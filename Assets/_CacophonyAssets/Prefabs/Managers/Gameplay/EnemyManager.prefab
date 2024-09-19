@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5708370481222698483
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8400948728280587974}
+  - component: {fileID: 3218990780130783478}
+  m_Layer: 0
+  m_Name: EnemyManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8400948728280587974
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5708370481222698483}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3218990780130783478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5708370481222698483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c2964fd1a6de9e44942db46f93a0630, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  playerTransform: {fileID: 0}
+  _enemyMaterials:
+  - _harmonizationType: 0
+    dissonantMaterial: {fileID: 2100000, guid: 4b0e3cbb3a98a0f4d92cea86bfa860d5, type: 2}
+    harmonizedMaterial: {fileID: 2100000, guid: 98d46fdf64cf0bb48bc40bb87f29e826, type: 2}
+    stunnedMaterial: {fileID: 2100000, guid: eebda2fb7155ac941ba4a74c687dd882, type: 2}
+  - _harmonizationType: 1
+    dissonantMaterial: {fileID: 2100000, guid: 55503b58b6883b94e95bc49ceee8f17b, type: 2}
+    harmonizedMaterial: {fileID: 2100000, guid: 9f047e9ce2d43dc4fa45498075523fb6, type: 2}
+    stunnedMaterial: {fileID: 2100000, guid: e49191b7be7eb0c46962ee9739e660f1, type: 2}
+  - _harmonizationType: 2
+    dissonantMaterial: {fileID: 2100000, guid: fd93c6fd2c820544cbd495cc1163af96, type: 2}
+    harmonizedMaterial: {fileID: 2100000, guid: cca0b30589563b84aaa037f29530b82a, type: 2}
+    stunnedMaterial: {fileID: 2100000, guid: 5ffdc556f0a87864d8b2d5f3b9e0d62b, type: 2}
+  dissonantMaterial: {fileID: 2100000, guid: 4b0e3cbb3a98a0f4d92cea86bfa860d5, type: 2}
+  harmonizedMaterial: {fileID: 2100000, guid: 98d46fdf64cf0bb48bc40bb87f29e826, type: 2}
+  stunnedMaterial: {fileID: 2100000, guid: eebda2fb7155ac941ba4a74c687dd882, type: 2}
+  timeToMove: 0.2
+  enemySortType: 3

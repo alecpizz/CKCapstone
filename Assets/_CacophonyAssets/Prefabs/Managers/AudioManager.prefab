@@ -1,0 +1,151 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &227528616364888201
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 227528616364888439}
+  - component: {fileID: 227528616364888200}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &227528616364888439
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 227528616364888201}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &227528616364888200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 227528616364888201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7701a7f80ee03a9488eb931f7229ec65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _music:
+  - Name: MainTheme
+    Clip: {fileID: 8300000, guid: 3a2314b6dfd8d804e8626479ef428266, type: 3}
+    Volume: 0.5
+    Pitch: 1
+    PitchDeviation: 0
+    Loop: 1
+    Source: {fileID: 0}
+  - Name: Player
+    Clip: {fileID: 8300000, guid: b371e05fc6af5c4418b2553d603904f3, type: 3}
+    Volume: 1
+    Pitch: 1
+    PitchDeviation: 0
+    Loop: 1
+    Source: {fileID: 0}
+  - Name: Enemy1
+    Clip: {fileID: 8300000, guid: 5758bdf559c6b884b9c09c595534abf1, type: 3}
+    Volume: 1
+    Pitch: 1
+    PitchDeviation: 0
+    Loop: 1
+    Source: {fileID: 0}
+  - Name: Enemy2
+    Clip: {fileID: 8300000, guid: f3a3461913e002f40922b260ea203eba, type: 3}
+    Volume: 1
+    Pitch: 1
+    PitchDeviation: 0
+    Loop: 1
+    Source: {fileID: 0}
+  - Name: Enemy3
+    Clip: {fileID: 8300000, guid: dd283daa3e434d84bb3a938253d69a42, type: 3}
+    Volume: 1
+    Pitch: 1
+    PitchDeviation: 0
+    Loop: 1
+    Source: {fileID: 0}
+  - Name: Frenzy
+    Clip: {fileID: 8300000, guid: b76fc21d82bb4cb4e8b5c4f613612b35, type: 3}
+    Volume: 1
+    Pitch: 1
+    PitchDeviation: 0
+    Loop: 1
+    Source: {fileID: 0}
+  - Name: Resonator(Ab)
+    Clip: {fileID: 8300000, guid: a2829acb5584c0d4e8cf8b8343d291bd, type: 3}
+    Volume: 1
+    Pitch: 1
+    PitchDeviation: 0
+    Loop: 1
+    Source: {fileID: 0}
+  - Name: Resonator(C)
+    Clip: {fileID: 8300000, guid: b495c67bf955f8c49adf842be1250782, type: 3}
+    Volume: 1
+    Pitch: 1
+    PitchDeviation: 0
+    Loop: 1
+    Source: {fileID: 0}
+  - Name: Resonator(F)
+    Clip: {fileID: 8300000, guid: a7da6be6146a99e47baaf6e85f5d201e, type: 3}
+    Volume: 1
+    Pitch: 1
+    PitchDeviation: 0
+    Loop: 1
+    Source: {fileID: 0}
+  - Name: End
+    Clip: {fileID: 8300000, guid: 8377493183dcbfb4587d3651bc80dae4, type: 3}
+    Volume: 0.5
+    Pitch: 1
+    PitchDeviation: 0
+    Loop: 1
+    Source: {fileID: 0}
+  _soundEffects:
+  - Name: SolvePuzzle
+    Clip: {fileID: 8300000, guid: 4289972843cdb7241995ac8257d67ed1, type: 3}
+    Volume: 1
+    Pitch: 1
+    PitchDeviation: 0
+    Loop: 0
+    Source: {fileID: 0}
+  - Name: Forward
+    Clip: {fileID: 8300000, guid: 9b35aaefaa60f3e49b53e4bce4585e7a, type: 3}
+    Volume: 1
+    Pitch: 1
+    PitchDeviation: 0
+    Loop: 0
+    Source: {fileID: 0}
+  - Name: DirectionSelect
+    Clip: {fileID: 8300000, guid: c24060436189921488a719e7cb8b396d, type: 3}
+    Volume: 0.2
+    Pitch: 1
+    PitchDeviation: 0
+    Loop: 0
+    Source: {fileID: 0}
+  _amplifiedEffects:
+  - Name: FailPuzzle
+    Clip: {fileID: 8300000, guid: d042360cc43ec3040a3df7ac57cf9ee5, type: 3}
+    Volume: 1
+    Pitch: 1
+    PitchDeviation: 0
+    Loop: 0
+    Source: {fileID: 0}
+  _currentMusic: []
+  _musicGroup: {fileID: -4134751590408431124, guid: 4e014f97e232d3142ac46d8279202adb, type: 2}
+  _soundEffectGroup: {fileID: -5843628945124920673, guid: 4e014f97e232d3142ac46d8279202adb, type: 2}
+  _amplifiedEffectGroup: {fileID: -6233623119697847394, guid: 4e014f97e232d3142ac46d8279202adb, type: 2}
