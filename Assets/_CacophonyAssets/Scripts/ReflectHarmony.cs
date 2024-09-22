@@ -6,18 +6,22 @@ using UnityEngine;
 /// Author: Ryan
 /// Description: Reflects the harmony wave
 /// </summary>
-public class ReflectHarmony : MonoBehaviour
+
+namespace Cacophony
 {
-    [SerializeField] bool _canReflect;
-    [SerializeField] List<Vector3> _reflectDirection;
-
-    public List<Vector3> GetReflectDirection()
+    public class ReflectHarmony : MonoBehaviour
     {
-        return _reflectDirection;
-    }
+        [SerializeField] bool _canReflect;
+        [SerializeField] List<Vector3> _reflectDirection;
 
-    public bool GetCanReflect()
-    {
-        return _canReflect;
+        public List<Vector3> GetReflectDirection()
+        {
+            return _reflectDirection;
+        }
+
+        public bool GetCanReflect()
+        {
+            return _canReflect;
+        }
     }
 }

@@ -6,26 +6,29 @@ using UnityEngine;
 /// Author: Liz
 /// Description: Base class for full-screen UI elements
 /// </summary>
-public class BaseScreenUI : MonoBehaviour
+namespace Cacophony
 {
-    private const string ENTER_ANIM = "TutorialBoxFadeIn";
-    private const string EXIT_ANIM = "TutorialBoxFadeOut";
-
-    public static bool UIActive = false;
-
-    [SerializeField] private Animator _animator;
-
-    public void SetUIActive(bool active)
+    public class BaseScreenUI : MonoBehaviour
     {
-        UIActive = active;
+        private const string ENTER_ANIM = "TutorialBoxFadeIn";
+        private const string EXIT_ANIM = "TutorialBoxFadeOut";
 
-        if (active)
+        public static bool UIActive = false;
+
+        [SerializeField] private Animator _animator;
+
+        public void SetUIActive(bool active)
         {
-            _animator.Play(ENTER_ANIM);
-        }
-        else
-        {
-            _animator.Play(EXIT_ANIM);
+            UIActive = active;
+
+            if (active)
+            {
+                _animator.Play(ENTER_ANIM);
+            }
+            else
+            {
+                _animator.Play(EXIT_ANIM);
+            }
         }
     }
 }

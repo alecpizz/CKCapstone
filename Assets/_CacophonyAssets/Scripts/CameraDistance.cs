@@ -2,34 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraDistance : MonoBehaviour
+namespace Cacophony
 {
-    [SerializeField] Vector3 _direction;
-    [SerializeField] float _distPerGridSpace;
-
-    // Start is called before the first frame update
-    void Start()
+    public class CameraDistance : MonoBehaviour
     {
-        CameraDist();
-    }
+        [SerializeField] Vector3 _direction;
+        [SerializeField] float _distPerGridSpace;
 
-    void CameraDist()
-    {
-        if (GameplayManagers.Instance == null) return;
-        float storedX = transform.position.x;
-        transform.position = _direction * GameplayManagers.Instance.Grid.ReturnGreaterOfRowsColumns() * _distPerGridSpace;
+        // Start is called before the first frame update
+        void Start()
+        {
+            CameraDist();
+        }
 
-        storedX += .5f;
-        if (GameplayManagers.Instance.Grid.GetColumns() % 2 != 0)
+        void CameraDist()
+        {
+            if (GameplayManagers.Instance == null) return;
+            float storedX = transform.position.x;
+            transform.position = _direction * GameplayManagers.Instance.Grid.ReturnGreaterOfRowsColumns() *
+                                 _distPerGridSpace;
+
             storedX += .5f;
-        transform.position = new Vector3(storedX, transform.position.y, transform.position.z);
-    }
+            if (GameplayManagers.Instance.Grid.GetColumns() % 2 != 0)
+                storedX += .5f;
+            transform.position = new Vector3(storedX, transform.position.y, transform.position.z);
+        }
 
 
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        // Update is called once per frame
+        void Update()
+        {
+        }
     }
 }

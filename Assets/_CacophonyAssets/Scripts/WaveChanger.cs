@@ -6,12 +6,15 @@ using UnityEngine;
 /// Author: Ryan
 /// Description: The object that is hit to change the type of wave
 /// </summary>
-public class WaveChanger : MonoBehaviour
+namespace Cacophony
 {
-    [SerializeField] HarmonizationType _changeToType;
-    
-    public HarmonizationType GetChangeType()
+    public class WaveChanger : MonoBehaviour
     {
-        return _changeToType;
+        [SerializeField] HarmonizationType _changeToType;
+
+        public HarmonizationType GetChangeType()
+        {
+            return _changeToType;
+        }
     }
 }

@@ -2,42 +2,42 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CompleteButton : MonoBehaviour
+namespace Cacophony
 {
-    [SerializeField]
-    Renderer visual;
-
-    [SerializeField]
-    Material baseMaterial;
-
-    [SerializeField]
-    Material completedMaterial;
-
-    bool isCompleted;
-
-    private void Start()
+    public class CompleteButton : MonoBehaviour
     {
-        isCompleted = GameplayManagers.Instance.Room.GetRoomSolved();
+        [SerializeField] Renderer visual;
 
-        UpdateVisuals();
-    }
+        [SerializeField] Material baseMaterial;
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (!other.CompareTag("Player"))
-            return;
+        [SerializeField] Material completedMaterial;
 
-        GameplayManagers.Instance.Room.RoomVictory();
+        bool isCompleted;
 
-        isCompleted = true;
+        private void Start()
+        {
+            isCompleted = GameplayManagers.Instance.Room.GetRoomSolved();
 
-        UpdateVisuals();
-    }
+            UpdateVisuals();
+        }
 
-    private void UpdateVisuals()
-    {
-        Material newMaterial = isCompleted ? completedMaterial : baseMaterial;
+        private void OnTriggerEnter(Collider other)
+        {
+            if (!other.CompareTag("Player"))
+                return;
 
-        visual.material = newMaterial;
+            GameplayManagers.Instance.Room.RoomVictory();
+
+            isCompleted = true;
+
+            UpdateVisuals();
+        }
+
+        private void UpdateVisuals()
+        {
+            Material newMaterial = isCompleted ? completedMaterial : baseMaterial;
+
+            visual.material = newMaterial;
+        }
     }
 }
