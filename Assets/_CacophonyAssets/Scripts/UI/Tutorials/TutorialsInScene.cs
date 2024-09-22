@@ -6,12 +6,15 @@ using UnityEngine;
 /// Author: Liz
 /// Description: Holds scene-specific Tutorial data. Separated from "TutorialUI" for convenience.
 /// </summary>
-public class TutorialsInScene : MonoBehaviour
+namespace Cacophony
 {
-    [SerializeField] private List<TutorialSO> _sceneTutorials = new List<TutorialSO>();
-
-    public List<TutorialSO> GetSceneTutorials()
+    public class TutorialsInScene : MonoBehaviour
     {
-        return _sceneTutorials;
+        [SerializeField] private List<TutorialSO> _sceneTutorials = new List<TutorialSO>();
+
+        public List<TutorialSO> GetSceneTutorials()
+        {
+            return _sceneTutorials;
+        }
     }
 }

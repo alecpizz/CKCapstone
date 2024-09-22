@@ -8,26 +8,29 @@ using TMPro;
 /// Author: Liz
 /// Description: Base script for UI elements.
 /// </summary>
-public class UIVisuals
+namespace Cacophony
 {
-    /// <summary>
-    /// Calculates the animation time of an animation.
-    /// </summary>
-    /// <param name="anims">The animator to search through.</param>
-    /// <param name="animationName">The name of the animation to find.</param>
-    /// <returns>The animation time if an animation is found. 0 otherwise, and flags a warning.</returns>
-    public static float GetAnimationTime(Animator anims, string animationName)
+    public class UIVisuals
     {
-        AnimationClip[] clips = anims.runtimeAnimatorController.animationClips;
-        foreach (AnimationClip c in clips)
+        /// <summary>
+        /// Calculates the animation time of an animation.
+        /// </summary>
+        /// <param name="anims">The animator to search through.</param>
+        /// <param name="animationName">The name of the animation to find.</param>
+        /// <returns>The animation time if an animation is found. 0 otherwise, and flags a warning.</returns>
+        public static float GetAnimationTime(Animator anims, string animationName)
         {
-            if (c.name == animationName)
+            AnimationClip[] clips = anims.runtimeAnimatorController.animationClips;
+            foreach (AnimationClip c in clips)
             {
-                return c.length;
+                if (c.name == animationName)
+                {
+                    return c.length;
+                }
             }
-        }
 
-        Debug.LogWarning($"Could not find animation named {animationName} in {anims.name}");
-        return 0;
+            Debug.LogWarning($"Could not find animation named {animationName} in {anims.name}");
+            return 0;
+        }
     }
 }

@@ -9,153 +9,156 @@ using UnityEngine.Events;
 /// Editor(s): Trinity
 /// Description: Switches the 'turns' from player and enemies
 /// </summary>
-/// 
-public class TurnManager : MonoBehaviour
+namespace Cacophony
 {
-
-    [SerializeField] private TurnState _turnState = 0;
-
-    private int turnstateAmt;
-
-    public event Action EnvironmentTurnEvent;
-
-    private void Awake()
+    public class TurnManager : MonoBehaviour
     {
-        turnstateAmt = Enum.GetNames(typeof(TurnState)).Length;
-    }
+        [SerializeField] private TurnState _turnState = 0;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        //Progress();
-        StartTurnState(TurnState.Player);
-    }
+        private int turnstateAmt;
 
-    public void Progress()
-    {
-        IncrementTurnState();
-        StartTurnState(_turnState);
-        
-        //NextTurnState();
+        public event Action EnvironmentTurnEvent;
 
-        GameplayManagers.Instance.Harmonizer.TriggerAllWaves();
-    }
-
-    public void ResetProgress()
-    {
-        _turnState = 0;
-        Progress();
-    }
-
-    private void IncrementTurnState()
-    {
-        int newState = (int)_turnState + 1;
-        if (newState >= turnstateAmt)
-            newState = 0;
-
-        _turnState = (TurnState) newState;
-    }
-
-    private void NextTurnState()
-    {
-        switch (_turnState)
+        private void Awake()
         {
-            case (TurnState.Player):
-                StartTurnState(TurnState.Enemy);
-                return;
-            case (TurnState.Enemy):
-                StartTurnState(TurnState.Player);
-                return;
+            turnstateAmt = Enum.GetNames(typeof(TurnState)).Length;
         }
-        
-    }
 
-    #region PlayerTurn
-    public void StartPlayerTurn()
-    {
-        GameplayManagers.Instance.Enemy.GetPlayer().SendHarmonyWaveInMoveDirection();
-    }
-    #endregion
-
-    #region EnvironmentTurn
-
-    public void StartEnvironmentTurn()
-    {
-        if (EnvironmentTurnEvent == null || EnvironmentTurnEvent.GetInvocationList().Length == 0)
+        // Start is called before the first frame update
+        void Start()
         {
+            //Progress();
+            StartTurnState(TurnState.Player);
+        }
+
+        public void Progress()
+        {
+            IncrementTurnState();
+            StartTurnState(_turnState);
+
+            //NextTurnState();
+
+            GameplayManagers.Instance.Harmonizer.TriggerAllWaves();
+        }
+
+        public void ResetProgress()
+        {
+            _turnState = 0;
             Progress();
-            return;
         }
-            
-        EnvironmentTurnEvent?.Invoke();
-        StartCoroutine(DelayEvent());
-        StartCoroutine(TurnProcessWaves(GameplayManagers.Instance.Enemy.GetTotalTimeToMove()));
-    }
 
-    #endregion
-
-    #region EnemyTurn
-    public void StartEnemyTurn()
-    {
-        MoveAllEnemies();
-    }
-
-    private void MoveAllEnemies()
-    {
-        GameplayManagers.Instance.Enemy.MoveAllEnemies();
-        StartCoroutine(DelayEvent());
-    }
-
-    IEnumerator DelayEvent()
-    {
-        yield return new WaitForSeconds(GameplayManagers.Instance.Enemy.GetTotalTimeToMove());
-        Progress();
-    }
-
-    IEnumerator TurnProcessWaves(float turnTime)
-    {
-        while(turnTime > 0)
+        private void IncrementTurnState()
         {
-            turnTime -= Time.deltaTime;
-            GameplayManagers.Instance.Harmonizer.GetVisualizeAllWavesEvent().Invoke();
-            yield return null;
+            int newState = (int) _turnState + 1;
+            if (newState >= turnstateAmt)
+                newState = 0;
+
+            _turnState = (TurnState) newState;
         }
-    }
 
-    #endregion
-
-    void StartTurnState(TurnState newState)
-    {
-        if (GameplayManagers.Instance.Room.GetRoomSolved())
+        private void NextTurnState()
         {
-            _turnState = TurnState.Player;
-            return;
+            switch (_turnState)
+            {
+                case (TurnState.Player):
+                    StartTurnState(TurnState.Enemy);
+                    return;
+                case (TurnState.Enemy):
+                    StartTurnState(TurnState.Player);
+                    return;
+            }
         }
-            
-        _turnState = newState;
-        switch (newState)
+
+        #region PlayerTurn
+
+        public void StartPlayerTurn()
         {
-            case (TurnState.Player):
-                StartPlayerTurn();
-                break;
-            case (TurnState.Environment):
-                StartEnvironmentTurn();
+            GameplayManagers.Instance.Enemy.GetPlayer().SendHarmonyWaveInMoveDirection();
+        }
+
+        #endregion
+
+        #region EnvironmentTurn
+
+        public void StartEnvironmentTurn()
+        {
+            if (EnvironmentTurnEvent == null || EnvironmentTurnEvent.GetInvocationList().Length == 0)
+            {
+                Progress();
                 return;
-            case (TurnState.Enemy):
-                StartEnemyTurn();
-                break;
+            }
+
+            EnvironmentTurnEvent?.Invoke();
+            StartCoroutine(DelayEvent());
+            StartCoroutine(TurnProcessWaves(GameplayManagers.Instance.Enemy.GetTotalTimeToMove()));
+        }
+
+        #endregion
+
+        #region EnemyTurn
+
+        public void StartEnemyTurn()
+        {
+            MoveAllEnemies();
+        }
+
+        private void MoveAllEnemies()
+        {
+            GameplayManagers.Instance.Enemy.MoveAllEnemies();
+            StartCoroutine(DelayEvent());
+        }
+
+        IEnumerator DelayEvent()
+        {
+            yield return new WaitForSeconds(GameplayManagers.Instance.Enemy.GetTotalTimeToMove());
+            Progress();
+        }
+
+        IEnumerator TurnProcessWaves(float turnTime)
+        {
+            while (turnTime > 0)
+            {
+                turnTime -= Time.deltaTime;
+                GameplayManagers.Instance.Harmonizer.GetVisualizeAllWavesEvent().Invoke();
+                yield return null;
+            }
+        }
+
+        #endregion
+
+        void StartTurnState(TurnState newState)
+        {
+            if (GameplayManagers.Instance.Room.GetRoomSolved())
+            {
+                _turnState = TurnState.Player;
+                return;
+            }
+
+            _turnState = newState;
+            switch (newState)
+            {
+                case (TurnState.Player):
+                    StartPlayerTurn();
+                    break;
+                case (TurnState.Environment):
+                    StartEnvironmentTurn();
+                    return;
+                case (TurnState.Enemy):
+                    StartEnemyTurn();
+                    break;
+            }
+        }
+
+        public TurnState GetTurnState()
+        {
+            return _turnState;
         }
     }
 
-    public TurnState GetTurnState()
+    public enum TurnState
     {
-        return _turnState;
+        Player,
+        Environment,
+        Enemy
     }
-}
-
-public enum TurnState
-{
-    Player,
-    Environment,
-    Enemy
 }

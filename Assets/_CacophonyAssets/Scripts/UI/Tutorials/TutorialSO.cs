@@ -7,11 +7,14 @@ using UnityEngine.Video;
 /// Author: Liz
 /// Description: Holds Tutorial data.
 /// </summary>
-[CreateAssetMenu()]
-public class TutorialSO : ScriptableObject
+namespace Cacophony
 {
-    public string TutorialName;
-    [TextArea(3, 10)] public string TutorialDescription;
-    public Sprite TutorialImage;
-    public VideoClip TutorialVideo;
+    [CreateAssetMenu()]
+    public class TutorialSO : ScriptableObject
+    {
+        public string TutorialName;
+        [TextArea(3, 10)] public string TutorialDescription;
+        public Sprite TutorialImage;
+        public VideoClip TutorialVideo;
+    }
 }

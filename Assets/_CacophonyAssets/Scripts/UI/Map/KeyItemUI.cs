@@ -4,14 +4,17 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class KeyItemUI : MonoBehaviour
+namespace Cacophony
 {
-    [SerializeField] private TextMeshProUGUI _text;
-    [SerializeField] private Image _colorIcon;
-
-    public void PrepareElement(KeyElement keyElement)
+    public class KeyItemUI : MonoBehaviour
     {
-        _text.text = keyElement.KeyElementName;
-        _colorIcon.color = keyElement.KeyElementColor;
+        [SerializeField] private TextMeshProUGUI _text;
+        [SerializeField] private Image _colorIcon;
+
+        public void PrepareElement(KeyElement keyElement)
+        {
+            _text.text = keyElement.KeyElementName;
+            _colorIcon.color = keyElement.KeyElementColor;
+        }
     }
 }

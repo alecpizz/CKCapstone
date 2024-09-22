@@ -2,7 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IEnvironmentHazard
+namespace Cacophony
 {
-    public void OnEnvironmentTurn();
+    public interface IEnvironmentHazard
+    {
+        public void OnEnvironmentTurn();
+    }
 }

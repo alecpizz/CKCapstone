@@ -2,15 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameIntroController : MonoBehaviour
+namespace Cacophony
 {
-    public void LoadGame()
+    public class GameIntroController : MonoBehaviour
     {
-        SceneTransitions.Instance.LoadSceneWithTransition(SceneTransitions.TransitionType.Fade, 1);
-    }
+        public void LoadGame()
+        {
+            SceneTransitions.Instance.LoadSceneWithTransition(SceneTransitions.TransitionType.Fade, 1);
+        }
 
-    public void MarkTutorialsComplete()
-    {
-        TutorialManager.Instance.SetAllTutorialsSeen();
+        public void MarkTutorialsComplete()
+        {
+            TutorialManager.Instance.SetAllTutorialsSeen();
+        }
     }
 }

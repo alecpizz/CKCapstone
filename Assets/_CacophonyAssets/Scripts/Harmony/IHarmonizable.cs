@@ -2,21 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IHarmonizable
+namespace Cacophony
 {
-    void SetHarmonized(bool harmonized, HarmonizationType hType);
+    public interface IHarmonizable
+    {
+        void SetHarmonized(bool harmonized, HarmonizationType hType);
 
-    bool IsHarmonized();
+        bool IsHarmonized();
 
-    bool IsPermaHarmonizable();
+        bool IsPermaHarmonizable();
 
-    HarmonizationObjectCatagory GetHarmonizationCatagory();
+        HarmonizationObjectCatagory GetHarmonizationCatagory();
 
-    HarmonizationType GetHarmonizationType();
-}
+        HarmonizationType GetHarmonizationType();
+    }
 
-public enum HarmonizationObjectCatagory
-{
-    Enemy,
-    Environment
+    public enum HarmonizationObjectCatagory
+    {
+        Enemy,
+        Environment
+    }
 }

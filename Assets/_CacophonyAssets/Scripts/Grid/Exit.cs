@@ -7,61 +7,62 @@ using UnityEngine;
 /// Coconspirator: Ryan
 /// Description: Places where the player exits the level
 /// </summary>
-public class Exit : MonoBehaviour
+namespace Cacophony
 {
-    [SerializeField] int _sceneIDToLoad;
-    SceneTransitions.TransitionType transitionType;
-    private Vector2 _directionOfSceneToLoad;
-
-    [SerializeField] GameObject _disabledVisual;
-    [SerializeField] GameObject _enabledVisual;
-
-    private void OnTriggerEnter(Collider other)
+    public class Exit : MonoBehaviour
     {
-        if (!other.CompareTag("Player"))
-            return;
+        [SerializeField] int _sceneIDToLoad;
+        SceneTransitions.TransitionType transitionType;
+        private Vector2 _directionOfSceneToLoad;
 
-        
-    }
+        [SerializeField] GameObject _disabledVisual;
+        [SerializeField] GameObject _enabledVisual;
 
-    public void UseExit()
-    {
-        //Debug.Log("<insert load next scene>");
-
-        /*if (SaveSceneData.Instance.LevelCompleteCount() == 6)
+        private void OnTriggerEnter(Collider other)
         {
-            SceneTransitions.Instance.LoadSceneWithTransition(transitionType, 7);
+            if (!other.CompareTag("Player"))
+                return;
         }
-        else
+
+        public void UseExit()
         {
-            
-        }*/
-        SaveSceneData.Instance.SetLastSceneDirection(_directionOfSceneToLoad * -1);
-        SceneTransitions.Instance.LoadSceneWithTransition(transitionType, _sceneIDToLoad);
+            //Debug.Log("<insert load next scene>");
 
-        //GameplayManagers.Instance.Room.ResetRoom();
-    }
+            /*if (SaveSceneData.Instance.LevelCompleteCount() == 6)
+            {
+                SceneTransitions.Instance.LoadSceneWithTransition(transitionType, 7);
+            }
+            else
+            {
 
-    public void ExitActivationStatus(bool status)
-    {
-        GetComponent<Collider>().enabled = status;
+            }*/
+            SaveSceneData.Instance.SetLastSceneDirection(_directionOfSceneToLoad * -1);
+            SceneTransitions.Instance.LoadSceneWithTransition(transitionType, _sceneIDToLoad);
 
-        _enabledVisual.SetActive(status);
-        _disabledVisual.SetActive(!status);
-    }
+            //GameplayManagers.Instance.Room.ResetRoom();
+        }
 
-    public void SetSceneIDToLoad(int newID)
-    {
-        _sceneIDToLoad = newID;
-    }
-    
-    public void SetDirectionOfNextScene(Vector2 nextSceneDir)
-    {
-        _directionOfSceneToLoad = nextSceneDir;
-    }
+        public void ExitActivationStatus(bool status)
+        {
+            GetComponent<Collider>().enabled = status;
 
-    public void GiveTransition(SceneTransitions.TransitionType transition)
-    {
-        transitionType = transition;
+            _enabledVisual.SetActive(status);
+            _disabledVisual.SetActive(!status);
+        }
+
+        public void SetSceneIDToLoad(int newID)
+        {
+            _sceneIDToLoad = newID;
+        }
+
+        public void SetDirectionOfNextScene(Vector2 nextSceneDir)
+        {
+            _directionOfSceneToLoad = nextSceneDir;
+        }
+
+        public void GiveTransition(SceneTransitions.TransitionType transition)
+        {
+            transitionType = transition;
+        }
     }
 }
