@@ -9,7 +9,8 @@ public class GridBase : MonoBehaviour
     [SerializeField] private Transform cursor;
     [SerializeField] private Grid grid;
     //TODO: type based dictionaries rather than GameObjects, keeping this since I dunno what the types will be.
-    private Dictionary<Vector3Int, HashSet<GameObject>> _gridMap = new();
+    private Dictionary<Vector3Int, HashSet<GameObject>> _gridEntries = new();
+    private Dictionary<GameObject, Vector3Int> _gameObjectToGridMap = new();
     private void OnDrawGizmos()
     {
         if (grid == null) return;
@@ -26,25 +27,41 @@ public class GridBase : MonoBehaviour
         Gizmos.DrawWireCube(grid.GetCellCenterWorld(WorldToCell(cursor.position)), grid.cellSize);
     }
 
-    public void AddObjectToGrid(GameObject obj)
+    public void AddEntry(GameObject obj)
     {
+        if (_gameObjectToGridMap.ContainsKey(obj)) return;
+        _gameObjectToGridMap.Add(obj, WorldToCell(obj.transform.position));
         var set = GetCellEntries(obj.transform.position);
         set.Add(obj);
     }
 
-    public void UpdateObjectCellIndex(GameObject obj)
+    public void UpdateEntry(GameObject obj)
     {
-        
+        if (!_gameObjectToGridMap.TryGetValue(obj, out var prevPos))
+        {
+            AddEntry(obj);
+            return;
+        }
+
+        Vector3Int newPos = WorldToCell(obj.transform.position);
+        if (prevPos == newPos) return;
+        _gameObjectToGridMap[obj] = newPos;
+        _gridEntries[prevPos].Remove(obj);
+        if (!_gridEntries.ContainsKey(newPos))
+        {
+            _gridEntries.Add(newPos, new HashSet<GameObject>());
+        }
+        _gridEntries[newPos].Add(obj);
     }
 
     public HashSet<GameObject> GetCellEntries(Vector3Int coordinate)
     {
-        if (_gridMap.TryGetValue(coordinate, out var entries))
+        if (_gridEntries.TryGetValue(coordinate, out var entries))
         {
             return entries;
         }
-        _gridMap.Add(coordinate, new HashSet<GameObject>());
-        return _gridMap[coordinate];
+        _gridEntries.Add(coordinate, new HashSet<GameObject>());
+        return _gridEntries[coordinate];
     }
 
     public HashSet<GameObject> GetCellEntries(Vector3 worldSpacePos)
