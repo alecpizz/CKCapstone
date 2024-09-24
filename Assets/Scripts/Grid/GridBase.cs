@@ -55,6 +55,10 @@ public class GridBase : MonoBehaviour
         Gizmos.color = Color.red;
         if (debugCursor == null) return;
         Gizmos.DrawWireCube(grid.GetCellCenterWorld(WorldToCell(debugCursor.position)), grid.cellSize);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireCube(GetCellPositionInDirection(debugCursor.position, debugCursor.forward), grid.cellSize);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireCube(GetCellPositionInDirection(debugCursor.position, debugCursor.right), grid.cellSize);
     }
 
     /// <summary>
@@ -127,6 +131,7 @@ public class GridBase : MonoBehaviour
     /// <returns>A cell index for the grid.</returns>
     public Vector3Int WorldToCell(Vector3 worldSpacePos)
     {
+        worldSpacePos.y = transform.position.y;
         Vector3 local = transform.InverseTransformPoint(worldSpacePos);
 
         Vector3 cellSize = grid.cellSize;
@@ -146,6 +151,28 @@ public class GridBase : MonoBehaviour
     /// <returns>A world space, centered position of a cell.</returns>
     public Vector3 CellToWorld(Vector3Int cellPos)
     {
-        return grid.GetCellCenterWorld(cellPos);
+        Vector3Int pos = cellPos;
+        pos.x = Mathf.Clamp(cellPos.x, 0, gridSize - 1);
+        pos.y = Mathf.Clamp(cellPos.y, 0, gridSize - 1);
+        pos.z = Mathf.Clamp(cellPos.z, 0, gridSize - 1);
+        return grid.GetCellCenterWorld(pos);
+    }
+
+    /// <summary>
+    /// Gets the world space cell position for a cell in the desired direction,
+    /// relative to the original position.
+    /// </summary>
+    /// <param name="position">The position of the object.</param>
+    /// <param name="dir">The direction the object will move in. This will scale based on the grid.
+    /// This must be in a cardinal direction.</param>
+    /// <returns></returns>
+    public Vector3 GetCellPositionInDirection(Vector3 position, Vector3 dir)
+    {
+        return CellToWorld(WorldToCell(position) + Vector3ToInt(dir.normalized));
+    }
+
+    private static Vector3Int Vector3ToInt(Vector3 v)
+    {
+        return new Vector3Int(Mathf.FloorToInt(v.x), Mathf.FloorToInt(v.y), Mathf.FloorToInt(v.z));
     }
 }
