@@ -1,11 +1,11 @@
 /******************************************************************
-*    Author: Alec Pizziferro
-*    Contributors: N/A
-*    Date Created: 9/20/2024
-*    Description: Class for interfacing with a grid, stores information about
+ *    Author: Alec Pizziferro
+ *    Contributors: N/A
+ *    Date Created: 9/20/2024
+ *    Description: Class for interfacing with a grid, stores information about
  *   what entities are in a cell, as well as provides methods for converting world
  *   space information to grid space and vice versa.
-*******************************************************************/
+ *******************************************************************/
 
 using System;
 using System.Collections.Generic;
@@ -20,13 +20,20 @@ using UnityEngine.Serialization;
 [RequireComponent(typeof(Grid))]
 public class GridBase : MonoBehaviour
 {
+    [InfoBox("Assign this to draw the grid gizmos.")] [SerializeField]
+    private Grid grid;
+    [Header("Grid Parameters")]
     [SerializeField] [MinValue(2)] private int gridSize = 8;
     [SerializeField] private Transform debugCursor;
-    [InfoBox("Assign this to draw the grid gizmos.")]
-    [SerializeField] private Grid grid;
+    [Header("Grid Visuals")]
+    [SerializeField] private Material primaryGridMat;
+    [SerializeField] private Material secondaryGridMat;
+
+
     //TODO: type based dictionaries rather than GameObjects, keeping this since I dunno what the types will be.
     private Dictionary<Vector3Int, HashSet<GameObject>> _gridEntries = new();
     private Dictionary<GameObject, Vector3Int> _gameObjectToGridMap = new();
+    private GameObject _gridMeshHolder;
 
     /// <summary>
     /// Grabs the grid component.
@@ -34,6 +41,7 @@ public class GridBase : MonoBehaviour
     private void Awake()
     {
         grid = GetComponent<Grid>();
+        GenerateMesh();
     }
 
     /// <summary>
@@ -52,13 +60,17 @@ public class GridBase : MonoBehaviour
         }
 
         //try and draw a red box based on the cursor position.
-        Gizmos.color = Color.red;
+
         if (debugCursor == null) return;
-        Gizmos.DrawWireCube(grid.GetCellCenterWorld(WorldToCell(debugCursor.position)), grid.cellSize);
+
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireCube(GetCellPositionInDirection(debugCursor.position, debugCursor.forward), grid.cellSize);
+        Gizmos.DrawWireCube(GetCellPositionInDirection(debugCursor.position, Vector3.forward), grid.cellSize);
+        Gizmos.DrawWireCube(GetCellPositionInDirection(debugCursor.position, Vector3.back), grid.cellSize);
         Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(GetCellPositionInDirection(debugCursor.position, debugCursor.right), grid.cellSize);
+        Gizmos.DrawWireCube(GetCellPositionInDirection(debugCursor.position, Vector3.right), grid.cellSize);
+        Gizmos.DrawWireCube(GetCellPositionInDirection(debugCursor.position, Vector3.left), grid.cellSize);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireCube(grid.GetCellCenterWorld(WorldToCell(debugCursor.position)), grid.cellSize);
     }
 
     /// <summary>
@@ -95,6 +107,7 @@ public class GridBase : MonoBehaviour
         {
             _gridEntries.Add(newPos, new HashSet<GameObject>());
         }
+
         _gridEntries[newPos].Add(obj);
     }
 
@@ -109,6 +122,7 @@ public class GridBase : MonoBehaviour
         {
             return entries;
         }
+
         _gridEntries.Add(coordinate, new HashSet<GameObject>());
         return _gridEntries[coordinate];
     }
@@ -136,11 +150,11 @@ public class GridBase : MonoBehaviour
 
         Vector3 cellSize = grid.cellSize;
         Vector3 cellGap = grid.cellGap;
- 
+
         int x = Mathf.Clamp(Mathf.FloorToInt(local.x / (cellSize.x + cellGap.x)), 0, gridSize - 1);
         int y = Mathf.Clamp(Mathf.FloorToInt(local.y / (cellSize.y + cellGap.y)), 0, gridSize - 1);
         int z = Mathf.Clamp(Mathf.FloorToInt(local.z / (cellSize.z + cellGap.z)), 0, gridSize - 1);
-        
+
         return new Vector3Int(x, y, z);
     }
 
@@ -171,8 +185,64 @@ public class GridBase : MonoBehaviour
         return CellToWorld(WorldToCell(position) + Vector3ToInt(dir.normalized));
     }
 
+    /// <summary>
+    /// Flattens a Vec3 into a Vec3int.
+    /// </summary>
+    /// <param name="v">A vector3.</param>
+    /// <returns>A flattened Vector3Int.</returns>
     private static Vector3Int Vector3ToInt(Vector3 v)
     {
         return new Vector3Int(Mathf.FloorToInt(v.x), Mathf.FloorToInt(v.y), Mathf.FloorToInt(v.z));
+    }
+
+    /// <summary>
+    /// Generates a grid by spawning a bunch of planes respective to the cells.
+    /// </summary>
+    [Button]
+    private void GenerateMesh()
+    {
+        if (grid == null)
+        {
+            return;
+        }
+
+        if (_gridMeshHolder != null)
+        {
+            if (Application.isPlaying)
+            {
+                Destroy(_gridMeshHolder);
+            }
+            else
+            {
+                DestroyImmediate(_gridMeshHolder);
+            }
+        }
+        
+        _gridMeshHolder = new GameObject("Grid Mesh Holder")
+        {
+            transform =
+            {
+                parent = transform
+            }
+        };
+        _gridMeshHolder.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+
+        
+        for (int i = 0; i < gridSize; i++)
+        {
+            for (int j = 0; j < gridSize; j++)
+            {
+                var pos = CellToWorld(new Vector3Int(i, 0, j));
+                var plane = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                plane.transform.position = pos;
+                plane.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+                var scale = plane.transform.localScale;
+                scale.x = (grid.cellSize.x);
+                scale.y = (grid.cellSize.z);
+                plane.transform.localScale = scale;
+                plane.transform.SetParent(_gridMeshHolder.transform, true);
+                plane.GetComponent<MeshRenderer>().material = i % 2 == 1 ^ j % 2 == 0 ? primaryGridMat : secondaryGridMat;
+            }
+        }
     }
 }
