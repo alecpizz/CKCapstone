@@ -5,13 +5,19 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using TMPro;
+using UnityEngine.Rendering.UI;
 
 public class DebugMenuManager : MonoBehaviour
 {
     [SerializeField] private GameObject _debugMenuFirst;
     public GameObject debugMenu;
+    public GameObject fpsCounter;
 
     private bool dMenu = false;
+
+    [SerializeField] private TextMeshProUGUI fpsText;
+    private float fps;
 
     private DebugtInputActions playerInput;
     private InputAction debugInput;
@@ -50,6 +56,9 @@ public class DebugMenuManager : MonoBehaviour
         {
             CloseDebugMenu();
         }
+
+        //fps = DebugUIHandlerValueTuple.m_Timer;
+        fpsText.text = fps.ToString();
     }
 
     public void OpenDebugMenu()
