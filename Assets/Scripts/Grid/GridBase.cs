@@ -157,6 +157,21 @@ public class GridBase : MonoBehaviour
     }
 
     /// <summary>
+    /// Checks if the cell contains any objects.
+    /// </summary>
+    /// <param name="position">The world position to find a cell.</param>
+    /// <returns>True if the cell is empty.</returns>
+    public bool CellIsEmpty(Vector3 position)
+    {
+        var set = GetCellEntries(position);
+        if (set == null)
+        {
+            return false;
+        }
+        return set.Count == 0;
+    }
+
+    /// <summary>
     /// Converts a world space position to a cell index.
     /// If outside the bounds of the grid, it will be clamped.
     /// </summary>
