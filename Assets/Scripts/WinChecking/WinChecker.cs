@@ -62,6 +62,7 @@ public class WinChecker : MonoBehaviour
 
             if (doesSequenceMatch)
             {
+                Debug.Log("Correct Sequence");
                 GotCorrectSequence?.Invoke();
             }
             else

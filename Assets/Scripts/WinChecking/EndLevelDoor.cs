@@ -42,6 +42,8 @@ public class EndLevelDoor : MonoBehaviour
         _isUnlocked = true;
     }
 
+    // TODO: this OnTriggerEnter method can be replaced with grid data checking
+
     /// <summary>
     /// If player collides with door and it's unlocked, load the next scene
     /// </summary>
