@@ -6,23 +6,26 @@ using UnityEngine;
 /// Author: Liz
 /// Description: Holds every manager for easy editor use
 /// </summary>
-public class ManagerParent : MonoBehaviour
+namespace Cacophony
 {
-    [SerializeField] private List<GameObject> _managerPrefabs;
-
-    private void Awake()
+    public class ManagerParent : MonoBehaviour
     {
-        SpawnManagers();
-    }
+        [SerializeField] private List<GameObject> _managerPrefabs;
 
-    /// <summary>
-    /// Spawns every manager
-    /// </summary>
-    private void SpawnManagers()
-    {
-        foreach (GameObject manager in _managerPrefabs)
+        private void Awake()
         {
-            Instantiate(manager, transform.position, Quaternion.identity);
+            SpawnManagers();
+        }
+
+        /// <summary>
+        /// Spawns every manager
+        /// </summary>
+        private void SpawnManagers()
+        {
+            foreach (GameObject manager in _managerPrefabs)
+            {
+                Instantiate(manager, transform.position, Quaternion.identity);
+            }
         }
     }
 }

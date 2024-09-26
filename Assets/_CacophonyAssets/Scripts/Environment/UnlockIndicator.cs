@@ -6,56 +6,51 @@ using UnityEngine;
 /// Author: Trinity
 /// Description: Controls the indicator for the endgame lock in the respecetive level once it is completed
 /// </summary>
-public class UnlockIndicator : MonoBehaviour
+namespace Cacophony
 {
-    [Header("Assignments")]
-    [SerializeField]
-    Renderer indicatorRenderer;
-
-    [Header("Transition")]
-    [SerializeField]
-    bool doTeleportPlayer = false;
-
-    [SerializeField]
-    int startRoomID;
-
-    [SerializeField]
-    float teleportDelay = 2;
-
-    [SerializeField]
-    float timeSlow = 0.2f;
-
-    [Header("Materials")]
-    [SerializeField]
-    Material baseMaterial;
-
-    [SerializeField]
-    Material completedMaterial;
-
-    private void OnEnable()
+    public class UnlockIndicator : MonoBehaviour
     {
-        indicatorRenderer.material = baseMaterial;
-        GameplayManagers.Instance.Room.RoomVictoryEvent += OnRoomVictory;
-    }
+        [Header("Assignments")] [SerializeField]
+        Renderer indicatorRenderer;
 
-    private void OnDisable()
-    {
-        GameplayManagers.Instance.Room.RoomVictoryEvent -= OnRoomVictory;
-    }
+        [Header("Transition")] [SerializeField]
+        bool doTeleportPlayer = false;
 
-    private void OnRoomVictory()
-    {
-        indicatorRenderer.material = completedMaterial;
+        [SerializeField] int startRoomID;
 
-        if(doTeleportPlayer)
-            StartCoroutine(DelayedTeleportPlayer());
-    }
+        [SerializeField] float teleportDelay = 2;
 
-    IEnumerator DelayedTeleportPlayer()
-    {
-        Time.timeScale = timeSlow;
-        yield return new WaitForSecondsRealtime(teleportDelay);
-        SceneTransitions.Instance.LoadSceneWithTransition(SceneTransitions.TransitionType.Fade, startRoomID);
-        Time.timeScale = 1f;
+        [SerializeField] float timeSlow = 0.2f;
+
+        [Header("Materials")] [SerializeField] Material baseMaterial;
+
+        [SerializeField] Material completedMaterial;
+
+        private void OnEnable()
+        {
+            indicatorRenderer.material = baseMaterial;
+            GameplayManagers.Instance.Room.RoomVictoryEvent += OnRoomVictory;
+        }
+
+        private void OnDisable()
+        {
+            GameplayManagers.Instance.Room.RoomVictoryEvent -= OnRoomVictory;
+        }
+
+        private void OnRoomVictory()
+        {
+            indicatorRenderer.material = completedMaterial;
+
+            if (doTeleportPlayer)
+                StartCoroutine(DelayedTeleportPlayer());
+        }
+
+        IEnumerator DelayedTeleportPlayer()
+        {
+            Time.timeScale = timeSlow;
+            yield return new WaitForSecondsRealtime(teleportDelay);
+            SceneTransitions.Instance.LoadSceneWithTransition(SceneTransitions.TransitionType.Fade, startRoomID);
+            Time.timeScale = 1f;
+        }
     }
 }

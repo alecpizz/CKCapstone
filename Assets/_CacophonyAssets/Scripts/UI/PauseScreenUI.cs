@@ -3,73 +3,76 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class PauseScreenUI : BaseScreenUI
+namespace Cacophony
 {
-    [SerializeField] private GameObject _pauseDefault;
-    [SerializeField] private GameObject _pauseControls;
-    [SerializeField] private GameObject _pauseCredits;
-
-    private void Start()
+    public class PauseScreenUI : BaseScreenUI
     {
-        EnablePauseText(_pauseDefault);
-    }
+        [SerializeField] private GameObject _pauseDefault;
+        [SerializeField] private GameObject _pauseControls;
+        [SerializeField] private GameObject _pauseCredits;
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        private void Start()
         {
-            if (UIActive)
+            EnablePauseText(_pauseDefault);
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
-                return;
+                if (UIActive)
+                {
+                    return;
+                }
+
+                PauseGame();
             }
 
-            PauseGame();
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                ResetLevel();
+            }
         }
 
-        if (Input.GetKeyDown(KeyCode.R))
+        public void EnablePauseText(GameObject enabledObject)
         {
-            ResetLevel();
+            _pauseControls.SetActive(false);
+            _pauseDefault.SetActive(false);
+            _pauseCredits.SetActive(false);
+
+            enabledObject.SetActive(true);
         }
-    }
 
-    public void EnablePauseText(GameObject enabledObject)
-    {
-        _pauseControls.SetActive(false);
-        _pauseDefault.SetActive(false);
-        _pauseCredits.SetActive(false);
+        public void PauseGame()
+        {
+            Time.timeScale = 0f;
 
-        enabledObject.SetActive(true);
-    }
+            EnablePauseText(_pauseDefault);
+            SetUIActive(true);
+        }
 
-    public void PauseGame()
-    {
-        Time.timeScale = 0f;
+        public void ResumeGame()
+        {
+            Time.timeScale = 1f;
 
-        EnablePauseText(_pauseDefault);
-        SetUIActive(true);
-    }
+            SetUIActive(false);
+        }
 
-    public void ResumeGame()
-    {
-        Time.timeScale = 1f;
+        public void LoadScene(int sceneIndex)
+        {
+            Time.timeScale = 1f;
 
-        SetUIActive(false);
-    }
+            SceneTransitions.Instance.LoadSceneWithTransition(SceneTransitions.TransitionType.Fade, sceneIndex);
+        }
 
-    public void LoadScene(int sceneIndex)
-    {
-        Time.timeScale = 1f;
+        public void ResetLevel()
+        {
+            LoadScene(SceneTransitions.Instance.GetBuildIndex());
+        }
 
-        SceneTransitions.Instance.LoadSceneWithTransition(SceneTransitions.TransitionType.Fade, sceneIndex);
-    }
-
-    public void ResetLevel()
-    {
-        LoadScene(SceneTransitions.Instance.GetBuildIndex());
-    }
-
-    public void CloseGame()
-    {
-        Application.Quit();
+        public void CloseGame()
+        {
+            Application.Quit();
+        }
     }
 }

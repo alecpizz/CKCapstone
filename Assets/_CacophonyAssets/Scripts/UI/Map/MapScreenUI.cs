@@ -2,14 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapScreenUI : BaseScreenUI
+namespace Cacophony
 {
-    [SerializeField] private Transform _keyContainer;
-    [SerializeField] private GameObject _keyElementPrefab;
-
-    public void SpawnKeyElement(KeyElement keyElement)
+    public class MapScreenUI : BaseScreenUI
     {
-        KeyItemUI ki = Instantiate(_keyElementPrefab, _keyContainer).GetComponent<KeyItemUI>();
-        ki.PrepareElement(keyElement);
+        [SerializeField] private Transform _keyContainer;
+        [SerializeField] private GameObject _keyElementPrefab;
+
+        public void SpawnKeyElement(KeyElement keyElement)
+        {
+            KeyItemUI ki = Instantiate(_keyElementPrefab, _keyContainer).GetComponent<KeyItemUI>();
+            ki.PrepareElement(keyElement);
+        }
     }
 }

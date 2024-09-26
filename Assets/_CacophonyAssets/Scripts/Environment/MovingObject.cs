@@ -7,56 +7,57 @@ using UnityEngine;
 /// Author: Trinity
 /// Description: Controls the movement of moveable environment objects
 /// </summary>
-public class MovingObject : AbstractEnvironmentalObject
+namespace Cacophony
 {
-    [SerializeField]
-    Transform waypointParent;
-
-    [SerializeField]
-    float animSpeed = 3;
-
-    [SerializeField]
-    float moveLength = 0.2f;
-
-    Animator anim;
-
-    Queue<Vector3> queue = new();
-
-    private void Awake()
+    public class MovingObject : AbstractEnvironmentalObject
     {
-        anim = GetComponent<Animator>();
-        anim.speed = animSpeed;
-    }
+        [SerializeField] Transform waypointParent;
 
-    private void Start()
-    {
-        foreach(Transform child in waypointParent)
-            queue.Enqueue(child.position);
-    }
+        [SerializeField] float animSpeed = 3;
 
-    /// <summary>
-    /// Moves the object along the next point of its waypoints, then re-adds that point so that the movement loops
-    /// </summary>
-    protected override void Move()
-    {
-        Vector3 nextPos = queue.Peek();
-        GridStats currentTile = GameplayManagers.Instance.Grid.DetermineGridSpaceFromPosition(transform.position);
-        GridStats nextTile = GameplayManagers.Instance.Grid.DetermineGridSpaceFromPosition(nextPos);
+        [SerializeField] float moveLength = 0.2f;
 
-        if (nextTile == null || nextTile.GetGridAvailability() == GridAvailability.Occupied)
+        Animator anim;
+
+        Queue<Vector3> queue = new();
+
+        private void Awake()
         {
-            //Debug.Log("Grr");
-            anim.Play("Frustrated");
-
-            return;
+            anim = GetComponent<Animator>();
+            anim.speed = animSpeed;
         }
-        //Debug.Log("Moving to " + nextPos);
-        nextPos = queue.Dequeue();
 
-        GameplayManagers.Instance.Mover.MoveCharacter(gameObject, nextTile, moveLength);
-        currentTile.SetObjectOnTile(null);
+        private void Start()
+        {
+            foreach (Transform child in waypointParent)
+                queue.Enqueue(child.position);
+        }
 
-        queue.Enqueue(nextPos);
-        //Debug.Log("Queue size: " + queue.Count);
+        /// <summary>
+        /// Moves the object along the next point of its waypoints, then re-adds that point so that the movement loops
+        /// </summary>
+        protected override void Move()
+        {
+            Vector3 nextPos = queue.Peek();
+            GridStats currentTile = GameplayManagers.Instance.Grid.DetermineGridSpaceFromPosition(transform.position);
+            GridStats nextTile = GameplayManagers.Instance.Grid.DetermineGridSpaceFromPosition(nextPos);
+
+            if (nextTile == null || nextTile.GetGridAvailability() == GridAvailability.Occupied)
+            {
+                //Debug.Log("Grr");
+                anim.Play("Frustrated");
+
+                return;
+            }
+
+            //Debug.Log("Moving to " + nextPos);
+            nextPos = queue.Dequeue();
+
+            GameplayManagers.Instance.Mover.MoveCharacter(gameObject, nextTile, moveLength);
+            currentTile.SetObjectOnTile(null);
+
+            queue.Enqueue(nextPos);
+            //Debug.Log("Queue size: " + queue.Count);
+        }
     }
 }
