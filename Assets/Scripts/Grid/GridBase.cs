@@ -20,6 +20,8 @@ using UnityEngine.Serialization;
 [RequireComponent(typeof(Grid))]
 public class GridBase : MonoBehaviour
 {
+    public static GridBase Instance { get; private set; }
+    
     [InfoBox("Assign this to draw the grid gizmos.")] [SerializeField]
     private Grid grid;
     [Header("Grid Parameters")]
@@ -28,18 +30,20 @@ public class GridBase : MonoBehaviour
     [Header("Grid Visuals")]
     [SerializeField] private Material primaryGridMat;
     [SerializeField] private Material secondaryGridMat;
-
-
-    //TODO: type based dictionaries rather than GameObjects, keeping this since I dunno what the types will be.
     private Dictionary<Vector3Int, HashSet<GameObject>> _gridEntries = new();
     private Dictionary<GameObject, Vector3Int> _gameObjectToGridMap = new();
-    private GameObject _gridMeshHolder;
+    [SerializeField] [HideInInspector] private GameObject gridMeshHolder;
 
     /// <summary>
     /// Grabs the grid component.
     /// </summary>
     private void Awake()
     {
+        if (Instance != null)
+        {
+            Destroy(Instance);
+            Instance = this;
+        }
         grid = GetComponent<Grid>();
         GenerateMesh();
     }
@@ -221,26 +225,26 @@ public class GridBase : MonoBehaviour
             return;
         }
 
-        if (_gridMeshHolder != null)
+        if (gridMeshHolder != null)
         {
             if (Application.isPlaying)
             {
-                Destroy(_gridMeshHolder);
+               Destroy(gridMeshHolder);
             }
             else
             {
-                DestroyImmediate(_gridMeshHolder);
+                DestroyImmediate(gridMeshHolder);
             }
         }
         
-        _gridMeshHolder = new GameObject("Grid Mesh Holder")
+        gridMeshHolder = new GameObject("Grid Mesh Holder")
         {
             transform =
             {
                 parent = transform
             }
         };
-        _gridMeshHolder.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+        gridMeshHolder.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
 
         
         for (int i = 0; i < gridSize; i++)
@@ -255,7 +259,7 @@ public class GridBase : MonoBehaviour
                 scale.x = (grid.cellSize.x);
                 scale.y = (grid.cellSize.z);
                 plane.transform.localScale = scale;
-                plane.transform.SetParent(_gridMeshHolder.transform, true);
+                plane.transform.SetParent(gridMeshHolder.transform, true);
                 plane.GetComponent<MeshRenderer>().material = i % 2 == 1 ^ j % 2 == 0 ? primaryGridMat : secondaryGridMat;
             }
         }
