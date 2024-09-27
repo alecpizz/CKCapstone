@@ -17,7 +17,7 @@ public class WinChecker : MonoBehaviour
 
     [InfoBox("This is the sequence the player must collect notes in, represented by ints", 
         EInfoBoxType.Normal)]
-    [SerializeField] private List<int> _targetNoteSequence;
+    [SerializeField] private List<int> _targetNoteSequence = new();
 
     [InfoBox("For visualization purposes, don't edit this",
         EInfoBoxType.Normal)]
@@ -57,6 +57,7 @@ public class WinChecker : MonoBehaviour
                 if (_collectedSequence[i] != _targetNoteSequence[i])
                 {
                     doesSequenceMatch = false;
+                    break;
                 }
             }
 
