@@ -11,6 +11,7 @@ using NaughtyAttributes;
 
 public class EndLevelDoor : MonoBehaviour
 {
+    [Scene]
     [SerializeField] private int _levelIndexToLoad = 0;
 
     bool _isUnlocked = false;

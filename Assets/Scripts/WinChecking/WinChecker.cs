@@ -12,20 +12,33 @@ using NaughtyAttributes;
 
 public class WinChecker : MonoBehaviour
 {
+    public static WinChecker Instance { get; private set; }
+
     public static Action<int> CollectedNote;
     public static Action GotCorrectSequence;
     public static Action GotWrongSequence;
 
-    [InfoBox("This is the sequence the player must collect notes in, represented by ints", 
-        EInfoBoxType.Normal)]
-    [SerializeField] private List<int> _targetNoteSequence = new();
+    [field:SerializeField] public List<int> TargetNoteSequence { get; private set; } = new List<int>();
 
     [InfoBox("For visualization purposes, don't edit this",
         EInfoBoxType.Normal)]
     [SerializeField] private List<int> _collectedSequence = new List<int>();
 
-    public List<int> TargetNoteSequence { get => _targetNoteSequence; 
-        private set => _targetNoteSequence = value; }
+    //public List<int> TargetNoteSequence { get => _targetNoteSequence; 
+    //private set => _targetNoteSequence = value; }
+
+    /// <summary>
+    /// Establish singleton
+    /// </summary>
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(Instance.gameObject);
+        }
+
+        Instance = this;
+    }
 
     /// <summary>
     /// Registering to action

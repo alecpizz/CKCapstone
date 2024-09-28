@@ -10,13 +10,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using NaughtyAttributes;
 
 public class TEMP_ProgressUI : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI _sequenceUI;
-    [SerializeField] private TextMeshProUGUI _collectedNotesUI;
-    [SerializeField] private GameObject _incorrectMessage;
-    [SerializeField] private GameObject _doorUnlockMessage;
+    [Required] [SerializeField] private TextMeshProUGUI _sequenceUI;
+    [Required] [SerializeField] private TextMeshProUGUI _collectedNotesUI;
+    [Required] [SerializeField] private GameObject _incorrectMessage;
+    [Required] [SerializeField] private GameObject _doorUnlockMessage;
     [SerializeField] private float _messageWaitTime;
 
     private List<int> _notes;
@@ -82,7 +83,7 @@ public class TEMP_ProgressUI : MonoBehaviour
         StopAllCoroutines();
         _doorUnlockMessage.SetActive(false);
         _incorrectMessage.SetActive(false);
-        StartCoroutine(DisplayTimedMessage(_incorrectMessage));
+        StartCoroutine(IncorrectMessageResetTimer(_incorrectMessage));
     }
 
     /// <summary>
@@ -98,7 +99,7 @@ public class TEMP_ProgressUI : MonoBehaviour
     /// </summary>
     /// <param name="message">UI to toggle on</param>
     /// <returns>Waits for seconds based on message wait time</returns>
-    private IEnumerator DisplayTimedMessage(GameObject message)
+    private IEnumerator IncorrectMessageResetTimer(GameObject message)
     {
         message.SetActive(true);
 
