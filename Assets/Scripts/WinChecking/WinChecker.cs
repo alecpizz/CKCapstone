@@ -14,6 +14,7 @@ public class WinChecker : MonoBehaviour
 {
     public static Action<int> CollectedNote;
     public static Action GotCorrectSequence;
+    public static Action GotWrongSequence;
 
     [InfoBox("This is the sequence the player must collect notes in, represented by ints", 
         EInfoBoxType.Normal)]
@@ -22,6 +23,9 @@ public class WinChecker : MonoBehaviour
     [InfoBox("For visualization purposes, don't edit this",
         EInfoBoxType.Normal)]
     [SerializeField] private List<int> _collectedSequence = new List<int>();
+
+    public List<int> TargetNoteSequence { get => _targetNoteSequence; 
+        private set => _targetNoteSequence = value; }
 
     /// <summary>
     /// Registering to action
@@ -48,13 +52,13 @@ public class WinChecker : MonoBehaviour
     {
         _collectedSequence.Add(note);
 
-        if (_collectedSequence.Count == _targetNoteSequence.Count)
+        if (_collectedSequence.Count == TargetNoteSequence.Count)
         {
             bool doesSequenceMatch = true;
 
-            for (int i = 0; i < _collectedSequence.Count && i < _targetNoteSequence.Count; ++i)
+            for (int i = 0; i < _collectedSequence.Count && i < TargetNoteSequence.Count; ++i)
             {
-                if (_collectedSequence[i] != _targetNoteSequence[i])
+                if (_collectedSequence[i] != TargetNoteSequence[i])
                 {
                     doesSequenceMatch = false;
                     break;
@@ -69,8 +73,8 @@ public class WinChecker : MonoBehaviour
             else
             {
                 ClearCollectedSequence();
-                // TODO: implement what happens when player fails sequence
                 Debug.Log("Wrong Sequence");
+                GotWrongSequence?.Invoke();
             }
         }
     }
@@ -103,6 +107,12 @@ public class WinChecker : MonoBehaviour
     private void TestCollectNoteTwo()
     {
         CollectedNote(2);
+    }
+
+    [Button]
+    private void TestCollectNoteThree()
+    {
+        CollectedNote(3);
     }
 #endif
 }
