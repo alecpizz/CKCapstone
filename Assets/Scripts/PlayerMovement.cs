@@ -53,20 +53,26 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="obj"></param>
     private void MoveDown_performed(InputAction.CallbackContext obj)
     {
-        // Sets the Down directional pointer if this is the first button press
-        if (!_downPointer.activeInHierarchy)
+        // Checks to make sure that there's a space further down to move to
+        // before anything else
+        if(gameObject.transform.position.z != -12)
         {
-            _downPointer.SetActive(true);
+            // Sets the Down directional pointer if this is the first button
+            // press
+            if (!_downPointer.activeInHierarchy)
+            {
+                _downPointer.SetActive(true);
 
-            _upPointer.SetActive(false);
-            _leftPointer.SetActive(false);
-            _rightPointer.SetActive(false);
-        }
-        else
-        {
-            // Move down and remove the pointer
-            gameObject.transform.Translate(0, 0, -12);
-            _downPointer.SetActive(false);
+                _upPointer.SetActive(false);
+                _leftPointer.SetActive(false);
+                _rightPointer.SetActive(false);
+            }
+            else
+            {
+                // Move down and remove the pointer
+                gameObject.transform.Translate(0, 0, -12);
+                _downPointer.SetActive(false);
+            }
         }
     }
 
@@ -77,58 +83,86 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="obj"></param>
     private void MoveUp_performed(InputAction.CallbackContext obj)
     {
-        // Sets the Up directional pointer if this is the first button press
-        if (!_upPointer.activeInHierarchy)
+        // Checks to make sure that there's a space further up to move to
+        // before anything else
+        if (gameObject.transform.position.z != 72)
         {
-            _upPointer.SetActive(true);
+            // Sets the Up directional pointer if this is the first button
+            // press
+            if (!_upPointer.activeInHierarchy)
+            {
+                _upPointer.SetActive(true);
 
-            _downPointer.SetActive(false);
-            _leftPointer.SetActive(false);
-            _rightPointer.SetActive(false);
-        }
-        else
-        {
-            // Move up and remove the pointer
-            gameObject.transform.Translate(0, 0, 12);
-            _upPointer.SetActive(false);
+                _downPointer.SetActive(false);
+                _leftPointer.SetActive(false);
+                _rightPointer.SetActive(false);
+            }
+            else
+            {
+                // Move up and remove the pointer
+                gameObject.transform.Translate(0, 0, 12);
+                _upPointer.SetActive(false);
+            }
         }
     }
 
+    /// <summary>
+    /// Handles the leftward movement of the player when the respective control
+    /// binding is triggered
+    /// </summary>
+    /// <param name="obj"></param>
     private void MoveLeft_performed(InputAction.CallbackContext obj)
     {
-        // Sets the Left directional pointer if this is the first button press
-        if (!_leftPointer.activeInHierarchy)
+        // Check to make sure that there's a space further left to move to
+        // before anything else
+        if (gameObject.transform.position.x != -12)
         {
-            _leftPointer.SetActive(true);
+            // Sets the Left directional pointer if this is the first button
+            // press
+            if (!_leftPointer.activeInHierarchy)
+            {
+                _leftPointer.SetActive(true);
 
-            _upPointer.SetActive(false);
-            _downPointer.SetActive(false);
-            _rightPointer.SetActive(false);
-        }
-        else
-        {
-            // Move left and remove the pointer
-            gameObject.transform.Translate(-12, 0, 0);
-            _leftPointer.SetActive(false);
+                _upPointer.SetActive(false);
+                _downPointer.SetActive(false);
+                _rightPointer.SetActive(false);
+            }
+            else
+            {
+                // Move left and remove the pointer
+                gameObject.transform.Translate(-12, 0, 0);
+                _leftPointer.SetActive(false);
+            }
         }
     }
 
+    /// <summary>
+    /// Handles the rightward movement of the player when the respective control
+    /// binding is triggered
+    /// </summary>
+    /// <param name="obj"></param>
     private void MoveRight_performed(InputAction.CallbackContext obj)
     {
-        // Sets the Right directional pointer if this is the first button press
-        if (!_rightPointer.activeInHierarchy)
+        // Check to make sure that there's a space further right to move to
+        // before anything else
+        if (gameObject.transform.position.x != 72)
         {
-            _rightPointer.SetActive(true);
+            // Sets the Right directional pointer if this is the first button
+            // press
+            if (!_rightPointer.activeInHierarchy)
+            {
+                _rightPointer.SetActive(true);
 
-            _upPointer.SetActive(false);
-            _downPointer.SetActive(false);
-            _leftPointer.SetActive(false);
-        }
-        else
-        {
-            // Move Right and remove the pointer
-            gameObject.transform.Translate(12, 0, 0);
-            _rightPointer.SetActive(false);
+                _upPointer.SetActive(false);
+                _downPointer.SetActive(false);
+                _leftPointer.SetActive(false);
+            }
+            else
+            {
+                // Move Right and remove the pointer
+                gameObject.transform.Translate(12, 0, 0);
+                _rightPointer.SetActive(false);
+            }
         }
     }
 
