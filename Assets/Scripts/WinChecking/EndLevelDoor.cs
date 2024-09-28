@@ -52,8 +52,7 @@ public class EndLevelDoor : MonoBehaviour
     {
         if (_isUnlocked && other.CompareTag("Player"))
         {
-            // TODO: transition to next level here
-            //SceneManager.LoadScene(_levelIndexToLoad);
+            SceneManager.LoadScene(_levelIndexToLoad);
             Debug.Log("Load level with index: " + _levelIndexToLoad);
         }
         else if (other.CompareTag("Player"))
