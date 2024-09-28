@@ -24,9 +24,6 @@ public class WinChecker : MonoBehaviour
         EInfoBoxType.Normal)]
     [SerializeField] private List<int> _collectedSequence = new List<int>();
 
-    //public List<int> TargetNoteSequence { get => _targetNoteSequence; 
-    //private set => _targetNoteSequence = value; }
-
     /// <summary>
     /// Establish singleton
     /// </summary>

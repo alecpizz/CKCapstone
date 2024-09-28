@@ -35,16 +35,19 @@ public class TEMP_ProgressUI : MonoBehaviour
         _sequenceUI.text = BaseSequenceText;
         _collectedNotesUI.text = BaseCollectedText;
 
+        if (WinChecker.Instance != null)
+        {
+            WinChecker winChecker = WinChecker.Instance;
+            _notes = winChecker.TargetNoteSequence;
+            foreach (int note in _notes)
+            {
+                _sequenceUI.text += " " + note;
+            }
+        }
+
         WinChecker.CollectedNote += UpdateCollectedNotesText;
         WinChecker.GotCorrectSequence += DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence += DisplayIncorrectMessage;
-
-        WinChecker winChecker = FindObjectOfType<WinChecker>();
-        _notes = winChecker.TargetNoteSequence;
-        foreach(int note in _notes)
-        {
-            _sequenceUI.text += " " + note;
-        }
     }
 
     /// <summary>
