@@ -24,6 +24,8 @@ public class PlayerMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        GridBase.Instance.AddEntry(gameObject);
+
         // Referenceing and setup of the Input Action functions
         _input = new PlayerControls();
         _input.InGame.Enable();
@@ -70,6 +72,7 @@ public class PlayerMovement : MonoBehaviour
                 if (GridBase.Instance.CellIsEmpty(downMove))
                 {
                     gameObject.transform.position = downMove;
+                    GridBase.Instance.UpdateEntry(gameObject);
                 }
                 _downPointer.SetActive(false);
             }
@@ -99,6 +102,7 @@ public class PlayerMovement : MonoBehaviour
                 if (GridBase.Instance.CellIsEmpty(upMove))
                 {
                     gameObject.transform.position = upMove;
+                    GridBase.Instance.UpdateEntry(gameObject);
                 }
                 _upPointer.SetActive(false);
             }
@@ -128,6 +132,7 @@ public class PlayerMovement : MonoBehaviour
                 if (GridBase.Instance.CellIsEmpty(leftMove))
                 {
                     gameObject.transform.position = leftMove;
+                    GridBase.Instance.UpdateEntry(gameObject);
                 }
                 _leftPointer.SetActive(false);
             }
@@ -157,8 +162,9 @@ public class PlayerMovement : MonoBehaviour
                 if(GridBase.Instance.CellIsEmpty(rightMove))
                 {
                     gameObject.transform.position = rightMove;
+                    GridBase.Instance.UpdateEntry(gameObject);   
                 }
-                _rightPointer.SetActive(false);
+            _rightPointer.SetActive(false);
             }
     }
 
