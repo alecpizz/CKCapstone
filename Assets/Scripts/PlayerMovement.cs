@@ -26,19 +26,13 @@ public class PlayerMovement : MonoBehaviour
     {
         GridBase.Instance.AddEntry(gameObject);
 
-        // Referenceing and setup of the Input Action functions
+        // Referencing and setup of the Input Action functions
         _input = new PlayerControls();
         _input.InGame.Enable();
-        _input.InGame.MoveUp.performed += MoveUp_performed;
-        _input.InGame.MoveDown.performed += MoveDown_performed;
-        _input.InGame.MoveLeft.performed += MoveLeft_performed;
-        _input.InGame.MoveRight.performed += MoveRight_performed;
-
-        // Get references to the directional pointers for later use
-        _upPointer = GameObject.Find("Up Pointer");
-        _downPointer = GameObject.Find("Down Pointer");
-        _leftPointer = GameObject.Find("Left Pointer");
-        _rightPointer = GameObject.Find("Right Pointer");
+        _input.InGame.MoveUp.performed += MoveUpPerformed;
+        _input.InGame.MoveDown.performed += MoveDownPerformed;
+        _input.InGame.MoveLeft.performed += MoveLeftPerformed;
+        _input.InGame.MoveRight.performed += MoveRightPerformed;
 
         // Gets rid of all the pointers by default
         _upPointer.SetActive(false);
@@ -53,7 +47,7 @@ public class PlayerMovement : MonoBehaviour
     /// binding is triggered
     /// </summary>
     /// <param name="obj"></param>
-    private void MoveDown_performed(InputAction.CallbackContext obj)
+    private void MoveDownPerformed(InputAction.CallbackContext obj)
     {
             // Sets the Down directional pointer if this is the first button
             // press
@@ -83,7 +77,7 @@ public class PlayerMovement : MonoBehaviour
     /// binding is triggered
     /// </summary>
     /// <param name="obj"></param>
-    private void MoveUp_performed(InputAction.CallbackContext obj)
+    private void MoveUpPerformed(InputAction.CallbackContext obj)
     {
             // Sets the Up directional pointer if this is the first button
             // press
@@ -113,7 +107,7 @@ public class PlayerMovement : MonoBehaviour
     /// binding is triggered
     /// </summary>
     /// <param name="obj"></param>
-    private void MoveLeft_performed(InputAction.CallbackContext obj)
+    private void MoveLeftPerformed(InputAction.CallbackContext obj)
     {
             // Sets the Left directional pointer if this is the first button
             // press
@@ -143,7 +137,7 @@ public class PlayerMovement : MonoBehaviour
     /// binding is triggered
     /// </summary>
     /// <param name="obj"></param>
-    private void MoveRight_performed(InputAction.CallbackContext obj)
+    private void MoveRightPerformed(InputAction.CallbackContext obj)
     {
             // Sets the Right directional pointer if this is the first button
             // press
@@ -166,10 +160,5 @@ public class PlayerMovement : MonoBehaviour
                 }
             _rightPointer.SetActive(false);
             }
-    }
-
-    private void Update()
-    {
-        
     }
 }
