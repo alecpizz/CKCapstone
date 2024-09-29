@@ -11,6 +11,19 @@ public class MenuManager : MonoBehaviour
 *    Date Created: 9/26/24
 *    Description: This is just meant to make menu buttons, when pressed, work.
 *******************************************************************/
+
+    public GameObject PauseScreen;
+
+    public void Unpause()
+    {
+        PauseScreen.SetActive(false);
+    }
+
+    public void Pause()
+    {
+        PauseScreen.SetActive(true);
+    }
+
     public void BackToMainMenu()
     {
         SceneManager.LoadScene(0);
