@@ -95,6 +95,18 @@ public class GridBase : MonoBehaviour
     }
 
     /// <summary>
+    /// Removes a gameObject from the grid cell.
+    /// </summary>
+    /// <param name="obj">The object to remove.</param>
+    public void RemoveEntry(GameObject obj)
+    {
+        if (!_gameObjectToGridMap.ContainsKey(obj)) return;
+        Vector3Int cell = WorldToCell(obj.transform.position);
+        _gameObjectToGridMap.Remove(obj);
+        _gridEntries[cell].Remove(obj);
+    }
+
+    /// <summary>
     /// Updates an entries status in the grid. If the entry isn't in the grid, it will be added.
     /// If there is no position change it will exit early.
     /// </summary>
