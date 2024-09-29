@@ -165,7 +165,6 @@ public class DebugMenuManager : MonoBehaviour
         qMenu = true;
         //Sets the default option for keyboard and controller navigation
         EventSystem.current.SetSelectedGameObject(_quitMenuFirst);
-        Time.timeScale = 0f;
     }
 
     /// <summary>
@@ -175,7 +174,6 @@ public class DebugMenuManager : MonoBehaviour
     {
         quitMenu.SetActive(false);
         qMenu = false;
-        Time.timeScale = 1f;
     }
 
     /// <summary>
