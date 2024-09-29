@@ -12,31 +12,34 @@ using FMOD.Studio;
 
 public class AudioManager : MonoBehaviour
 {
-    [SerializeField] EventReference enemy = default;
+    public static AudioManager Instance;
+
+    [SerializeField] private EventReference _enemy = default;
+    [SerializeField] [Range(0, 4)] private int _musicLayering = 0;
+
     Dictionary<EventReference, EventInstance> AudioInstances;
 
-    [SerializeField] [Range(0, 4)] private int MusicLayering = 0;
+    private EventInstance _key;
 
-    private EventInstance key;
-
-    public static AudioManager instance;
+    private bool _paused = false;
 
     private void Awake()
     {
-        instance = this;
+        if (Instance != null && Instance != this)
+            Destroy(Instance.gameObject);
+        
+        Instance = this;
         AudioInstances = new Dictionary<EventReference, EventInstance>();
     }
 
     void Start()
     {
-        key = PlaySound(enemy);
+        _key = PlaySound(_enemy);
     }
-
-    private bool paused = false;
 
     void Update()
     {
-        key.setParameterByName("MusicLayering", MusicLayering);
+        _key.setParameterByName("MusicLayering", _musicLayering);
     }
 
     /// <summary>
