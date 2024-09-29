@@ -15,7 +15,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] EventReference enemy = default;
     Dictionary<EventReference, EventInstance> AudioInstances;
 
-    [SerializeField] [Range(0, 4)] private int numOfEnemy = 0;
+    [SerializeField] [Range(0, 4)] private int MusicLayering = 0;
 
     private EventInstance key;
 
@@ -23,7 +23,7 @@ public class AudioManager : MonoBehaviour
 
     private void Awake()
     {
-        PlaySound(enemy);
+        instance = this;
         AudioInstances = new Dictionary<EventReference, EventInstance>();
     }
 
@@ -36,12 +36,7 @@ public class AudioManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetButtonDown("Jump"))
-        {
-            paused = !paused;
-            ToggleSound(enemy, paused);
-        }
-        key.setParameterByName("NumberOfEnemies", numOfEnemy);
+        key.setParameterByName("MusicLayering", MusicLayering);
     }
 
     /// <summary>
