@@ -12,9 +12,8 @@ using TMPro;
 
 public class InventoryUI : MonoBehaviour
 {
-  
     // variables
-    public TextMeshProUGUI collectibleText;
+    [SerializeField] private TextMeshProUGUI collectibleText;
 
     /// <summary>
     /// The start function allows you to see the text
@@ -23,16 +22,15 @@ public class InventoryUI : MonoBehaviour
     void Start()
     {
         collectibleText = GetComponent<TextMeshProUGUI>();
-        
     }
 
     /// <summary>
     /// This uses the PlayerInventory script to update
     /// the text when you collect a collectible.
     /// </summary>
-    void UpdateCollectibleText(PlayerInventory playerInventory)
-    {
-        collectibleText.text = playerInventory.collectibleCount.ToString();
+    //void UpdateCollectibleText(PlayerInventory playerInventory)
+    //{
+       // collectibleText.text = playerInventory.collectibleCount.ToString();
         
-    }
+    //}
 }

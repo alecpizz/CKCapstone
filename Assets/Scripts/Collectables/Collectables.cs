@@ -1,5 +1,5 @@
 /******************************************************************
-*    Author: [creator of file]
+*    Author: Taylor Sims
 *    Contributors: None
 *    Date Created: 09-24-24
 *    Description: This script is the collection system for Notes.
@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using NaughtyAttributes;
 
-public class Collectibles : MonoBehaviour
+public class Collectables : MonoBehaviour
 {
     // variables
     [MinValue(0), MaxValue(10)]
@@ -26,9 +26,7 @@ public class Collectibles : MonoBehaviour
         if (other.tag == "Player") 
         {
             Collect();
-            
-        }
-        
+        }        
     }
 
     /// <summary>
@@ -42,5 +40,4 @@ public class Collectibles : MonoBehaviour
         WinChecker.CollectedNote?.Invoke(_collectibleNumber);
         Destroy(gameObject);
     }
-
 }
