@@ -44,6 +44,10 @@ public class GridBase : MonoBehaviour
             Destroy(Instance);
             Instance = this;
         }
+        else
+        {
+            Instance = this;
+        }
         grid = GetComponent<Grid>();
         GenerateMesh();
     }
