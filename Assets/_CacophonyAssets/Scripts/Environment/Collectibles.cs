@@ -1,3 +1,10 @@
+/******************************************************************
+*    Author: [creator of file]
+*    Contributors: None
+*    Date Created: 09-24-24
+*    Description: This script is the collection system for Notes.
+*******************************************************************/
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,10 +12,15 @@ using NaughtyAttributes;
 
 public class Collectibles : MonoBehaviour
 {
+    // variables
     [MinValue(0), MaxValue(10)]
     [SerializeField] private int _collectibleNumber;
   
-    // Start is called before the first frame update
+    /// <summary>
+    /// This method triggers the Collect method when the
+    /// player collides with a collectible.
+    /// </summary>
+    /// <param name="other"></param>
     void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player") 
@@ -19,6 +31,11 @@ public class Collectibles : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// This method debugs when the player collects
+    /// a collectible and checks that the player
+    /// has won by collecting the right sequence of Notes. 
+    /// </summary>
     void Collect() 
     {
         Debug.Log("You got a collectible!");
