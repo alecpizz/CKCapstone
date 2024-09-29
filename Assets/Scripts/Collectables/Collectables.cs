@@ -14,16 +14,16 @@ public class Collectables : MonoBehaviour
 {
     // variables
     [MinValue(0), MaxValue(10)]
-    [SerializeField] private int _collectibleNumber;
-  
+    [SerializeField] private int _collectableNumber;
+
     /// <summary>
     /// This method triggers the Collect method when the
-    /// player collides with a collectible.
+    /// player collides with a collectable.
     /// </summary>
     /// <param name="other"></param>
-    void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Player") 
+        if (other.tag == "Player" && WinChecker.Instance.CheckForCollection(_collectableNumber)) 
         {
             Collect();
         }        
@@ -31,13 +31,13 @@ public class Collectables : MonoBehaviour
 
     /// <summary>
     /// This method debugs when the player collects
-    /// a collectible and checks that the player
+    /// a collectable and checks that the player
     /// has won by collecting the right sequence of Notes. 
     /// </summary>
-    void Collect() 
+    private void Collect() 
     {
-        Debug.Log("You got a collectible!");
-        WinChecker.CollectedNote?.Invoke(_collectibleNumber);
+        Debug.Log("You got a collectable!");
+        WinChecker.CollectedNote?.Invoke(_collectableNumber);
         Destroy(gameObject);
     }
 }
