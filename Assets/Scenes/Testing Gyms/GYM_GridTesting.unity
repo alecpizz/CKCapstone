@@ -1693,6 +1693,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 5018984338312499582, guid: 4b4ed906bab175f468c3e8cc2650a794,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1719,6 +1724,12 @@ GameObject:
 --- !u!1 &528456420 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8727859426261679579, guid: 4b4ed906bab175f468c3e8cc2650a794,
+    type: 3}
+  m_PrefabInstance: {fileID: 528456416}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &528456421 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2735164925453966809, guid: 4b4ed906bab175f468c3e8cc2650a794,
     type: 3}
   m_PrefabInstance: {fileID: 528456416}
   m_PrefabAsset: {fileID: 0}
@@ -3088,7 +3099,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -3172,6 +3183,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dialogueBox: {fileID: 753587923}
+  Player: {fileID: 528456421}
 --- !u!1 &898205348
 GameObject:
   m_ObjectHideFlags: 0
