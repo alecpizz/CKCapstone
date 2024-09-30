@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 
 /*
-* ******************************************************************
+********************************************************************
 File name: NPCScript
 author: David Henvick
 Creation date: 9/30/24
@@ -15,45 +15,70 @@ public class NPCScript : MonoBehaviour
     //dialogue options
     string[] dialogue = {"Hello! this is testing dialogue", "I wish I were a fish", "They don't know my secret"};
     int currentDialogue = 0;
+    //used to tell if player is in adjacent square
+    bool occupied;
 
     [SerializeField] private TMP_Text dialogueBox;
-    [SerializeField] private GameObject Player;
 
-    void advanceDialogue()
+    /// <summary>
+    /// is used to advance the current dialogue
+    /// is called by player when the interact key is used
+    /// </summary>
+    public void AdvanceDialogue()
     {
-        if (currentDialogue < dialogue.Length)
+        if (occupied)
         {
-            currentDialogue++;
-            dialogueBox.SetText(dialogue[currentDialogue]);
-        }
-        else
-        {
-            currentDialogue = 0;
-            dialogueBox.SetText(dialogue[currentDialogue]);
+            if (currentDialogue < dialogue.Length - 1)
+            {
+                currentDialogue++;
+                dialogueBox.SetText(dialogue[currentDialogue]);
+            }
+            else
+            {
+                currentDialogue = 0;
+                dialogueBox.SetText(dialogue[currentDialogue]);
+            }
         }
     }
 
-    // Start is called before the first frame update
+    /// <summary>
+    /// Start is called before the first frame update
+    /// used here to grabe the dialogue ui item and to set the occupied variable
+    /// </summary>
     void Start()
     {
         dialogueBox.SetText(dialogue[currentDialogue]);
         dialogueBox.gameObject.SetActive(false);
+        occupied = false;
     }
 
+    /// <summary>
+    /// activated on collision enter
+    /// if the player enters the box collision dialogue is enabled anc can be advanced
+    /// </summary>
+    /// <param name="collision"></param>
     private void OnCollisionEnter(Collision collision)
     {
-        dialogueBox.gameObject.SetActive(true);
+        if(collision.gameObject.name == "NPCReader")
+        {
+            dialogueBox.gameObject.SetActive(true);
+            occupied = true;
+        }
     }
 
-    private void OnCollisionStay(Collision collision)
-    {
-        dialogueBox.gameObject.SetActive(true);
-        //if(player presses interact key) {advanceDialogue();}
-    }
-
+    /// <summary>
+    /// activated on collision exit
+    /// if the player leaves the space adjacent to the npc, the dialogue is disabled 
+    /// and the dialogue can no longer be advanced
+    /// </summary>
+    /// <param name="collision"></param>
     private void OnCollisionExit(Collision collision)
     {
-        dialogueBox.gameObject.SetActive(false);
+        if (collision.gameObject.name == "NPCReader")
+        {
+            dialogueBox.gameObject.SetActive(false);
+            occupied = false;
+        }
     }
 
 }
