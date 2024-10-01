@@ -25,6 +25,21 @@ public class WinChecker : MonoBehaviour
     [SerializeField] private List<int> _collectedSequence = new List<int>();
 
     /// <summary>
+    /// Called by collectables to determine if they are able to be picked up
+    /// </summary>
+    /// <param name="noteToCollect">int representing note of collectable</param>
+    /// <returns>true if note matches next one in sequence</returns>
+    public bool CheckForCollection(int noteToCollect)
+    {
+        if (_collectedSequence.Count < TargetNoteSequence.Count)
+        {
+            return TargetNoteSequence[_collectedSequence.Count] == noteToCollect;
+        }
+
+        return false;
+    }
+
+    /// <summary>
     /// Establish singleton
     /// </summary>
     private void Awake()

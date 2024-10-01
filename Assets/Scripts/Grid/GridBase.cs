@@ -44,6 +44,10 @@ public class GridBase : MonoBehaviour
             Destroy(Instance);
             Instance = this;
         }
+        else
+        {
+            Instance = this;
+        }
         grid = GetComponent<Grid>();
         GenerateMesh();
     }
@@ -88,6 +92,18 @@ public class GridBase : MonoBehaviour
         _gameObjectToGridMap.Add(obj, cell);
         var set = GetCellEntries(cell);
         set.Add(obj);
+    }
+
+    /// <summary>
+    /// Removes a gameObject from the grid cell.
+    /// </summary>
+    /// <param name="obj">The object to remove.</param>
+    public void RemoveEntry(GameObject obj)
+    {
+        if (!_gameObjectToGridMap.ContainsKey(obj)) return;
+        Vector3Int cell = WorldToCell(obj.transform.position);
+        _gameObjectToGridMap.Remove(obj);
+        _gridEntries[cell].Remove(obj);
     }
 
     /// <summary>
