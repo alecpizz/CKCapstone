@@ -23,9 +23,9 @@ public class NPCScript : MonoBehaviour
 
     private PlayerInteract _player;
     //dialogue options
-    int _currentDialogue = 0;
+    private int _currentDialogue = 0;
     //used to tell if player is in adjacent square
-    bool _occupied;
+    private bool _occupied;
 
     [SerializeField] private TMP_Text _dialogueBox;
 
