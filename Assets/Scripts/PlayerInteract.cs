@@ -44,6 +44,12 @@ public class PlayerInteract : MonoBehaviour
         return;
     }
 
+    public void RemoveNPC(NPCScript addedNPC)
+    {
+        _npcList.Remove(addedNPC);
+        return;
+    }
+
     /// <summary>
     /// activated when the player uses the interact action
     /// is used for npc interaction

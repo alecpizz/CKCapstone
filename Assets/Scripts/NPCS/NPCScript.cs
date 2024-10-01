@@ -64,7 +64,6 @@ public class NPCScript : MonoBehaviour
     void Start()
     {
         _player = FindObjectOfType<PlayerInteract>();
-        _player.AddNPC(this);
 
         _dialogueBox.SetText(_dialogueText[_currentDialogue]);
         _dialogueBox.gameObject.SetActive(false);
@@ -81,6 +80,7 @@ public class NPCScript : MonoBehaviour
     /// <param name="collision"></param>
     private void OnCollisionEnter(Collision collision)
     {
+        _player.AddNPC(this);
         _dialogueBox.SetText(_dialogueText[_currentDialogue]);
         if(collision.gameObject.tag == "NPCReadable")
         {
@@ -97,6 +97,7 @@ public class NPCScript : MonoBehaviour
     /// <param name="collision"></param>
     private void OnCollisionExit(Collision collision)
     {
+        _player.RemoveNPC(this);
         if (collision.gameObject.tag == "NPCReadable")
         {
 
