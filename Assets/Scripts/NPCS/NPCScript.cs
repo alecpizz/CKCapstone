@@ -35,7 +35,11 @@ public class NPCScript : MonoBehaviour
     /// </summary>
     public void AdvanceDialogue()
     {
-        if (_occupied)
+        if (!_occupied)
+        {
+            return;
+        }
+        else if (_occupied)
         {
 
             if (_currentDialogue < _dialogueText.Length-1)
