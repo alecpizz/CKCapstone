@@ -60,7 +60,7 @@ public class NPCScript : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         Debug.Log(collision.gameObject.tag);
-        if(collision.gameObject.CompareTag("NPCReadable"))
+        if(collision.gameObject.tag == "NPCReadable")
         {
             _dialogueBox.gameObject.SetActive(true);
             _occupied = true;
@@ -75,7 +75,7 @@ public class NPCScript : MonoBehaviour
     /// <param name="collision"></param>
     private void OnCollisionExit(Collision collision)
     {
-        if (collision.gameObject.CompareTag("NPCReadable"))
+        if (collision.gameObject.tag == "NPCReadable")
         {
             _dialogueBox.gameObject.SetActive(false);
             _occupied = false;
