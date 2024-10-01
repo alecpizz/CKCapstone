@@ -16,7 +16,7 @@ summary: this is the script that is used for the interact input
 public class PlayerInteract : MonoBehaviour
 {
     //npc
-    private List<NPCScript> _npcList;
+    private NPCScript _npc;
     private PlayerControls _input;
 
     /// <summary>
@@ -28,7 +28,6 @@ public class PlayerInteract : MonoBehaviour
         // Referencing and setup of the Input Action functions
         _input = new PlayerControls();
         _input.InGame.Enable();
-        _npcList = new List<NPCScript>();
 
         _input.InGame.Interact.performed += InteractPerformed;
     }
@@ -40,13 +39,13 @@ public class PlayerInteract : MonoBehaviour
     /// <param name="addedNPC"></param> new npc
     public void AddNPC(NPCScript addedNPC) 
     {
-        _npcList.Add(addedNPC);
+        _npc = addedNPC;
         return;
     }
 
     public void RemoveNPC(NPCScript addedNPC)
     {
-        _npcList.Remove(addedNPC);
+        _npc = null;
         return;
     }
 
@@ -57,12 +56,9 @@ public class PlayerInteract : MonoBehaviour
     /// <param name="context"></param>
     private void InteractPerformed(InputAction.CallbackContext context)
     {
-        if (_npcList[0] != null)
+        if (_npc != null)
         {
-            for(int i = 0; i < _npcList.Count; i++)
-            {
-                _npcList[i].AdvanceDialogue();
-            }
+            _npc.AdvanceDialogue();
         }
     }
 }
