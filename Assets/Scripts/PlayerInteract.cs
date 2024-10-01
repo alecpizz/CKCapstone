@@ -16,7 +16,7 @@ summary: this is the script that is used for the interact input
 public class PlayerInteract : MonoBehaviour
 {
     //npc
-    [SerializeField] private List<NPCScript> _npcList;
+    private List<NPCScript> _npcList;
     private PlayerControls _input;
 
     /// <summary>
@@ -28,7 +28,6 @@ public class PlayerInteract : MonoBehaviour
         // Referencing and setup of the Input Action functions
         _input = new PlayerControls();
         _input.InGame.Enable();
-        //_npc = FindObjectOfType<NPCScript>();
         _npcList = new List<NPCScript>();
 
         _input.InGame.Interact.performed += InteractPerformed;

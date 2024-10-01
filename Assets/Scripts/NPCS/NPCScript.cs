@@ -20,7 +20,6 @@ public class NPCScript : MonoBehaviour
 {
     [SerializeField] private List<EventReference>  _dialogueSound = default;
     [SerializeField] private string[] _dialogueText;
-    private EventInstance _eventInstance;
 
     private PlayerInteract _player;
     //dialogue options
@@ -38,19 +37,16 @@ public class NPCScript : MonoBehaviour
     {
         if (_occupied)
         {
-            //AudioManager.Instance.StopSound(_eventInstance);
 
             if (_currentDialogue < _dialogueText.Length-1)
             {
                 _currentDialogue++;
                 _dialogueBox.SetText(_dialogueText[_currentDialogue]);
-               // _eventInstance = AudioManager.Instance.PlaySound(_dialogueSound[_currentDialogue]);
             }
             else
             {
                 _currentDialogue = 0;
                 _dialogueBox.SetText(_dialogueText[_currentDialogue]);
-                // _eventInstance = AudioManager.Instance.PlaySound(_dialogueSound[_currentDialogue]);
             }
 
 
@@ -84,7 +80,6 @@ public class NPCScript : MonoBehaviour
         _dialogueBox.SetText(_dialogueText[_currentDialogue]);
         if(collision.gameObject.tag == "NPCReadable")
         {
-           // _eventInstance = AudioManager.Instance.PlaySound(_dialogueSound[_currentDialogue]);
             _dialogueBox.gameObject.SetActive(true);
             _occupied = true;
         }
@@ -103,7 +98,6 @@ public class NPCScript : MonoBehaviour
 
             _dialogueBox.gameObject.SetActive(false);
             _occupied = false;
-            //AudioManager.Instance.StopSound(_eventInstance);
         }
     }
 
