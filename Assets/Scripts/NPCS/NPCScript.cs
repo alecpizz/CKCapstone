@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using FMODUnity;
+using FMOD.Studio;
+
+
 
 /*
 ********************************************************************
@@ -10,8 +14,15 @@ author: David Henvick
 Creation date: 9/30/24
 summary: this is the script that is used control an npc and their dialogue
 */
+
+
 public class NPCScript : MonoBehaviour
 {
+    [SerializeField] private List<EventReference>  _dialogueSound = default;
+    [SerializeField] private List<string> _dialogueText;
+    private EventInstance _eventInstance;
+
+    private PlayerInteract _player;
     //dialogue options
     string[] _dialogue = {"Hello! this is testing dialogue", "I wish I were a fish", "They don't know my secret"};
     int _currentDialogue = 0;
@@ -28,16 +39,22 @@ public class NPCScript : MonoBehaviour
     {
         if (_occupied)
         {
-            if (_currentDialogue < _dialogue.Length - 1)
+            AudioManager.Instance.StopSound(_eventInstance);
+
+            if (_currentDialogue < _dialogueText.Count - 1)
             {
                 _currentDialogue++;
-                _dialogueBox.SetText(_dialogue[_currentDialogue]);
+                _dialogueBox.SetText(_dialogueText[_currentDialogue]);
+               // _eventInstance = AudioManager.Instance.PlaySound(_dialogueSound[_currentDialogue]);
             }
             else
             {
                 _currentDialogue = 0;
-                _dialogueBox.SetText(_dialogue[_currentDialogue]);
+                _dialogueBox.SetText(_dialogueText[_currentDialogue]);
+                // _eventInstance = AudioManager.Instance.PlaySound(_dialogueSound[_currentDialogue]);
             }
+
+
         }
     }
 
@@ -47,9 +64,14 @@ public class NPCScript : MonoBehaviour
     /// </summary>
     void Start()
     {
+
         _dialogueBox.SetText(_dialogue[_currentDialogue]);
         _dialogueBox.gameObject.SetActive(false);
         _occupied = false;
+
+        _dialogueSound = new List<EventReference>();
+        _dialogueText = new List<string>(); 
+
     }
 
     /// <summary>
@@ -62,6 +84,7 @@ public class NPCScript : MonoBehaviour
         Debug.Log(collision.gameObject.tag);
         if(collision.gameObject.tag == "NPCReadable")
         {
+           // _eventInstance = AudioManager.Instance.PlaySound(_dialogueSound[_currentDialogue]);
             _dialogueBox.gameObject.SetActive(true);
             _occupied = true;
         }
@@ -77,8 +100,10 @@ public class NPCScript : MonoBehaviour
     {
         if (collision.gameObject.tag == "NPCReadable")
         {
+
             _dialogueBox.gameObject.SetActive(false);
             _occupied = false;
+            //AudioManager.Instance.StopSound(_eventInstance);
         }
     }
 
