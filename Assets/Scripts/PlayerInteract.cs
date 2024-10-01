@@ -5,10 +5,17 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/*
+********************************************************************
+File name: NPCScript
+author: David Henvick
+Creation date: 9/30/24
+summary: this is the script that is used for the interact input
+*/
 public class PlayerInteract : MonoBehaviour
 {
     //npc
-    private NPCScript npc;
+    private NPCScript _npc;
     private PlayerControls _input;
 
     /// <summary>
@@ -20,7 +27,7 @@ public class PlayerInteract : MonoBehaviour
         // Referencing and setup of the Input Action functions
         _input = new PlayerControls();
         _input.InGame.Enable();
-        npc = FindObjectOfType<NPCScript>();
+        _npc = FindObjectOfType<NPCScript>();
 
         _input.InGame.Interact.performed += InteractPerformed;
     }
@@ -33,9 +40,9 @@ public class PlayerInteract : MonoBehaviour
     /// <param name="context"></param>
     private void InteractPerformed(InputAction.CallbackContext context)
     {
-        if (npc != null)
+        if (_npc != null)
         {
-            npc.AdvanceDialogue();
+            _npc.AdvanceDialogue();
         }
     }
 }

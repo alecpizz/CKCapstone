@@ -13,12 +13,12 @@ summary: this is the script that is used control an npc and their dialogue
 public class NPCScript : MonoBehaviour
 {
     //dialogue options
-    string[] dialogue = {"Hello! this is testing dialogue", "I wish I were a fish", "They don't know my secret"};
-    int currentDialogue = 0;
+    string[] _dialogue = {"Hello! this is testing dialogue", "I wish I were a fish", "They don't know my secret"};
+    int _currentDialogue = 0;
     //used to tell if player is in adjacent square
-    bool occupied;
+    bool _occupied;
 
-    [SerializeField] private TMP_Text dialogueBox;
+    [SerializeField] private TMP_Text _dialogueBox;
 
     /// <summary>
     /// is used to advance the current dialogue
@@ -26,17 +26,17 @@ public class NPCScript : MonoBehaviour
     /// </summary>
     public void AdvanceDialogue()
     {
-        if (occupied)
+        if (_occupied)
         {
-            if (currentDialogue < dialogue.Length - 1)
+            if (_currentDialogue < _dialogue.Length - 1)
             {
-                currentDialogue++;
-                dialogueBox.SetText(dialogue[currentDialogue]);
+                _currentDialogue++;
+                _dialogueBox.SetText(_dialogue[_currentDialogue]);
             }
             else
             {
-                currentDialogue = 0;
-                dialogueBox.SetText(dialogue[currentDialogue]);
+                _currentDialogue = 0;
+                _dialogueBox.SetText(_dialogue[_currentDialogue]);
             }
         }
     }
@@ -47,9 +47,9 @@ public class NPCScript : MonoBehaviour
     /// </summary>
     void Start()
     {
-        dialogueBox.SetText(dialogue[currentDialogue]);
-        dialogueBox.gameObject.SetActive(false);
-        occupied = false;
+        _dialogueBox.SetText(_dialogue[_currentDialogue]);
+        _dialogueBox.gameObject.SetActive(false);
+        _occupied = false;
     }
 
     /// <summary>
@@ -59,10 +59,10 @@ public class NPCScript : MonoBehaviour
     /// <param name="collision"></param>
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.name == "NPCReader")
+        if(collision.gameObject.tag == "NPCReadable")
         {
-            dialogueBox.gameObject.SetActive(true);
-            occupied = true;
+            _dialogueBox.gameObject.SetActive(true);
+            _occupied = true;
         }
     }
 
@@ -74,10 +74,10 @@ public class NPCScript : MonoBehaviour
     /// <param name="collision"></param>
     private void OnCollisionExit(Collision collision)
     {
-        if (collision.gameObject.name == "NPCReader")
+        if (collision.gameObject.tag == "NPCReadable")
         {
-            dialogueBox.gameObject.SetActive(false);
-            occupied = false;
+            _dialogueBox.gameObject.SetActive(false);
+            _occupied = false;
         }
     }
 
