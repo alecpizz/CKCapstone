@@ -36,10 +36,8 @@ public class NPCScript : MonoBehaviour
     /// </summary>
     public void AdvanceDialogue()
     {
-        Debug.Log(_currentDialogue + "out of occupied");
         if (_occupied)
         {
-            Debug.Log(_dialogueText[_currentDialogue]);
             //AudioManager.Instance.StopSound(_eventInstance);
 
             if (_currentDialogue < _dialogueText.Length-1)
@@ -83,7 +81,7 @@ public class NPCScript : MonoBehaviour
     /// <param name="collision"></param>
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log(collision.gameObject.tag);
+        _dialogueBox.SetText(_dialogueText[_currentDialogue]);
         if(collision.gameObject.tag == "NPCReadable")
         {
            // _eventInstance = AudioManager.Instance.PlaySound(_dialogueSound[_currentDialogue]);
