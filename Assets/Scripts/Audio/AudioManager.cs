@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Claire Noto
-*    Contributors: Claire Noto
+*    Contributors: Claire Noto, Alec Pizziferro
 *    Date Created: 09/19/2024
 *    Description: Audio Manager using FMOD. See FMOD documentation 
 *    for more info
@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using FMODUnity;
 using FMOD.Studio;
+using STOP_MODE = FMOD.Studio.STOP_MODE;
 
 public class AudioManager : MonoBehaviour
 {
@@ -20,8 +21,6 @@ public class AudioManager : MonoBehaviour
     Dictionary<EventReference, EventInstance> AudioInstances;
 
     private EventInstance _key;
-
-    private bool _paused = false;
 
     private void Awake()
     {
@@ -47,9 +46,8 @@ public class AudioManager : MonoBehaviour
     /// in the inspector. See the FMOD Guide in resources for more info.
     /// </summary>
     /// <param name="reference">the desired sound reference</param>
-    /// <param name="gameObject">gameobject the sound plays from</param>
     /// <returns>an EventInstance, save it if you need to use a parameter</returns>
-    public EventInstance PlaySound(EventReference reference, GameObject gameObject = null)
+    public EventInstance PlaySound(EventReference reference)
     {
         EventInstance audioEvent;
 
@@ -61,42 +59,44 @@ public class AudioManager : MonoBehaviour
             AudioInstances.Add(reference, audioEvent);
         }
 
-        if (gameObject)
-        {
-            RuntimeManager.AttachInstanceToGameObject(audioEvent, gameObject.transform);
-        }
+        audioEvent.start();
+        return audioEvent;
+    }
+
+    /// <summary>
+    /// Plays an FMOD sound using a reference. Just add an eventreference and setup the sound
+    /// in the inspector. See the FMOD Guide in resources for more info.
+    /// </summary>
+    /// <param name="reference">the desired sound reference</param>
+    /// <param name="gameObject">gameobject the sound plays from</param>
+    /// <returns>an EventInstance, save it if the sound needs to be stopped or has a parameter</returns>
+    public EventInstance PlaySound(EventReference reference, GameObject gameObject)
+    {
+        EventInstance audioEvent = RuntimeManager.CreateInstance(reference);
+
+        RuntimeManager.AttachInstanceToGameObject(audioEvent, gameObject.transform);
 
         audioEvent.start();
         return audioEvent;
     }
 
     /// <summary>
-    /// Similar to play sound, stops an FMOD sound using a reference. 
+    /// Similar to play sound, stops an FMOD sound using a reference.
     /// </summary>
-    /// <param name="reference">the desired sound reference</param>
+    /// <param name="audioEvent">the desired sound instance</param>
     /// <param name="fade">toggles wether the sound will fade when done playing</param>
-    public void StopSound(EventReference reference, bool fade = false)
+    public void StopSound(EventInstance audioEvent, bool fade = false)
     {
-        EventInstance audioEvent = ConvertReferenceToInstance(reference);
-
-        RuntimeManager.DetachInstanceFromGameObject(audioEvent);
-
-        if (fade)
-            audioEvent.stop(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);
-        else
-            audioEvent.stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+        audioEvent.stop(fade ? STOP_MODE.ALLOWFADEOUT : STOP_MODE.IMMEDIATE);
     }
-
 
     /// <summary>
     /// Toggles a sound, pausing and unpausing a specified sound.
     /// </summary>
-    /// <param name="reference">the desired sound reference</param>
+    /// <param name="audioEvent">the desired sound instance</param>
     /// <param name="paused">true if paused, false if not</param>
-    public void ToggleSound(EventReference reference, bool paused)
+    public void ToggleSound(EventInstance audioEvent, bool paused)
     {
-        EventInstance audioEvent = ConvertReferenceToInstance(reference);
-
         audioEvent.setPaused(paused);
     }
 
@@ -111,5 +111,23 @@ public class AudioManager : MonoBehaviour
 
         AudioInstances.TryGetValue(reference, out audioEvent);
         return audioEvent;
+    }
+
+    private void OnDestroy()
+    {
+        StopAllSounds();
+        AudioInstances.Clear();
+    }
+
+    /// <summary>
+    /// Stops all sounds.
+    /// </summary>
+    public void StopAllSounds()
+    {
+        var bus = RuntimeManager.GetBus("bus:/");
+        if (bus.isValid())
+        {
+            bus.stopAllEvents(STOP_MODE.IMMEDIATE);
+        }
     }
 }
