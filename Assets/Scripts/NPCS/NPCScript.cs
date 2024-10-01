@@ -19,12 +19,11 @@ summary: this is the script that is used control an npc and their dialogue
 public class NPCScript : MonoBehaviour
 {
     [SerializeField] private List<EventReference>  _dialogueSound = default;
-    [SerializeField] private List<string> _dialogueText;
+    [SerializeField] private string[] _dialogueText;
     private EventInstance _eventInstance;
 
     private PlayerInteract _player;
     //dialogue options
-    string[] _dialogue = {"Hello! this is testing dialogue", "I wish I were a fish", "They don't know my secret"};
     int _currentDialogue = 0;
     //used to tell if player is in adjacent square
     bool _occupied;
@@ -37,11 +36,13 @@ public class NPCScript : MonoBehaviour
     /// </summary>
     public void AdvanceDialogue()
     {
+        Debug.Log(_currentDialogue + "out of occupied");
         if (_occupied)
         {
-            AudioManager.Instance.StopSound(_eventInstance);
+            Debug.Log(_dialogueText[_currentDialogue]);
+            //AudioManager.Instance.StopSound(_eventInstance);
 
-            if (_currentDialogue < _dialogueText.Count - 1)
+            if (_currentDialogue < _dialogueText.Length-1)
             {
                 _currentDialogue++;
                 _dialogueBox.SetText(_dialogueText[_currentDialogue]);
@@ -64,13 +65,14 @@ public class NPCScript : MonoBehaviour
     /// </summary>
     void Start()
     {
+        _player = FindObjectOfType<PlayerInteract>();
+        _player.AddNPC(this);
 
-        _dialogueBox.SetText(_dialogue[_currentDialogue]);
+        _dialogueBox.SetText(_dialogueText[_currentDialogue]);
         _dialogueBox.gameObject.SetActive(false);
         _occupied = false;
 
         _dialogueSound = new List<EventReference>();
-        _dialogueText = new List<string>(); 
 
     }
 

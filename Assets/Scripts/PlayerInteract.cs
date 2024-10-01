@@ -1,3 +1,4 @@
+using FMODUnity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ summary: this is the script that is used for the interact input
 public class PlayerInteract : MonoBehaviour
 {
     //npc
-    private NPCScript _npc;
+    [SerializeField] private List<NPCScript> _npcList;
     private PlayerControls _input;
 
     /// <summary>
@@ -27,11 +28,22 @@ public class PlayerInteract : MonoBehaviour
         // Referencing and setup of the Input Action functions
         _input = new PlayerControls();
         _input.InGame.Enable();
-        _npc = FindObjectOfType<NPCScript>();
+        //_npc = FindObjectOfType<NPCScript>();
+        _npcList = new List<NPCScript>();
 
         _input.InGame.Interact.performed += InteractPerformed;
     }
 
+    /// <summary>
+    /// called by npcs on game start. 
+    /// is used to add an npc to the list of npcs that the player has
+    /// </summary>
+    /// <param name="addedNPC"></param> new npc
+    public void AddNPC(NPCScript addedNPC) 
+    {
+        _npcList.Add(addedNPC);
+        return;
+    }
 
     /// <summary>
     /// activated when the player uses the interact action
@@ -40,9 +52,12 @@ public class PlayerInteract : MonoBehaviour
     /// <param name="context"></param>
     private void InteractPerformed(InputAction.CallbackContext context)
     {
-        if (_npc != null)
+        if (_npcList[0] != null)
         {
-            _npc.AdvanceDialogue();
+            for(int i = 0; i < _npcList.Count; i++)
+            {
+                _npcList[i].AdvanceDialogue();
+            }
         }
     }
 }
