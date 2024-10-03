@@ -15,10 +15,10 @@ MonoBehaviour:
   Path: FMOD/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 638633733367896658
+  lastModified: 638635523137935770
   FileSizes:
   - Name: 
-    Value: 868
+    Value: 1034
   Exists: 1
 --- !u!114 &-6576825280472150680
 MonoBehaviour:
@@ -35,7 +35,7 @@ MonoBehaviour:
   Path: FMOD/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 638633733367886652
+  lastModified: 638635523137890599
   FileSizes: []
   Exists: 1
 --- !u!114 &-5865497245905083406
@@ -66,6 +66,24 @@ MonoBehaviour:
   MinDistance: 1
   MaxDistance: 20
   Length: 60600
+--- !u!114 &-5530986901211812178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Sound Effects.bank
+  m_EditorClassIdentifier: 
+  Path: FMOD/Desktop/Sound Effects.bank
+  Name: Sound Effects
+  StudioPath: bank:/Sound Effects
+  lastModified: 638635523138409814
+  FileSizes: []
+  Exists: 1
 --- !u!114 &-5088047745946924252
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105,9 +123,37 @@ MonoBehaviour:
   Path: FMOD/Desktop/Music.bank
   Name: Music
   StudioPath: bank:/Music
-  lastModified: 638633733368146721
+  lastModified: 638632198979689309
   FileSizes: []
   Exists: 1
+--- !u!114 &-923751912991074491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/NPC Dialogue
+  m_EditorClassIdentifier: 
+  Path: event:/NPC Dialogue
+  Guid:
+    Data1: -2121835079
+    Data2: 1170427212
+    Data3: 882398619
+    Data4: -1619512685
+  Banks:
+  - {fileID: -5530986901211812178}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: 8441571270239670188}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,12 +170,38 @@ MonoBehaviour:
   - {fileID: -9101229972127339748}
   - {fileID: -6576825280472150680}
   - {fileID: -3591263675254998873}
+  - {fileID: -5530986901211812178}
   EditorEvents:
   - {fileID: -5865497245905083406}
+  - {fileID: -923751912991074491}
   EditorParameters: []
   MasterBanks:
   - {fileID: -6576825280472150680}
   StringsBanks:
   - {fileID: -9101229972127339748}
-  cacheTime: 638633733368146721
+  cacheTime: 638635523138409814
   cacheVersion: 131619
+--- !u!114 &8441571270239670188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/NPC Dialogue/Test Dialogue
+  m_EditorClassIdentifier: 
+  Name: Test Dialogue
+  StudioPath: 
+  Min: 1
+  Max: 3
+  Default: 1
+  ID:
+    data1: 338824692
+    data2: 1237734951
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
