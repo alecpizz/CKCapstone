@@ -17,6 +17,7 @@ using UnityEngine.Serialization;
 /// Class for interfacing with a grid. Stores information about
 /// what entities are in a cell. Also contains space conversions within it.
 /// </summary>
+[DefaultExecutionOrder(-10000)]
 [RequireComponent(typeof(Grid))]
 public class GridBase : MonoBehaviour
 {
@@ -24,14 +25,14 @@ public class GridBase : MonoBehaviour
     
     [InfoBox("Assign this to draw the grid gizmos.")] [SerializeField]
     private Grid grid;
-    [Header("Grid Parameters")]
+    [BoxGroup("Grid Parameters")]
     [SerializeField] [MinValue(2)] private int gridSize = 8;
-    [SerializeField] private Transform debugCursor;
-    [Header("Grid Visuals")]
+    [BoxGroup("Grid Parameters")] [SerializeField] private Transform debugCursor;
+    [BoxGroup("Grid Visuals")]
     [SerializeField] private Material primaryGridMat;
-    [SerializeField] private Material secondaryGridMat;
-    private Dictionary<Vector3Int, HashSet<GameObject>> _gridEntries = new();
-    private Dictionary<GameObject, Vector3Int> _gameObjectToGridMap = new();
+    [BoxGroup("Grid Visuals")][SerializeField] private Material secondaryGridMat;
+    private Dictionary<Vector3Int, HashSet<IGridEntry>> _gridEntries = new();
+    private Dictionary<IGridEntry, Vector3Int> _gameObjectToGridMap = new();
     [SerializeField] [HideInInspector] private GameObject gridMeshHolder;
 
     /// <summary>
@@ -85,10 +86,10 @@ public class GridBase : MonoBehaviour
     /// Adds a gameObject to the grid cell. Will not add if the grid already contains it.
     /// </summary>
     /// <param name="obj">The gameObject to add.</param>
-    public void AddEntry(GameObject obj)
+    public void AddEntry(IGridEntry obj)
     {
         if (_gameObjectToGridMap.ContainsKey(obj)) return;
-        Vector3Int cell = WorldToCell(obj.transform.position);
+        Vector3Int cell = WorldToCell(obj.Position);
         _gameObjectToGridMap.Add(obj, cell);
         var set = GetCellEntries(cell);
         set.Add(obj);
@@ -98,10 +99,10 @@ public class GridBase : MonoBehaviour
     /// Removes a gameObject from the grid cell.
     /// </summary>
     /// <param name="obj">The object to remove.</param>
-    public void RemoveEntry(GameObject obj)
+    public void RemoveEntry(IGridEntry obj)
     {
         if (!_gameObjectToGridMap.ContainsKey(obj)) return;
-        Vector3Int cell = WorldToCell(obj.transform.position);
+        Vector3Int cell = WorldToCell(obj.Position);
         _gameObjectToGridMap.Remove(obj);
         _gridEntries[cell].Remove(obj);
     }
@@ -111,7 +112,7 @@ public class GridBase : MonoBehaviour
     /// If there is no position change it will exit early.
     /// </summary>
     /// <param name="obj"></param>
-    public void UpdateEntry(GameObject obj)
+    public void UpdateEntry(IGridEntry obj)
     {
         if (!_gameObjectToGridMap.TryGetValue(obj, out var prevPos))
         {
@@ -119,13 +120,13 @@ public class GridBase : MonoBehaviour
             return;
         }
 
-        Vector3Int newPos = WorldToCell(obj.transform.position);
+        Vector3Int newPos = WorldToCell(obj.Position);
         if (prevPos == newPos) return;
         _gameObjectToGridMap[obj] = newPos;
         _gridEntries[prevPos].Remove(obj);
         if (!_gridEntries.ContainsKey(newPos))
         {
-            _gridEntries.Add(newPos, new HashSet<GameObject>());
+            _gridEntries.Add(newPos, new HashSet<IGridEntry>());
         }
 
         _gridEntries[newPos].Add(obj);
@@ -136,14 +137,14 @@ public class GridBase : MonoBehaviour
     /// </summary>
     /// <param name="coordinate">The cell index.</param>
     /// <returns>A hashset of entries within the cell.</returns>
-    public HashSet<GameObject> GetCellEntries(Vector3Int coordinate)
+    public HashSet<IGridEntry> GetCellEntries(Vector3Int coordinate)
     {
         if (_gridEntries.TryGetValue(coordinate, out var entries))
         {
             return entries;
         }
 
-        _gridEntries.Add(coordinate, new HashSet<GameObject>());
+        _gridEntries.Add(coordinate, new HashSet<IGridEntry>());
         return _gridEntries[coordinate];
     }
 
@@ -152,7 +153,7 @@ public class GridBase : MonoBehaviour
     /// </summary>
     /// <param name="worldSpacePos">The position, in world space, to compare against.</param>
     /// <returns>A hashset of entries within the cell.</returns>
-    public HashSet<GameObject> GetCellEntries(Vector3 worldSpacePos)
+    public HashSet<IGridEntry> GetCellEntries(Vector3 worldSpacePos)
     {
         return GetCellEntries(WorldToCell(worldSpacePos));
     }
@@ -170,6 +171,44 @@ public class GridBase : MonoBehaviour
             return false;
         }
         return set.Count == 0;
+    }
+
+    public bool CellIsTransparent(Vector3Int cellID)
+    {
+        var set = GetCellEntries(cellID);
+        if (set == null)
+        {
+            return false;
+        }
+
+        foreach (var entry in set)
+        {
+            if (!entry.IsTransparent)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    
+    public bool CellIsTransparent(Vector3 position)
+    {
+        var set = GetCellEntries(position);
+        if (set == null)
+        {
+            return false;
+        }
+
+        foreach (var entry in set)
+        {
+            if (!entry.IsTransparent)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /// <summary>

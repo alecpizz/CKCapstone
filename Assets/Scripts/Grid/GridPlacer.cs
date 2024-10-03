@@ -14,19 +14,19 @@ using UnityEngine;
 /// <summary>
 /// Placement tool for grid objects. To use, simply attach to a gameobject that you wish to position on the grid.
 /// </summary>
-[DefaultExecutionOrder(-10000)]
-public class GridPlacer : MonoBehaviour
+public class GridPlacer : MonoBehaviour, IGridEntry
 {
+    [BoxGroup("Settings")]
     [InfoBox("Use this component to add this gameObject to a grid.")]
     [SerializeField] 
-    private int _dummyField;
+    private bool isTransparent = true;
     /// <summary>
     /// Places the object on the grid and updates its position.
     /// </summary>
     private void Start()
     {
         transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position));
-        GridBase.Instance.AddEntry(this.gameObject);
+        GridBase.Instance.AddEntry(this);
     }
 
     /// <summary>
@@ -43,7 +43,7 @@ public class GridPlacer : MonoBehaviour
     public void UpdatePosition()
     {
         transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position));
-        GridBase.Instance.UpdateEntry(this.gameObject);
+        GridBase.Instance.UpdateEntry(this);
     }
 
     /// <summary>
@@ -51,6 +51,9 @@ public class GridPlacer : MonoBehaviour
     /// </summary>
     private void OnDestroy()
     {
-        GridBase.Instance.RemoveEntry(gameObject);
+        GridBase.Instance.RemoveEntry(this);
     }
+
+    public bool IsTransparent { get => isTransparent; }
+    public Vector3 Position { get => transform.position; }
 }
