@@ -1789,7 +1789,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f909d3e89d395904b8c48afefddd9d33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _npcList: []
 --- !u!1 &557586736
 GameObject:
   m_ObjectHideFlags: 0
@@ -3239,11 +3238,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f4d43645ca7c7240adf3f2b2b4d76cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dialogueSound: []
-  _dialogueText:
-  - I wish i were a fish
-  - PlaceholderText.txt
-  - egg.egg
+  _dialogueEntries:
+  - _sound:
+      Guid:
+        Data1: 0
+        Data2: 0
+        Data3: 0
+        Data4: 0
+      Path: 
+    _text: I wish i were a fish
+  - _sound:
+      Guid:
+        Data1: 0
+        Data2: 0
+        Data3: 0
+        Data4: 0
+      Path: 
+    _text: PlaceholderText.txt
+  - _sound:
+      Guid:
+        Data1: 0
+        Data2: 0
+        Data3: 0
+        Data4: 0
+      Path: 
+    _text: egg.egg
   _dialogueBox: {fileID: 753587923}
 --- !u!1 &898205348
 GameObject:
@@ -7866,11 +7885,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f4d43645ca7c7240adf3f2b2b4d76cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dialogueSound: []
-  _dialogueText:
-  - ALL CAPS TO SHOW IT'S A NEW NPC
-  - AAAAAAAA
-  - STAY HYDRATED...THIS IS A THREAT
+  _dialogueEntries: []
   _dialogueBox: {fileID: 753587923}
 --- !u!65 &2027910147
 BoxCollider:
