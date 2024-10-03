@@ -29,7 +29,7 @@ Shader "Vefects/SH_Vefects_URP_VFX_Slime_Lit_Matcap_Triplanar"
 		_WPOIntensity("WPO Intensity", Float) = 0.1
 		_WPOTriplanarContrast("WPO Triplanar Contrast", Float) = 1
 		_WPOTile("WPO Tile", Vector) = (1,1,1,0)
-		_WPOTileSpeed("WPO Tile Speed", Vector) = (0,1,1,0)
+		_WPOTileSpeed("WPO Tile Speed", Vector) = (0,0,0,0)
 		_WPOTileOffsetCustom("WPO Tile Offset Custom", Vector) = (0,0,0,0)
 		[Space(33)][Header(WPO Axis Mask)][Space(13)][Toggle(_WPOAXISMASK_ON)] _WPOAxisMask("WPO Axis Mask", Float) = 0
 		[Toggle]_AxisWorldorVertex("Axis World or Vertex", Float) = 0
