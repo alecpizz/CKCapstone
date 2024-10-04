@@ -3137,6 +3137,7 @@ GameObject:
   - component: {fileID: 788088653}
   - component: {fileID: 788088656}
   - component: {fileID: 788088657}
+  - component: {fileID: 788088658}
   m_Layer: 0
   m_Name: NPC_Test1
   m_TagString: Untagged
@@ -3274,6 +3275,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
+--- !u!65 &788088658
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 788088650}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &898205348
 GameObject:
   m_ObjectHideFlags: 0
@@ -7779,6 +7801,7 @@ GameObject:
   - component: {fileID: 2027910148}
   - component: {fileID: 2027910146}
   - component: {fileID: 2027910151}
+  - component: {fileID: 2027910152}
   m_Layer: 0
   m_Name: NPC_Test2
   m_TagString: Untagged
@@ -7798,7 +7821,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f4d43645ca7c7240adf3f2b2b4d76cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dialogueEntries: []
+  _dialogueEntries:
+  - _sound:
+      Guid:
+        Data1: 0
+        Data2: 0
+        Data3: 0
+        Data4: 0
+      Path: 
+    _text: ALL CAPS TO SHOW THAT IT'S A DIFFERENT NPC
+  - _sound:
+      Guid:
+        Data1: 0
+        Data2: 0
+        Data3: 0
+        Data4: 0
+      Path: 
+    _text: AAAAAAAAAA
+  - _sound:
+      Guid:
+        Data1: 0
+        Data2: 0
+        Data3: 0
+        Data4: 0
+      Path: 
+    _text: WHOA A THRID LINE OF TEXT? CRAZYYYYY
   _dialogueBox: {fileID: 753587923}
 --- !u!23 &2027910148
 MeshRenderer:
@@ -7892,6 +7939,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
+--- !u!65 &2027910152
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2027910145}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2065051871
 GameObject:
   m_ObjectHideFlags: 0
