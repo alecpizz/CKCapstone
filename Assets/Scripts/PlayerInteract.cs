@@ -52,7 +52,7 @@ public class PlayerInteract : MonoBehaviour
     /// <param name="collision"></param>
     void OnCollisionExit(Collision collision)
     {
-        UnityEngine.Debug.Log("Exited");
+    {
         _npc = collision.gameObject.GetComponent<NPCScript>();
         if (_npc != null)
         {
