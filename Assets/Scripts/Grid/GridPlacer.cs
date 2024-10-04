@@ -16,16 +16,22 @@ using UnityEngine;
 /// </summary>
 public class GridPlacer : MonoBehaviour, IGridEntry
 {
-    [BoxGroup("Settings")]
     [InfoBox("Use this component to add this gameObject to a grid.")]
+    [BoxGroup("Settings")]
     [SerializeField] 
     private bool isTransparent = true;
+
+    [SerializeField] [BoxGroup("Settings")]
+    private bool snapToGrid = true;
     /// <summary>
     /// Places the object on the grid and updates its position.
     /// </summary>
     private void Start()
     {
-        transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position));
+        if (snapToGrid)
+        {
+            transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position));
+        }
         GridBase.Instance.AddEntry(this);
     }
 
@@ -42,7 +48,10 @@ public class GridPlacer : MonoBehaviour, IGridEntry
     /// </summary>
     public void UpdatePosition()
     {
-        transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position));
+        if (snapToGrid)
+        {
+            transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position));
+        }
         GridBase.Instance.UpdateEntry(this);
     }
 
