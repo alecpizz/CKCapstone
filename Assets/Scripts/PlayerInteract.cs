@@ -52,7 +52,6 @@ public class PlayerInteract : MonoBehaviour
     /// <param name="collision"></param>
     void OnCollisionExit(Collision collision)
     {
-    {
         _npc = collision.gameObject.GetComponent<NPCScript>();
         if (_npc != null)
         {
