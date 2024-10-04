@@ -2,6 +2,7 @@ using FMODUnity;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -33,20 +34,31 @@ public class PlayerInteract : MonoBehaviour
     }
 
     /// <summary>
-    /// called by npcs on game start. 
-    /// is used to add an npc to the list of npcs that the player has
+    /// called on collision, is used to log interactables within range
     /// </summary>
-    /// <param name="addedNPC"></param> new npc
-    public void AddNPC(NPCScript addedNPC) 
+    /// <param name="collision"></param>
+    void OnCollisionEnter(Collision collision)
     {
-        _npc = addedNPC;
-        return;
+        _npc = collision.gameObject.GetComponent<NPCScript>();
+        if ( _npc != null)
+        {
+            _npc.ShowDialogue();
+        }
     }
 
-    public void RemoveNPC(NPCScript addedNPC)
+    /// <summary>
+    /// called on collision, is used to remove logged interactables when they leave the range
+    /// </summary>
+    /// <param name="collision"></param>
+    void OnCollisionExit(Collision collision)
     {
+        UnityEngine.Debug.Log("Exited");
+        _npc = collision.gameObject.GetComponent<NPCScript>();
+        if (_npc != null)
+        {
+            _npc.HideDialogue();
+        }
         _npc = null;
-        return;
     }
 
     /// <summary>

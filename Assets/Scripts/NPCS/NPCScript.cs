@@ -24,7 +24,6 @@ public class NPCScript : MonoBehaviour
 {
     [SerializeField] private List<DialogueEntry> _dialogueEntries;
 
-    private PlayerInteract _player;
     //dialogue options
     private int _currentDialogue = 0;
     //used to tell if player is in adjacent square
@@ -67,29 +66,11 @@ public class NPCScript : MonoBehaviour
     /// </summary>
     void Start()
     {
-        _player = FindObjectOfType<PlayerInteract>();
 
         if(CheckForEntries())
             _dialogueBox.SetText(_dialogueEntries[_currentDialogue]._text);
         _dialogueBox.gameObject.SetActive(false);
         _occupied = false;
-    }
-
-    /// <summary>
-    /// activated on collision enter
-    /// if the player enters the box collision dialogue is enabled anc can be advanced
-    /// </summary>
-    /// <param name="collision"></param>
-    private void OnCollisionEnter(Collision collision)
-    {
-        _player.AddNPC(this);
-        if (CheckForEntries())
-            _dialogueBox.SetText(_dialogueEntries[_currentDialogue]._text);
-        if(collision.gameObject.tag == "NPCReadable")
-        {
-            _dialogueBox.gameObject.SetActive(true);
-            _occupied = true;
-        }
     }
 
     /// <summary>
@@ -108,20 +89,25 @@ public class NPCScript : MonoBehaviour
     }
 
     /// <summary>
-    /// activated on collision exit
-    /// if the player leaves the space adjacent to the npc, the dialogue is disabled 
-    /// and the dialogue can no longer be advanced
+    /// use this to show the dialogue of the npc
     /// </summary>
-    /// <param name="collision"></param>
-    private void OnCollisionExit(Collision collision)
+    public void ShowDialogue()
     {
-        _player.RemoveNPC(this);
-        if (collision.gameObject.tag == "NPCReadable")
-        {
+        if (CheckForEntries())
+            _dialogueBox.SetText(_dialogueEntries[_currentDialogue]._text);
 
-            _dialogueBox.gameObject.SetActive(false);
-            _occupied = false;
-        }
+        _dialogueBox.gameObject.SetActive(true);
+        _occupied = true;
     }
 
+    /// <summary>
+    /// use this to hide the dialogue of the npc
+    /// </summary>
+    public void HideDialogue()
+    {
+        _dialogueBox.gameObject.SetActive(false);
+        _occupied = false;
+    }
+
+    
 }
