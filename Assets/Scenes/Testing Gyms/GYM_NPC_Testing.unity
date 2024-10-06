@@ -1498,6 +1498,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 477273720}
+  - component: {fileID: 477273721}
   m_Layer: 0
   m_Name: PutAudioManagerHere
   m_TagString: Untagged
@@ -1520,6 +1521,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &477273721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 477273718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2bbe8088a9dc6d4f97c948f623e59c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _enemy:
+    Guid:
+      Data1: 1087454660
+      Data2: 1125730479
+      Data3: 2075035788
+      Data4: 1825618196
+    Path: event:/Music Controller
+  _musicLayering: 0
 --- !u!1 &501352337
 GameObject:
   m_ObjectHideFlags: 0
@@ -2675,8 +2696,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -15}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: 0, y: -15.799988}
+  m_SizeDelta: {x: 306.0666, y: 94.9041}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &753587923
 MonoBehaviour:
@@ -2725,8 +2746,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 25.97
+  m_fontSizeBase: 25.97
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -3222,6 +3243,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f4d43645ca7c7240adf3f2b2b4d76cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _dialogueBox: {fileID: 753587923}
+  _typingSpeed: 3.48
   _dialogueEntries:
   - _sound:
       Guid:
@@ -3230,7 +3253,8 @@ MonoBehaviour:
         Data3: 0
         Data4: 0
       Path: 
-    _text: I wish i were a fish
+    _text: slow... so slow...
+    _adjustTypingSpeed: -2
   - _sound:
       Guid:
         Data1: 0
@@ -3238,7 +3262,8 @@ MonoBehaviour:
         Data3: 0
         Data4: 0
       Path: 
-    _text: PlaceholderText.txt
+    _text: fast... so fast...
+    _adjustTypingSpeed: 5
   - _sound:
       Guid:
         Data1: 0
@@ -3247,7 +3272,7 @@ MonoBehaviour:
         Data4: 0
       Path: 
     _text: egg.egg
-  _dialogueBox: {fileID: 753587923}
+    _adjustTypingSpeed: 0
 --- !u!54 &788088657
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -7821,6 +7846,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f4d43645ca7c7240adf3f2b2b4d76cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _dialogueBox: {fileID: 753587923}
+  _typingSpeed: 0
   _dialogueEntries:
   - _sound:
       Guid:
@@ -7830,6 +7857,7 @@ MonoBehaviour:
         Data4: 0
       Path: 
     _text: ALL CAPS TO SHOW THAT IT'S A DIFFERENT NPC
+    _adjustTypingSpeed: 0
   - _sound:
       Guid:
         Data1: 0
@@ -7838,6 +7866,7 @@ MonoBehaviour:
         Data4: 0
       Path: 
     _text: AAAAAAAAAA
+    _adjustTypingSpeed: 0
   - _sound:
       Guid:
         Data1: 0
@@ -7846,7 +7875,7 @@ MonoBehaviour:
         Data4: 0
       Path: 
     _text: WHOA A THRID LINE OF TEXT? CRAZYYYYY
-  _dialogueBox: {fileID: 753587923}
+    _adjustTypingSpeed: 0
 --- !u!23 &2027910148
 MeshRenderer:
   m_ObjectHideFlags: 0
