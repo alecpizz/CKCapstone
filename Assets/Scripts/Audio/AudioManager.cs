@@ -10,6 +10,7 @@ using UnityEngine;
 using FMODUnity;
 using FMOD.Studio;
 using STOP_MODE = FMOD.Studio.STOP_MODE;
+using System;
 
 public class AudioManager : MonoBehaviour
 {
@@ -49,18 +50,26 @@ public class AudioManager : MonoBehaviour
     /// <returns>an EventInstance, save it if you need to use a parameter</returns>
     public EventInstance PlaySound(EventReference reference)
     {
-        EventInstance audioEvent;
-
-        if (AudioInstances.ContainsKey(reference))
-            AudioInstances.TryGetValue(reference, out audioEvent);
-        else
+        try
         {
-            audioEvent = RuntimeManager.CreateInstance(reference);
-            AudioInstances.Add(reference, audioEvent);
-        }
+            EventInstance audioEvent;
 
-        audioEvent.start();
-        return audioEvent;
+            if (AudioInstances.ContainsKey(reference))
+                AudioInstances.TryGetValue(reference, out audioEvent);
+            else
+            {
+                audioEvent = RuntimeManager.CreateInstance(reference);
+                AudioInstances.Add(reference, audioEvent);
+            }
+
+            audioEvent.start();
+            return audioEvent;
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning(e);
+            return default;
+        }
     }
 
     /// <summary>
@@ -72,12 +81,20 @@ public class AudioManager : MonoBehaviour
     /// <returns>an EventInstance, save it if the sound needs to be stopped or has a parameter</returns>
     public EventInstance PlaySound(EventReference reference, GameObject gameObject)
     {
-        EventInstance audioEvent = RuntimeManager.CreateInstance(reference);
+        try
+        {
+            EventInstance audioEvent = RuntimeManager.CreateInstance(reference);
 
-        RuntimeManager.AttachInstanceToGameObject(audioEvent, gameObject.transform);
+            RuntimeManager.AttachInstanceToGameObject(audioEvent, gameObject.transform);
 
-        audioEvent.start();
-        return audioEvent;
+            audioEvent.start();
+            return audioEvent;
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning(e);
+            return default;
+        }
     }
 
     /// <summary>
@@ -87,7 +104,8 @@ public class AudioManager : MonoBehaviour
     /// <param name="fade">toggles wether the sound will fade when done playing</param>
     public void StopSound(EventInstance audioEvent, bool fade = false)
     {
-        audioEvent.stop(fade ? STOP_MODE.ALLOWFADEOUT : STOP_MODE.IMMEDIATE);
+        try { _ = audioEvent.stop(fade ? STOP_MODE.ALLOWFADEOUT : STOP_MODE.IMMEDIATE); }
+        catch (Exception e) { Debug.LogWarning(e); }
     }
 
     /// <summary>
@@ -97,7 +115,8 @@ public class AudioManager : MonoBehaviour
     /// <param name="paused">true if paused, false if not</param>
     public void ToggleSound(EventInstance audioEvent, bool paused)
     {
-        audioEvent.setPaused(paused);
+        try { _ = audioEvent.setPaused(paused); }
+        catch (Exception e) { Debug.LogWarning(e); }
     }
 
     /// <summary>
