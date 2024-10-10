@@ -19,7 +19,7 @@ public class GridPlacer : MonoBehaviour, IGridEntry
     [InfoBox("Use this component to add this gameObject to a grid.")]
     [BoxGroup("Settings")]
     [SerializeField] 
-    private bool isTransparent = true;
+    private bool isTransparent = false;
 
     [SerializeField] [BoxGroup("Settings")]
     private bool snapToGrid = true;
