@@ -42,6 +42,7 @@ public class GridPlacer : MonoBehaviour
     /// </summary>
     public void UpdatePosition()
     {
+        if (GridBase.Instance == null) return;
         transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position));
         GridBase.Instance.UpdateEntry(this.gameObject);
     }
@@ -51,6 +52,7 @@ public class GridPlacer : MonoBehaviour
     /// </summary>
     private void OnDestroy()
     {
+        if (GridBase.Instance == null) return; 
         GridBase.Instance.RemoveEntry(gameObject);
     }
 }
