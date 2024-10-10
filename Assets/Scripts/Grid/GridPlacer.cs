@@ -48,11 +48,13 @@ public class GridPlacer : MonoBehaviour, IGridEntry
     /// </summary>
     public void UpdatePosition()
     {
+        if (GridBase.Instance == null) return;
         if (snapToGrid)
         {
             transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position));
         }
-        GridBase.Instance.UpdateEntry(this);
+        transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position));
+        GridBase.Instance.UpdateEntry(this.gameObject);
     }
 
     /// <summary>
@@ -60,7 +62,8 @@ public class GridPlacer : MonoBehaviour, IGridEntry
     /// </summary>
     private void OnDestroy()
     {
-        GridBase.Instance.RemoveEntry(this);
+        if (GridBase.Instance == null) return; 
+        GridBase.Instance.RemoveEntry(gameObject);
     }
 
     public bool IsTransparent { get => isTransparent; }
