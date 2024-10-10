@@ -63,7 +63,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         {
             // Move down and remove the pointer
             var downMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.back);
-            if (GridBase.Instance.CellIsTransparent(downMove))
+            if (GridBase.Instance.CellIsTransparent(downMove) || DebugMenuManager.instance.ghostMode)
             {
                 gameObject.transform.position = downMove;
                 GridBase.Instance.UpdateEntry(this);
@@ -93,7 +93,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         {
             // Move up and remove the pointer
             var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
-            if (GridBase.Instance.CellIsTransparent(upMove))
+            if (GridBase.Instance.CellIsTransparent(upMove) || DebugMenuManager.instance.ghostMode)
             {
                 gameObject.transform.position = upMove;
                 GridBase.Instance.UpdateEntry(this);
@@ -123,7 +123,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         {
             // Move left and remove the pointer
             var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
-            if (GridBase.Instance.CellIsTransparent(leftMove))
+            if (GridBase.Instance.CellIsTransparent(leftMove) || DebugMenuManager.instance.ghostMode)
             {
                 gameObject.transform.position = leftMove;
                 GridBase.Instance.UpdateEntry(this);
@@ -153,7 +153,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         {
             // Move Right and remove the pointer
             var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
-            if(GridBase.Instance.CellIsTransparent(rightMove))
+            if(GridBase.Instance.CellIsTransparent(rightMove) || DebugMenuManager.instance.ghostMode)
             {
                 gameObject.transform.position = rightMove;
                 GridBase.Instance.UpdateEntry(this);   
