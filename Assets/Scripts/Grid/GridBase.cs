@@ -22,19 +22,26 @@ using UnityEngine.Serialization;
 public class GridBase : MonoBehaviour
 {
     public static GridBase Instance { get; private set; }
-    
+
     [InfoBox("Assign this to draw the grid gizmos.")] [SerializeField]
     private Grid grid;
-    [BoxGroup("Grid Parameters")]
-    [SerializeField] [MinValue(2)] private int gridSize = 8;
-    [BoxGroup("Grid Parameters")] [SerializeField] private Transform debugCursor;
-    [BoxGroup("Grid Visuals")]
-    [SerializeField] private Material primaryGridMat;
-    [BoxGroup("Grid Visuals")][SerializeField] private Material secondaryGridMat;
+
+    [BoxGroup("Grid Parameters")] [SerializeField] [MinValue(2)]
+    private int gridSize = 8;
+
+    [BoxGroup("Grid Visuals")] [SerializeField]
+    private Material primaryGridMat;
+
+    [BoxGroup("Grid Visuals")] [SerializeField]
+    private Material secondaryGridMat;
+
+    [BoxGroup("Grid Visuals")] [SerializeField] [OnValueChanged(nameof(OnDrawMeshChanged))]
+    private bool drawGridMesh = true;
+
     private Dictionary<Vector3Int, HashSet<IGridEntry>> _gridEntries = new();
     private Dictionary<IGridEntry, Vector3Int> _gameObjectToGridMap = new();
     [SerializeField] [HideInInspector] private GameObject gridMeshHolder;
-    
+
     /// <summary>
     /// Grabs the grid component.
     /// </summary>
@@ -49,6 +56,7 @@ public class GridBase : MonoBehaviour
         {
             Instance = this;
         }
+
         grid = GetComponent<Grid>();
         GenerateMesh();
     }
@@ -67,19 +75,6 @@ public class GridBase : MonoBehaviour
                 Gizmos.DrawWireCube(grid.GetCellCenterWorld(new Vector3Int(i, 0, j)), grid.cellSize);
             }
         }
-
-        //try and draw a red box based on the cursor position.
-
-        if (debugCursor == null) return;
-
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireCube(GetCellPositionInDirection(debugCursor.position, Vector3.forward), grid.cellSize);
-        Gizmos.DrawWireCube(GetCellPositionInDirection(debugCursor.position, Vector3.back), grid.cellSize);
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(GetCellPositionInDirection(debugCursor.position, Vector3.right), grid.cellSize);
-        Gizmos.DrawWireCube(GetCellPositionInDirection(debugCursor.position, Vector3.left), grid.cellSize);
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(grid.GetCellCenterWorld(WorldToCell(debugCursor.position)), grid.cellSize);
     }
 
     /// <summary>
@@ -170,9 +165,15 @@ public class GridBase : MonoBehaviour
         {
             return false;
         }
+
         return set.Count == 0;
     }
 
+    /// <summary>
+    /// Checks if the cell contains all transparent entries.
+    /// </summary>
+    /// <param name="cellID">The id of the cell being searched.</param>
+    /// <returns>True if all the elements in the cell are transparent.</returns>
     public bool CellIsTransparent(Vector3Int cellID)
     {
         var set = GetCellEntries(cellID);
@@ -191,7 +192,12 @@ public class GridBase : MonoBehaviour
 
         return true;
     }
-    
+
+    /// <summary>
+    /// Checks if the cell contains all transparent entries.
+    /// </summary>
+    /// <param name="position">The world position to find a cell.</param>
+    /// <returns>True if all the elements in the cell are transparent.</returns>
     public bool CellIsTransparent(Vector3 position)
     {
         var set = GetCellEntries(position);
@@ -223,6 +229,7 @@ public class GridBase : MonoBehaviour
         {
             return false;
         }
+
         return set.Count == 0;
     }
 
@@ -275,6 +282,16 @@ public class GridBase : MonoBehaviour
     }
 
     /// <summary>
+    /// Toggles the grid visuals on and off in runtime.
+    /// </summary>
+    /// <param name="active">Whether or not the grid visual should be active.</param>
+    public void ToggleGridVisuals(bool active)
+    {
+        drawGridMesh = active;
+        OnDrawMeshChanged();
+    }
+
+    /// <summary>
     /// Flattens a Vec3 into a Vec3int.
     /// </summary>
     /// <param name="v">A vector3.</param>
@@ -295,18 +312,13 @@ public class GridBase : MonoBehaviour
             return;
         }
 
-        if (gridMeshHolder != null)
+        if (!drawGridMesh)
         {
-            if (Application.isPlaying)
-            {
-               Destroy(gridMeshHolder);
-            }
-            else
-            {
-                DestroyImmediate(gridMeshHolder);
-            }
+            return;
         }
-        
+
+        DestroyMesh();
+
         gridMeshHolder = new GameObject("Grid Mesh Holder")
         {
             transform =
@@ -316,7 +328,7 @@ public class GridBase : MonoBehaviour
         };
         gridMeshHolder.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
 
-        
+
         for (int i = 0; i < gridSize; i++)
         {
             for (int j = 0; j < gridSize; j++)
@@ -330,8 +342,40 @@ public class GridBase : MonoBehaviour
                 scale.y = (grid.cellSize.z);
                 plane.transform.localScale = scale;
                 plane.transform.SetParent(gridMeshHolder.transform, true);
-                plane.GetComponent<MeshRenderer>().material = i % 2 == 1 ^ j % 2 == 0 ? primaryGridMat : secondaryGridMat;
+                plane.GetComponent<MeshRenderer>().material =
+                    i % 2 == 1 ^ j % 2 == 0 ? primaryGridMat : secondaryGridMat;
             }
+        }
+    }
+
+    /// <summary>
+    /// Destroys the grid mesh.
+    /// </summary>
+    private void DestroyMesh()
+    {
+        if (gridMeshHolder == null) return;
+        if (Application.isPlaying)
+        {
+            Destroy(gridMeshHolder);
+        }
+        else
+        {
+            DestroyImmediate(gridMeshHolder);
+        }
+    }
+
+    /// <summary>
+    /// Editor callback for when the draw grid visual bool changed.
+    /// </summary>
+    private void OnDrawMeshChanged()
+    {
+        if (drawGridMesh)
+        {
+            GenerateMesh();
+        }
+        else
+        {
+            DestroyMesh();
         }
     }
 }
