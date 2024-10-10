@@ -193,7 +193,7 @@ public class DebugMenuManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Will toggle ghost mode, currently just displays a notification saying it's on
+    /// Will toggle ghost mode
     /// </summary>
     public void GhostModeToggle()
     {

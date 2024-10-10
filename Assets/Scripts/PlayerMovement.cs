@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Cole Stranczek
-*    Contributors: Cole Stranczek
+*    Contributors: Cole Stranczek, Alex Laubenstein
 *    Date Created: 9/22/24
 *    Description: Script that handles the player's movement along
 *    the grid
