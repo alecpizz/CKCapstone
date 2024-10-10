@@ -23,6 +23,9 @@ public class GridPlacer : MonoBehaviour, IGridEntry
 
     [SerializeField] [BoxGroup("Settings")]
     private bool snapToGrid = true;
+
+    [SerializeField] [BoxGroup("Settings")]
+    private bool disableGridCell = false;
     /// <summary>
     /// Places the object on the grid and updates its position.
     /// </summary>
@@ -33,6 +36,10 @@ public class GridPlacer : MonoBehaviour, IGridEntry
             transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position));
         }
         GridBase.Instance.AddEntry(this);
+        if (disableGridCell)
+        {
+            GridBase.Instance.DisableCellVisual(GridBase.Instance.WorldToCell(transform.position));
+        }
     }
 
     /// <summary>

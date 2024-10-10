@@ -41,7 +41,7 @@ public class GridBase : MonoBehaviour
     private Dictionary<Vector3Int, HashSet<IGridEntry>> _gridEntries = new();
     private Dictionary<IGridEntry, Vector3Int> _gameObjectToGridMap = new();
     [SerializeField] [HideInInspector] private GameObject gridMeshHolder;
-
+    private Dictionary<Vector3Int, MeshRenderer> _gridMeshes = new();
     /// <summary>
     /// Grabs the grid component.
     /// </summary>
@@ -290,6 +290,16 @@ public class GridBase : MonoBehaviour
         drawGridMesh = active;
         OnDrawMeshChanged();
     }
+    
+    
+    /// <summary>
+    /// Disables the grid visual for the cell.
+    /// </summary>
+    /// <param name="key"></param>
+    public void DisableCellVisual(Vector3Int key)
+    {
+        _gridMeshes[key].gameObject.SetActive(false);
+    }
 
     /// <summary>
     /// Flattens a Vec3 into a Vec3int.
@@ -327,12 +337,13 @@ public class GridBase : MonoBehaviour
             }
         };
         gridMeshHolder.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
-
-
+        _gridMeshes.Clear();
+        
         for (int i = 0; i < gridSize; i++)
         {
             for (int j = 0; j < gridSize; j++)
             {
+                Vector3Int index = new Vector3Int(i, 0, j);
                 var pos = CellToWorld(new Vector3Int(i, 0, j));
                 var plane = GameObject.CreatePrimitive(PrimitiveType.Quad);
                 plane.transform.position = pos;
@@ -344,10 +355,12 @@ public class GridBase : MonoBehaviour
                 plane.transform.SetParent(gridMeshHolder.transform, true);
                 plane.GetComponent<MeshRenderer>().material =
                     i % 2 == 1 ^ j % 2 == 0 ? primaryGridMat : secondaryGridMat;
+                _gridMeshes.Add(index, plane.GetComponent<MeshRenderer>());
             }
         }
     }
 
+    
     /// <summary>
     /// Destroys the grid mesh.
     /// </summary>
