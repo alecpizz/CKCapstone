@@ -34,7 +34,7 @@ public class GridBase : MonoBehaviour
     private Dictionary<Vector3Int, HashSet<IGridEntry>> _gridEntries = new();
     private Dictionary<IGridEntry, Vector3Int> _gameObjectToGridMap = new();
     [SerializeField] [HideInInspector] private GameObject gridMeshHolder;
-
+    
     /// <summary>
     /// Grabs the grid component.
     /// </summary>
