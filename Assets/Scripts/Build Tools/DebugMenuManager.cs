@@ -33,7 +33,7 @@ public class DebugMenuManager : MonoBehaviour
     private bool _dMenu = false;
     private bool _qMenu = false;
     private bool _fpsCount = false;
-    public bool ghostMode = false;
+    public bool ghostMode { get; private set; } = false;
     private bool _invincibility = false;
     private bool _enemyTurn = true;
 
