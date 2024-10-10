@@ -164,4 +164,5 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
 
     public bool IsTransparent { get => true; }
     public Vector3 Position { get => transform.position; }
+    public GameObject GetGameObject { get => gameObject; }
 }

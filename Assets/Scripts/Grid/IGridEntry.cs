@@ -19,4 +19,6 @@ public interface IGridEntry
     /// The position of the object, in world space.
     /// </summary>
     Vector3 Position { get; }
+
+    GameObject GetGameObject { get; }
 }
