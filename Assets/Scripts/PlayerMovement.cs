@@ -63,7 +63,7 @@ public class PlayerMovement : MonoBehaviour
         {
             // Move down and remove the pointer
             var downMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.back);
-            if (GridBase.Instance.CellIsEmpty(downMove))
+            if (GridBase.Instance.CellIsEmpty(downMove) || DebugMenuManager.instance.ghostMode == true)
             {
                 gameObject.transform.position = downMove;
                 GridBase.Instance.UpdateEntry(gameObject);
@@ -93,7 +93,7 @@ public class PlayerMovement : MonoBehaviour
         {
             // Move up and remove the pointer
             var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
-            if (GridBase.Instance.CellIsEmpty(upMove))
+            if (GridBase.Instance.CellIsEmpty(upMove) || DebugMenuManager.instance.ghostMode == true)
             {
                 gameObject.transform.position = upMove;
                 GridBase.Instance.UpdateEntry(gameObject);
@@ -123,7 +123,7 @@ public class PlayerMovement : MonoBehaviour
         {
             // Move left and remove the pointer
             var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
-            if (GridBase.Instance.CellIsEmpty(leftMove))
+            if (GridBase.Instance.CellIsEmpty(leftMove) || DebugMenuManager.instance.ghostMode == true)
             {
                 gameObject.transform.position = leftMove;
                 GridBase.Instance.UpdateEntry(gameObject);
@@ -153,7 +153,7 @@ public class PlayerMovement : MonoBehaviour
         {
             // Move Right and remove the pointer
             var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
-            if(GridBase.Instance.CellIsEmpty(rightMove))
+            if(GridBase.Instance.CellIsEmpty(rightMove) || DebugMenuManager.instance.ghostMode == true)
             {
                 gameObject.transform.position = rightMove;
                 GridBase.Instance.UpdateEntry(gameObject);   
