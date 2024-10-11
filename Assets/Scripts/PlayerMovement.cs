@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Cole Stranczek
-*    Contributors: Cole Stranczek
+*    Contributors: Cole Stranczek, Nick Grinstead
 *    Date Created: 9/22/24
 *    Description: Script that handles the player's movement along
 *    the grid
@@ -14,6 +14,8 @@ using UnityEngine.Windows;
 
 public class PlayerMovement : MonoBehaviour, IGridEntry
 {
+    public Vector3 FacingDirection { get; private set; }
+    
     private PlayerControls _input;
 
     [SerializeField] private GameObject _upPointer;
@@ -24,6 +26,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     // Start is called before the first frame update
     void Start()
     {
+        FacingDirection = new Vector3(0, 0, 0);
+
         GridBase.Instance.AddEntry(this);
 
         // Referencing and setup of the Input Action functions
@@ -49,6 +53,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     /// <param name="obj"></param>
     private void MoveDownPerformed(InputAction.CallbackContext obj)
     {
+        FacingDirection = Vector3.back;
+
         // Sets the Down directional pointer if this is the first button
         // press
         if (!_downPointer.activeInHierarchy)
@@ -79,6 +85,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     /// <param name="obj"></param>
     private void MoveUpPerformed(InputAction.CallbackContext obj)
     {
+        FacingDirection = Vector3.forward;
+
         // Sets the Up directional pointer if this is the first button
         // press
         if (!_upPointer.activeInHierarchy)
@@ -109,6 +117,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     /// <param name="obj"></param>
     private void MoveLeftPerformed(InputAction.CallbackContext obj)
     {
+        FacingDirection = Vector3.left;
+
         // Sets the Left directional pointer if this is the first button
         // press
         if (!_leftPointer.activeInHierarchy)
@@ -139,6 +149,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     /// <param name="obj"></param>
     private void MoveRightPerformed(InputAction.CallbackContext obj)
     {
+        FacingDirection = Vector3.right;
+
         // Sets the Right directional pointer if this is the first button
         // press
         if (!_rightPointer.activeInHierarchy)

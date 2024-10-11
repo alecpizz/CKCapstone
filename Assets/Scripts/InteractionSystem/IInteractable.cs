@@ -1,21 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
+/******************************************************************
+*    Author: Nick Grinstead
+*    Contributors: 
+*    Date Created: 10/10/24
+*    Description: Interface for objects that the player can interact
+*    with.
+*******************************************************************/
 using UnityEngine;
 
-public class IInteractable : MonoBehaviour
+public interface IInteractable
 {
     /// <summary>
     /// Field to retrieve attached GameObject
     /// </summary>
-    public GameObject AttachedGameObject
-        { get => gameObject; private set => AttachedGameObject = value; }
+    GameObject GetGameObject { get; }
+
 
     /// <summary>
     /// This function will be implemented to contain the specific functionality
     /// for an interactable object
     /// </summary>
-    public void OnInteract()
-    {
-        throw new System.NotImplementedException("OnInteract not implemented");
-    }
+    public void OnInteract();
 }
