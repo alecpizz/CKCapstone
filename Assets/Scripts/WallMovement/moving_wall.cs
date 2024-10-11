@@ -7,6 +7,7 @@ public class moving_wall : MonoBehaviour
     private Vector3 originTransform;
 
     [SerializeField] private Vector3 wallTransform;
+    [SerializeField] private Material wallColor;
 
     // Start is called before the first frame update
     void Start()
@@ -14,15 +15,10 @@ public class moving_wall : MonoBehaviour
         originTransform = transform.position;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void Wall_Is_Moved()
     {
         transform.position = wallTransform;
+        
     }
 
     public void Wall_Move_Back()
