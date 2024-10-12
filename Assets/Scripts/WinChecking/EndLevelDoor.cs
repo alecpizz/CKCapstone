@@ -53,8 +53,7 @@ public class EndLevelDoor : MonoBehaviour
     {
         if (_isUnlocked && other.CompareTag("Player"))
         {
-            SceneManager.LoadScene(_levelIndexToLoad);
-            Debug.Log("Load level with index: " + _levelIndexToLoad);
+            SceneController.Instance.LoadNewScene(_levelIndexToLoad);
         }
         else if (other.CompareTag("Player"))
         {
