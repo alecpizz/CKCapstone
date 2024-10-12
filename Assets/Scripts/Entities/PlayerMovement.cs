@@ -21,6 +21,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private GameObject _leftPointer;
     [SerializeField] private GameObject _rightPointer;
 
+    public bool playerMoved;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -47,7 +49,7 @@ public class PlayerMovement : MonoBehaviour
     /// binding is triggered
     /// </summary>
     /// <param name="obj"></param>
-    private void MoveDownPerformed(InputAction.CallbackContext obj)
+    public void MoveDownPerformed(InputAction.CallbackContext obj)
     {
         // Sets the Down directional pointer if this is the first button
         // press
@@ -69,6 +71,8 @@ public class PlayerMovement : MonoBehaviour
                 GridBase.Instance.UpdateEntry(gameObject);
             }
             _downPointer.SetActive(false);
+
+            playerMoved = true;
         }
     }
 
@@ -99,6 +103,8 @@ public class PlayerMovement : MonoBehaviour
                 GridBase.Instance.UpdateEntry(gameObject);
             }
             _upPointer.SetActive(false);
+
+            playerMoved = true;
         }
     }
 
@@ -129,6 +135,8 @@ public class PlayerMovement : MonoBehaviour
                 GridBase.Instance.UpdateEntry(gameObject);
             }
             _leftPointer.SetActive(false);
+
+            playerMoved = true;
         }
     }
 
@@ -159,6 +167,8 @@ public class PlayerMovement : MonoBehaviour
                 GridBase.Instance.UpdateEntry(gameObject);   
             }
             _rightPointer.SetActive(false);
+
+            playerMoved = true;
         }
     }
 }
