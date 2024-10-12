@@ -16,6 +16,7 @@ using NaughtyAttributes;
 public class SceneController : MonoBehaviour
 {
     public static SceneController Instance;
+
     // Remembers previous wipe color when loading a new scene
     private static Color CurrentFadeColor = Color.black;
 
@@ -76,7 +77,7 @@ public class SceneController : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Called by the circle wipe coroutine to center the circle over the player
     /// </summary>
     private void RepositionCircleWipe()
     {
@@ -105,6 +106,7 @@ public class SceneController : MonoBehaviour
     /// Handles the smoothly animating the circle wipe over a period of time
     /// </summary>
     /// <param name="isFadingIn">True if circle should move out, false if it should close in</param>
+    /// <param name="fadeColor">Determines color of the background during wipe</param>
     /// <param name="sceneIndexToLoad">Index of the scene to load, only needed if fading out</param>
     private IEnumerator CircleWipeTransition(bool isFadingIn, Color fadeColor, int sceneIndexToLoad = -1)
     {
