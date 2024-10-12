@@ -1670,58 +1670,43 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1927230979896276126, guid: 4b4ed906bab175f468c3e8cc2650a794,
         type: 3}
+      propertyPath: enemy
+      value: 
+      objectReference: {fileID: 1776029355}
+    - target: {fileID: 1927230979896276126, guid: 4b4ed906bab175f468c3e8cc2650a794,
+        type: 3}
       propertyPath: _upPointer
       value: 
-      objectReference: {fileID: 528456420}
+      objectReference: {fileID: 0}
     - target: {fileID: 1927230979896276126, guid: 4b4ed906bab175f468c3e8cc2650a794,
         type: 3}
       propertyPath: _downPointer
       value: 
-      objectReference: {fileID: 528456419}
+      objectReference: {fileID: 0}
     - target: {fileID: 1927230979896276126, guid: 4b4ed906bab175f468c3e8cc2650a794,
         type: 3}
       propertyPath: _leftPointer
       value: 
-      objectReference: {fileID: 528456418}
+      objectReference: {fileID: 0}
     - target: {fileID: 1927230979896276126, guid: 4b4ed906bab175f468c3e8cc2650a794,
         type: 3}
       propertyPath: _rightPointer
       value: 
-      objectReference: {fileID: 528456417}
+      objectReference: {fileID: 0}
     - target: {fileID: 2735164925453966809, guid: 4b4ed906bab175f468c3e8cc2650a794,
         type: 3}
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 8727859426261679579, guid: 4b4ed906bab175f468c3e8cc2650a794, type: 3}
+    - {fileID: 1317350430989100906, guid: 4b4ed906bab175f468c3e8cc2650a794, type: 3}
+    - {fileID: 3128790273862555454, guid: 4b4ed906bab175f468c3e8cc2650a794, type: 3}
+    - {fileID: 3782616084152203658, guid: 4b4ed906bab175f468c3e8cc2650a794, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4b4ed906bab175f468c3e8cc2650a794, type: 3}
---- !u!1 &528456417 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3782616084152203658, guid: 4b4ed906bab175f468c3e8cc2650a794,
-    type: 3}
-  m_PrefabInstance: {fileID: 528456416}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &528456418 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1317350430989100906, guid: 4b4ed906bab175f468c3e8cc2650a794,
-    type: 3}
-  m_PrefabInstance: {fileID: 528456416}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &528456419 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3128790273862555454, guid: 4b4ed906bab175f468c3e8cc2650a794,
-    type: 3}
-  m_PrefabInstance: {fileID: 528456416}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &528456420 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8727859426261679579, guid: 4b4ed906bab175f468c3e8cc2650a794,
-    type: 3}
-  m_PrefabInstance: {fileID: 528456416}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &557586736
 GameObject:
   m_ObjectHideFlags: 0
@@ -3031,6 +3016,37 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 898205348}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &913059645
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 913059646}
+  m_Layer: 0
+  m_Name: ThirdDestination
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &913059646
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 913059645}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 15.028, y: 0.8101418, z: 6.84}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &942804234
 GameObject:
   m_ObjectHideFlags: 0
@@ -3465,7 +3481,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1077620328}
   m_Layer: 0
-  m_Name: EnemyDestination
+  m_Name: SecondDestination
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6745,9 +6761,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 587945343}
-  tilesMoved: 2
-  start: {fileID: 0}
+  tilesMoved: 1
+  start: {fileID: 1536351981}
   destination: {fileID: 1077620328}
+  atStart: 0
+  currentPoint: 0
 --- !u!114 &1776029357
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7814,3 +7832,4 @@ SceneRoots:
   - {fileID: 1776029361}
   - {fileID: 1536351981}
   - {fileID: 1077620328}
+  - {fileID: 913059646}

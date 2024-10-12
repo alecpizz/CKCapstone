@@ -16,11 +16,6 @@ public class PlayerMovement : MonoBehaviour
 {
     private PlayerControls _input;
 
-    [SerializeField] private GameObject _upPointer;
-    [SerializeField] private GameObject _downPointer;
-    [SerializeField] private GameObject _leftPointer;
-    [SerializeField] private GameObject _rightPointer;
-
     public bool playerMoved;
 
     // Start is called before the first frame update
@@ -36,12 +31,6 @@ public class PlayerMovement : MonoBehaviour
         _input.InGame.MoveLeft.performed += MoveLeftPerformed;
         _input.InGame.MoveRight.performed += MoveRightPerformed;
 
-        // Gets rid of all the pointers by default
-        _upPointer.SetActive(false);
-        _downPointer.SetActive(false);
-        _leftPointer.SetActive(false);
-        _rightPointer.SetActive(false);
-
     }
 
     /// <summary>
@@ -51,28 +40,13 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="obj"></param>
     public void MoveDownPerformed(InputAction.CallbackContext obj)
     {
-        // Sets the Down directional pointer if this is the first button
-        // press
-        if (!_downPointer.activeInHierarchy)
+        
+        // Move down and remove the pointer
+        var downMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.back);
+        if (GridBase.Instance.CellIsEmpty(downMove))
         {
-            _downPointer.SetActive(true);
-
-            _upPointer.SetActive(false);
-            _leftPointer.SetActive(false);
-            _rightPointer.SetActive(false);
-        }
-        else
-        {
-            // Move down and remove the pointer
-            var downMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.back);
-            if (GridBase.Instance.CellIsEmpty(downMove))
-            {
-                gameObject.transform.position = downMove;
-                GridBase.Instance.UpdateEntry(gameObject);
-            }
-            _downPointer.SetActive(false);
-
-            playerMoved = true;
+            gameObject.transform.position = downMove;
+            GridBase.Instance.UpdateEntry(gameObject);
         }
     }
 
@@ -83,18 +57,7 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="obj"></param>
     private void MoveUpPerformed(InputAction.CallbackContext obj)
     {
-        // Sets the Up directional pointer if this is the first button
-        // press
-        if (!_upPointer.activeInHierarchy)
-        {
-            _upPointer.SetActive(true);
-
-            _downPointer.SetActive(false);
-            _leftPointer.SetActive(false);
-            _rightPointer.SetActive(false);
-        }
-        else
-        {
+        
             // Move up and remove the pointer
             var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
             if (GridBase.Instance.CellIsEmpty(upMove))
@@ -102,10 +65,9 @@ public class PlayerMovement : MonoBehaviour
                 gameObject.transform.position = upMove;
                 GridBase.Instance.UpdateEntry(gameObject);
             }
-            _upPointer.SetActive(false);
 
             playerMoved = true;
-        }
+        
     }
 
     /// <summary>
@@ -115,18 +77,7 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="obj"></param>
     private void MoveLeftPerformed(InputAction.CallbackContext obj)
     {
-        // Sets the Left directional pointer if this is the first button
-        // press
-        if (!_leftPointer.activeInHierarchy)
-        {
-            _leftPointer.SetActive(true);
-
-            _upPointer.SetActive(false);
-            _downPointer.SetActive(false);
-            _rightPointer.SetActive(false);
-        }
-        else
-        {
+        
             // Move left and remove the pointer
             var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
             if (GridBase.Instance.CellIsEmpty(leftMove))
@@ -134,10 +85,8 @@ public class PlayerMovement : MonoBehaviour
                 gameObject.transform.position = leftMove;
                 GridBase.Instance.UpdateEntry(gameObject);
             }
-            _leftPointer.SetActive(false);
-
             playerMoved = true;
-        }
+        
     }
 
     /// <summary>
@@ -147,18 +96,7 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="obj"></param>
     private void MoveRightPerformed(InputAction.CallbackContext obj)
     {
-        // Sets the Right directional pointer if this is the first button
-        // press
-        if (!_rightPointer.activeInHierarchy)
-        {
-            _rightPointer.SetActive(true);
-
-            _upPointer.SetActive(false);
-            _downPointer.SetActive(false);
-            _leftPointer.SetActive(false);
-        }
-        else
-        {
+      
             // Move Right and remove the pointer
             var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
             if(GridBase.Instance.CellIsEmpty(rightMove))
@@ -166,9 +104,8 @@ public class PlayerMovement : MonoBehaviour
                 gameObject.transform.position = rightMove;
                 GridBase.Instance.UpdateEntry(gameObject);   
             }
-            _rightPointer.SetActive(false);
 
             playerMoved = true;
-        }
+       
     }
 }
