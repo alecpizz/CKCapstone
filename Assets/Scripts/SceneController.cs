@@ -5,7 +5,7 @@
 *    Description: Handles the loading and reloading of scenes along with
 *    performning a screen wipe transition.
 *    Used https://www.youtube.com/watch?v=9d5Pz4SNmqo&t=300s as reference
-*    for the shader graph set-up and properties.
+*    for the shader graph set-up.
 *******************************************************************/
 using System.Collections;
 using UnityEngine;
@@ -16,7 +16,7 @@ using NaughtyAttributes;
 public class SceneController : MonoBehaviour
 {
     public static SceneController Instance;
-
+    // Remembers previous wipe color when loading a new scene
     private static Color CurrentFadeColor = Color.black;
 
     [Required]
@@ -75,6 +75,9 @@ public class SceneController : MonoBehaviour
         StartCoroutine(CircleWipeTransition(false, CurrentFadeColor, sceneBuildIndex));
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     private void RepositionCircleWipe()
     {
         // Do circle wipe in center of the screen if there's no player
