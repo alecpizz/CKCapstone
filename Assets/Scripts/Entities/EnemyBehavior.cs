@@ -27,7 +27,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
     [SerializeField] private bool atStart;
     [SerializeField] private int currentPoint = 0;
 
-    private List<GameObject> movePoints = new List<GameObject>();
+    PlayerMovement playerMoveRef;
+    [SerializeField] private float moveRate = 1f;
+    [SerializeField] private float waitTime = 1f;
+
+    [SerializeField]  private List<GameObject> movePoints = new List<GameObject>();
 
 
     // Start is called before the first frame update
@@ -45,12 +49,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
         _input.InGame.MoveLeft.performed += EnemyMove;
         _input.InGame.MoveRight.performed += EnemyMove;
 
+        playerMoveRef = player.GetComponent<PlayerMovement>();
         GridBase.Instance.AddEntry(this);
-
-        // Adding destination points to the list to cycle through them
-        movePoints.Add(GameObject.Find("StartDestination"));
-        movePoints.Add(GameObject.Find("SecondDestination"));
-        movePoints.Add(GameObject.Find("ThirdDestination"));
 
         // Make sure enemiess are always seen at the start
         atStart = true;
@@ -62,38 +62,36 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
     /// <param name="obj"></param>
     public void EnemyMove(InputAction.CallbackContext obj)
     {
-        //var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
-        //var downMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.back);
-        //var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
-        //var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
+        var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
+        var downMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.back);
+        var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
+        var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
 
-        //var startPos = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(start.transform.position));
-        //var desPos = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(destination.transform.position));
-
-        // If the enemy at the first point in the list, count up to make it
-        // move "forward" through the points
-        if(atStart)
+        var nextPos = movePoints[currentPoint].transform.position;
+        var currentPos = gameObject.transform.position;
+        if (playerMoveRef.enemiesMoved == true)
         {
-            currentPoint++;
-            gameObject.transform.position = movePoints[currentPoint].transform.position;
-
-            // When it reaches the end of the list, it's no longer at the start
-            if (currentPoint == movePoints.Count - 1)
+            if (atStart)
             {
-                atStart = false;
+                currentPoint++;
+                playerMoveRef.enemiesMoved = false;
+                StartCoroutine(MoveOverTime2());
+
+                if (currentPoint == movePoints.Count - 1)
+                {
+                    atStart = false;
+                }
             }
-        }
-        // If the enemy at the last point in the list, count down to make it
-        // move "backward" through the points
-        else
-        {
-            currentPoint--;
-            gameObject.transform.position = movePoints[currentPoint].transform.position;
-
-            // When it reaches the front of the list, it's no longer at the end 
-            if (currentPoint == 0)
+            else
             {
-                atStart = true;
+                currentPoint--;
+                playerMoveRef.enemiesMoved = false;
+                StartCoroutine(MoveOverTime2());
+
+                if (currentPoint == 0)
+                {
+                    atStart = true;
+                }
             }
         }
 
@@ -111,5 +109,25 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
 
         //    playerMoveRef.playerMoved = false;
         //}
+    }
+
+    /// <summary>
+    /// Function moves enemy from either current x or z position on the grid to next x or z position on the grid.
+    /// </summary>
+    /// <returns></returns>
+
+    IEnumerator MoveOverTime2()
+    {
+        Vector3 startPos = transform.position;
+
+        for (float i = 0; i <= waitTime; i += 0.05f)
+        {
+            yield return new WaitForSeconds(0.05f);
+            transform.position = Vector3.Lerp(startPos, movePoints[currentPoint].transform.position, i / waitTime);
+            Debug.Log(i);
+        }
+
+        transform.position = movePoints[currentPoint].transform.position;
+        playerMoveRef.enemiesMoved = true;
     }
 }
