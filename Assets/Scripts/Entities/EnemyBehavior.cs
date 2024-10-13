@@ -11,8 +11,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class EnemyBehavior : MonoBehaviour
+public class EnemyBehavior : MonoBehaviour, IGridEntry
 {
+    public bool IsTransparent { get => true; }
+    public Vector3 Position { get => transform.position; }
+    public GameObject GetGameObject { get => gameObject; }
+
     private PlayerControls _input;
 
     [SerializeField] private GameObject player;
@@ -41,7 +45,7 @@ public class EnemyBehavior : MonoBehaviour
         _input.InGame.MoveLeft.performed += EnemyMove;
         _input.InGame.MoveRight.performed += EnemyMove;
 
-        GridBase.Instance.AddEntry(gameObject);
+        GridBase.Instance.AddEntry(this);
 
         // Adding destination points to the list to cycle through them
         movePoints.Add(GameObject.Find("StartDestination"));

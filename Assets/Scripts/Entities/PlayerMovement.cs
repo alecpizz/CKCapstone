@@ -13,16 +13,25 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.Windows;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour, IGridEntry
 {
+
+
     private PlayerControls _input;
 
+    public Vector3 FacingDirection { get; private set; }
+
     public bool playerMoved;
+    public bool IsTransparent { get => true; }
+    public Vector3 Position { get => transform.position; }
+    public GameObject GetGameObject { get => gameObject; }
 
     // Start is called before the first frame update
     void Start()
     {
-        GridBase.Instance.AddEntry(gameObject);
+        FacingDirection = new Vector3(0, 0, 0);
+
+        GridBase.Instance.AddEntry(this);
 
         // Referencing and setup of the Input Action functions
         _input = new PlayerControls();
@@ -41,13 +50,14 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="obj"></param>
     public void MoveDownPerformed(InputAction.CallbackContext obj)
     {
-        
+        FacingDirection = Vector3.back;
+
         // Move down and remove the pointer
         var downMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.back);
         if (GridBase.Instance.CellIsEmpty(downMove))
         {
             gameObject.transform.position = downMove;
-            GridBase.Instance.UpdateEntry(gameObject);
+            GridBase.Instance.UpdateEntry(this);
         }
     }
 
@@ -58,12 +68,14 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="obj"></param>
     private void MoveUpPerformed(InputAction.CallbackContext obj)
     {
+        FacingDirection = Vector3.forward;
+
         // Move up and remove the pointer
         var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
         if (GridBase.Instance.CellIsEmpty(upMove))
         {
             gameObject.transform.position = upMove;
-            GridBase.Instance.UpdateEntry(gameObject);
+            GridBase.Instance.UpdateEntry(this);
         }
         playerMoved = true;
         
@@ -76,12 +88,14 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="obj"></param>
     private void MoveLeftPerformed(InputAction.CallbackContext obj)
     {
+        FacingDirection = Vector3.left;
+
         // Move left and remove the pointer
         var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
         if (GridBase.Instance.CellIsEmpty(leftMove))
         {
            gameObject.transform.position = leftMove;
-           GridBase.Instance.UpdateEntry(gameObject);
+           GridBase.Instance.UpdateEntry(this);
         }
 
         playerMoved = true;
@@ -94,12 +108,14 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="obj"></param>
     private void MoveRightPerformed(InputAction.CallbackContext obj)
     {
+        FacingDirection = Vector3.right;
+
         // Move Right and remove the pointer
         var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
         if(GridBase.Instance.CellIsEmpty(rightMove))
         {
            gameObject.transform.position = rightMove;
-           GridBase.Instance.UpdateEntry(gameObject);   
+           GridBase.Instance.UpdateEntry(this);   
         }
 
         playerMoved = true; 
