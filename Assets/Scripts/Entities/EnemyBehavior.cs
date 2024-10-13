@@ -21,8 +21,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
 
     [SerializeField] private GameObject player;
     [SerializeField] private int tilesMoved;
-    [SerializeField] private Transform start;
-    [SerializeField] private Transform destination;
 
     [SerializeField] private bool atStart;
     [SerializeField] private int currentPoint = 0;
@@ -32,6 +30,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
     [SerializeField] private float waitTime = 1f;
 
     public List<GameObject> movePoints = new List<GameObject>();
+
+    public bool enemyFrozen = false;
 
 
     // Start is called before the first frame update
@@ -69,7 +69,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
 
         var nextPos = movePoints[currentPoint].transform.position;
         var currentPos = gameObject.transform.position;
-        if (playerMoveRef.enemiesMoved == true)
+        if (playerMoveRef.enemiesMoved == true && enemyFrozen == false)
         {
             if (atStart)
             {
