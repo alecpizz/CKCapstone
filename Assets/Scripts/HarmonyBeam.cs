@@ -2,18 +2,20 @@
 *    Author: Claire Noto
 *    Contributors: Claire Noto
 *    Date Created: 10/10/24
-*    Description: Script that handles the harmony
+*    Description: Script that handles the harmony beam
 *******************************************************************/
 using System.Collections.Generic;
 using UnityEngine;
 
 public class HarmonyBeam : MonoBehaviour
 {
-    private float _laserDistance = 50f;
+    [SerializeField] private float _laserDistance = 50f;
     private LineRenderer _lineRenderer;
-    private List<GameObject> _previouslyHitEnemies = new();
 
-    void Start()
+    // Track enemy states: true = hit, false = not hit
+    private Dictionary<GameObject, bool> _enemyHitStates = new();
+
+    void Awake()
     {
         _lineRenderer = GetComponent<LineRenderer>();
     }
@@ -31,59 +33,99 @@ public class HarmonyBeam : MonoBehaviour
     /// <param name="distance">distance the laser will go</param>
     public void ShootLaser(Vector3 startPosition, Vector3 direction, float distance)
     {
-        _lineRenderer.positionCount = 2;  // Ensure the line renderer has 2 points (start and end)
+        // Clear the previous line and start a new one
+        _lineRenderer.positionCount = 1;
         _lineRenderer.SetPosition(0, startPosition);  // Starting point of the laser
 
-        RaycastHit[] hits = Physics.RaycastAll(startPosition, direction, distance);
-        System.Array.Sort(hits, (hit1, hit2) => hit1.distance.CompareTo(hit2.distance));  // Sort hits by distance
+        Vector3 currentStartPosition = startPosition;
+        Vector3 currentDirection = direction;
+        float remainingDistance = distance;
 
-        Vector3 laserEndPoint = startPosition + direction * distance;  // Default endpoint of the laser
-        List<GameObject> currentlyHitEnemies = new();
+        int reflections = 0;  
+        const int maxReflections = 10;  // Limit the number of reflections to prevent infinite loops
 
-        foreach (RaycastHit hit in hits)
+        HashSet<GameObject> currentlyHitEnemies = new();  // Used to track enemies hit in this frame
+
+        while (remainingDistance > 0 && reflections < maxReflections)
         {
-            if (hit.collider.CompareTag("Enemy"))
-            {
-                GameObject enemy = hit.collider.gameObject;
-                Debug.Log("Froze enemy");
+            RaycastHit[] hits = Physics.RaycastAll(currentStartPosition, currentDirection, remainingDistance);
+            System.Array.Sort(hits, (hit1, hit2) => hit1.distance.CompareTo(hit2.distance));  // Sort hits by distance
 
-                // Add to the currently hit list
-                currentlyHitEnemies.Add(enemy);
-            }
-            else if (hit.collider.CompareTag("Reflective"))
+            bool hitSomething = false;
+            foreach (RaycastHit hit in hits)
             {
-                // Reflect the laser using the ReflectiveObject's Reflect method
-                var reflectiveObject = hit.collider.GetComponent<ReflectiveObject>();
-                if (reflectiveObject)
+                _lineRenderer.positionCount += 1;
+                _lineRenderer.SetPosition(_lineRenderer.positionCount - 1, hit.point);
+
+                if (hit.collider.CompareTag("Enemy"))
                 {
-                    reflectiveObject.Reflect(direction, distance - hit.distance);
-                }
+                    GameObject enemy = hit.collider.gameObject;
+                    currentlyHitEnemies.Add(enemy);
 
-                // Stop the main laser at the reflective object
-                laserEndPoint = hit.point;
-                break;
+                    // Check if the enemy was not hit before
+                    if (!_enemyHitStates.ContainsKey(enemy) || !_enemyHitStates[enemy])
+                    {
+                        // Handle when an enemy first enters the beam
+                        _enemyHitStates[enemy] = true;
+                        Debug.Log("Froze enemy: " + enemy.name);
+                        // FREEZE ENEMY HERE!!!!!!
+                    }
+
+                    continue;
+                }
+                else if (hit.collider.CompareTag("Reflective"))
+                {
+                    var reflectiveObject = hit.collider.GetComponent<ReflectiveObject>();
+                    if (reflectiveObject)
+                    {
+                        // Get the reflected direction from the ReflectiveObject
+                        currentDirection = reflectiveObject.GetReflectionDirection(currentDirection);
+
+                        // Update currentStartPosition to where the beam hit the reflective object
+                        currentStartPosition = hit.point;
+                        remainingDistance -= hit.distance;
+                        reflections++;
+                        hitSomething = true;
+                        break;
+                    }
+                }
+                else
+                {
+                    // Stop the beam at a non-enemy, non-reflective object
+                    remainingDistance = 0;
+                    hitSomething = true;
+                    break;
+                }
             }
-            else
+
+            if (!hitSomething)
             {
-                // Stop the laser at a non-enemy, non-reflective object
-                laserEndPoint = hit.point;
+                _lineRenderer.positionCount += 1;
+                _lineRenderer.SetPosition(_lineRenderer.positionCount - 1, currentStartPosition + currentDirection * remainingDistance);
                 break;
             }
         }
 
-        _lineRenderer.SetPosition(1, laserEndPoint);
-
-        // Unfreeze any enemies that were previously hit but not hit now
-        foreach (GameObject enemy in _previouslyHitEnemies)
+        // Handle when enemies leave the beam
+        List<GameObject> enemiesToUnfreeze = new();
+        foreach (var enemy in _enemyHitStates.Keys)
         {
+            if (!_enemyHitStates[enemy]) continue;  // If already unfrozen, skip
+
             if (!currentlyHitEnemies.Contains(enemy))
             {
-                Debug.Log("Unfroze enemy");
+                // The enemy was hit before but is no longer in the beam
+                Debug.Log("Unfroze enemy: " + enemy.name);
+
+                //UNFREEZE ENEMY HERE!!!!!!!!
+
+                enemiesToUnfreeze.Add(enemy);
             }
         }
 
-        // Update the previously hit enemies list
-        _previouslyHitEnemies.Clear();
-        _previouslyHitEnemies.AddRange(currentlyHitEnemies);
+        foreach (GameObject enemy in enemiesToUnfreeze)
+        {
+            _enemyHitStates[enemy] = false;
+        }
     }
 }
