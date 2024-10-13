@@ -18,6 +18,9 @@ public class HUDscript : MonoBehaviour
 {
     [Required][SerializeField] private TextMeshProUGUI _collectedNotesUI;
     [SerializeField] private float _messageWaitTime;
+    [SerializeField] private GameObject _doorUnlockMessage;
+    [SerializeField] private GameObject _incorrectMessage;
+    private TextMeshProUGUI _sequenceUI;
 
     private List<int> _notes;
 
