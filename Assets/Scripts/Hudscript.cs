@@ -17,10 +17,13 @@ using NaughtyAttributes;
 public class HUDscript : MonoBehaviour
 {
     [Required][SerializeField] private TextMeshProUGUI _collectedNotesUI;
+    [SerializeField] private TextMeshProUGUI _sequenceUI;
     [SerializeField] private float _messageWaitTime;
+    [SerializeField] private float _doorUnlockMessage;
+    [SerializeField] private float _incorrectMessage;
+   
 
     private List<int> _notes;
-
     private const string BaseCollectedText = "Collected Notes:";
 
     /// <summary>
@@ -43,8 +46,8 @@ public class HUDscript : MonoBehaviour
         }
 
         WinChecker.CollectedNote += UpdateCollectedNotesText;
-        WinChecker.GotCorrectSequence += DisplayDoorUnlockMessage;
-        WinChecker.GotWrongSequence += DisplayIncorrectMessage;
+        WinChecker.GotCorrectSequence += DisplayDoorUnlockMessage();
+        WinChecker.GotWrongSequence += ctx => DisplayIncorrectMessage();
     }
 
     /// <summary>
@@ -53,8 +56,8 @@ public class HUDscript : MonoBehaviour
     private void OnDisable()
     {
         WinChecker.CollectedNote -= UpdateCollectedNotesText;
-        WinChecker.GotCorrectSequence -= DisplayDoorUnlockMessage;
-        WinChecker.GotWrongSequence -= DisplayIncorrectMessage;
+        WinChecker.GotCorrectSequence -= ctx => DisplayDoorUnlockMessage();
+        WinChecker.GotWrongSequence -= ctx => DisplayIncorrectMessage();
     }
 
     /// <summary>
@@ -77,11 +80,10 @@ public class HUDscript : MonoBehaviour
     /// <summary>
     /// Invoked to display the wrong sequence screen
     /// </summary>
-    private void DisplayIncorrectMessage()
+    private void DisplayIncorrectMessage(GameObject _incorrectMessage)
     {
         ResetCollectedNotesText();
         StopAllCoroutines();
-        _doorUnlockMessage.SetActive(false);
         _incorrectMessage.SetActive(false);
         StartCoroutine(IncorrectMessageResetTimer(_incorrectMessage));
     }
@@ -89,7 +91,7 @@ public class HUDscript : MonoBehaviour
     /// <summary>
     /// Displays message that door has been unlocked
     /// </summary>
-    private void DisplayDoorUnlockMessage()
+    private void DisplayDoorUnlockMessage(GameObject _doorUnlockMessage)
     {
         _doorUnlockMessage.SetActive(true);
     }
