@@ -34,18 +34,19 @@ public class SwitchTrigger : MonoBehaviour
         {
             _isTriggered = !_isTriggered;
 
-                for (int i = 0; i < _moveWalls.Count; i++)
+            for (int i = 0; i < _moveWalls.Count; i++)
+            {
+                if (_isTriggered)
                 {
-                    if (_isTriggered)
-                    {
-                        _moveWalls[i].WallIsMoved();
-                    }
-                    else
-                    {
-                        _moveWalls[i].WallMoveBack();
-                    }
+                    _moveWalls[i].WallIsMoved();
                 }
+                else
+                {
+                    _moveWalls[i].WallMoveBack();
+                }
+            }
         }
     }
+}
 
 
