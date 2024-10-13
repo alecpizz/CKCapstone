@@ -17,23 +17,31 @@ using UnityEngine.Serialization;
 /// Class for interfacing with a grid. Stores information about
 /// what entities are in a cell. Also contains space conversions within it.
 /// </summary>
+[DefaultExecutionOrder(-10000)]
 [RequireComponent(typeof(Grid))]
 public class GridBase : MonoBehaviour
 {
     public static GridBase Instance { get; private set; }
-    
+
     [InfoBox("Assign this to draw the grid gizmos.")] [SerializeField]
     private Grid grid;
-    [Header("Grid Parameters")]
-    [SerializeField] [MinValue(2)] private int gridSize = 8;
-    [SerializeField] private Transform debugCursor;
-    [Header("Grid Visuals")]
-    [SerializeField] private Material primaryGridMat;
-    [SerializeField] private Material secondaryGridMat;
-    private Dictionary<Vector3Int, HashSet<GameObject>> _gridEntries = new();
-    private Dictionary<GameObject, Vector3Int> _gameObjectToGridMap = new();
-    [SerializeField] [HideInInspector] private GameObject gridMeshHolder;
 
+    [BoxGroup("Grid Parameters")] [SerializeField] [MinValue(2)]
+    private int gridSize = 8;
+
+    [BoxGroup("Grid Visuals")] [SerializeField]
+    private Material primaryGridMat;
+
+    [BoxGroup("Grid Visuals")] [SerializeField]
+    private Material secondaryGridMat;
+
+    [BoxGroup("Grid Visuals")] [SerializeField] [OnValueChanged(nameof(OnDrawMeshChanged))]
+    private bool drawGridMesh = true;
+
+    private Dictionary<Vector3Int, HashSet<IGridEntry>> _gridEntries = new();
+    private Dictionary<IGridEntry, Vector3Int> _gameObjectToGridMap = new();
+    [SerializeField] [HideInInspector] private GameObject gridMeshHolder;
+    private Dictionary<Vector3Int, MeshRenderer> _gridMeshes = new();
     /// <summary>
     /// Grabs the grid component.
     /// </summary>
@@ -48,6 +56,7 @@ public class GridBase : MonoBehaviour
         {
             Instance = this;
         }
+
         grid = GetComponent<Grid>();
         GenerateMesh();
     }
@@ -66,29 +75,16 @@ public class GridBase : MonoBehaviour
                 Gizmos.DrawWireCube(grid.GetCellCenterWorld(new Vector3Int(i, 0, j)), grid.cellSize);
             }
         }
-
-        //try and draw a red box based on the cursor position.
-
-        if (debugCursor == null) return;
-
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireCube(GetCellPositionInDirection(debugCursor.position, Vector3.forward), grid.cellSize);
-        Gizmos.DrawWireCube(GetCellPositionInDirection(debugCursor.position, Vector3.back), grid.cellSize);
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireCube(GetCellPositionInDirection(debugCursor.position, Vector3.right), grid.cellSize);
-        Gizmos.DrawWireCube(GetCellPositionInDirection(debugCursor.position, Vector3.left), grid.cellSize);
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(grid.GetCellCenterWorld(WorldToCell(debugCursor.position)), grid.cellSize);
     }
 
     /// <summary>
     /// Adds a gameObject to the grid cell. Will not add if the grid already contains it.
     /// </summary>
     /// <param name="obj">The gameObject to add.</param>
-    public void AddEntry(GameObject obj)
+    public void AddEntry(IGridEntry obj)
     {
         if (_gameObjectToGridMap.ContainsKey(obj)) return;
-        Vector3Int cell = WorldToCell(obj.transform.position);
+        Vector3Int cell = WorldToCell(obj.Position);
         _gameObjectToGridMap.Add(obj, cell);
         var set = GetCellEntries(cell);
         set.Add(obj);
@@ -98,10 +94,10 @@ public class GridBase : MonoBehaviour
     /// Removes a gameObject from the grid cell.
     /// </summary>
     /// <param name="obj">The object to remove.</param>
-    public void RemoveEntry(GameObject obj)
+    public void RemoveEntry(IGridEntry obj)
     {
         if (!_gameObjectToGridMap.ContainsKey(obj)) return;
-        Vector3Int cell = WorldToCell(obj.transform.position);
+        Vector3Int cell = WorldToCell(obj.Position);
         _gameObjectToGridMap.Remove(obj);
         _gridEntries[cell].Remove(obj);
     }
@@ -111,7 +107,7 @@ public class GridBase : MonoBehaviour
     /// If there is no position change it will exit early.
     /// </summary>
     /// <param name="obj"></param>
-    public void UpdateEntry(GameObject obj)
+    public void UpdateEntry(IGridEntry obj)
     {
         if (!_gameObjectToGridMap.TryGetValue(obj, out var prevPos))
         {
@@ -119,13 +115,13 @@ public class GridBase : MonoBehaviour
             return;
         }
 
-        Vector3Int newPos = WorldToCell(obj.transform.position);
+        Vector3Int newPos = WorldToCell(obj.Position);
         if (prevPos == newPos) return;
         _gameObjectToGridMap[obj] = newPos;
         _gridEntries[prevPos].Remove(obj);
         if (!_gridEntries.ContainsKey(newPos))
         {
-            _gridEntries.Add(newPos, new HashSet<GameObject>());
+            _gridEntries.Add(newPos, new HashSet<IGridEntry>());
         }
 
         _gridEntries[newPos].Add(obj);
@@ -136,14 +132,14 @@ public class GridBase : MonoBehaviour
     /// </summary>
     /// <param name="coordinate">The cell index.</param>
     /// <returns>A hashset of entries within the cell.</returns>
-    public HashSet<GameObject> GetCellEntries(Vector3Int coordinate)
+    public HashSet<IGridEntry> GetCellEntries(Vector3Int coordinate)
     {
         if (_gridEntries.TryGetValue(coordinate, out var entries))
         {
             return entries;
         }
 
-        _gridEntries.Add(coordinate, new HashSet<GameObject>());
+        _gridEntries.Add(coordinate, new HashSet<IGridEntry>());
         return _gridEntries[coordinate];
     }
 
@@ -152,7 +148,7 @@ public class GridBase : MonoBehaviour
     /// </summary>
     /// <param name="worldSpacePos">The position, in world space, to compare against.</param>
     /// <returns>A hashset of entries within the cell.</returns>
-    public HashSet<GameObject> GetCellEntries(Vector3 worldSpacePos)
+    public HashSet<IGridEntry> GetCellEntries(Vector3 worldSpacePos)
     {
         return GetCellEntries(WorldToCell(worldSpacePos));
     }
@@ -169,7 +165,56 @@ public class GridBase : MonoBehaviour
         {
             return false;
         }
+
         return set.Count == 0;
+    }
+
+    /// <summary>
+    /// Checks if the cell contains all transparent entries.
+    /// </summary>
+    /// <param name="cellID">The id of the cell being searched.</param>
+    /// <returns>True if all the elements in the cell are transparent.</returns>
+    public bool CellIsTransparent(Vector3Int cellID)
+    {
+        var set = GetCellEntries(cellID);
+        if (set == null)
+        {
+            return false;
+        }
+
+        foreach (var entry in set)
+        {
+            if (!entry.IsTransparent)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Checks if the cell contains all transparent entries.
+    /// </summary>
+    /// <param name="position">The world position to find a cell.</param>
+    /// <returns>True if all the elements in the cell are transparent.</returns>
+    public bool CellIsTransparent(Vector3 position)
+    {
+        var set = GetCellEntries(position);
+        if (set == null)
+        {
+            return false;
+        }
+
+        foreach (var entry in set)
+        {
+            if (!entry.IsTransparent)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /// <summary>
@@ -184,6 +229,7 @@ public class GridBase : MonoBehaviour
         {
             return false;
         }
+
         return set.Count == 0;
     }
 
@@ -236,6 +282,26 @@ public class GridBase : MonoBehaviour
     }
 
     /// <summary>
+    /// Toggles the grid visuals on and off in runtime.
+    /// </summary>
+    /// <param name="active">Whether or not the grid visual should be active.</param>
+    public void ToggleGridVisuals(bool active)
+    {
+        drawGridMesh = active;
+        OnDrawMeshChanged();
+    }
+    
+    
+    /// <summary>
+    /// Disables the grid visual for the cell.
+    /// </summary>
+    /// <param name="key"></param>
+    public void DisableCellVisual(Vector3Int key)
+    {
+        _gridMeshes[key].gameObject.SetActive(false);
+    }
+
+    /// <summary>
     /// Flattens a Vec3 into a Vec3int.
     /// </summary>
     /// <param name="v">A vector3.</param>
@@ -256,18 +322,13 @@ public class GridBase : MonoBehaviour
             return;
         }
 
-        if (gridMeshHolder != null)
+        if (!drawGridMesh)
         {
-            if (Application.isPlaying)
-            {
-               Destroy(gridMeshHolder);
-            }
-            else
-            {
-                DestroyImmediate(gridMeshHolder);
-            }
+            return;
         }
-        
+
+        DestroyMesh();
+
         gridMeshHolder = new GameObject("Grid Mesh Holder")
         {
             transform =
@@ -276,12 +337,13 @@ public class GridBase : MonoBehaviour
             }
         };
         gridMeshHolder.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
-
+        _gridMeshes.Clear();
         
         for (int i = 0; i < gridSize; i++)
         {
             for (int j = 0; j < gridSize; j++)
             {
+                Vector3Int index = new Vector3Int(i, 0, j);
                 var pos = CellToWorld(new Vector3Int(i, 0, j));
                 var plane = GameObject.CreatePrimitive(PrimitiveType.Quad);
                 plane.transform.position = pos;
@@ -291,8 +353,42 @@ public class GridBase : MonoBehaviour
                 scale.y = (grid.cellSize.z);
                 plane.transform.localScale = scale;
                 plane.transform.SetParent(gridMeshHolder.transform, true);
-                plane.GetComponent<MeshRenderer>().material = i % 2 == 1 ^ j % 2 == 0 ? primaryGridMat : secondaryGridMat;
+                plane.GetComponent<MeshRenderer>().material =
+                    i % 2 == 1 ^ j % 2 == 0 ? primaryGridMat : secondaryGridMat;
+                _gridMeshes.Add(index, plane.GetComponent<MeshRenderer>());
             }
+        }
+    }
+
+    
+    /// <summary>
+    /// Destroys the grid mesh.
+    /// </summary>
+    private void DestroyMesh()
+    {
+        if (gridMeshHolder == null) return;
+        if (Application.isPlaying)
+        {
+            Destroy(gridMeshHolder);
+        }
+        else
+        {
+            DestroyImmediate(gridMeshHolder);
+        }
+    }
+
+    /// <summary>
+    /// Editor callback for when the draw grid visual bool changed.
+    /// </summary>
+    private void OnDrawMeshChanged()
+    {
+        if (drawGridMesh)
+        {
+            GenerateMesh();
+        }
+        else
+        {
+            DestroyMesh();
         }
     }
 }
