@@ -34,7 +34,14 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4.4.3
+        id: artifact-upload-step
         with:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
+      - name: Notify Discord
+        if: success()
+        uses: discord-actions/message@v2
+        with:
+            webhookUrl: ${{ secrets.DISCORD_WEBHOOK_URL }}
+            message: "Build succeeded, artifact: ${{ steps.artifact-upload-step.outputs.artifact-url }}"
