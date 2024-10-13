@@ -34,7 +34,17 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: ${{ matrix.targetPlatform }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4.4.3
+        id: artifact-upload-step
         with:
           name: Build-${{ matrix.targetPlatform }}
           path: build/${{ matrix.targetPlatform }}
+      - name: Notify Discord
+        if: success()
+        uses: stegzilla/discord-notify@v4
+        with:
+            webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+            title: "Build Report"
+            message: "Build succeeded, artifact: ${{ steps.artifact-upload-step.outputs.artifact-url }}"
+            avatar_url: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
+            username: GitHub
