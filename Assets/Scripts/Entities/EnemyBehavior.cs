@@ -19,15 +19,15 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
 
     private PlayerControls _input;
 
-    [SerializeField] private GameObject player;
-    [SerializeField] private int tilesMoved;
+    [SerializeField] private GameObject _player;
+    [SerializeField] private int _tilesMoved;
 
-    [SerializeField] private bool atStart;
-    [SerializeField] private int currentPoint = 0;
+    [SerializeField] private bool _atStart;
+    [SerializeField] private int _currentPoint = 0;
 
-    PlayerMovement playerMoveRef;
-    [SerializeField] private float moveRate = 1f;
-    [SerializeField] private float waitTime = 1f;
+    private PlayerMovement _playerMoveRef;
+    [SerializeField] private float _moveRate = 1f;
+    [SerializeField] private float _waitTime = 1f;
 
     public List<GameObject> movePoints = new List<GameObject>();
 
@@ -49,11 +49,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
         _input.InGame.MoveLeft.performed += EnemyMove;
         _input.InGame.MoveRight.performed += EnemyMove;
 
-        playerMoveRef = player.GetComponent<PlayerMovement>();
+        _playerMoveRef = _player.GetComponent<PlayerMovement>();
         GridBase.Instance.AddEntry(this);
 
         // Make sure enemiess are always seen at the start
-        atStart = true;
+        _atStart = true;
     }
 
     /// <summary>
@@ -67,67 +67,51 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
         var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
         var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
 
-        var nextPos = movePoints[currentPoint].transform.position;
+        var nextPos = movePoints[_currentPoint].transform.position;
         var currentPos = gameObject.transform.position;
-        if (playerMoveRef.enemiesMoved == true && enemyFrozen == false)
+        if (_playerMoveRef.enemiesMoved == true && enemyFrozen == false)
         {
-            if (atStart)
+            if (_atStart)
             {
-                currentPoint++;
-                playerMoveRef.enemiesMoved = false;
+                _currentPoint++;
+                _playerMoveRef.enemiesMoved = false;
                 StartCoroutine(MoveOverTime2());
 
-                if (currentPoint == movePoints.Count - 1)
+                if (_currentPoint == movePoints.Count - 1)
                 {
-                    atStart = false;
+                    _atStart = false;
                 }
             }
             else
             {
-                currentPoint--;
-                playerMoveRef.enemiesMoved = false;
+                _currentPoint--;
+                _playerMoveRef.enemiesMoved = false;
                 StartCoroutine(MoveOverTime2());
 
-                if (currentPoint == 0)
+                if (_currentPoint == 0)
                 {
-                    atStart = true;
+                    _atStart = true;
                 }
             }
         }
-
-        //if (GridBase.Instance.CellIsEmpty(rightMove))
-        //{
-        //    gameObject.transform.position = rightMove;
-        //    GridBase.Instance.UpdateEntry(gameObject);
-
-        //    playerMoveRef.playerMoved = false;
-        //}
-        //else if(GridBase.Instance.CellIsEmpty(downMove))
-        //{
-        //    gameObject.transform.position = downMove;
-        //    GridBase.Instance.UpdateEntry(gameObject);
-
-        //    playerMoveRef.playerMoved = false;
-        //}
     }
 
     /// <summary>
     /// Function moves enemy from either current x or z position on the grid to next x or z position on the grid.
     /// </summary>
     /// <returns></returns>
-
     IEnumerator MoveOverTime2()
     {
         Vector3 startPos = transform.position;
 
-        for (float i = 0; i <= waitTime; i += 0.05f)
+        for (float i = 0; i <= _waitTime; i += 0.05f)
         {
             yield return new WaitForSeconds(0.05f);
-            transform.position = Vector3.Lerp(startPos, movePoints[currentPoint].transform.position, i / waitTime);
+            transform.position = Vector3.Lerp(startPos, movePoints[_currentPoint].transform.position, i / _waitTime);
             Debug.Log(i);
         }
 
-        transform.position = movePoints[currentPoint].transform.position;
-        playerMoveRef.enemiesMoved = true;
+        transform.position = movePoints[_currentPoint].transform.position;
+        _playerMoveRef.enemiesMoved = true;
     }
 }
