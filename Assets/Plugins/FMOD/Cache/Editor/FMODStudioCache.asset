@@ -15,11 +15,83 @@ MonoBehaviour:
   Path: FMOD/Desktop/Master.strings.bank
   Name: Master.strings
   StudioPath: bank:/Master.strings
-  lastModified: 638644346724891660
+  lastModified: 638644275882361851
   FileSizes:
   - Name: 
-    Value: 868
+    Value: 1274
   Exists: 1
+--- !u!114 &-8910754886540506022
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c18180ecb35941f4682ae60107b85b7c, type: 3}
+  m_Name: bank:/Sound Effects.bank
+  m_EditorClassIdentifier: 
+  Path: FMOD/Desktop/Sound Effects.bank
+  Name: Sound Effects
+  StudioPath: bank:/Sound Effects
+  lastModified: 638644275882890080
+  FileSizes: []
+  Exists: 1
+--- !u!114 &-8720946863561082552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Puzzle Failed
+  m_EditorClassIdentifier: 
+  Path: event:/Puzzle Failed
+  Guid:
+    Data1: -738222806
+    Data2: 1238122652
+    Data3: -686122316
+    Data4: -584568449
+  Banks:
+  - {fileID: -8910754886540506022}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 5929
+--- !u!114 &-8304095410972025360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Harmonization Beam
+  m_EditorClassIdentifier: 
+  Path: event:/Harmonization Beam
+  Guid:
+    Data1: 1935760485
+    Data2: 1109226944
+    Data3: 1072423297
+    Data4: 1095135220
+  Banks:
+  - {fileID: -8910754886540506022}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 6426
 --- !u!114 &-6576825280472150680
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35,7 +107,7 @@ MonoBehaviour:
   Path: FMOD/Desktop/Master.bank
   Name: Master
   StudioPath: bank:/Master
-  lastModified: 638633785968063302
+  lastModified: 638633784477514247
   FileSizes: []
   Exists: 1
 --- !u!114 &-5865497245905083406
@@ -105,9 +177,37 @@ MonoBehaviour:
   Path: FMOD/Desktop/Music.bank
   Name: Music
   StudioPath: bank:/Music
-  lastModified: 638644346725301995
+  lastModified: 638644301803235495
   FileSizes: []
   Exists: 1
+--- !u!114 &-1163290411790890610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/NPC Dialogue
+  m_EditorClassIdentifier: 
+  Path: event:/NPC Dialogue
+  Guid:
+    Data1: -2121835079
+    Data2: 1170427212
+    Data3: 882398619
+    Data4: -1619512685
+  Banks:
+  - {fileID: -8910754886540506022}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters:
+  - {fileID: 2300185309432558361}
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,12 +224,124 @@ MonoBehaviour:
   - {fileID: -9101229972127339748}
   - {fileID: -6576825280472150680}
   - {fileID: -3591263675254998873}
+  - {fileID: -8910754886540506022}
   EditorEvents:
   - {fileID: -5865497245905083406}
+  - {fileID: -8304095410972025360}
+  - {fileID: -1163290411790890610}
+  - {fileID: 4553247457499560084}
+  - {fileID: 417964189014685952}
+  - {fileID: -8720946863561082552}
+  - {fileID: 1847306957694278932}
   EditorParameters: []
   MasterBanks:
   - {fileID: -6576825280472150680}
   StringsBanks:
   - {fileID: -9101229972127339748}
-  cacheTime: 638644346725301995
+  cacheTime: 638644301803235495
   cacheVersion: 131619
+--- !u!114 &417964189014685952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Fragment Collected
+  m_EditorClassIdentifier: 
+  Path: event:/Fragment Collected
+  Guid:
+    Data1: 1354257182
+    Data2: 1085218841
+    Data3: 1904202674
+    Data4: -433878465
+  Banks:
+  - {fileID: -8910754886540506022}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 1097
+--- !u!114 &1847306957694278932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Puzzle Solved
+  m_EditorClassIdentifier: 
+  Path: event:/Puzzle Solved
+  Guid:
+    Data1: -217377689
+    Data2: 1098537459
+    Data3: 446566038
+    Data4: -2055791523
+  Banks:
+  - {fileID: -8910754886540506022}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 1
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 5067
+--- !u!114 &2300185309432558361
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fecb8ef7f94ca804a8ab72049b86782e, type: 3}
+  m_Name: parameter:/NPC Dialogue/Test Dialogue
+  m_EditorClassIdentifier: 
+  Name: Test Dialogue
+  StudioPath: 
+  Min: 1
+  Max: 3
+  Default: 1
+  ID:
+    data1: 338824692
+    data2: 1237734951
+  Type: 1
+  IsGlobal: 0
+  Labels: []
+  Exists: 1
+--- !u!114 &4553247457499560084
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceb653cd98e289a4e8697a1af55201f2, type: 3}
+  m_Name: event:/Enemy Harmonizing
+  m_EditorClassIdentifier: 
+  Path: event:/Enemy Harmonizing
+  Guid:
+    Data1: 677451771
+    Data2: 1241568789
+    Data3: 1575010469
+    Data4: 1070342239
+  Banks:
+  - {fileID: -8910754886540506022}
+  IsStream: 0
+  Is3D: 0
+  IsOneShot: 0
+  Parameters: []
+  MinDistance: 1
+  MaxDistance: 20
+  Length: 6426
