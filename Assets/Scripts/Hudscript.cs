@@ -20,11 +20,11 @@ public class HUDscript : MonoBehaviour
     [SerializeField] private float _messageWaitTime;
     [SerializeField] private GameObject _doorUnlockMessage;
     [SerializeField] private GameObject _incorrectMessage;
-    private TextMeshProUGUI _sequenceUI;
+    [SerializeField] private TextMeshProUGUI _sequenceUI;
 
     private List<int> _notes;
 
-    private const string BaseCollectedText = "Collected Notes:";
+    private const string BaseCollectedText = "Collect the notes in numerical order:";
 
     /// <summary>
     /// Initializing values and registering to actions
@@ -84,9 +84,15 @@ public class HUDscript : MonoBehaviour
     {
         ResetCollectedNotesText();
         StopAllCoroutines();
-        _doorUnlockMessage.SetActive(false);
-        _incorrectMessage.SetActive(false);
-        StartCoroutine(IncorrectMessageResetTimer(_incorrectMessage));
+        if (_doorUnlockMessage.gameObject.activeSelf == false)
+        {
+            _incorrectMessage.SetActive(true);
+        }
+        else
+        {
+            _incorrectMessage.SetActive(false);
+            StartCoroutine(IncorrectMessageResetTimer(_incorrectMessage));
+        }
     }
 
     /// <summary>

@@ -3741,11 +3741,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 815985034}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 154.56392}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -71}
   m_SizeDelta: {x: 381.71, y: 94.2522}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &761874313
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4430,7 +4430,7 @@ GameObject:
   - component: {fileID: 815985033}
   - component: {fileID: 815985032}
   - component: {fileID: 815985031}
-  - component: {fileID: 815985030}
+  - component: {fileID: 815985035}
   m_Layer: 5
   m_Name: Canvas (1)
   m_TagString: Untagged
@@ -4438,23 +4438,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &815985030
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 815985029}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 161e8cd4e78d0d54c8a81443442a702f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _sequenceUI: {fileID: 1912509591}
-  _collectedNotesUI: {fileID: 1751623246}
-  _incorrectMessage: {fileID: 794533153}
-  _doorUnlockMessage: {fileID: 761874311}
-  _messageWaitTime: 3
 --- !u!114 &815985031
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4541,6 +4524,23 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &815985035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 815985029}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77675e769f19c484f8610a28ec7f8fbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _collectedNotesUI: {fileID: 1751623246}
+  _messageWaitTime: 3
+  _doorUnlockMessage: {fileID: 761874311}
+  _incorrectMessage: {fileID: 794533153}
+  _sequenceUI: {fileID: 1912509591}
 --- !u!1 &898205348
 GameObject:
   m_ObjectHideFlags: 0
@@ -9381,11 +9381,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 815985034}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -262.7, y: 176.69}
-  m_SizeDelta: {x: 200, y: 50}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -14.719971}
+  m_SizeDelta: {x: 367.6, y: 50}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1751623246
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9406,7 +9406,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 0/4
+  m_text: 'Collect the notes in numeric order:'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 766878d5179a27344a8a66ae4cf22ca3, type: 2}
   m_sharedMaterial: {fileID: 7984206283420469898, guid: 766878d5179a27344a8a66ae4cf22ca3,
@@ -9434,14 +9434,14 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 22
+  m_fontSizeBase: 22
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -9756,7 +9756,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1912509590
 RectTransform:
   m_ObjectHideFlags: 0
