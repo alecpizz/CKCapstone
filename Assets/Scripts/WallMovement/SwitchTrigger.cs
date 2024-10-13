@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Josephine Qualls
-*    Contributors: Josh Eddy
+*    Contributors: Josh Eddy, Alec Pizziferro
 *    Date Created: 10/10/2024
 *    Description: Switch that moves walls.
 *    Only moves registered walls.
@@ -45,7 +45,6 @@ public class SwitchTrigger : MonoBehaviour
                         _moveWalls[i].WallMoveBack();
                     }
                 }
-            }
         }
     }
 
