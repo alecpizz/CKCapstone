@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Josephine Qualls
-*    Contributors: Josh Eddy
+*    Contributors: Josh Eddy, Alec Pizziferro
 *    Date Created: 10/10/2024
 *    Description: Switch that moves walls.
 *    Only moves registered walls.
@@ -32,15 +32,7 @@ public class SwitchTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            if (_isTriggered = !_isTriggered)
-            {
-                _isTriggered = false;
-                print("Switch Off");
-            }
-            else
-            {
-                _isTriggered = true;
-                print("Switch On");
+            _isTriggered = !_isTriggered;
 
                 for (int i = 0; i < _moveWalls.Count; i++)
                 {
@@ -53,7 +45,6 @@ public class SwitchTrigger : MonoBehaviour
                         _moveWalls[i].WallMoveBack();
                     }
                 }
-            }
         }
     }
 

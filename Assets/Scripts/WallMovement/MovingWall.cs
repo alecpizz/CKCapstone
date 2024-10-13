@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Josephine Qualls
-*    Contributors: Josh Eddy
+*    Contributors: Josh Eddy, Alec Pizziferro
 *    Date Created: 10/10/2024
 *    Description: Controls where walls move after switch is triggered.
 *******************************************************************/
@@ -18,11 +18,9 @@ using UnityEngine;
 /// </summary>
 public class MovingWall : MonoBehaviour, IGridEntry
 {
-    //original position of wall
-    private Vector3 _originTransform;
-
-    //used to give coordinates for new wall position
-    [SerializeField] private Vector3 _wallTransform;
+    //original position of wall and ghost
+    private Vector3 _originWall;
+    private Vector3 _originGhost;
 
     //used to determine the GridPlacer of specific wall
     [SerializeField] private GridPlacer _wallGrid;
@@ -45,32 +43,32 @@ public class MovingWall : MonoBehaviour, IGridEntry
     /// </summary>
     void Start()
     {
-        _originTransform = transform.position;
+        _originWall = transform.position;
 
-        _wallGhost.transform.position = _wallTransform;
+        _originGhost = _wallGhost.transform.position;
     }
 
     /// <summary>
-    /// Moves the wall to the new registered position
-    /// Moves indicator to where the wall was before
+    /// Swaps the positions of the wall and the ghost
+    /// To switch on position
     /// Allows Player to move where wall once was
     /// </summary>
     public void WallIsMoved()
     {
-        transform.position = _wallTransform;
-        _wallGhost.transform.position = _originTransform;
+        transform.position = _originGhost;
+        _wallGhost.transform.position = _originWall;
         _wallGrid.UpdatePosition();
     }
 
     /// <summary>
-    /// Moves wall back to its first position
-    /// Moves indicator to where wall can move to
+    /// Swaps wall and ghost back to original positions
+    /// Now that switch is off
     /// Allows Player to move where wall once was
     /// </summary>
     public void WallMoveBack()
     {
-        transform.position = _originTransform;
-        _wallGhost.transform.position = _wallTransform;
+        transform.position = _originWall;
+        _wallGhost.transform.position = _originGhost;
         _wallGrid.UpdatePosition();
     }
 }
