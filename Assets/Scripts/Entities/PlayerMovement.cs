@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Cole Stranczek
-*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein
+*    Contributors: Cole Stranczek
 *    Date Created: 9/22/24
 *    Description: Script that handles the player's movement along
 *    the grid
@@ -10,18 +10,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.Windows;
 
 public class PlayerMovement : MonoBehaviour, IGridEntry
 {
-    public Vector3 FacingDirection { get; private set; }
-    
-    private PlayerControls _input;
 
-    [SerializeField] private GameObject _upPointer;
-    [SerializeField] private GameObject _downPointer;
-    [SerializeField] private GameObject _leftPointer;
-    [SerializeField] private GameObject _rightPointer;
+
+    private PlayerControls _input;
+    public Vector3 FacingDirection { get; private set; }
+
+    public bool playerMoved;
+    public bool enemiesMoved = true;
+    public bool IsTransparent { get => true; }
+    public Vector3 Position { get => transform.position; }
+    public GameObject GetGameObject { get => gameObject; }
 
     // Start is called before the first frame update
     void Start()
@@ -37,13 +40,18 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         _input.InGame.MoveDown.performed += MoveDownPerformed;
         _input.InGame.MoveLeft.performed += MoveLeftPerformed;
         _input.InGame.MoveRight.performed += MoveRightPerformed;
+    }
 
-        // Gets rid of all the pointers by default
-        _upPointer.SetActive(false);
-        _downPointer.SetActive(false);
-        _leftPointer.SetActive(false);
-        _rightPointer.SetActive(false);
-
+    /// <summary>
+    /// Unregistering from input actions
+    /// </summary>
+    private void OnDisable()
+    {
+        _input.InGame.Disable();
+        _input.InGame.MoveUp.performed -= MoveUpPerformed;
+        _input.InGame.MoveDown.performed -= MoveDownPerformed;
+        _input.InGame.MoveLeft.performed -= MoveLeftPerformed;
+        _input.InGame.MoveRight.performed -= MoveRightPerformed;
     }
 
     /// <summary>
@@ -51,18 +59,17 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     /// binding is triggered
     /// </summary>
     /// <param name="obj"></param>
-    private void MoveDownPerformed(InputAction.CallbackContext obj)
+    public void MoveDownPerformed(InputAction.CallbackContext obj)
     {
         FacingDirection = Vector3.back;
 
-        // Move down 
+        // Move down and remove the pointer
         var downMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.back);
-        if (GridBase.Instance.CellIsTransparent(downMove) || DebugMenuManager.instance.ghostMode)
+        if (GridBase.Instance.CellIsEmpty(downMove) && enemiesMoved == true)
         {
             gameObject.transform.position = downMove;
             GridBase.Instance.UpdateEntry(this);
         }
-        
     }
 
     /// <summary>
@@ -74,14 +81,15 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     {
         FacingDirection = Vector3.forward;
 
-        // Move up 
+        // Move up and remove the pointer
         var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
-        if (GridBase.Instance.CellIsTransparent(upMove) || DebugMenuManager.instance.ghostMode)
+        if (GridBase.Instance.CellIsEmpty(upMove) && enemiesMoved == true)
         {
             gameObject.transform.position = upMove;
             GridBase.Instance.UpdateEntry(this);
-        }        
-
+        }
+        playerMoved = true;
+        
     }
 
     /// <summary>
@@ -93,14 +101,15 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     {
         FacingDirection = Vector3.left;
 
-        // Move left 
+        // Move left and remove the pointer
         var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
-        if (GridBase.Instance.CellIsTransparent(leftMove) || DebugMenuManager.instance.ghostMode)
+        if (GridBase.Instance.CellIsEmpty(leftMove) && enemiesMoved == true)
         {
-            gameObject.transform.position = leftMove;
-            GridBase.Instance.UpdateEntry(this);
+           gameObject.transform.position = leftMove;
+           GridBase.Instance.UpdateEntry(this);
         }
 
+        playerMoved = true;
     }
 
     /// <summary>
@@ -112,17 +121,23 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     {
         FacingDirection = Vector3.right;
 
-        // Move Right 
+        // Move Right and remove the pointer
         var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
-        if(GridBase.Instance.CellIsTransparent(rightMove) || DebugMenuManager.instance.ghostMode)
+        if(GridBase.Instance.CellIsEmpty(rightMove) && enemiesMoved == true)
         {
-            gameObject.transform.position = rightMove;
-            GridBase.Instance.UpdateEntry(this);   
+           gameObject.transform.position = rightMove;
+           GridBase.Instance.UpdateEntry(this);   
         }
 
+        playerMoved = true; 
     }
 
-    public bool IsTransparent { get => true; }
-    public Vector3 Position { get => transform.position; }
-    public GameObject GetGameObject { get => gameObject; }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Enemy")
+        {
+            Scene scene = SceneManager.GetActiveScene();
+            SceneManager.LoadScene(scene.name);
+        }
+    }
 }
