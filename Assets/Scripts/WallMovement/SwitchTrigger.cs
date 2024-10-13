@@ -32,7 +32,7 @@ public class SwitchTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            if (_isTriggered)
+            if (_isTriggered = !_isTriggered)
             {
                 _isTriggered = false;
                 print("Switch Off");
@@ -41,18 +41,18 @@ public class SwitchTrigger : MonoBehaviour
             {
                 _isTriggered = true;
                 print("Switch On");
-            }
-        }
 
-        for(int i = 0; i < _moveWalls.Count; i++)
-        {
-            if(_isTriggered)
-            {
-                _moveWalls[i].WallIsMoved();
-            }
-            else
-            {
-                _moveWalls[i].WallMoveBack();
+                for (int i = 0; i < _moveWalls.Count; i++)
+                {
+                    if (_isTriggered)
+                    {
+                        _moveWalls[i].WallIsMoved();
+                    }
+                    else
+                    {
+                        _moveWalls[i].WallMoveBack();
+                    }
+                }
             }
         }
     }

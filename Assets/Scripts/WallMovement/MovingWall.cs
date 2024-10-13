@@ -8,6 +8,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEditor;
 using UnityEngine;
 
@@ -23,9 +24,6 @@ public class MovingWall : MonoBehaviour, IGridEntry
     //used to give coordinates for new wall position
     [SerializeField] private Vector3 _wallTransform;
 
-    //to color coordinate wall with specific switch
-    [SerializeField] private Material _wallColor;
-
     //used to determine the GridPlacer of specific wall
     [SerializeField] private GridPlacer _wallGrid;
 
@@ -33,11 +31,11 @@ public class MovingWall : MonoBehaviour, IGridEntry
     [SerializeField] private GameObject _wallGhost;
 
     //classes required from Alec's IGridEntry Interface
-    public bool IsTransparent => throw new System.NotImplementedException();
+    public bool IsTransparent => false;
 
-    public GameObject GetGameObject => throw new System.NotImplementedException();
+    public GameObject GetGameObject => gameObject;
 
-    public Vector3 Position => throw new System.NotImplementedException();
+    public Vector3 Position => transform.position;
 
 
 
