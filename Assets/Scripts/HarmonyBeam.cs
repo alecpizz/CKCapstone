@@ -6,18 +6,28 @@
 *******************************************************************/
 using System.Collections.Generic;
 using UnityEngine;
+using FMOD.Studio;
+using FMODUnity;
 
 public class HarmonyBeam : MonoBehaviour
 {
     [SerializeField] private float _laserDistance = 50f;
+    [SerializeField] private EventReference _harmonySound = default;
+
     private LineRenderer _lineRenderer;
 
     // Track enemy states: true = hit, false = not hit
     private Dictionary<GameObject, bool> _enemyHitStates = new();
+    private EventInstance _key;
 
     void Awake()
     {
         _lineRenderer = GetComponent<LineRenderer>();
+    }
+
+    private void Start()
+    {
+        _key = AudioManager.Instance.PlaySound(_harmonySound);
     }
 
     void FixedUpdate()
@@ -127,5 +137,10 @@ public class HarmonyBeam : MonoBehaviour
         {
             _enemyHitStates[enemy] = false;
         }
+    }
+
+    private void OnDestroy()
+    {
+        AudioManager.Instance.StopSound(_key, true);
     }
 }
