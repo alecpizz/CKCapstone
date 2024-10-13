@@ -10,14 +10,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Windows;
 
 public class EnemyBehavior : MonoBehaviour
 {
     private PlayerControls _input;
 
     [SerializeField] private GameObject player;
-    PlayerMovement playerMoveRef;
     [SerializeField] private int tilesMoved;
     [SerializeField] private Transform start;
     [SerializeField] private Transform destination;
@@ -31,6 +29,11 @@ public class EnemyBehavior : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Getting player input for the sake of triggering enemy movement.
+        // There's 100% a better way to do this but every attempt Mitchell
+        // and I made to just get a bool from the player script to signal
+        // when it's moving didn't work, so this was just done to get 
+        // SOMETHING working
         _input = new PlayerControls();
         _input.InGame.Enable();
         _input.InGame.MoveUp.performed += EnemyMove;
@@ -38,41 +41,52 @@ public class EnemyBehavior : MonoBehaviour
         _input.InGame.MoveLeft.performed += EnemyMove;
         _input.InGame.MoveRight.performed += EnemyMove;
 
-        playerMoveRef = player.GetComponent<PlayerMovement>();
         GridBase.Instance.AddEntry(gameObject);
 
+        // Adding destination points to the list to cycle through them
         movePoints.Add(GameObject.Find("StartDestination"));
         movePoints.Add(GameObject.Find("SecondDestination"));
         movePoints.Add(GameObject.Find("ThirdDestination"));
 
+        // Make sure enemiess are always seen at the start
         atStart = true;
     }
 
+    /// <summary>
+    /// Function that handles the enemy's movement along the provided points in the list
+    /// </summary>
+    /// <param name="obj"></param>
     public void EnemyMove(InputAction.CallbackContext obj)
     {
-        var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
-        var downMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.back);
-        var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
-        var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
+        //var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
+        //var downMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.back);
+        //var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
+        //var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
 
-        var startPos = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(start.transform.position));
-        var desPos = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(destination.transform.position));
+        //var startPos = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(start.transform.position));
+        //var desPos = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(destination.transform.position));
 
+        // If the enemy at the first point in the list, count up to make it
+        // move "forward" through the points
         if(atStart)
         {
             currentPoint++;
             gameObject.transform.position = movePoints[currentPoint].transform.position;
 
+            // When it reaches the end of the list, it's no longer at the start
             if (currentPoint == movePoints.Count - 1)
             {
                 atStart = false;
             }
         }
+        // If the enemy at the last point in the list, count down to make it
+        // move "backward" through the points
         else
         {
             currentPoint--;
             gameObject.transform.position = movePoints[currentPoint].transform.position;
 
+            // When it reaches the front of the list, it's no longer at the end 
             if (currentPoint == 0)
             {
                 atStart = true;

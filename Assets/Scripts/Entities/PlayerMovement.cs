@@ -10,6 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.Windows;
 
 public class PlayerMovement : MonoBehaviour
@@ -57,16 +58,14 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="obj"></param>
     private void MoveUpPerformed(InputAction.CallbackContext obj)
     {
-        
-            // Move up and remove the pointer
-            var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
-            if (GridBase.Instance.CellIsEmpty(upMove))
-            {
-                gameObject.transform.position = upMove;
-                GridBase.Instance.UpdateEntry(gameObject);
-            }
-
-            playerMoved = true;
+        // Move up and remove the pointer
+        var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
+        if (GridBase.Instance.CellIsEmpty(upMove))
+        {
+            gameObject.transform.position = upMove;
+            GridBase.Instance.UpdateEntry(gameObject);
+        }
+        playerMoved = true;
         
     }
 
@@ -77,16 +76,15 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="obj"></param>
     private void MoveLeftPerformed(InputAction.CallbackContext obj)
     {
-        
-            // Move left and remove the pointer
-            var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
-            if (GridBase.Instance.CellIsEmpty(leftMove))
-            {
-                gameObject.transform.position = leftMove;
-                GridBase.Instance.UpdateEntry(gameObject);
-            }
-            playerMoved = true;
-        
+        // Move left and remove the pointer
+        var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
+        if (GridBase.Instance.CellIsEmpty(leftMove))
+        {
+           gameObject.transform.position = leftMove;
+           GridBase.Instance.UpdateEntry(gameObject);
+        }
+
+        playerMoved = true;
     }
 
     /// <summary>
@@ -96,16 +94,23 @@ public class PlayerMovement : MonoBehaviour
     /// <param name="obj"></param>
     private void MoveRightPerformed(InputAction.CallbackContext obj)
     {
-      
-            // Move Right and remove the pointer
-            var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
-            if(GridBase.Instance.CellIsEmpty(rightMove))
-            {
-                gameObject.transform.position = rightMove;
-                GridBase.Instance.UpdateEntry(gameObject);   
-            }
+        // Move Right and remove the pointer
+        var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
+        if(GridBase.Instance.CellIsEmpty(rightMove))
+        {
+           gameObject.transform.position = rightMove;
+           GridBase.Instance.UpdateEntry(gameObject);   
+        }
 
-            playerMoved = true;
-       
+        playerMoved = true; 
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Enemy")
+        {
+            Scene scene = SceneManager.GetActiveScene();
+            SceneManager.LoadScene(scene.name);
+        }
     }
 }
