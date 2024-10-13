@@ -4182,9 +4182,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grid: {fileID: 1170851287}
   gridSize: 8
-  debugCursor: {fileID: 757415402}
   primaryGridMat: {fileID: 2100000, guid: 8e21dd5f57250be488ce312f1f58c905, type: 2}
   secondaryGridMat: {fileID: 2100000, guid: 54a3c1dfb6082524cbe80c094c89b51b, type: 2}
+  drawGridMesh: 1
   gridMeshHolder: {fileID: 311062409}
 --- !u!156049354 &1170851287
 Grid:
@@ -5443,7 +5443,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 814452625f34aba4ab827682fb17a231, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dummyField: 0
+  isTransparent: 0
+  snapToGrid: 1
+  disableGridCell: 0
 --- !u!65 &1445284685
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6766,6 +6768,12 @@ MonoBehaviour:
   destination: {fileID: 1077620328}
   atStart: 0
   currentPoint: 0
+  moveRate: 1
+  waitTime: 1
+  movePoints:
+  - {fileID: 1536351980}
+  - {fileID: 1077620327}
+  - {fileID: 913059645}
 --- !u!114 &1776029357
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6778,7 +6786,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 814452625f34aba4ab827682fb17a231, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dummyField: 0
+  isTransparent: 0
+  snapToGrid: 1
+  disableGridCell: 0
 --- !u!65 &1776029358
 BoxCollider:
   m_ObjectHideFlags: 0

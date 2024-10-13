@@ -31,7 +31,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
     [SerializeField] private float moveRate = 1f;
     [SerializeField] private float waitTime = 1f;
 
-    [SerializeField]  private List<GameObject> movePoints = new List<GameObject>();
+    public List<GameObject> movePoints = new List<GameObject>();
 
 
     // Start is called before the first frame update
