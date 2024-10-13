@@ -51,41 +51,21 @@ public class PlayerArrows : MonoBehaviour
     void Update()
     {
         //shorthands for arrow scales
-        Vector3 scale1 = _arrow1.transform.localScale;
-        Vector3 scale2 = _arrow2.transform.localScale;
-        Vector3 scale3 = _arrow3.transform.localScale;
-        Vector3 scale4 = _arrow4.transform.localScale;
-
+        
         //if coroutine is active...
         if (!canRestartCoroutine)
         {
-            //if arrow 1 is not at its minimum scale...
+            Vector3 scale1 = _arrow1.transform.localScale;
+            Vector3 scaleMod = new Vector3(0, _pulseSpeed * Time.deltaTime,  0f);
+           
+            // //if arrow 1 is not at its minimum scale...
             if (scale1.y >= _minYScale)
             {
                 //...shrink its scale
-                _arrow1.transform.localScale -= new Vector3(0, 
-                    _pulseSpeed * 0.1f, 0f);
-            }
-            //if arrow 2 is not at its minimum scale...
-            if (scale2.y >= _minYScale)
-            {
-                //...shrink its scale
-                _arrow2.transform.localScale -= new Vector3(0,
-                    _pulseSpeed * 0.1f, 0f);
-            }
-            //if arrow 3 is not at its minimum scale...
-            if (scale3.y >= _minYScale)
-            {
-                //...shrink its scale
-                _arrow3.transform.localScale -= new Vector3(0,
-                   _pulseSpeed * 0.1f, 0f);
-            }
-            //if arrow 4 is not at its minimum scale...
-            if (scale4.y >= _minYScale)
-            {
-                //...shrink its scale
-                _arrow4.transform.localScale -= new Vector3(0,
-                    _pulseSpeed * 0.1f, 0f);
+                _arrow1.transform.localScale -= scaleMod;
+                _arrow2.transform.localScale -= scaleMod;
+                _arrow3.transform.localScale -= scaleMod;
+                _arrow4.transform.localScale -= scaleMod;
             }
         }
 
