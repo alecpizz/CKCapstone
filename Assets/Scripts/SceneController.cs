@@ -12,6 +12,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using NaughtyAttributes;
+using FMODUnity;
 
 public class SceneController : MonoBehaviour
 {
@@ -28,6 +29,7 @@ public class SceneController : MonoBehaviour
     [SerializeField] private Transform _playerTransform;
     [SerializeField] private float _timeForScreenWipe;
     [SerializeField] private bool _shouldFadeInOnLoad;
+    [SerializeField] private EventReference _endSound;
 
     private readonly int _circleSizePropId = Shader.PropertyToID("_CircleSize");
     private readonly int _backgroundColorPropId = Shader.PropertyToID("_BackgroundColor");
@@ -120,6 +122,7 @@ public class SceneController : MonoBehaviour
         _circleWipeImage.materialForRendering.SetColor(_backgroundColorPropId, fadeColor);
 
         RepositionCircleWipe();
+        AudioManager.Instance.PlaySound(_endSound);
         yield return new WaitForEndOfFrame();
 
         // Animates circle wipe until the end time is reached
