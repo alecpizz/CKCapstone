@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Cole Stranczek
-*    Contributors: Cole Stranczek, Nick Grinstead
+*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein
 *    Date Created: 9/22/24
 *    Description: Script that handles the player's movement along
 *    the grid
@@ -55,27 +55,14 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     {
         FacingDirection = Vector3.back;
 
-        // Sets the Down directional pointer if this is the first button
-        // press
-        if (!_downPointer.activeInHierarchy)
+        // Move down 
+        var downMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.back);
+        if (GridBase.Instance.CellIsTransparent(downMove) || DebugMenuManager.instance.ghostMode)
         {
-            _downPointer.SetActive(true);
-
-            _upPointer.SetActive(false);
-            _leftPointer.SetActive(false);
-            _rightPointer.SetActive(false);
+            gameObject.transform.position = downMove;
+            GridBase.Instance.UpdateEntry(this);
         }
-        else
-        {
-            // Move down and remove the pointer
-            var downMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.back);
-            if (GridBase.Instance.CellIsTransparent(downMove) || DebugMenuManager.instance.ghostMode)
-            {
-                gameObject.transform.position = downMove;
-                GridBase.Instance.UpdateEntry(this);
-            }
-            _downPointer.SetActive(false);
-        }
+        
     }
 
     /// <summary>
@@ -87,27 +74,14 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     {
         FacingDirection = Vector3.forward;
 
-        // Sets the Up directional pointer if this is the first button
-        // press
-        if (!_upPointer.activeInHierarchy)
+        // Move up 
+        var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
+        if (GridBase.Instance.CellIsTransparent(upMove) || DebugMenuManager.instance.ghostMode)
         {
-            _upPointer.SetActive(true);
+            gameObject.transform.position = upMove;
+            GridBase.Instance.UpdateEntry(this);
+        }        
 
-            _downPointer.SetActive(false);
-            _leftPointer.SetActive(false);
-            _rightPointer.SetActive(false);
-        }
-        else
-        {
-            // Move up and remove the pointer
-            var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
-            if (GridBase.Instance.CellIsTransparent(upMove) || DebugMenuManager.instance.ghostMode)
-            {
-                gameObject.transform.position = upMove;
-                GridBase.Instance.UpdateEntry(this);
-            }
-            _upPointer.SetActive(false);
-        }
     }
 
     /// <summary>
@@ -119,27 +93,14 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     {
         FacingDirection = Vector3.left;
 
-        // Sets the Left directional pointer if this is the first button
-        // press
-        if (!_leftPointer.activeInHierarchy)
+        // Move left 
+        var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
+        if (GridBase.Instance.CellIsTransparent(leftMove) || DebugMenuManager.instance.ghostMode)
         {
-            _leftPointer.SetActive(true);
+            gameObject.transform.position = leftMove;
+            GridBase.Instance.UpdateEntry(this);
+        }
 
-            _upPointer.SetActive(false);
-            _downPointer.SetActive(false);
-            _rightPointer.SetActive(false);
-        }
-        else
-        {
-            // Move left and remove the pointer
-            var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
-            if (GridBase.Instance.CellIsTransparent(leftMove) || DebugMenuManager.instance.ghostMode)
-            {
-                gameObject.transform.position = leftMove;
-                GridBase.Instance.UpdateEntry(this);
-            }
-            _leftPointer.SetActive(false);
-        }
     }
 
     /// <summary>
@@ -151,27 +112,14 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     {
         FacingDirection = Vector3.right;
 
-        // Sets the Right directional pointer if this is the first button
-        // press
-        if (!_rightPointer.activeInHierarchy)
+        // Move Right 
+        var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
+        if(GridBase.Instance.CellIsTransparent(rightMove) || DebugMenuManager.instance.ghostMode)
         {
-            _rightPointer.SetActive(true);
+            gameObject.transform.position = rightMove;
+            GridBase.Instance.UpdateEntry(this);   
+        }
 
-            _upPointer.SetActive(false);
-            _downPointer.SetActive(false);
-            _leftPointer.SetActive(false);
-        }
-        else
-        {
-            // Move Right and remove the pointer
-            var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
-            if(GridBase.Instance.CellIsTransparent(rightMove) || DebugMenuManager.instance.ghostMode)
-            {
-                gameObject.transform.position = rightMove;
-                GridBase.Instance.UpdateEntry(this);   
-            }
-            _rightPointer.SetActive(false);
-        }
     }
 
     public bool IsTransparent { get => true; }
