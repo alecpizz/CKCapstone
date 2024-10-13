@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Cole Stranczek
-*    Contributors: Cole Stranczek
+*    Contributors: Cole Stranczek, Nick Grinstead
 *    Date Created: 9/22/24
 *    Description: Script that handles the player's movement along
 *    the grid
@@ -14,6 +14,8 @@ using UnityEngine.Windows;
 
 public class PlayerMovement : MonoBehaviour, IGridEntry
 {
+    public Vector3 FacingDirection { get; private set; }
+    
     private PlayerControls _input;
 
     [SerializeField] private GameObject _upPointer;
@@ -24,6 +26,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     // Start is called before the first frame update
     void Start()
     {
+        FacingDirection = new Vector3(0, 0, 0);
+
         GridBase.Instance.AddEntry(this);
 
         // Referencing and setup of the Input Action functions
@@ -49,6 +53,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     /// <param name="obj"></param>
     private void MoveDownPerformed(InputAction.CallbackContext obj)
     {
+        FacingDirection = Vector3.back;
+
         // Sets the Down directional pointer if this is the first button
         // press
         if (!_downPointer.activeInHierarchy)
@@ -63,7 +69,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         {
             // Move down and remove the pointer
             var downMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.back);
-            if (GridBase.Instance.CellIsTransparent(downMove))
+            if (GridBase.Instance.CellIsTransparent(downMove) || DebugMenuManager.instance.ghostMode)
             {
                 gameObject.transform.position = downMove;
                 GridBase.Instance.UpdateEntry(this);
@@ -79,6 +85,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     /// <param name="obj"></param>
     private void MoveUpPerformed(InputAction.CallbackContext obj)
     {
+        FacingDirection = Vector3.forward;
+
         // Sets the Up directional pointer if this is the first button
         // press
         if (!_upPointer.activeInHierarchy)
@@ -93,7 +101,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         {
             // Move up and remove the pointer
             var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
-            if (GridBase.Instance.CellIsTransparent(upMove))
+            if (GridBase.Instance.CellIsTransparent(upMove) || DebugMenuManager.instance.ghostMode)
             {
                 gameObject.transform.position = upMove;
                 GridBase.Instance.UpdateEntry(this);
@@ -109,6 +117,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     /// <param name="obj"></param>
     private void MoveLeftPerformed(InputAction.CallbackContext obj)
     {
+        FacingDirection = Vector3.left;
+
         // Sets the Left directional pointer if this is the first button
         // press
         if (!_leftPointer.activeInHierarchy)
@@ -123,7 +133,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         {
             // Move left and remove the pointer
             var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
-            if (GridBase.Instance.CellIsTransparent(leftMove))
+            if (GridBase.Instance.CellIsTransparent(leftMove) || DebugMenuManager.instance.ghostMode)
             {
                 gameObject.transform.position = leftMove;
                 GridBase.Instance.UpdateEntry(this);
@@ -139,6 +149,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     /// <param name="obj"></param>
     private void MoveRightPerformed(InputAction.CallbackContext obj)
     {
+        FacingDirection = Vector3.right;
+
         // Sets the Right directional pointer if this is the first button
         // press
         if (!_rightPointer.activeInHierarchy)
@@ -153,7 +165,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         {
             // Move Right and remove the pointer
             var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
-            if(GridBase.Instance.CellIsTransparent(rightMove))
+            if(GridBase.Instance.CellIsTransparent(rightMove) || DebugMenuManager.instance.ghostMode)
             {
                 gameObject.transform.position = rightMove;
                 GridBase.Instance.UpdateEntry(this);   
