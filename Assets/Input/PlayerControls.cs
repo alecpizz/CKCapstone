@@ -66,7 +66,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 {
                     ""name"": ""Interact"",
                     ""type"": ""Button"",
-                    ""id"": ""ae23a291-d10b-4027-a3e9-fea73b735793"",
+                    ""id"": ""2f82a05b-2a62-407a-a679-5af9cc43b65b"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -208,18 +208,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""a8863322-25d0-493d-bc7a-08f324d8f2df"",
-                    ""path"": ""<Keyboard>/space"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Interact"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""c3f60660-8d17-4981-b4be-fecabb7c0926"",
+                    ""id"": ""3d3c4358-ac5d-4aec-923d-5e80622f19d9"",
                     ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
                     ""processors"": """",
@@ -230,8 +219,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""31a6266f-619d-4e24-bc50-33995345356c"",
-                    ""path"": ""<XInputController>/buttonSouth"",
+                    ""id"": ""1d18ccdd-dbc5-4411-af08-4efb155740cc"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
