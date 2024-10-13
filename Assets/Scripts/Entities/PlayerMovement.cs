@@ -40,7 +40,18 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         _input.InGame.MoveDown.performed += MoveDownPerformed;
         _input.InGame.MoveLeft.performed += MoveLeftPerformed;
         _input.InGame.MoveRight.performed += MoveRightPerformed;
+    }
 
+    /// <summary>
+    /// Unregistering from input actions
+    /// </summary>
+    private void OnDisable()
+    {
+        _input.InGame.Disable();
+        _input.InGame.MoveUp.performed -= MoveUpPerformed;
+        _input.InGame.MoveDown.performed -= MoveDownPerformed;
+        _input.InGame.MoveLeft.performed -= MoveLeftPerformed;
+        _input.InGame.MoveRight.performed -= MoveRightPerformed;
     }
 
     /// <summary>

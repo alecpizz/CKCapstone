@@ -20,7 +20,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
 
     private PlayerControls _input;
 
-    [Required] [SerializeField] private GameObject _player;
+    [Required][SerializeField] private GameObject _player;
     [SerializeField] private int _tilesMoved;
 
     [SerializeField] private bool _atStart;
