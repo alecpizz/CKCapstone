@@ -10,6 +10,7 @@ using UnityEngine;
 using FMODUnity;
 using FMOD.Studio;
 using STOP_MODE = FMOD.Studio.STOP_MODE;
+using System;
 
 public class AudioManager : MonoBehaviour
 {
@@ -49,6 +50,12 @@ public class AudioManager : MonoBehaviour
     /// <returns>an EventInstance, save it if you need to use a parameter</returns>
     public EventInstance PlaySound(EventReference reference)
     {
+        if (reference.IsNull)
+        {
+            Debug.LogWarning("NO REFERENCE SOUND!");
+            return default;
+        }
+
         EventInstance audioEvent;
 
         if (AudioInstances.ContainsKey(reference))
@@ -72,12 +79,17 @@ public class AudioManager : MonoBehaviour
     /// <returns>an EventInstance, save it if the sound needs to be stopped or has a parameter</returns>
     public EventInstance PlaySound(EventReference reference, GameObject gameObject)
     {
-        EventInstance audioEvent = RuntimeManager.CreateInstance(reference);
+        if (reference.IsNull)
+        {
+            Debug.LogWarning("NO REFERENCE SOUND!");
+            return default;
+        }
+            EventInstance audioEvent = RuntimeManager.CreateInstance(reference);
 
-        RuntimeManager.AttachInstanceToGameObject(audioEvent, gameObject.transform);
+            RuntimeManager.AttachInstanceToGameObject(audioEvent, gameObject.transform);
 
-        audioEvent.start();
-        return audioEvent;
+            audioEvent.start();
+            return audioEvent;
     }
 
     /// <summary>
@@ -87,7 +99,14 @@ public class AudioManager : MonoBehaviour
     /// <param name="fade">toggles wether the sound will fade when done playing</param>
     public void StopSound(EventInstance audioEvent, bool fade = false)
     {
-        audioEvent.stop(fade ? STOP_MODE.ALLOWFADEOUT : STOP_MODE.IMMEDIATE);
+        if (audioEvent.isValid())
+        {
+            audioEvent.stop(fade ? STOP_MODE.ALLOWFADEOUT : STOP_MODE.IMMEDIATE);
+        }
+        else
+        {
+            Debug.LogWarning("Null audioEvent. Please use a real event instance.");
+        }
     }
 
     /// <summary>
@@ -97,7 +116,14 @@ public class AudioManager : MonoBehaviour
     /// <param name="paused">true if paused, false if not</param>
     public void ToggleSound(EventInstance audioEvent, bool paused)
     {
-        audioEvent.setPaused(paused);
+        if (audioEvent.isValid())
+        {
+            audioEvent.setPaused(paused);
+        }
+        else
+        {
+            Debug.LogWarning("Null audioEvent. Please use a real event instance.");
+        }
     }
 
     /// <summary>

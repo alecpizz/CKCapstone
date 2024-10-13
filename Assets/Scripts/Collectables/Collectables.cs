@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using NaughtyAttributes;
+using FMODUnity;
 
 public class Collectables : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class Collectables : MonoBehaviour
     public DestroyGlowEffect destroyGlowEffect;
     [MinValue(0), MaxValue(10)]
     [SerializeField] private int _collectableNumber;
+    [SerializeField] private EventReference _sound;
 
     /// <summary>
     /// This method triggers the Collect method when the
@@ -41,6 +43,7 @@ public class Collectables : MonoBehaviour
     private void Collect() 
     {
         Debug.Log("You got a collectable!");
+        AudioManager.Instance.PlaySound(_sound);
         WinChecker.CollectedNote?.Invoke(_collectableNumber);
         destroyGlowEffect.DestroyCollectible();
     }
