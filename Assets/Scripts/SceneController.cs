@@ -128,13 +128,13 @@ public class SceneController : MonoBehaviour
             lerpingTime = elapsedTime / _timeForScreenWipe;
             newCircleSize = Mathf.Lerp(startingCircleSize, targetCircleSize, lerpingTime);
             _circleWipeImage.materialForRendering.SetFloat(_circleSizePropId, newCircleSize);
-            elapsedTime += Time.deltaTime;
+            elapsedTime += Time.unscaledDeltaTime;
             yield return null;
         }
 
         _circleWipeImage.materialForRendering.SetFloat(_circleSizePropId, targetCircleSize);
 
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSecondsRealtime(0.1f);
 
         // Loads new scene if needed
         if (!isFadingIn && sceneIndexToLoad != -1)
