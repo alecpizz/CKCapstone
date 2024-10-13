@@ -9,23 +9,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using NaughtyAttributes;
+using FMODUnity;
 
 public class Collectables : MonoBehaviour
 {
     // variables
+    public DestroyGlowEffect destroyGlowEffect;
     [MinValue(0), MaxValue(10)]
     [SerializeField] private int _collectableNumber;
+    [SerializeField] private EventReference _sound;
 
     /// <summary>
     /// This method triggers the Collect method when the
     /// player collides with a collectable.
     /// </summary>
-    /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player" && WinChecker.Instance.CheckForCollection(_collectableNumber)) 
         {
             Collect();
+            
+
         }        
     }
 
@@ -33,11 +37,14 @@ public class Collectables : MonoBehaviour
     /// This method debugs when the player collects
     /// a collectable and checks that the player
     /// has won by collecting the right sequence of Notes. 
+    /// Once the player collects a note, the note disappears
+    /// in a glow effect. 
     /// </summary>
     private void Collect() 
     {
         Debug.Log("You got a collectable!");
+        AudioManager.Instance.PlaySound(_sound);
         WinChecker.CollectedNote?.Invoke(_collectableNumber);
-        Destroy(gameObject);
+        destroyGlowEffect.DestroyCollectible();
     }
 }
