@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Cole Stranczek
-*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein
+*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson
 *    Date Created: 9/22/24
 *    Description: Script that handles the player's movement along
 *    the grid
@@ -25,6 +25,9 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     public bool IsTransparent { get => true; }
     public Vector3 Position { get => transform.position; }
     public GameObject GetGameObject { get => gameObject; }
+
+    [SerializeField]
+    private Vector3 _positionOffset;
 
     // Start is called before the first frame update
     void Start()
@@ -68,7 +71,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         if ((GridBase.Instance.CellIsEmpty(downMove) && enemiesMoved == true) || 
             (DebugMenuManager.instance.ghostMode && enemiesMoved == true))
         {
-            gameObject.transform.position = downMove;
+            gameObject.transform.position = downMove + _positionOffset;
             GridBase.Instance.UpdateEntry(this);
         }
         else
@@ -90,7 +93,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         if ((GridBase.Instance.CellIsEmpty(upMove) && enemiesMoved == true) || 
             (DebugMenuManager.instance.ghostMode && enemiesMoved == true))
         {
-            gameObject.transform.position = upMove;
+            gameObject.transform.position = upMove + _positionOffset;
             GridBase.Instance.UpdateEntry(this);
         }
         playerMoved = true;
@@ -111,7 +114,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         if ((GridBase.Instance.CellIsEmpty(leftMove) && enemiesMoved == true) || 
             (DebugMenuManager.instance.ghostMode && enemiesMoved == true))
         {
-           gameObject.transform.position = leftMove;
+           gameObject.transform.position = leftMove + _positionOffset;
            GridBase.Instance.UpdateEntry(this);
         }
 
@@ -132,7 +135,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         if((GridBase.Instance.CellIsEmpty(rightMove) && enemiesMoved == true) || 
             (DebugMenuManager.instance.ghostMode && enemiesMoved == true))
         {
-           gameObject.transform.position = rightMove;
+           gameObject.transform.position = rightMove + _positionOffset;
            GridBase.Instance.UpdateEntry(this);   
         }
 
@@ -141,8 +144,13 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "Enemy")
+        if (collision.gameObject.CompareTag("Enemy"))
         {
+            // Checks if the enemy is frozen; if they are, doesn't reload the scene
+            EnemyBehavior enemy = collision.collider.GetComponent<EnemyBehavior>();
+            if (enemy == null || enemy.enemyFrozen)
+                return;
+
             Scene scene = SceneManager.GetActiveScene();
             SceneManager.LoadScene(scene.name);
         }
