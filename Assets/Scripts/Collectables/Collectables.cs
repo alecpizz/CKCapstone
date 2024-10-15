@@ -14,7 +14,7 @@ using FMODUnity;
 public class Collectables : MonoBehaviour
 {
     // variables
-    public DestroyGlowEffect destroyGlowEffect;
+    public DestroyGlowEffect DestroyGlowEffect;
     [MinValue(0), MaxValue(10)]
     [SerializeField] private int _collectableNumber;
     [SerializeField] private EventReference _sound;
@@ -28,8 +28,6 @@ public class Collectables : MonoBehaviour
         if (other.tag == "Player" && WinChecker.Instance.CheckForCollection(_collectableNumber)) 
         {
             Collect();
-            
-
         }        
     }
 
@@ -50,6 +48,6 @@ public class Collectables : MonoBehaviour
         }
 
         WinChecker.CollectedNote?.Invoke(_collectableNumber);
-        destroyGlowEffect.DestroyCollectible();
+        DestroyGlowEffect.DestroyCollectible();
     }
 }

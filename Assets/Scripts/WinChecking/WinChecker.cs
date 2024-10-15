@@ -18,7 +18,7 @@ public class WinChecker : MonoBehaviour
     public static Action GotCorrectSequence;
     public static Action GotWrongSequence;
 
-    [field:SerializeField] public List<int> TargetNoteSequence { get; private set; } = new List<int>();
+    [field: SerializeField] public List<int> TargetNoteSequence { get; private set; } = new List<int>();
 
     [InfoBox("For visualization purposes, don't edit this",
         EInfoBoxType.Normal)]

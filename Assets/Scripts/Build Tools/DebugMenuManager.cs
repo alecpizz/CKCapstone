@@ -19,7 +19,9 @@ using UnityEngine.Rendering.UI;
 
 public class DebugMenuManager : MonoBehaviour
 {
-    public static DebugMenuManager instance;
+    public static DebugMenuManager Instance;
+
+    public bool GhostMode { get; private set; } = false;
 
     [SerializeField] private GameObject _debugMenuFirst;
     [SerializeField] private GameObject _quitMenuFirst;
@@ -28,23 +30,22 @@ public class DebugMenuManager : MonoBehaviour
     [SerializeField] private GameObject _fpsCounter;
     [SerializeField] private GameObject _ghostModeReminder;
     [SerializeField] private GameObject _invincibilityReminder;
-    [SerializeField] private GameObject _EnemyTurnReminder;
+    [SerializeField] private GameObject _enemyTurnReminder;
+
+    [SerializeField] private TextMeshProUGUI _fpsText;
+    [SerializeField] private TextMeshProUGUI _fpsButtonText;
+    [SerializeField] private TextMeshProUGUI _ghostModeButtonText;
+    [SerializeField] private TextMeshProUGUI _invincibilityButtonText;
+    [SerializeField] private TextMeshProUGUI _enemyTurnButtonText;
 
     private bool _dMenu = false;
     private bool _qMenu = false;
     private bool _fpsCount = false;
-    public bool ghostMode { get; private set; } = false;
     private bool _invincibility = false;
     private bool _enemyTurn = true;
 
     private int _lastFrameIndex;
     private float[] _frameDeltaTimeArray;
-
-    [SerializeField] private TextMeshProUGUI _fpsText;
-    [SerializeField] private TextMeshProUGUI _fpsButtonText;
-    [SerializeField] private TextMeshProUGUI ghostModeButtonText;
-    [SerializeField] private TextMeshProUGUI _invincibilityButtonText;
-    [SerializeField] private TextMeshProUGUI _enemyTurnButtonText;
 
     private DebugInputActions _playerInput;
     private InputAction _debugInput;
@@ -68,7 +69,7 @@ public class DebugMenuManager : MonoBehaviour
     private void Awake()
     {
         //sets the current instance
-        instance = this;
+        Instance = this;
 
         //enables player input
         _playerInput = new DebugInputActions();
@@ -197,17 +198,17 @@ public class DebugMenuManager : MonoBehaviour
     /// </summary>
     public void GhostModeToggle()
     {
-        if (ghostMode == false)
+        if (GhostMode == false)
         {
             _ghostModeReminder.SetActive(true);
-            ghostModeButtonText.text = "Ghost Mode: On";
-            ghostMode = true;
+            _ghostModeButtonText.text = "Ghost Mode: On";
+            GhostMode = true;
         }
-        else if (ghostMode == true)
+        else if (GhostMode == true)
         {
             _ghostModeReminder.SetActive(false);
-            ghostModeButtonText.text = "Ghost Mode: Off";
-            ghostMode = false;
+            _ghostModeButtonText.text = "Ghost Mode: Off";
+            GhostMode = false;
         }
     }
 
@@ -237,13 +238,13 @@ public class DebugMenuManager : MonoBehaviour
     {
         if (_enemyTurn == true)
         {
-            _EnemyTurnReminder.SetActive(true);
+            _enemyTurnReminder.SetActive(true);
             _enemyTurnButtonText.text = "Enemy Turns: Off";
             _enemyTurn = false;
         }
         else if (_enemyTurn == false)
         {
-            _EnemyTurnReminder.SetActive(false);
+            _enemyTurnReminder.SetActive(false);
             _enemyTurnButtonText.text = "Enemy Turns: On";
             _enemyTurn = true;
         }
