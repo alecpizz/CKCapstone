@@ -11,7 +11,7 @@ using UnityEngine;
 public class DestroyGlowEffect : MonoBehaviour
 {
      // variables 
-    public GameObject GlowEffectPrefab;
+    public GameObject glowEffectPrefab;
 
     /// <summary>
     /// This method is called the player collides 
@@ -20,9 +20,9 @@ public class DestroyGlowEffect : MonoBehaviour
     /// </summary>
     public void DestroyCollectible()
     {
-        if (GlowEffectPrefab != null)
+        if (glowEffectPrefab != null)
         {
-            Instantiate(GlowEffectPrefab, transform.position, transform.rotation);
+            Instantiate(glowEffectPrefab, transform.position, transform.rotation);
         }
 
         Destroy(gameObject);

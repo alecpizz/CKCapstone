@@ -18,8 +18,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     private PlayerControls _input;
     public Vector3 FacingDirection { get; private set; }
 
-    public bool PlayerMoved;
-    public bool EnemiesMoved = true;
+    public bool playerMoved;
+    public bool enemiesMoved = true;
     public bool IsTransparent { get => true; }
     public Vector3 Position { get => transform.position; }
     public GameObject GetGameObject { get => gameObject; }
@@ -63,7 +63,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
 
         // Move down and remove the pointer
         var downMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.back);
-        if (GridBase.Instance.CellIsEmpty(downMove) && EnemiesMoved == true)
+        if (GridBase.Instance.CellIsEmpty(downMove) && enemiesMoved == true)
         {
             gameObject.transform.position = downMove;
             GridBase.Instance.UpdateEntry(this);
@@ -81,12 +81,12 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
 
         // Move up and remove the pointer
         var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
-        if (GridBase.Instance.CellIsEmpty(upMove) && EnemiesMoved == true)
+        if (GridBase.Instance.CellIsEmpty(upMove) && enemiesMoved == true)
         {
             gameObject.transform.position = upMove;
             GridBase.Instance.UpdateEntry(this);
         }
-        PlayerMoved = true;
+        playerMoved = true;
         
     }
 
@@ -101,13 +101,13 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
 
         // Move left and remove the pointer
         var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
-        if (GridBase.Instance.CellIsEmpty(leftMove) && EnemiesMoved == true)
+        if (GridBase.Instance.CellIsEmpty(leftMove) && enemiesMoved == true)
         {
            gameObject.transform.position = leftMove;
            GridBase.Instance.UpdateEntry(this);
         }
 
-        PlayerMoved = true;
+        playerMoved = true;
     }
 
     /// <summary>
@@ -121,13 +121,13 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
 
         // Move Right and remove the pointer
         var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
-        if(GridBase.Instance.CellIsEmpty(rightMove) && EnemiesMoved == true)
+        if(GridBase.Instance.CellIsEmpty(rightMove) && enemiesMoved == true)
         {
            gameObject.transform.position = rightMove;
            GridBase.Instance.UpdateEntry(this);   
         }
 
-        PlayerMoved = true; 
+        playerMoved = true; 
     }
 
     /// <summary>

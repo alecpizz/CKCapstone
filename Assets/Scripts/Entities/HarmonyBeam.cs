@@ -82,7 +82,7 @@ public class HarmonyBeam : MonoBehaviour
                         Debug.Log("Froze enemy: " + enemy.name);
 
                         eb = hit.collider.GetComponent<EnemyBehavior>();
-                        eb.EnemyFrozen = true;
+                        eb.enemyFrozen = true;
                     }
 
                     continue;
@@ -132,7 +132,7 @@ public class HarmonyBeam : MonoBehaviour
                 Debug.Log("Unfroze enemy: " + enemy.name);
 
                 eb = enemy.GetComponent<EnemyBehavior>();
-                eb.EnemyFrozen = false;
+                eb.enemyFrozen = false;
 
                 enemiesToUnfreeze.Add(enemy);
             }
