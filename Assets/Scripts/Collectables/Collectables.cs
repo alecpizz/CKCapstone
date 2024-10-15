@@ -43,7 +43,12 @@ public class Collectables : MonoBehaviour
     private void Collect() 
     {
         Debug.Log("You got a collectable!");
-        AudioManager.Instance.PlaySound(_sound);
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySound(_sound);
+        }
+
         WinChecker.CollectedNote?.Invoke(_collectableNumber);
         destroyGlowEffect.DestroyCollectible();
     }

@@ -122,7 +122,10 @@ public class SceneController : MonoBehaviour
         _circleWipeImage.materialForRendering.SetColor(_backgroundColorPropId, fadeColor);
 
         RepositionCircleWipe();
-        AudioManager.Instance.PlaySound(_endSound);
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySound(_endSound);
+        }
         yield return new WaitForEndOfFrame();
 
         // Animates circle wipe until the end time is reached
