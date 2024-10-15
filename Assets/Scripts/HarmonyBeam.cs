@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Claire Noto
-*    Contributors: Claire Noto
+*    Contributors: Claire Noto, Trinity Hutson
 *    Date Created: 10/10/24
 *    Description: Script that handles the harmony beam
 *******************************************************************/
@@ -67,7 +67,7 @@ public class HarmonyBeam : MonoBehaviour
             foreach (RaycastHit hit in hits)
             {
                 _lineRenderer.positionCount += 1;
-                _lineRenderer.SetPosition(_lineRenderer.positionCount - 1, hit.point);
+                _lineRenderer.SetPosition(_lineRenderer.positionCount - 1, hit.transform.position);
 
                 if (hit.collider.CompareTag("Enemy"))
                 {
@@ -96,7 +96,8 @@ public class HarmonyBeam : MonoBehaviour
                         currentDirection = reflectiveObject.GetReflectionDirection(currentDirection);
 
                         // Update currentStartPosition to where the beam hit the reflective object
-                        currentStartPosition = hit.point;
+                        currentStartPosition = hit.transform.position;
+                        Debug.Log("New Position: " + currentStartPosition);
                         remainingDistance -= hit.distance;
                         reflections++;
                         hitSomething = true;
@@ -116,6 +117,7 @@ public class HarmonyBeam : MonoBehaviour
             {
                 _lineRenderer.positionCount += 1;
                 _lineRenderer.SetPosition(_lineRenderer.positionCount - 1, currentStartPosition + currentDirection * remainingDistance);
+                //_lineRenderer.SetPosition(_lineRenderer.positionCount - 1, currentStartPosition);
                 break;
             }
         }

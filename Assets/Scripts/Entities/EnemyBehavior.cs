@@ -51,10 +51,24 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
         _input.InGame.MoveRight.performed += EnemyMove;
 
         _playerMoveRef = _player.GetComponent<PlayerMovement>();
-        GridBase.Instance.AddEntry(this);
+        //GridBase.Instance.AddEntry(this);
 
         // Make sure enemiess are always seen at the start
         _atStart = true;
+    }
+
+
+    /// <summary>
+    /// Unregisters from player input
+    /// </summary>
+    private void OnDisable()
+    {
+        _input.InGame.Disable();
+
+        _input.InGame.MoveUp.performed -= EnemyMove;
+        _input.InGame.MoveDown.performed -= EnemyMove;
+        _input.InGame.MoveLeft.performed -= EnemyMove;
+        _input.InGame.MoveRight.performed -= EnemyMove;
     }
 
     /// <summary>
@@ -70,6 +84,18 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
 
         var nextPos = movePoints[_currentPoint].transform.position;
         var currentPos = gameObject.transform.position;
+
+        StartCoroutine(DelayedPlayerInput());
+    }
+
+    /// <summary>
+    /// Delays the input from the player by 1 frame so that the player moves before enemies lock out their movement
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator DelayedPlayerInput()
+    {
+        yield return null;
+
         if (_playerMoveRef.enemiesMoved == true && enemyFrozen == false)
         {
             if (_atStart)
@@ -105,12 +131,14 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
     {
         Vector3 startPos = transform.position;
 
-        for (float i = 0; i <= _waitTime; i += 0.05f)
+        for (float i = 0; i <= _waitTime; i += Time.deltaTime)
         {
-            yield return new WaitForSeconds(0.05f);
+            yield return null;
             transform.position = Vector3.Lerp(startPos, movePoints[_currentPoint].transform.position, i / _waitTime);
-            Debug.Log(i);
+            //Debug.Log(i);
         }
+
+        //GridBase.Instance.UpdateEntry(this);
 
         transform.position = movePoints[_currentPoint].transform.position;
         _playerMoveRef.enemiesMoved = true;
