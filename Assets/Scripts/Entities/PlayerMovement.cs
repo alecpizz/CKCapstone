@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Cole Stranczek
-*    Contributors: Cole Stranczek
+*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein
 *    Date Created: 9/22/24
 *    Description: Script that handles the player's movement along
 *    the grid
@@ -63,9 +63,10 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     {
         FacingDirection = Vector3.back;
 
-        // Move down and remove the pointer
+        // Move down if there is no wall below the player or if ghost mode is enabled
         var downMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.back);
-        if (GridBase.Instance.CellIsEmpty(downMove) && enemiesMoved == true)
+        if ((GridBase.Instance.CellIsEmpty(downMove) && enemiesMoved == true) || 
+            (DebugMenuManager.instance.ghostMode && enemiesMoved == true))
         {
             gameObject.transform.position = downMove;
             GridBase.Instance.UpdateEntry(this);
@@ -84,9 +85,10 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     {
         FacingDirection = Vector3.forward;
 
-        // Move up and remove the pointer
+        // Move up if there is no wall above the player or if ghost mode is enabled
         var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
-        if (GridBase.Instance.CellIsEmpty(upMove) && enemiesMoved == true)
+        if ((GridBase.Instance.CellIsEmpty(upMove) && enemiesMoved == true) || 
+            (DebugMenuManager.instance.ghostMode && enemiesMoved == true))
         {
             gameObject.transform.position = upMove;
             GridBase.Instance.UpdateEntry(this);
@@ -104,9 +106,10 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     {
         FacingDirection = Vector3.left;
 
-        // Move left and remove the pointer
+        // Move left if there is no wall to the left of the player or if ghost mode is enabled
         var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
-        if (GridBase.Instance.CellIsEmpty(leftMove) && enemiesMoved == true)
+        if ((GridBase.Instance.CellIsEmpty(leftMove) && enemiesMoved == true) || 
+            (DebugMenuManager.instance.ghostMode && enemiesMoved == true))
         {
            gameObject.transform.position = leftMove;
            GridBase.Instance.UpdateEntry(this);
@@ -124,9 +127,10 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     {
         FacingDirection = Vector3.right;
 
-        // Move Right and remove the pointer
+        // Move Right if there is no wall to the right of the player or if ghost mode is enabled
         var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
-        if(GridBase.Instance.CellIsEmpty(rightMove) && enemiesMoved == true)
+        if((GridBase.Instance.CellIsEmpty(rightMove) && enemiesMoved == true) || 
+            (DebugMenuManager.instance.ghostMode && enemiesMoved == true))
         {
            gameObject.transform.position = rightMove;
            GridBase.Instance.UpdateEntry(this);   
