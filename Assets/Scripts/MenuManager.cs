@@ -4,6 +4,7 @@
 *    Date Created: 9/26/24
 *    Description: This is just meant to make menu buttons, when pressed, work.
 *******************************************************************/
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +13,7 @@ using UnityEngine.SceneManagement;
 public class MenuManager : MonoBehaviour
 {
     [SerializeField] private GameObject _pauseScreen;
+    [SerializeField] public GameObject TutorialScreen;
 
     /// <summary>
     /// Invoked to close the pause menu
@@ -27,6 +29,11 @@ public class MenuManager : MonoBehaviour
     public void Pause()
     {
         _pauseScreen.SetActive(true);
+    }
+
+    public void Tutorial()
+    {
+        TutorialScreen.SetActive(true);
     }
 
     /// <summary>
