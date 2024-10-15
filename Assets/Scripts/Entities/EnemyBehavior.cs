@@ -51,7 +51,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
         _input.InGame.MoveRight.performed += EnemyMove;
 
         _playerMoveRef = _player.GetComponent<PlayerMovement>();
-        GridBase.Instance.AddEntry(this);
+        //GridBase.Instance.AddEntry(this);
 
         // Make sure enemiess are always seen at the start
         _atStart = true;
@@ -138,7 +138,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
             //Debug.Log(i);
         }
 
-        GridBase.Instance.UpdateEntry(this);
+        //GridBase.Instance.UpdateEntry(this);
 
         transform.position = movePoints[_currentPoint].transform.position;
         _playerMoveRef.enemiesMoved = true;
