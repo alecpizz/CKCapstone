@@ -17,14 +17,14 @@ using NaughtyAttributes;
 public class HUDscript : MonoBehaviour
 {
     [Required][SerializeField] private TextMeshProUGUI _collectedNotesUI;
-    [SerializeField] private TextMeshProUGUI _sequenceUI;
     [SerializeField] private float _messageWaitTime;
-    [SerializeField] private float _doorUnlockMessage;
-    [SerializeField] private float _incorrectMessage;
-   
+    [SerializeField] private GameObject _doorUnlockMessage;
+    [SerializeField] private GameObject _incorrectMessage;
+    [SerializeField] private TextMeshProUGUI _sequenceUI;
 
     private List<int> _notes;
-    private const string BaseCollectedText = "Collected Notes:";
+
+    private const string BaseCollectedText = "Collect the notes in numerical order:";
 
     /// <summary>
     /// Initializing values and registering to actions
@@ -46,8 +46,8 @@ public class HUDscript : MonoBehaviour
         }
 
         WinChecker.CollectedNote += UpdateCollectedNotesText;
-        WinChecker.GotCorrectSequence += DisplayDoorUnlockMessage();
-        WinChecker.GotWrongSequence += ctx => DisplayIncorrectMessage();
+        WinChecker.GotCorrectSequence += DisplayDoorUnlockMessage;
+        WinChecker.GotWrongSequence += DisplayIncorrectMessage;
     }
 
     /// <summary>
@@ -56,8 +56,8 @@ public class HUDscript : MonoBehaviour
     private void OnDisable()
     {
         WinChecker.CollectedNote -= UpdateCollectedNotesText;
-        WinChecker.GotCorrectSequence -= ctx => DisplayDoorUnlockMessage();
-        WinChecker.GotWrongSequence -= ctx => DisplayIncorrectMessage();
+        WinChecker.GotCorrectSequence -= DisplayDoorUnlockMessage;
+        WinChecker.GotWrongSequence -= DisplayIncorrectMessage;
     }
 
     /// <summary>
@@ -80,18 +80,25 @@ public class HUDscript : MonoBehaviour
     /// <summary>
     /// Invoked to display the wrong sequence screen
     /// </summary>
-    private void DisplayIncorrectMessage(GameObject _incorrectMessage)
+    private void DisplayIncorrectMessage()
     {
         ResetCollectedNotesText();
         StopAllCoroutines();
-        _incorrectMessage.SetActive(false);
-        StartCoroutine(IncorrectMessageResetTimer(_incorrectMessage));
+        if (_doorUnlockMessage.gameObject.activeSelf == false)
+        {
+            _incorrectMessage.SetActive(true);
+        }
+        else
+        {
+            _incorrectMessage.SetActive(false);
+            StartCoroutine(IncorrectMessageResetTimer(_incorrectMessage));
+        }
     }
 
     /// <summary>
     /// Displays message that door has been unlocked
     /// </summary>
-    private void DisplayDoorUnlockMessage(GameObject _doorUnlockMessage)
+    private void DisplayDoorUnlockMessage()
     {
         _doorUnlockMessage.SetActive(true);
     }

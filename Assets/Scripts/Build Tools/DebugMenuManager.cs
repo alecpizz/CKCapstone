@@ -19,6 +19,8 @@ using UnityEngine.Rendering.UI;
 
 public class DebugMenuManager : MonoBehaviour
 {
+    public static DebugMenuManager instance;
+
     [SerializeField] private GameObject _debugMenuFirst;
     [SerializeField] private GameObject _quitMenuFirst;
     [SerializeField] private GameObject _debugMenu;
@@ -31,7 +33,7 @@ public class DebugMenuManager : MonoBehaviour
     private bool _dMenu = false;
     private bool _qMenu = false;
     private bool _fpsCount = false;
-    private bool _ghostMode = false;
+    public bool ghostMode { get; private set; } = false;
     private bool _invincibility = false;
     private bool _enemyTurn = true;
 
@@ -40,11 +42,11 @@ public class DebugMenuManager : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI _fpsText;
     [SerializeField] private TextMeshProUGUI _fpsButtonText;
-    [SerializeField] private TextMeshProUGUI _ghostModeButtonText;
+    [SerializeField] private TextMeshProUGUI ghostModeButtonText;
     [SerializeField] private TextMeshProUGUI _invincibilityButtonText;
     [SerializeField] private TextMeshProUGUI _enemyTurnButtonText;
 
-    private DebugtInputActions _playerInput;
+    private DebugInputActions _playerInput;
     private InputAction _debugInput;
     private InputAction _restartInput;
     private InputAction _quitInput;
@@ -65,8 +67,11 @@ public class DebugMenuManager : MonoBehaviour
 
     private void Awake()
     {
+        //sets the current instance
+        instance = this;
+
         //enables player input
-        _playerInput = new DebugtInputActions();
+        _playerInput = new DebugInputActions();
         _debugInput = _playerInput.Player.Debug;
         _restartInput = _playerInput.Player.Restart;
         _quitInput = _playerInput.Player.Quit;
@@ -105,12 +110,12 @@ public class DebugMenuManager : MonoBehaviour
     }
 
     private void Update()
-    {
+    {   
         //handles opening and closing the debug menu
-        if (_debugInput.WasPressedThisFrame())
+        if (_debugInput.WasPressedThisFrame() && Debug.isDebugBuild == true)
         {
             ToggleDebugMenu();
-        }
+        }       
 
         //restarts the current scene if the restart input is pressed
         if (_restartInput.WasPressedThisFrame())
@@ -125,7 +130,7 @@ public class DebugMenuManager : MonoBehaviour
         }
 
         //updates the FPS Counter
-        _frameDeltaTimeArray[_lastFrameIndex] = Time.deltaTime;
+        _frameDeltaTimeArray[_lastFrameIndex] = Time.unscaledDeltaTime;
         _lastFrameIndex = (_lastFrameIndex + 1) % _frameDeltaTimeArray.Length;
         _fpsText.text = (Mathf.RoundToInt(FPSCalculation()).ToString() + " FPS");
     }
@@ -188,21 +193,21 @@ public class DebugMenuManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Will toggle ghost mode, currently just displays a notification saying it's on
+    /// Will toggle ghost mode
     /// </summary>
     public void GhostModeToggle()
     {
-        if (_ghostMode == false)
+        if (ghostMode == false)
         {
             _ghostModeReminder.SetActive(true);
-            _ghostModeButtonText.text = "Ghost Mode: On";
-            _ghostMode = true;
+            ghostModeButtonText.text = "Ghost Mode: On";
+            ghostMode = true;
         }
-        else if (_ghostMode == true)
+        else if (ghostMode == true)
         {
             _ghostModeReminder.SetActive(false);
-            _ghostModeButtonText.text = "Ghost Mode: Off";
-            _ghostMode = false;
+            ghostModeButtonText.text = "Ghost Mode: Off";
+            ghostMode = false;
         }
     }
 
