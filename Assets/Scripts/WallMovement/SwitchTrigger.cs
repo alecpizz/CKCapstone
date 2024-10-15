@@ -16,7 +16,7 @@ using UnityEngine;
 /// </summary>
 public class SwitchTrigger : MonoBehaviour
 {
-    //on/off variable
+    //on/off variable for switch
     private bool _isTriggered = false;
 
     //for registering walls to a switch
