@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 4530148562958940866}
   - component: {fileID: 1238397645620571336}
   - component: {fileID: 2406617457571976407}
-  - component: {fileID: 4681459072296277059}
   m_Layer: 0
   m_Name: Switch
   m_TagString: Untagged
@@ -119,23 +118,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dea731508f9c3a4e8928cbef0784552, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movWalls:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
---- !u!114 &4681459072296277059
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 73749311997623971}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82a4bfe8cc02478418a439b1fb27c5f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  wallTransform: {x: 0, y: 0, z: 0}
-  wallColor: {fileID: 0}
-  wallGrid: {fileID: 0}
-  wallGhost: {fileID: 0}
+  _moveWalls: []
