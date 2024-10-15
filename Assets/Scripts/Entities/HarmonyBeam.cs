@@ -16,7 +16,7 @@ public class HarmonyBeam : MonoBehaviour
 
     private LineRenderer _lineRenderer;
 
-    EnemyBehavior eb;
+    private EnemyBehavior eb;
 
     // Track enemy states: true = hit, false = not hit
     private Dictionary<GameObject, bool> _enemyHitStates = new();
@@ -82,7 +82,7 @@ public class HarmonyBeam : MonoBehaviour
                         Debug.Log("Froze enemy: " + enemy.name);
 
                         eb = hit.collider.GetComponent<EnemyBehavior>();
-                        eb.enemyFrozen = true;
+                        eb.EnemyFrozen = true;
                     }
 
                     continue;
@@ -132,7 +132,7 @@ public class HarmonyBeam : MonoBehaviour
                 Debug.Log("Unfroze enemy: " + enemy.name);
 
                 eb = enemy.GetComponent<EnemyBehavior>();
-                eb.enemyFrozen = false;
+                eb.EnemyFrozen = false;
 
                 enemiesToUnfreeze.Add(enemy);
             }
@@ -143,8 +143,6 @@ public class HarmonyBeam : MonoBehaviour
             _enemyHitStates[enemy] = false;
         }
     }
-
-    
 
     private void OnDestroy()
     {

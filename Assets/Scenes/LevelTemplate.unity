@@ -2620,12 +2620,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d22144976a94ce4cbe43b0b4253e156, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grid: {fileID: 530120605}
-  gridSize: 8
-  primaryGridMat: {fileID: 2100000, guid: 8e21dd5f57250be488ce312f1f58c905, type: 2}
-  secondaryGridMat: {fileID: 2100000, guid: 54a3c1dfb6082524cbe80c094c89b51b, type: 2}
-  drawGridMesh: 1
-  gridMeshHolder: {fileID: 1817116115}
+  _grid: {fileID: 530120605}
+  _gridSize: 8
+  _primaryGridMat: {fileID: 2100000, guid: 8e21dd5f57250be488ce312f1f58c905, type: 2}
+  _secondaryGridMat: {fileID: 2100000, guid: 54a3c1dfb6082524cbe80c094c89b51b, type: 2}
+  _drawGridMesh: 1
+  _gridMeshHolder: {fileID: 0}
 --- !u!156049354 &530120605
 Grid:
   m_ObjectHideFlags: 0
@@ -4065,7 +4065,7 @@ PrefabInstance:
         type: 3}
       propertyPath: destroyGlowEffect
       value: 
-      objectReference: {fileID: 825073507}
+      objectReference: {fileID: 0}
     - target: {fileID: 5463086719921129959, guid: 31acf9c0ef85ab040930692ca2f0dcf9,
         type: 3}
       propertyPath: m_Name
@@ -4144,11 +4144,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5463086719921129959, guid: 31acf9c0ef85ab040930692ca2f0dcf9,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 825073507}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 31acf9c0ef85ab040930692ca2f0dcf9, type: 3}
 --- !u!4 &825073505 stripped
 Transform:
@@ -4156,26 +4152,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 825073504}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &825073506 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5463086719921129959, guid: 31acf9c0ef85ab040930692ca2f0dcf9,
-    type: 3}
-  m_PrefabInstance: {fileID: 825073504}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &825073507
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 825073506}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 19f5d69acac8fa54fb1e9ebfa50ecee0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  glowEffectPrefab: {fileID: 8771972552311404799, guid: 4026826b70e5d384faa33d20f6cf588a,
-    type: 3}
 --- !u!1001 &852098774
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4679,7 +4655,7 @@ PrefabInstance:
         type: 3}
       propertyPath: destroyGlowEffect
       value: 
-      objectReference: {fileID: 989015360}
+      objectReference: {fileID: 0}
     - target: {fileID: 5153202387898623133, guid: 31acf9c0ef85ab040930692ca2f0dcf9,
         type: 3}
       propertyPath: _collectableNumber
@@ -4763,11 +4739,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5463086719921129959, guid: 31acf9c0ef85ab040930692ca2f0dcf9,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 989015360}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 31acf9c0ef85ab040930692ca2f0dcf9, type: 3}
 --- !u!4 &989015358 stripped
 Transform:
@@ -4775,26 +4747,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 989015357}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &989015359 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5463086719921129959, guid: 31acf9c0ef85ab040930692ca2f0dcf9,
-    type: 3}
-  m_PrefabInstance: {fileID: 989015357}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &989015360
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 989015359}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 19f5d69acac8fa54fb1e9ebfa50ecee0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  glowEffectPrefab: {fileID: 8771972552311404799, guid: 4026826b70e5d384faa33d20f6cf588a,
-    type: 3}
 --- !u!1 &995687136
 GameObject:
   m_ObjectHideFlags: 0
@@ -8481,7 +8433,7 @@ PrefabInstance:
         type: 3}
       propertyPath: destroyGlowEffect
       value: 
-      objectReference: {fileID: 1844996793}
+      objectReference: {fileID: 0}
     - target: {fileID: 5153202387898623133, guid: 31acf9c0ef85ab040930692ca2f0dcf9,
         type: 3}
       propertyPath: _collectableNumber
@@ -8565,11 +8517,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5463086719921129959, guid: 31acf9c0ef85ab040930692ca2f0dcf9,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1844996793}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 31acf9c0ef85ab040930692ca2f0dcf9, type: 3}
 --- !u!4 &1844996791 stripped
 Transform:
@@ -8577,26 +8525,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1844996790}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1844996792 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5463086719921129959, guid: 31acf9c0ef85ab040930692ca2f0dcf9,
-    type: 3}
-  m_PrefabInstance: {fileID: 1844996790}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1844996793
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1844996792}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 19f5d69acac8fa54fb1e9ebfa50ecee0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  glowEffectPrefab: {fileID: 8771972552311404799, guid: 4026826b70e5d384faa33d20f6cf588a,
-    type: 3}
 --- !u!1 &1848354347
 GameObject:
   m_ObjectHideFlags: 0
@@ -9467,7 +9395,7 @@ PrefabInstance:
         type: 3}
       propertyPath: destroyGlowEffect
       value: 
-      objectReference: {fileID: 2084394315}
+      objectReference: {fileID: 0}
     - target: {fileID: 5153202387898623133, guid: 31acf9c0ef85ab040930692ca2f0dcf9,
         type: 3}
       propertyPath: _collectableNumber
@@ -9553,11 +9481,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5463086719921129959, guid: 31acf9c0ef85ab040930692ca2f0dcf9,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2084394315}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 31acf9c0ef85ab040930692ca2f0dcf9, type: 3}
 --- !u!4 &2084394313 stripped
 Transform:
@@ -9565,26 +9489,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2084394312}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &2084394314 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5463086719921129959, guid: 31acf9c0ef85ab040930692ca2f0dcf9,
-    type: 3}
-  m_PrefabInstance: {fileID: 2084394312}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2084394315
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2084394314}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 19f5d69acac8fa54fb1e9ebfa50ecee0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  glowEffectPrefab: {fileID: 8771972552311404799, guid: 4026826b70e5d384faa33d20f6cf588a,
-    type: 3}
 --- !u!1 &2091065047
 GameObject:
   m_ObjectHideFlags: 0

@@ -35,8 +35,6 @@ public class MovingWall : MonoBehaviour, IGridEntry
 
     public Vector3 Position => transform.position;
 
-
-
     /// <summary>
     /// Original position of the wall is given
     /// And ghost wall is put in it's initial position
@@ -44,7 +42,6 @@ public class MovingWall : MonoBehaviour, IGridEntry
     void Start()
     {
         _originWall = transform.position;
-
         _originGhost = _wallGhost.transform.position;
     }
 
