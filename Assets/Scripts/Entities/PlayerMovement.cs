@@ -70,6 +70,9 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
             gameObject.transform.position = downMove;
             GridBase.Instance.UpdateEntry(this);
         }
+        else
+            Debug.Log(enemiesMoved);
+        Debug.Log("IS empty: " + GridBase.Instance.CellIsEmpty(downMove));
     }
 
     /// <summary>
