@@ -19,10 +19,12 @@ public struct DialogueEntry
 {
     public EventReference _sound;
     [TextArea] public string _text;
-    [InfoBox("This adjusts the speed of the text. A value of -5 slows it down while a value of 5 speeds it up", EInfoBoxType.Normal)]
+    [InfoBox("This adjusts the speed of the text. " +
+        "A value of -5 slows it down while a value of 5 speeds it up", EInfoBoxType.Normal)]
     [Range(-5f, 5f)] public float _adjustTypingSpeed;
 }
 
+// TODO: Update this class to implement from IInteractable
 public class NPCScript : MonoBehaviour
 {
     [SerializeField] private TMP_Text _dialogueBox;
@@ -41,7 +43,7 @@ public class NPCScript : MonoBehaviour
     private string _currentFullText;
     private List<GameObject> bouncingLetters;
 
-    // waiting until new AudioManager update gets pushed
+    // FIXME: waiting until new AudioManager update gets pushed
     //private EventInstance _currentInstance;
 
     /// <summary>
@@ -54,7 +56,8 @@ public class NPCScript : MonoBehaviour
             _dialogueBox.SetText(_dialogueEntries[_currentDialogue]._text);
         _dialogueBox.gameObject.SetActive(false);
         _occupied = false;
-        _currentTypingSpeed = Mathf.Clamp(_typingSpeed - _dialogueEntries[_currentDialogue]._adjustTypingSpeed, 2f, 15f) / 100f;
+        _currentTypingSpeed = Mathf.Clamp(
+            _typingSpeed - _dialogueEntries[_currentDialogue]._adjustTypingSpeed, 2f, 15f) / 100f;
     }
 
     /// <summary>
@@ -91,14 +94,12 @@ public class NPCScript : MonoBehaviour
 
         if (_typingCoroutine != null)
         {
-            //AudioManager.Instance.StopSound(_currentInstance);
             StopCoroutine(_typingCoroutine);
         }
 
         // adjusts typing speed on a per-entry basis
         _currentTypingSpeed = Mathf.Clamp(_typingSpeed - _dialogueEntries[_currentDialogue]._adjustTypingSpeed, 2f, 15f) / 100f;
 
-        //_currentInstance = AudioManager.Instance.PlaySound(_dialogueEntries[_currentDialogue]._sound);
         StopCoroutine(_bounceCoroutine);
         // Cleanup bouncing letters
         foreach (var letter in bouncingLetters)

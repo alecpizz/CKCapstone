@@ -1,19 +1,13 @@
-using FMODUnity;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using Unity.VisualScripting;
+/********************************************************************
+*    Author: David Henvick
+*    Contributors:
+*    Date Created: 9/30/24
+*    Description: This is the script that is used for the interact input
+*******************************************************************/
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/*
-********************************************************************
-File name: NPCScript
-author: David Henvick
-Creation date: 9/30/24
-summary: this is the script that is used for the interact input
-*/
+// TODO: merge this script together with PlayerInteraction
 public class PlayerInteract : MonoBehaviour
 {
     //npc
@@ -34,9 +28,9 @@ public class PlayerInteract : MonoBehaviour
     }
 
     /// <summary>
-    /// called on collision, is used to log interactables within range
+    /// Called on collision, is used to log interactables within range
     /// </summary>
-    /// <param name="collision"></param>
+    /// <param name="collision">Data from a collision</param>
     void OnCollisionEnter(Collision collision)
     {
         _npc = collision.gameObject.GetComponent<NPCScript>();
@@ -47,9 +41,9 @@ public class PlayerInteract : MonoBehaviour
     }
 
     /// <summary>
-    /// called on collision, is used to remove logged interactables when they leave the range
+    /// Called on collision, is used to remove logged interactables when they leave the range
     /// </summary>
-    /// <param name="collision"></param>
+    /// <param name="collision">Data from a collision</param>
     void OnCollisionExit(Collision collision)
     {
         _npc = collision.gameObject.GetComponent<NPCScript>();
@@ -61,10 +55,10 @@ public class PlayerInteract : MonoBehaviour
     }
 
     /// <summary>
-    /// activated when the player uses the interact action
+    /// Activated when the player uses the interact action
     /// is used for npc interaction
     /// </summary>
-    /// <param name="context"></param>
+    /// <param name="context">Input action callback</param>
     private void InteractPerformed(InputAction.CallbackContext context)
     {
         if (_npc != null)
