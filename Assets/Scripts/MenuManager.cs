@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Rider Hagen
-*    Contributors: [people who edited file, add your name if you edit]
+*    Contributors: David Galmines
 *    Date Created: 9/26/24
 *    Description: This is just meant to make menu buttons, when pressed, work.
 *******************************************************************/
@@ -12,6 +12,7 @@ using UnityEngine.SceneManagement;
 public class MenuManager : MonoBehaviour
 {
     [SerializeField] private GameObject _pauseScreen;
+    [SerializeField] private GameObject _tutorialCanvas;
 
     /// <summary>
     /// Invoked to close the pause menu
@@ -35,6 +36,14 @@ public class MenuManager : MonoBehaviour
     public void BackToMainMenu()
     {
         SceneManager.LoadScene(0);
+    }
+
+    /// <summary>
+    /// Clicking the start button on the main menu activates the tutorial canvas.
+    /// </summary>
+    public void ActivateTutorialCanvas()
+    {
+        _tutorialCanvas.SetActive(true);
     }
 
     /// <summary>
