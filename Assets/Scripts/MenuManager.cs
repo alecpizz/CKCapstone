@@ -14,12 +14,28 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject _pauseScreen;
     [SerializeField] private GameObject _tutorialCanvas;
 
+    private DebugInputActions _inputActions;
+
+    private void Awake()
+    {
+        _inputActions = new DebugInputActions();
+        _inputActions.Enable();
+        _inputActions.Player.Quit.performed += ctx => Pause();
+    }
+
+    private void OnDisable()
+    {
+        _inputActions.Disable();
+        _inputActions.Player.Quit.performed -= ctx => Pause();
+    }
+
     /// <summary>
     /// Invoked to close the pause menu
     /// </summary>
     public void Unpause()
     {
         _pauseScreen.SetActive(false);
+        Time.timeScale = 1f;
     }
 
     /// <summary>
@@ -28,6 +44,7 @@ public class MenuManager : MonoBehaviour
     public void Pause()
     {
         _pauseScreen.SetActive(true);
+        Time.timeScale = 0f;
     }
 
     /// <summary>
@@ -35,6 +52,7 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void BackToMainMenu()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene(0);
     }
 
