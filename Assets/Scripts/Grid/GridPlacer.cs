@@ -1,6 +1,6 @@
 /******************************************************************
  *    Author: Alec Pizziferro
- *    Contributors: N/A
+ *    Contributors: Trinity Hutson
  *    Date Created: 9/29/2024
  *    Description: Placement tool for grid objects.
  *    To use, simply attach to a gameobject that you wish to position on the grid.
@@ -25,9 +25,15 @@ public class GridPlacer : MonoBehaviour, IGridEntry
     [SerializeField] 
     private bool _isTransparent = false;
 
+    [Space]
     [SerializeField] [BoxGroup("Settings")]
     private bool _snapToGrid = true;
 
+    [SerializeField]
+    [BoxGroup("Settings")]
+    private Vector3 offset = Vector3.zero;
+
+    [Space]
     [SerializeField] [BoxGroup("Settings")]
     private bool _disableGridCell = false;
 
@@ -38,7 +44,7 @@ public class GridPlacer : MonoBehaviour, IGridEntry
     {
         if (_snapToGrid)
         {
-            transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position));
+            transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position)) + offset;
         }
         GridBase.Instance.AddEntry(this);
         if (_disableGridCell)

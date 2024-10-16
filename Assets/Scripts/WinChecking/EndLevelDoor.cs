@@ -14,6 +14,7 @@ public class EndLevelDoor : MonoBehaviour
     [Scene]
     [SerializeField] private int _levelIndexToLoad = 0;
 
+    [SerializeField]
     bool _isUnlocked = false;
 
     /// <summary>

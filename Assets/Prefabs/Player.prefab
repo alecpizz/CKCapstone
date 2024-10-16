@@ -18,7 +18,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2927809350318062334
 Transform:
   m_ObjectHideFlags: 0
@@ -122,7 +122,7 @@ GameObject:
   - component: {fileID: 1927230979896276126}
   - component: {fileID: 6008091980421706137}
   - component: {fileID: 1352843334314168968}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -232,10 +232,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1df8590b4d4f4434695a42b9278df198, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _upPointer: {fileID: 0}
-  _downPointer: {fileID: 0}
-  _leftPointer: {fileID: 0}
-  _rightPointer: {fileID: 0}
+  playerMoved: 0
+  enemiesMoved: 1
+  _positionOffset: {x: 0, y: 0.5, z: 0}
 --- !u!114 &6008091980421706137
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -294,7 +293,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &901813858669760668
 Transform:
   m_ObjectHideFlags: 0
@@ -1106,7 +1105,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6067916551799264742
 Transform:
   m_ObjectHideFlags: 0
@@ -1916,7 +1915,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1488121346802253936
 Transform:
   m_ObjectHideFlags: 0
@@ -3384,7 +3383,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &161745254742313518
 Transform:
   m_ObjectHideFlags: 0

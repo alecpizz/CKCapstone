@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 6547651919620652089}
   - component: {fileID: 6074357698567061032}
   - component: {fileID: 622129087759994690}
-  - component: {fileID: 5153780682380230687}
   - component: {fileID: 2218283480543364310}
   - component: {fileID: -3665481944566736048}
   m_Layer: 0
@@ -65,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 54cd0157b8bf228489d4c9acc9c1bbd9, type: 2}
+  - {fileID: 2100000, guid: a043f09a44734014780da407a37cac36, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -108,21 +107,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5153780682380230687
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5428858568231558975}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 814452625f34aba4ab827682fb17a231, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isTransparent: 0
-  snapToGrid: 1
-  disableGridCell: 0
 --- !u!114 &2218283480543364310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -135,16 +119,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5900e89ae92a9004fb398126d93ad34b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  tilesMoved: 1
-  atStart: 0
-  currentPoint: 0
-  moveRate: 1
-  waitTime: 1
+  _player: {fileID: 0}
+  _tilesMoved: 0
+  _atStart: 0
+  _currentPoint: 0
+  _moveRate: 1
+  _waitTime: 0.2
   movePoints:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  enemyFrozen: 0
 --- !u!54 &-3665481944566736048
 Rigidbody:
   m_ObjectHideFlags: 0

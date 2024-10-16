@@ -50,7 +50,6 @@ public class DebugMenuManager : MonoBehaviour
     private DebugInputActions _playerInput;
     private InputAction _debugInput;
     private InputAction _restartInput;
-    private InputAction _quitInput;
 
     /// <summary>
     /// Does the calculation for determining the game's frame rate.
@@ -75,7 +74,6 @@ public class DebugMenuManager : MonoBehaviour
         _playerInput = new DebugInputActions();
         _debugInput = _playerInput.Player.Debug;
         _restartInput = _playerInput.Player.Restart;
-        _quitInput = _playerInput.Player.Quit;
 
         //puts multiple frames into an array to slow down the fps counter instead having it change instantaniously
         _frameDeltaTimeArray = new float[60];
@@ -88,7 +86,6 @@ public class DebugMenuManager : MonoBehaviour
     {
         _debugInput.Enable();
         _restartInput.Enable();
-        _quitInput.Enable();
     }
 
     /// <summary>
@@ -98,7 +95,6 @@ public class DebugMenuManager : MonoBehaviour
     {
         _debugInput.Disable();
         _restartInput.Disable();
-        _quitInput.Disable();
     }
 
     private void Start()
@@ -122,12 +118,6 @@ public class DebugMenuManager : MonoBehaviour
         if (_restartInput.WasPressedThisFrame())
         {
             RestartLevel();
-        }
-
-        //handles opening and closing the quiting menu
-        if (_quitInput.WasPressedThisFrame())
-        {
-            ToggleQuitMenu();
         }
 
         //updates the FPS Counter
