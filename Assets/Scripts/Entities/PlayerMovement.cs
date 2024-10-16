@@ -15,8 +15,6 @@ using UnityEngine.Windows;
 
 public class PlayerMovement : MonoBehaviour, IGridEntry
 {
-
-
     private PlayerControls _input;
     public Vector3 FacingDirection { get; private set; }
 
@@ -142,6 +140,10 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         playerMoved = true; 
     }
 
+    /// <summary>
+    /// Reloads scene when player hits an enemy
+    /// </summary>
+    /// <param name="collision">Data from collision</param>
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Enemy"))

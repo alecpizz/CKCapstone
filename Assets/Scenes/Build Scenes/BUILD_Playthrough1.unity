@@ -489,9 +489,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 814452625f34aba4ab827682fb17a231, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTransparent: 0
-  snapToGrid: 1
-  disableGridCell: 0
+  _isTransparent: 0
+  _snapToGrid: 1
+  _disableGridCell: 0
 --- !u!65 &160213366
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -716,9 +716,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 814452625f34aba4ab827682fb17a231, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTransparent: 0
-  snapToGrid: 1
-  disableGridCell: 0
+  _isTransparent: 0
+  _snapToGrid: 1
+  _disableGridCell: 0
 --- !u!65 &166510124
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3268,9 +3268,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 814452625f34aba4ab827682fb17a231, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTransparent: 0
-  snapToGrid: 1
-  disableGridCell: 0
+  _isTransparent: 0
+  _snapToGrid: 1
+  _disableGridCell: 0
 --- !u!65 &719183938
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3707,9 +3707,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 814452625f34aba4ab827682fb17a231, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTransparent: 0
-  snapToGrid: 1
-  disableGridCell: 0
+  _isTransparent: 0
+  _snapToGrid: 1
+  _disableGridCell: 0
 --- !u!65 &780550962
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4169,9 +4169,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 814452625f34aba4ab827682fb17a231, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTransparent: 0
-  snapToGrid: 1
-  disableGridCell: 0
+  _isTransparent: 0
+  _snapToGrid: 1
+  _disableGridCell: 0
 --- !u!65 &918082459
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4892,9 +4892,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 814452625f34aba4ab827682fb17a231, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTransparent: 0
-  snapToGrid: 1
-  disableGridCell: 0
+  _isTransparent: 0
+  _snapToGrid: 1
+  _disableGridCell: 0
 --- !u!65 &1019303128
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5785,12 +5785,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d22144976a94ce4cbe43b0b4253e156, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grid: {fileID: 1170851287}
-  gridSize: 8
-  primaryGridMat: {fileID: 2100000, guid: 8e21dd5f57250be488ce312f1f58c905, type: 2}
-  secondaryGridMat: {fileID: 2100000, guid: 54a3c1dfb6082524cbe80c094c89b51b, type: 2}
-  drawGridMesh: 1
-  gridMeshHolder: {fileID: 311062409}
+  _grid: {fileID: 1170851287}
+  _gridSize: 8
+  _primaryGridMat: {fileID: 2100000, guid: 8e21dd5f57250be488ce312f1f58c905, type: 2}
+  _secondaryGridMat: {fileID: 2100000, guid: 54a3c1dfb6082524cbe80c094c89b51b, type: 2}
+  _drawGridMesh: 1
+  _gridMeshHolder: {fileID: 0}
 --- !u!156049354 &1170851287
 Grid:
   m_ObjectHideFlags: 0
@@ -6801,9 +6801,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 814452625f34aba4ab827682fb17a231, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTransparent: 0
-  snapToGrid: 1
-  disableGridCell: 0
+  _isTransparent: 0
+  _snapToGrid: 1
+  _disableGridCell: 0
 --- !u!65 &1284863177
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7105,8 +7105,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19f5d69acac8fa54fb1e9ebfa50ecee0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  glowEffectPrefab: {fileID: 8771972552311404799, guid: 4026826b70e5d384faa33d20f6cf588a,
-    type: 3}
+  GlowEffectPrefab: {fileID: 0}
 --- !u!1 &1336263276
 GameObject:
   m_ObjectHideFlags: 0
@@ -7555,8 +7554,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19f5d69acac8fa54fb1e9ebfa50ecee0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  glowEffectPrefab: {fileID: 8771972552311404799, guid: 4026826b70e5d384faa33d20f6cf588a,
-    type: 3}
+  GlowEffectPrefab: {fileID: 0}
 --- !u!1 &1399009141
 GameObject:
   m_ObjectHideFlags: 0
@@ -7665,9 +7663,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 814452625f34aba4ab827682fb17a231, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTransparent: 0
-  snapToGrid: 1
-  disableGridCell: 0
+  _isTransparent: 0
+  _snapToGrid: 1
+  _disableGridCell: 0
 --- !u!65 &1445284685
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7907,9 +7905,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 814452625f34aba4ab827682fb17a231, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTransparent: 0
-  snapToGrid: 1
-  disableGridCell: 0
+  _isTransparent: 0
+  _snapToGrid: 1
+  _disableGridCell: 0
 --- !u!65 &1467216789
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8645,9 +8643,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 814452625f34aba4ab827682fb17a231, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTransparent: 0
-  snapToGrid: 1
-  disableGridCell: 0
+  _isTransparent: 0
+  _snapToGrid: 1
+  _disableGridCell: 0
 --- !u!65 &1542498861
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8766,9 +8764,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 814452625f34aba4ab827682fb17a231, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTransparent: 0
-  snapToGrid: 1
-  disableGridCell: 0
+  _isTransparent: 0
+  _snapToGrid: 1
+  _disableGridCell: 0
 --- !u!65 &1552144346
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9496,8 +9494,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19f5d69acac8fa54fb1e9ebfa50ecee0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  glowEffectPrefab: {fileID: 8771972552311404799, guid: 4026826b70e5d384faa33d20f6cf588a,
-    type: 3}
+  GlowEffectPrefab: {fileID: 0}
 --- !u!1 &1728373586
 GameObject:
   m_ObjectHideFlags: 0
@@ -10335,8 +10332,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19f5d69acac8fa54fb1e9ebfa50ecee0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  glowEffectPrefab: {fileID: 8771972552311404799, guid: 4026826b70e5d384faa33d20f6cf588a,
-    type: 3}
+  GlowEffectPrefab: {fileID: 0}
 --- !u!1 &1999789515
 GameObject:
   m_ObjectHideFlags: 0
@@ -10702,9 +10698,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 814452625f34aba4ab827682fb17a231, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTransparent: 0
-  snapToGrid: 1
-  disableGridCell: 0
+  _isTransparent: 0
+  _snapToGrid: 1
+  _disableGridCell: 0
 --- !u!65 &2023045897
 BoxCollider:
   m_ObjectHideFlags: 0
