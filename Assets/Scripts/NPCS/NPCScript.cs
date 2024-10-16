@@ -100,7 +100,8 @@ public class NPCScript : MonoBehaviour
         // adjusts typing speed on a per-entry basis
         _currentTypingSpeed = Mathf.Clamp(_typingSpeed - _dialogueEntries[_currentDialogue]._adjustTypingSpeed, 2f, 15f) / 100f;
 
-        StopCoroutine(_bounceCoroutine);
+        if(_bounceCoroutine != null)
+            StopCoroutine(_bounceCoroutine);
         // Cleanup bouncing letters
         foreach (var letter in bouncingLetters)
         {
