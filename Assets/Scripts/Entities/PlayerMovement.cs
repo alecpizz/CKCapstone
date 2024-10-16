@@ -153,8 +153,9 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
             if (enemy == null || enemy.enemyFrozen)
                 return;
 
-            Scene scene = SceneManager.GetActiveScene();
-            SceneManager.LoadScene(scene.name);
+            Time.timeScale = 0f;
+
+            SceneController.Instance.ReloadCurrentScene();
         }
     }
 }
