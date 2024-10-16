@@ -16,7 +16,7 @@ public class HarmonyBeam : MonoBehaviour
 
     private LineRenderer _lineRenderer;
 
-    EnemyBehavior eb;
+    private EnemyBehavior eb;
 
     // Track enemy states: true = hit, false = not hit
     private Dictionary<GameObject, bool> _enemyHitStates = new();
@@ -145,8 +145,6 @@ public class HarmonyBeam : MonoBehaviour
             _enemyHitStates[enemy] = false;
         }
     }
-
-    
 
     private void OnDestroy()
     {

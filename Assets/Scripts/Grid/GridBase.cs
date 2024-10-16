@@ -24,24 +24,25 @@ public class GridBase : MonoBehaviour
     public static GridBase Instance { get; private set; }
 
     [InfoBox("Assign this to draw the grid gizmos.")] [SerializeField]
-    private Grid grid;
+    private Grid _grid;
 
     [BoxGroup("Grid Parameters")] [SerializeField] [MinValue(2)]
-    private int gridSize = 8;
+    private int _gridSize = 8;
 
     [BoxGroup("Grid Visuals")] [SerializeField]
-    private Material primaryGridMat;
+    private Material _primaryGridMat;
 
     [BoxGroup("Grid Visuals")] [SerializeField]
-    private Material secondaryGridMat;
+    private Material _secondaryGridMat;
 
     [BoxGroup("Grid Visuals")] [SerializeField] [OnValueChanged(nameof(OnDrawMeshChanged))]
-    private bool drawGridMesh = true;
+    private bool _drawGridMesh = true;
 
     private Dictionary<Vector3Int, HashSet<IGridEntry>> _gridEntries = new();
     private Dictionary<IGridEntry, Vector3Int> _gameObjectToGridMap = new();
-    [SerializeField] [HideInInspector] private GameObject gridMeshHolder;
+    [SerializeField] [HideInInspector] private GameObject _gridMeshHolder;
     private Dictionary<Vector3Int, MeshRenderer> _gridMeshes = new();
+
     /// <summary>
     /// Grabs the grid component.
     /// </summary>
@@ -57,7 +58,7 @@ public class GridBase : MonoBehaviour
             Instance = this;
         }
 
-        grid = GetComponent<Grid>();
+        _grid = GetComponent<Grid>();
         GenerateMesh();
     }
 
@@ -66,13 +67,13 @@ public class GridBase : MonoBehaviour
     /// </summary>
     private void OnDrawGizmos()
     {
-        if (grid == null) return;
+        if (_grid == null) return;
         //draw cells at points 0-grid size.
-        for (int i = 0; i < gridSize; i++)
+        for (int i = 0; i < _gridSize; i++)
         {
-            for (int j = 0; j < gridSize; j++)
+            for (int j = 0; j < _gridSize; j++)
             {
-                Gizmos.DrawWireCube(grid.GetCellCenterWorld(new Vector3Int(i, 0, j)), grid.cellSize);
+                Gizmos.DrawWireCube(_grid.GetCellCenterWorld(new Vector3Int(i, 0, j)), _grid.cellSize);
             }
         }
     }
@@ -244,12 +245,12 @@ public class GridBase : MonoBehaviour
         worldSpacePos.y = transform.position.y;
         Vector3 local = transform.InverseTransformPoint(worldSpacePos);
 
-        Vector3 cellSize = grid.cellSize;
-        Vector3 cellGap = grid.cellGap;
+        Vector3 cellSize = _grid.cellSize;
+        Vector3 cellGap = _grid.cellGap;
 
-        int x = Mathf.Clamp(Mathf.FloorToInt(local.x / (cellSize.x + cellGap.x)), 0, gridSize - 1);
-        int y = Mathf.Clamp(Mathf.FloorToInt(local.y / (cellSize.y + cellGap.y)), 0, gridSize - 1);
-        int z = Mathf.Clamp(Mathf.FloorToInt(local.z / (cellSize.z + cellGap.z)), 0, gridSize - 1);
+        int x = Mathf.Clamp(Mathf.FloorToInt(local.x / (cellSize.x + cellGap.x)), 0, _gridSize - 1);
+        int y = Mathf.Clamp(Mathf.FloorToInt(local.y / (cellSize.y + cellGap.y)), 0, _gridSize - 1);
+        int z = Mathf.Clamp(Mathf.FloorToInt(local.z / (cellSize.z + cellGap.z)), 0, _gridSize - 1);
 
         return new Vector3Int(x, y, z);
     }
@@ -262,10 +263,10 @@ public class GridBase : MonoBehaviour
     public Vector3 CellToWorld(Vector3Int cellPos)
     {
         Vector3Int pos = cellPos;
-        pos.x = Mathf.Clamp(cellPos.x, 0, gridSize - 1);
-        pos.y = Mathf.Clamp(cellPos.y, 0, gridSize - 1);
-        pos.z = Mathf.Clamp(cellPos.z, 0, gridSize - 1);
-        return grid.GetCellCenterWorld(pos);
+        pos.x = Mathf.Clamp(cellPos.x, 0, _gridSize - 1);
+        pos.y = Mathf.Clamp(cellPos.y, 0, _gridSize - 1);
+        pos.z = Mathf.Clamp(cellPos.z, 0, _gridSize - 1);
+        return _grid.GetCellCenterWorld(pos);
     }
 
     /// <summary>
@@ -287,7 +288,7 @@ public class GridBase : MonoBehaviour
     /// <param name="active">Whether or not the grid visual should be active.</param>
     public void ToggleGridVisuals(bool active)
     {
-        drawGridMesh = active;
+        _drawGridMesh = active;
         OnDrawMeshChanged();
     }
     
@@ -317,31 +318,31 @@ public class GridBase : MonoBehaviour
     [Button]
     private void GenerateMesh()
     {
-        if (grid == null)
+        if (_grid == null)
         {
             return;
         }
 
-        if (!drawGridMesh)
+        if (!_drawGridMesh)
         {
             return;
         }
 
         DestroyMesh();
 
-        gridMeshHolder = new GameObject("Grid Mesh Holder")
+        _gridMeshHolder = new GameObject("Grid Mesh Holder")
         {
             transform =
             {
                 parent = transform
             }
         };
-        gridMeshHolder.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+        _gridMeshHolder.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
         _gridMeshes.Clear();
         
-        for (int i = 0; i < gridSize; i++)
+        for (int i = 0; i < _gridSize; i++)
         {
-            for (int j = 0; j < gridSize; j++)
+            for (int j = 0; j < _gridSize; j++)
             {
                 Vector3Int index = new Vector3Int(i, 0, j);
                 var pos = CellToWorld(new Vector3Int(i, 0, j));
@@ -349,12 +350,12 @@ public class GridBase : MonoBehaviour
                 plane.transform.position = pos;
                 plane.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
                 var scale = plane.transform.localScale;
-                scale.x = (grid.cellSize.x);
-                scale.y = (grid.cellSize.z);
+                scale.x = (_grid.cellSize.x);
+                scale.y = (_grid.cellSize.z);
                 plane.transform.localScale = scale;
-                plane.transform.SetParent(gridMeshHolder.transform, true);
+                plane.transform.SetParent(_gridMeshHolder.transform, true);
                 plane.GetComponent<MeshRenderer>().material =
-                    i % 2 == 1 ^ j % 2 == 0 ? primaryGridMat : secondaryGridMat;
+                    i % 2 == 1 ^ j % 2 == 0 ? _primaryGridMat : _secondaryGridMat;
                 _gridMeshes.Add(index, plane.GetComponent<MeshRenderer>());
             }
         }
@@ -366,14 +367,14 @@ public class GridBase : MonoBehaviour
     /// </summary>
     private void DestroyMesh()
     {
-        if (gridMeshHolder == null) return;
+        if (_gridMeshHolder == null) return;
         if (Application.isPlaying)
         {
-            Destroy(gridMeshHolder);
+            Destroy(_gridMeshHolder);
         }
         else
         {
-            DestroyImmediate(gridMeshHolder);
+            DestroyImmediate(_gridMeshHolder);
         }
     }
 
@@ -382,7 +383,7 @@ public class GridBase : MonoBehaviour
     /// </summary>
     private void OnDrawMeshChanged()
     {
-        if (drawGridMesh)
+        if (_drawGridMesh)
         {
             GenerateMesh();
         }

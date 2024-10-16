@@ -35,22 +35,19 @@ public class MovingWall : MonoBehaviour, IGridEntry
 
     public Vector3 Position => transform.position;
 
-
-
     /// <summary>
     /// Original position of the wall is given
-    /// And wall indicator is put in it's initial position
+    /// And ghost wall is put in it's initial position
     /// </summary>
     void Start()
     {
         _originWall = transform.position;
-
         _originGhost = _wallGhost.transform.position;
     }
 
     /// <summary>
     /// Swaps the positions of the wall and the ghost
-    /// To switch on position
+    /// When switch is turned on
     /// Allows Player to move where wall once was
     /// </summary>
     public void WallIsMoved()

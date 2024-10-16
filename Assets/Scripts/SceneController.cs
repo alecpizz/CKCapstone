@@ -142,6 +142,8 @@ public class SceneController : MonoBehaviour
 
         yield return new WaitForSecondsRealtime(0.1f);
 
+        Time.timeScale = 1f;
+
         // Loads new scene if needed
         if (!isFadingIn && sceneIndexToLoad != -1)
             SceneManager.LoadScene(sceneIndexToLoad);

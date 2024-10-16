@@ -28,8 +28,6 @@ public class Collectables : MonoBehaviour
         if (other.tag == "Player" && WinChecker.Instance.CheckForCollection(_collectableNumber)) 
         {
             Collect();
-            
-
         }        
     }
 

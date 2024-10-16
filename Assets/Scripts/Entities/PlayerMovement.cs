@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Cole Stranczek
-*    Contributors: Cole Stranczek
+*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson
 *    Date Created: 9/22/24
 *    Description: Script that handles the player's movement along
 *    the grid
@@ -15,8 +15,6 @@ using UnityEngine.Windows;
 
 public class PlayerMovement : MonoBehaviour, IGridEntry
 {
-
-
     private PlayerControls _input;
     public Vector3 FacingDirection { get; private set; }
 
@@ -25,6 +23,9 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     public bool IsTransparent { get => true; }
     public Vector3 Position { get => transform.position; }
     public GameObject GetGameObject { get => gameObject; }
+
+    [SerializeField]
+    private Vector3 _positionOffset;
 
     // Start is called before the first frame update
     void Start()
@@ -63,11 +64,12 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     {
         FacingDirection = Vector3.back;
 
-        // Move down and remove the pointer
+        // Move down if there is no wall below the player or if ghost mode is enabled
         var downMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.back);
-        if (GridBase.Instance.CellIsEmpty(downMove) && enemiesMoved == true)
+        if ((GridBase.Instance.CellIsEmpty(downMove) && enemiesMoved == true) || 
+            (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
         {
-            gameObject.transform.position = downMove;
+            gameObject.transform.position = downMove + _positionOffset;
             GridBase.Instance.UpdateEntry(this);
         }
         else
@@ -84,11 +86,12 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     {
         FacingDirection = Vector3.forward;
 
-        // Move up and remove the pointer
+        // Move up if there is no wall above the player or if ghost mode is enabled
         var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
-        if (GridBase.Instance.CellIsEmpty(upMove) && enemiesMoved == true)
+        if ((GridBase.Instance.CellIsEmpty(upMove) && enemiesMoved == true) || 
+            (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
         {
-            gameObject.transform.position = upMove;
+            gameObject.transform.position = upMove + _positionOffset;
             GridBase.Instance.UpdateEntry(this);
         }
         playerMoved = true;
@@ -104,11 +107,12 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     {
         FacingDirection = Vector3.left;
 
-        // Move left and remove the pointer
+        // Move left if there is no wall to the left of the player or if ghost mode is enabled
         var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
-        if (GridBase.Instance.CellIsEmpty(leftMove) && enemiesMoved == true)
+        if ((GridBase.Instance.CellIsEmpty(leftMove) && enemiesMoved == true) || 
+            (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
         {
-           gameObject.transform.position = leftMove;
+           gameObject.transform.position = leftMove + _positionOffset;
            GridBase.Instance.UpdateEntry(this);
         }
 
@@ -124,23 +128,34 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     {
         FacingDirection = Vector3.right;
 
-        // Move Right and remove the pointer
+        // Move Right if there is no wall to the right of the player or if ghost mode is enabled
         var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
-        if(GridBase.Instance.CellIsEmpty(rightMove) && enemiesMoved == true)
+        if((GridBase.Instance.CellIsEmpty(rightMove) && enemiesMoved == true) || 
+            (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
         {
-           gameObject.transform.position = rightMove;
+           gameObject.transform.position = rightMove + _positionOffset;
            GridBase.Instance.UpdateEntry(this);   
         }
 
         playerMoved = true; 
     }
 
+    /// <summary>
+    /// Reloads scene when player hits an enemy
+    /// </summary>
+    /// <param name="collision">Data from collision</param>
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "Enemy")
+        if (collision.gameObject.CompareTag("Enemy"))
         {
-            Scene scene = SceneManager.GetActiveScene();
-            SceneManager.LoadScene(scene.name);
+            // Checks if the enemy is frozen; if they are, doesn't reload the scene
+            EnemyBehavior enemy = collision.collider.GetComponent<EnemyBehavior>();
+            if (enemy == null || enemy.enemyFrozen)
+                return;
+
+            Time.timeScale = 0f;
+
+            SceneController.Instance.ReloadCurrentScene();
         }
     }
 }
