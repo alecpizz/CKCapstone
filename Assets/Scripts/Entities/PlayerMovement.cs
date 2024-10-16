@@ -67,7 +67,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         // Move down if there is no wall below the player or if ghost mode is enabled
         var downMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.back);
         if ((GridBase.Instance.CellIsEmpty(downMove) && enemiesMoved == true) || 
-            (DebugMenuManager.instance.ghostMode && enemiesMoved == true))
+            (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
         {
             gameObject.transform.position = downMove + _positionOffset;
             GridBase.Instance.UpdateEntry(this);
@@ -89,7 +89,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         // Move up if there is no wall above the player or if ghost mode is enabled
         var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
         if ((GridBase.Instance.CellIsEmpty(upMove) && enemiesMoved == true) || 
-            (DebugMenuManager.instance.ghostMode && enemiesMoved == true))
+            (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
         {
             gameObject.transform.position = upMove + _positionOffset;
             GridBase.Instance.UpdateEntry(this);
@@ -110,7 +110,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         // Move left if there is no wall to the left of the player or if ghost mode is enabled
         var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
         if ((GridBase.Instance.CellIsEmpty(leftMove) && enemiesMoved == true) || 
-            (DebugMenuManager.instance.ghostMode && enemiesMoved == true))
+            (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
         {
            gameObject.transform.position = leftMove + _positionOffset;
            GridBase.Instance.UpdateEntry(this);
@@ -131,7 +131,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         // Move Right if there is no wall to the right of the player or if ghost mode is enabled
         var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
         if((GridBase.Instance.CellIsEmpty(rightMove) && enemiesMoved == true) || 
-            (DebugMenuManager.instance.ghostMode && enemiesMoved == true))
+            (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
         {
            gameObject.transform.position = rightMove + _positionOffset;
            GridBase.Instance.UpdateEntry(this);   
