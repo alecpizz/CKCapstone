@@ -31,6 +31,9 @@ public class WinChecker : MonoBehaviour
     /// <returns>true if note matches next one in sequence</returns>
     public bool CheckForCollection(int noteToCollect)
     {
+        if (TargetNoteSequence.Count == 0)
+            return true;
+
         if (_collectedSequence.Count < TargetNoteSequence.Count)
         {
             return TargetNoteSequence[_collectedSequence.Count] == noteToCollect;
