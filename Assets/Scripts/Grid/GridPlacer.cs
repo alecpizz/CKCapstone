@@ -1,6 +1,6 @@
 /******************************************************************
  *    Author: Alec Pizziferro
- *    Contributors: N/A
+ *    Contributors: Trinity Hutson
  *    Date Created: 9/29/2024
  *    Description: Placement tool for grid objects.
  *    To use, simply attach to a gameobject that you wish to position on the grid.
@@ -14,19 +14,43 @@ using UnityEngine;
 /// <summary>
 /// Placement tool for grid objects. To use, simply attach to a gameobject that you wish to position on the grid.
 /// </summary>
-[DefaultExecutionOrder(-10000)]
-public class GridPlacer : MonoBehaviour
+public class GridPlacer : MonoBehaviour, IGridEntry
 {
+    public bool IsTransparent { get => _isTransparent; }
+    public Vector3 Position { get => transform.position; }
+    public GameObject GetGameObject { get => gameObject; }
+
     [InfoBox("Use this component to add this gameObject to a grid.")]
+    [BoxGroup("Settings")]
     [SerializeField] 
-    private int _dummyField;
+    private bool _isTransparent = false;
+
+    [Space]
+    [SerializeField] [BoxGroup("Settings")]
+    private bool _snapToGrid = true;
+
+    [SerializeField]
+    [BoxGroup("Settings")]
+    private Vector3 offset = Vector3.zero;
+
+    [Space]
+    [SerializeField] [BoxGroup("Settings")]
+    private bool _disableGridCell = false;
+
     /// <summary>
     /// Places the object on the grid and updates its position.
     /// </summary>
     private void Start()
     {
-        transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position));
-        GridBase.Instance.AddEntry(this.gameObject);
+        if (_snapToGrid)
+        {
+            transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position)) + offset;
+        }
+        GridBase.Instance.AddEntry(this);
+        if (_disableGridCell)
+        {
+            GridBase.Instance.DisableCellVisual(GridBase.Instance.WorldToCell(transform.position));
+        }
     }
 
     /// <summary>
@@ -42,8 +66,13 @@ public class GridPlacer : MonoBehaviour
     /// </summary>
     public void UpdatePosition()
     {
+        if (GridBase.Instance == null) return;
+        if (_snapToGrid)
+        {
+            transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position));
+        }
         transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position));
-        GridBase.Instance.UpdateEntry(this.gameObject);
+        GridBase.Instance.UpdateEntry(this);
     }
 
     /// <summary>
@@ -51,6 +80,7 @@ public class GridPlacer : MonoBehaviour
     /// </summary>
     private void OnDestroy()
     {
-        GridBase.Instance.RemoveEntry(gameObject);
+        if (GridBase.Instance == null) return; 
+        GridBase.Instance.RemoveEntry(this);
     }
 }

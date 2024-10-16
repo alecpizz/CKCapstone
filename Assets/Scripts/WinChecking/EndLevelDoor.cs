@@ -14,6 +14,7 @@ public class EndLevelDoor : MonoBehaviour
     [Scene]
     [SerializeField] private int _levelIndexToLoad = 0;
 
+    [SerializeField]
     bool _isUnlocked = false;
 
     /// <summary>
@@ -53,8 +54,7 @@ public class EndLevelDoor : MonoBehaviour
     {
         if (_isUnlocked && other.CompareTag("Player"))
         {
-            SceneManager.LoadScene(_levelIndexToLoad);
-            Debug.Log("Load level with index: " + _levelIndexToLoad);
+            SceneController.Instance.LoadNewScene(_levelIndexToLoad);
         }
         else if (other.CompareTag("Player"))
         {
