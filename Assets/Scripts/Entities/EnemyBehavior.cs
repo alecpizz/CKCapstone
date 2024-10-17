@@ -21,7 +21,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
     private PlayerControls _input;
 
     [Required][SerializeField] private GameObject _player;
-    [SerializeField] private int _tilesMoved;
 
     [SerializeField] private bool _atStart;
     [SerializeField] private int _currentPoint = 0;
@@ -30,7 +29,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
     [SerializeField] private float _moveRate = 1f;
     [SerializeField] private float _waitTime = 1f;
 
-    public List<GameObject> movePoints = new List<GameObject>();
+    //List of Move Point Scriptable Objects
+    [SerializeField] private List<MovePoints> _movePoints;
 
     public bool enemyFrozen = false;
 
@@ -77,13 +77,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
     /// <param name="obj"></param>
     public void EnemyMove(InputAction.CallbackContext obj)
     {
-        var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
-        var downMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.back);
-        var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
-        var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
 
-        var nextPos = movePoints[_currentPoint].transform.position;
-        var currentPos = gameObject.transform.position;
 
         StartCoroutine(DelayedPlayerInput());
     }
@@ -102,7 +96,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
             {
                 _currentPoint++;
                 _playerMoveRef.enemiesMoved = false;
-                StartCoroutine(MoveOverTime2());
 
                 if (_currentPoint == movePoints.Count - 1)
                 {
@@ -113,7 +106,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
             {
                 _currentPoint--;
                 _playerMoveRef.enemiesMoved = false;
-                StartCoroutine(MoveOverTime2());
 
                 if (_currentPoint == 0)
                 {
@@ -121,26 +113,5 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
                 }
             }
         }
-    }
-
-    /// <summary>
-    /// Function moves enemy from either current x or z position on the grid to next x or z position on the grid.
-    /// </summary>
-    /// <returns></returns>
-    IEnumerator MoveOverTime2()
-    {
-        Vector3 startPos = transform.position;
-
-        for (float i = 0; i <= _waitTime; i += Time.deltaTime)
-        {
-            yield return null;
-            transform.position = Vector3.Lerp(startPos, movePoints[_currentPoint].transform.position, i / _waitTime);
-            //Debug.Log(i);
-        }
-
-        //GridBase.Instance.UpdateEntry(this);
-
-        transform.position = movePoints[_currentPoint].transform.position;
-        _playerMoveRef.enemiesMoved = true;
     }
 }
