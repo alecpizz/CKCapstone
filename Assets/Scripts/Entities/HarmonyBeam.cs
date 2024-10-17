@@ -71,6 +71,7 @@ public class HarmonyBeam : MonoBehaviour
 
                 if (hit.collider.CompareTag("Enemy"))
                 {
+
                     GameObject enemy = hit.collider.gameObject;
                     currentlyHitEnemies.Add(enemy);
 
@@ -78,11 +79,18 @@ public class HarmonyBeam : MonoBehaviour
                     if (!_enemyHitStates.ContainsKey(enemy) || !_enemyHitStates[enemy])
                     {
                         // Handle when an enemy first enters the beam
-                        _enemyHitStates[enemy] = true;
                         Debug.Log("Froze enemy: " + enemy.name);
 
                         eb = hit.collider.GetComponent<EnemyBehavior>();
-                        eb.enemyFrozen = true;
+                        if (!eb)
+                        {
+                            Debug.Log("The enemy " + enemy.name + " does not have an EnemyBehavior script");
+                            continue;
+                        }
+                        else
+                        {
+                            _enemyHitStates[enemy] = eb.enemyFrozen = true;
+                        }
                     }
 
                     continue;
@@ -97,7 +105,7 @@ public class HarmonyBeam : MonoBehaviour
 
                         // Update currentStartPosition to where the beam hit the reflective object
                         currentStartPosition = hit.transform.position;
-                        Debug.Log("New Position: " + currentStartPosition);
+                        //Debug.Log("New Position: " + currentStartPosition);
                         remainingDistance -= hit.distance;
                         reflections++;
                         hitSomething = true;
@@ -117,7 +125,6 @@ public class HarmonyBeam : MonoBehaviour
             {
                 _lineRenderer.positionCount += 1;
                 _lineRenderer.SetPosition(_lineRenderer.positionCount - 1, currentStartPosition + currentDirection * remainingDistance);
-                //_lineRenderer.SetPosition(_lineRenderer.positionCount - 1, currentStartPosition);
                 break;
             }
         }
@@ -131,18 +138,15 @@ public class HarmonyBeam : MonoBehaviour
             if (!currentlyHitEnemies.Contains(enemy))
             {
                 // The enemy was hit before but is no longer in the beam
-                Debug.Log("Unfroze enemy: " + enemy.name);
-
-                eb = enemy.GetComponent<EnemyBehavior>();
-                eb.enemyFrozen = false;
-
                 enemiesToUnfreeze.Add(enemy);
             }
         }
 
         foreach (GameObject enemy in enemiesToUnfreeze)
         {
-            _enemyHitStates[enemy] = false;
+            Debug.Log("Unfroze enemy: " + enemy.name);
+            eb = enemy.GetComponent<EnemyBehavior>();
+            _enemyHitStates[enemy] = eb.enemyFrozen = false;
         }
     }
 
