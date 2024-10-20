@@ -119,16 +119,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5900e89ae92a9004fb398126d93ad34b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _positionOffset: {x: 0, y: 0, z: 0}
   _player: {fileID: 0}
-  _tilesMoved: 0
   _atStart: 0
   _currentPoint: 0
-  _moveRate: 1
-  _waitTime: 0.2
-  movePoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  _movePoints: []
   enemyFrozen: 0
 --- !u!54 &-3665481944566736048
 Rigidbody:
