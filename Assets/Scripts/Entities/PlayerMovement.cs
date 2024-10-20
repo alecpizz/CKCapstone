@@ -27,6 +27,9 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     [SerializeField]
     private Vector3 _positionOffset;
 
+    [SerializeField]
+    private float delayTime = 0.5f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -71,6 +74,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         {
             gameObject.transform.position = downMove + _positionOffset;
             GridBase.Instance.UpdateEntry(this);
+
+            StartCoroutine(delayNextInput());
         }
         else
             Debug.Log(enemiesMoved);
@@ -93,6 +98,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         {
             gameObject.transform.position = upMove + _positionOffset;
             GridBase.Instance.UpdateEntry(this);
+
+            StartCoroutine(delayNextInput());
         }
         playerMoved = true;
         
@@ -114,6 +121,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         {
            gameObject.transform.position = leftMove + _positionOffset;
            GridBase.Instance.UpdateEntry(this);
+
+           StartCoroutine(delayNextInput());
         }
 
         playerMoved = true;
@@ -134,10 +143,24 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
             (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
         {
            gameObject.transform.position = rightMove + _positionOffset;
-           GridBase.Instance.UpdateEntry(this);   
+           GridBase.Instance.UpdateEntry(this);
+
+           StartCoroutine(delayNextInput());
         }
 
         playerMoved = true; 
+    }
+
+
+    IEnumerator delayNextInput()
+    {
+        yield return null;
+
+        if (GameObject.FindGameObjectsWithTag("Enemy") != null) 
+        {
+            yield return new WaitForSeconds(delayTime);
+            enemiesMoved = true;
+        }
     }
 
     /// <summary>
