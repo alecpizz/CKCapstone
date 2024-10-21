@@ -16,11 +16,10 @@ public class HarmonyBeam : MonoBehaviour
 
     private LineRenderer _lineRenderer;
 
-    private EnemyBehavior eb;
-
     // Track enemy states: true = hit, false = not hit
-    private Dictionary<GameObject, bool> _enemyHitStates = new();
+    private Dictionary<EnemyBehavior, bool> _enemyHitStates = new();
     private EventInstance _key;
+    private bool _toggled = true;
 
     void Awake()
     {
@@ -34,7 +33,8 @@ public class HarmonyBeam : MonoBehaviour
 
     void FixedUpdate()
     {
-        ShootLaser(transform.position, transform.forward, _laserDistance);
+        if (_toggled)
+            ShootLaser(transform.position, transform.forward, _laserDistance);
     }
 
     /// <summary>
@@ -47,21 +47,21 @@ public class HarmonyBeam : MonoBehaviour
     {
         // Clear the previous line and start a new one
         _lineRenderer.positionCount = 1;
-        _lineRenderer.SetPosition(0, startPosition);  // Starting point of the laser
+        _lineRenderer.SetPosition(0, startPosition);
 
         Vector3 currentStartPosition = startPosition;
         Vector3 currentDirection = direction;
         float remainingDistance = distance;
 
-        int reflections = 0;  
-        const int maxReflections = 10;  // Limit the number of reflections to prevent infinite loops
+        int reflections = 0;
+        const int maxReflections = 10;
 
-        HashSet<GameObject> currentlyHitEnemies = new();  // Used to track enemies hit in this frame
+        HashSet<EnemyBehavior> currentlyHitEnemies = new();  // Track enemies hit in this frame
 
         while (remainingDistance > 0 && reflections < maxReflections)
         {
             RaycastHit[] hits = Physics.RaycastAll(currentStartPosition, currentDirection, remainingDistance);
-            System.Array.Sort(hits, (hit1, hit2) => hit1.distance.CompareTo(hit2.distance));  // Sort hits by distance
+            System.Array.Sort(hits, (hit1, hit2) => hit1.distance.CompareTo(hit2.distance));
 
             bool hitSomething = false;
             foreach (RaycastHit hit in hits)
@@ -71,28 +71,20 @@ public class HarmonyBeam : MonoBehaviour
 
                 if (hit.collider.CompareTag("Enemy"))
                 {
-
-                    GameObject enemy = hit.collider.gameObject;
-                    currentlyHitEnemies.Add(enemy);
-
-                    // Check if the enemy was not hit before
-                    if (!_enemyHitStates.ContainsKey(enemy) || !_enemyHitStates[enemy])
+                    EnemyBehavior enemyBehavior = hit.collider.GetComponent<EnemyBehavior>();
+                    if (enemyBehavior != null)
                     {
-                        // Handle when an enemy first enters the beam
-                        Debug.Log("Froze enemy: " + enemy.name);
+                        currentlyHitEnemies.Add(enemyBehavior);  // Track the hit enemy behavior
 
-                        eb = hit.collider.GetComponent<EnemyBehavior>();
-                        if (!eb)
+                        // Immediately freeze the enemy upon being hit by this beam
+                        if (!enemyBehavior.enemyFrozen)  // Freeze only if not already frozen
                         {
-                            Debug.Log("The enemy " + enemy.name + " does not have an EnemyBehavior script");
-                            continue;
+                            HarmonyBeamManager.Instance.BeamHitsEnemy(enemyBehavior);
                         }
-                        else
-                        {
-                            _enemyHitStates[enemy] = eb.enemyFrozen = true;
-                        }
+
+                        // Mark this enemy as being hit in this frame
+                        _enemyHitStates[enemyBehavior] = true;
                     }
-
                     continue;
                 }
                 else if (hit.collider.CompareTag("Reflective"))
@@ -100,12 +92,8 @@ public class HarmonyBeam : MonoBehaviour
                     var reflectiveObject = hit.collider.GetComponent<ReflectiveObject>();
                     if (reflectiveObject)
                     {
-                        // Get the reflected direction from the ReflectiveObject
                         currentDirection = reflectiveObject.GetReflectionDirection(currentDirection);
-
-                        // Update currentStartPosition to where the beam hit the reflective object
                         currentStartPosition = hit.transform.position;
-                        //Debug.Log("New Position: " + currentStartPosition);
                         remainingDistance -= hit.distance;
                         reflections++;
                         hitSomething = true;
@@ -114,7 +102,6 @@ public class HarmonyBeam : MonoBehaviour
                 }
                 else
                 {
-                    // Stop the beam at a non-enemy, non-reflective object
                     remainingDistance = 0;
                     hitSomething = true;
                     break;
@@ -129,25 +116,31 @@ public class HarmonyBeam : MonoBehaviour
             }
         }
 
-        // Handle when enemies leave the beam
-        List<GameObject> enemiesToUnfreeze = new();
+        // Handle enemies that are no longer being hit by this beam
+        List<EnemyBehavior> enemiesToUnfreeze = new();
         foreach (var enemy in _enemyHitStates.Keys)
         {
-            if (!_enemyHitStates[enemy]) continue;  // If already unfrozen, skip
-
-            if (!currentlyHitEnemies.Contains(enemy))
+            if (_enemyHitStates[enemy] && !currentlyHitEnemies.Contains(enemy))
             {
-                // The enemy was hit before but is no longer in the beam
+                // This enemy was hit before but is no longer hit in this frame
                 enemiesToUnfreeze.Add(enemy);
             }
         }
 
-        foreach (GameObject enemy in enemiesToUnfreeze)
+        foreach (EnemyBehavior enemy in enemiesToUnfreeze)
         {
-            Debug.Log("Unfroze enemy: " + enemy.name);
-            eb = enemy.GetComponent<EnemyBehavior>();
-            _enemyHitStates[enemy] = eb.enemyFrozen = false;
+            _enemyHitStates[enemy] = false;  // Mark the enemy as no longer hit by this beam
+            HarmonyBeamManager.Instance.BeamStopsHittingEnemy(enemy);  // Report to the manager
         }
+    }
+
+    /// <summary>
+    /// Toggles the beam on and off when called, handles sound accordingly.
+    /// </summary>
+    public void ToggleBeam()
+    {
+        _toggled = !_toggled;
+        AudioManager.Instance.ToggleSound(_key, _toggled);
     }
 
     private void OnDestroy()
