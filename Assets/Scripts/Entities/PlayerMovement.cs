@@ -52,8 +52,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
 
     public void MovementPerformed(InputAction.CallbackContext context)
     {
-        Debug.Log("Moving!");
-
         Vector2 key = context.ReadValue<Vector2>();
         Vector3 direction = new(key.x, 0, key.y);
 
@@ -65,12 +63,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
             gameObject.transform.position = move + _positionOffset;
             GridBase.Instance.UpdateEntry(this);
         }
-        else
-        {
-            Debug.Log(enemiesMoved);
-            Debug.Log("IS empty: " + GridBase.Instance.CellIsEmpty(move));
-        }
-
     }
 
     /// <summary>
