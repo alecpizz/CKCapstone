@@ -6,6 +6,7 @@
 *    the grid
 *******************************************************************/
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -37,10 +38,12 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         // Referencing and setup of the Input Action functions
         _input = new PlayerControls();
         _input.InGame.Enable();
-        _input.InGame.MoveUp.performed += MoveUpPerformed;
-        _input.InGame.MoveDown.performed += MoveDownPerformed;
-        _input.InGame.MoveLeft.performed += MoveLeftPerformed;
-        _input.InGame.MoveRight.performed += MoveRightPerformed;
+        _input.InGame.Movement.performed += MovementPerformed;
+
+        //_input.InGame.MoveUp.performed += MoveUpPerformed;
+        //_input.InGame.MoveDown.performed += MoveDownPerformed;
+        //_input.InGame.MoveLeft.performed += MoveLeftPerformed;
+        //_input.InGame.MoveRight.performed += MoveRightPerformed;
     }
 
     /// <summary>
@@ -49,96 +52,117 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     private void OnDisable()
     {
         _input.InGame.Disable();
-        _input.InGame.MoveUp.performed -= MoveUpPerformed;
-        _input.InGame.MoveDown.performed -= MoveDownPerformed;
-        _input.InGame.MoveLeft.performed -= MoveLeftPerformed;
-        _input.InGame.MoveRight.performed -= MoveRightPerformed;
+        _input.InGame.Movement.performed -= MovementPerformed;
+
+        //_input.InGame.MoveUp.performed -= MoveUpPerformed;
+        //_input.InGame.MoveDown.performed -= MoveDownPerformed;
+        //_input.InGame.MoveLeft.performed -= MoveLeftPerformed;
+        //_input.InGame.MoveRight.performed -= MoveRightPerformed;
     }
 
-    /// <summary>
-    /// Handles the downward movement of the player when the respective control
-    /// binding is triggered
-    /// </summary>
-    /// <param name="obj"></param>
-    public void MoveDownPerformed(InputAction.CallbackContext obj)
+    public void MovementPerformed(InputAction.CallbackContext context)
     {
-        FacingDirection = Vector3.back;
+        Vector2 var = context.ReadValue<Vector2>();
+
+        var.x = var.y;
+        Vector3 direction = new(var.x, 0, var.y);
 
         // Move down if there is no wall below the player or if ghost mode is enabled
-        var downMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.back);
-        if ((GridBase.Instance.CellIsEmpty(downMove) && enemiesMoved == true) || 
+        var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
+        if ((GridBase.Instance.CellIsEmpty(move) && enemiesMoved == true) ||
             (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
         {
-            gameObject.transform.position = downMove + _positionOffset;
+            gameObject.transform.position = move + _positionOffset;
             GridBase.Instance.UpdateEntry(this);
         }
-        else
-            Debug.Log(enemiesMoved);
-        Debug.Log("IS empty: " + GridBase.Instance.CellIsEmpty(downMove));
+
+
     }
 
-    /// <summary>
-    /// Handles the upward movement of the player when the respective control
-    /// binding is triggered
-    /// </summary>
-    /// <param name="obj"></param>
-    private void MoveUpPerformed(InputAction.CallbackContext obj)
-    {
-        FacingDirection = Vector3.forward;
+    ///// <summary>
+    ///// Handles the downward movement of the player when the respective control
+    ///// binding is triggered
+    ///// </summary>
+    ///// <param name="obj"></param>
+    //public void MoveDownPerformed(InputAction.CallbackContext obj)
+    //{
+    //    FacingDirection = Vector3.back;
 
-        // Move up if there is no wall above the player or if ghost mode is enabled
-        var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
-        if ((GridBase.Instance.CellIsEmpty(upMove) && enemiesMoved == true) || 
-            (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
-        {
-            gameObject.transform.position = upMove + _positionOffset;
-            GridBase.Instance.UpdateEntry(this);
-        }
-        playerMoved = true;
+    //    // Move down if there is no wall below the player or if ghost mode is enabled
+    //    var downMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.back);
+    //    if ((GridBase.Instance.CellIsEmpty(downMove) && enemiesMoved == true) || 
+    //        (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
+    //    {
+    //        gameObject.transform.position = downMove + _positionOffset;
+    //        GridBase.Instance.UpdateEntry(this);
+    //    }
+    //    else
+    //        Debug.Log(enemiesMoved);
+    //    Debug.Log("IS empty: " + GridBase.Instance.CellIsEmpty(downMove));
+    //}
+
+    ///// <summary>
+    ///// Handles the upward movement of the player when the respective control
+    ///// binding is triggered
+    ///// </summary>
+    ///// <param name="obj"></param>
+    //private void MoveUpPerformed(InputAction.CallbackContext obj)
+    //{
+    //    FacingDirection = Vector3.forward;
+
+    //    // Move up if there is no wall above the player or if ghost mode is enabled
+    //    var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
+    //    if ((GridBase.Instance.CellIsEmpty(upMove) && enemiesMoved == true) || 
+    //        (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
+    //    {
+    //        gameObject.transform.position = upMove + _positionOffset;
+    //        GridBase.Instance.UpdateEntry(this);
+    //    }
+    //    playerMoved = true;
         
-    }
+    //}
 
-    /// <summary>
-    /// Handles the leftward movement of the player when the respective control
-    /// binding is triggered
-    /// </summary>
-    /// <param name="obj"></param>
-    private void MoveLeftPerformed(InputAction.CallbackContext obj)
-    {
-        FacingDirection = Vector3.left;
+    ///// <summary>
+    ///// Handles the leftward movement of the player when the respective control
+    ///// binding is triggered
+    ///// </summary>
+    ///// <param name="obj"></param>
+    //private void MoveLeftPerformed(InputAction.CallbackContext obj)
+    //{
+    //    FacingDirection = Vector3.left;
 
-        // Move left if there is no wall to the left of the player or if ghost mode is enabled
-        var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
-        if ((GridBase.Instance.CellIsEmpty(leftMove) && enemiesMoved == true) || 
-            (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
-        {
-           gameObject.transform.position = leftMove + _positionOffset;
-           GridBase.Instance.UpdateEntry(this);
-        }
+    //    // Move left if there is no wall to the left of the player or if ghost mode is enabled
+    //    var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
+    //    if ((GridBase.Instance.CellIsEmpty(leftMove) && enemiesMoved == true) || 
+    //        (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
+    //    {
+    //       gameObject.transform.position = leftMove + _positionOffset;
+    //       GridBase.Instance.UpdateEntry(this);
+    //    }
 
-        playerMoved = true;
-    }
+    //    playerMoved = true;
+    //}
 
-    /// <summary>
-    /// Handles the rightward movement of the player when the respective control
-    /// binding is triggered
-    /// </summary>
-    /// <param name="obj"></param>
-    private void MoveRightPerformed(InputAction.CallbackContext obj)
-    {
-        FacingDirection = Vector3.right;
+    ///// <summary>
+    ///// Handles the rightward movement of the player when the respective control
+    ///// binding is triggered
+    ///// </summary>
+    ///// <param name="obj"></param>
+    //private void MoveRightPerformed(InputAction.CallbackContext obj)
+    //{
+    //    FacingDirection = Vector3.right;
 
-        // Move Right if there is no wall to the right of the player or if ghost mode is enabled
-        var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
-        if((GridBase.Instance.CellIsEmpty(rightMove) && enemiesMoved == true) || 
-            (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
-        {
-           gameObject.transform.position = rightMove + _positionOffset;
-           GridBase.Instance.UpdateEntry(this);   
-        }
+    //    // Move Right if there is no wall to the right of the player or if ghost mode is enabled
+    //    var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
+    //    if((GridBase.Instance.CellIsEmpty(rightMove) && enemiesMoved == true) || 
+    //        (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
+    //    {
+    //       gameObject.transform.position = rightMove + _positionOffset;
+    //       GridBase.Instance.UpdateEntry(this);   
+    //    }
 
-        playerMoved = true; 
-    }
+    //    playerMoved = true; 
+    //}
 
     /// <summary>
     /// Reloads scene when player hits an enemy
