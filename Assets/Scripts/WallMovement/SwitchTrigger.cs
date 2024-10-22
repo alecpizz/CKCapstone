@@ -7,6 +7,7 @@
 *******************************************************************/
 
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -38,11 +39,11 @@ public class SwitchTrigger : MonoBehaviour
             {
                 if (_isTriggered)
                 {
-                    _moveWalls[i].WallIsMoved();
+                    _moveWalls[i].InitialSwitchMove();
                 }
                 else
                 {
-                    _moveWalls[i].WallMoveBack();
+                    _moveWalls[i].SwitchBackMovement();
                 }
             }
         }

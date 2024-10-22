@@ -50,7 +50,7 @@ public class MovingWall : MonoBehaviour, IGridEntry
     /// When switch is turned on
     /// Allows Player to move where wall once was
     /// </summary>
-    public void WallIsMoved()
+    public void InitialSwitchMove()
     {
         transform.position = _originGhost;
         _wallGhost.transform.position = _originWall;
@@ -62,7 +62,7 @@ public class MovingWall : MonoBehaviour, IGridEntry
     /// Now that switch is off
     /// Allows Player to move where wall once was
     /// </summary>
-    public void WallMoveBack()
+    public void SwitchBackMovement()
     {
         transform.position = _originWall;
         _wallGhost.transform.position = _originGhost;
