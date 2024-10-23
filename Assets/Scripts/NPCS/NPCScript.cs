@@ -51,7 +51,7 @@ public class NPCScript : MonoBehaviour, IInteractable
     /// <summary>
     /// Field to retrieve attached GameObject: from IInteractable
     /// </summary>
-    GameObject GetGameObject { get; }
+    public GameObject GetGameObject { get; }
 
 
     /// <summary>
@@ -63,6 +63,7 @@ public class NPCScript : MonoBehaviour, IInteractable
     {
         AdvanceDialogue();
     }
+
     /// <summary>
     /// This function will be implemented for when the player is no longer interacting with the interactable
     /// this one is used to call the hide dialogue function
@@ -79,11 +80,11 @@ public class NPCScript : MonoBehaviour, IInteractable
     /// </summary>
     void Start()
     {
-        _isTalking = false;
         if (CheckForEntries())
             _dialogueBox.SetText(_dialogueEntries[_currentDialogue]._text);
         _dialogueBox.gameObject.SetActive(false);
         _occupied = false;
+        _isTalking = false;
         _currentTypingSpeed = Mathf.Clamp(
             _typingSpeed - _dialogueEntries[_currentDialogue]._adjustTypingSpeed, 2f, 15f) / 100f;
     }
@@ -107,6 +108,7 @@ public class NPCScript : MonoBehaviour, IInteractable
 
             _dialogueBox.gameObject.SetActive(true);
             _occupied = true;
+            _isTalking = true;
         }
         else
         {
@@ -167,6 +169,7 @@ public class NPCScript : MonoBehaviour, IInteractable
         {
             StopCoroutine(_typingCoroutine);
         }
+        _isTalking = false;
     }
 
     /// <summary>
@@ -313,7 +316,7 @@ public class NPCScript : MonoBehaviour, IInteractable
     {
         if (_dialogueEntries.Count == 0)
         {
-            Debug.LogWarning("No entries in " + gameObject.name + ", please add some.");
+            UnityEngine.Debug.LogWarning("No entries in " + gameObject.name + ", please add some.");
             _dialogueBox.SetText("No Entries in NPC.");
             return false;
         }
