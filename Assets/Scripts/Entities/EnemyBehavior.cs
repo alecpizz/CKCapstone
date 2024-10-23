@@ -45,10 +45,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
         // SOMETHING working
         _input = new PlayerControls();
         _input.InGame.Enable();
-        _input.InGame.MoveUp.performed += EnemyMove;
-        _input.InGame.MoveDown.performed += EnemyMove;
-        _input.InGame.MoveLeft.performed += EnemyMove;
-        _input.InGame.MoveRight.performed += EnemyMove;
+        _input.InGame.Movement.performed += EnemyMove;
 
         _playerMoveRef = _player.GetComponent<PlayerMovement>();
         //GridBase.Instance.AddEntry(this);
@@ -64,11 +61,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
     private void OnDisable()
     {
         _input.InGame.Disable();
-
-        _input.InGame.MoveUp.performed -= EnemyMove;
-        _input.InGame.MoveDown.performed -= EnemyMove;
-        _input.InGame.MoveLeft.performed -= EnemyMove;
-        _input.InGame.MoveRight.performed -= EnemyMove;
+        _input.InGame.Movement.performed -= EnemyMove;
     }
 
     /// <summary>
