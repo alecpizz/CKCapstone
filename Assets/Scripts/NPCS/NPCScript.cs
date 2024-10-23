@@ -25,7 +25,7 @@ public struct DialogueEntry
 }
 
 // TODO: Update this class to implement from IInteractable
-public class NPCScript : MonoBehaviour
+public class NPCScript : MonoBehaviour, IInteractable
 {
     [SerializeField] private TMP_Text _dialogueBox;
     [InfoBox("This adjusts the base typing speed. 2 is the slowest, 10 is the fastest", EInfoBoxType.Normal)]
@@ -38,13 +38,26 @@ public class NPCScript : MonoBehaviour
     //used to tell if player is in adjacent square
     private bool _occupied;
     private Coroutine _typingCoroutine;
-    private Coroutine _bounceCoroutine;
     private bool _isTyping = false;
     private string _currentFullText;
-    private List<GameObject> bouncingLetters;
 
-    // FIXME: waiting until new AudioManager update gets pushed
-    //private EventInstance _currentInstance;
+    
+    private EventInstance _currentInstance;
+
+    /// <summary>
+    /// Field to retrieve attached GameObject: from IInteractables
+    /// </summary>
+    public GameObject GetGameObject { get; }
+
+
+    /// <summary>
+    /// This function will be implemented to contain the specific functionality
+    /// for an interactable object: from IInteractables
+    /// </summary>
+    public void OnInteract()
+    {
+        AdvanceDialogue();
+    }
 
     /// <summary>
     /// Start is called before the first frame update
@@ -95,17 +108,6 @@ public class NPCScript : MonoBehaviour
         if (_typingCoroutine != null)
         {
             StopCoroutine(_typingCoroutine);
-        }
-
-        // adjusts typing speed on a per-entry basis
-        _currentTypingSpeed = Mathf.Clamp(_typingSpeed - _dialogueEntries[_currentDialogue]._adjustTypingSpeed, 2f, 15f) / 100f;
-
-        if(_bounceCoroutine != null)
-            StopCoroutine(_bounceCoroutine);
-        // Cleanup bouncing letters
-        foreach (var letter in bouncingLetters)
-        {
-            Destroy(letter);
         }
         _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue]._text));
     }
@@ -167,10 +169,7 @@ public class NPCScript : MonoBehaviour
         _dialogueBox.SetText(""); // Clear the dialogue box
 
         bool style = false;
-        bool isBouncing = false;
         string currentTag = "";
-        float currentXPosition = 0f; // Tracks the horizontal position for letters
-        bouncingLetters = new();
 
         foreach (char letter in dialogue.ToCharArray())
         {
@@ -187,58 +186,19 @@ public class NPCScript : MonoBehaviour
                 {
                     style = false;
 
-                    // Check for custom bounce tag
-                    if (currentTag == "<bounce>")
-                    {
-                        isBouncing = true;
-                    }
-                    else if (currentTag == "</bounce>")
-                    {
-                        isBouncing = false;
-                    }
-                    else
-                    {
-                        _dialogueBox.text += currentTag;
-                    }
+                    _dialogueBox.text += currentTag;
 
                     currentTag = "";
                 }
             }
             else
             {
-                if (isBouncing)
-                {
-                    // Create a new GameObject for the bouncing letter
-                    var letterObj = new GameObject($"letter_{letter}");
-                    var textComponent = letterObj.AddComponent<TextMeshProUGUI>();
-                    textComponent.text = letter.ToString();
-                    textComponent.alignment = TMPro.TextAlignmentOptions.Center;
-                    textComponent.font = _dialogueBox.font; // Match font with the main dialogue box
-                    textComponent.fontSize = _dialogueBox.fontSize; // Match font size
-                    letterObj.transform.SetParent(_dialogueBox.transform, false);
-
-                    // Adjust the position of the letter
-                    RectTransform rectTransform = letterObj.GetComponent<RectTransform>();
-                    rectTransform.anchoredPosition = new Vector2(currentXPosition, 0);
-
-                    // Update the horizontal position for the next letter
-                    currentXPosition += 15;
-
-                    // Start the bounce animation for the letter
-                    _bounceCoroutine = StartCoroutine(BounceLetter(letterObj));
-                    bouncingLetters.Add(letterObj);
-                }
-                else
-                {
-                    // Add the letter directly to the dialogue box text and adjust the position
-                    _dialogueBox.text += letter;
-                    var tempText = new GameObject("tempText").AddComponent<TextMeshProUGUI>();
-                    tempText.text = letter.ToString();
-                    tempText.font = _dialogueBox.font;
-                    tempText.fontSize = _dialogueBox.fontSize;
-                    currentXPosition += tempText.preferredWidth;
-                    Destroy(tempText.gameObject);
-                }
+                _dialogueBox.text += letter;
+                var tempText = new GameObject("tempText").AddComponent<TextMeshProUGUI>();
+                tempText.text = letter.ToString();
+                tempText.font = _dialogueBox.font;
+                tempText.fontSize = _dialogueBox.fontSize;
+                Destroy(tempText.gameObject);
 
                 // Apply delays based on punctuation
                 switch (letter)
@@ -260,23 +220,6 @@ public class NPCScript : MonoBehaviour
 
         _isTyping = false;
     }
-
-    // Coroutine to make the letter bounce up and down
-    private IEnumerator BounceLetter(GameObject letterObj)
-    {
-        RectTransform rectTransform = letterObj.GetComponent<RectTransform>();
-        Vector3 startPosition = rectTransform.anchoredPosition;
-        float bounceHeight = 5f; // Adjust the bounce height
-        float bounceSpeed = 3f;  // Adjust the speed of the bounce
-
-        while (letterObj)
-        {
-            float offset = Mathf.Sin(Time.time * bounceSpeed) * bounceHeight;
-            rectTransform.anchoredPosition = startPosition + new Vector3(-15, offset + 15, 0);
-            yield return null;
-        }
-    }
-
 
     /// <summary>
     /// Makes sure the NPC has dialogue entries
