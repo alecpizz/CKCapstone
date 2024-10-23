@@ -12,12 +12,11 @@ using NaughtyAttributes;
 
 public class PlayerInteraction : MonoBehaviour
 {
-    [Required]
-    [SerializeField] private PlayerMovement _playerMovement;
-
     private GridBase _gridBase;
     private PlayerControls _playerControls;
     private HashSet<IGridEntry> _gridEntries;
+    private IInteractable _currentInteractable;
+    private Vector3 _facingDirection;
 
     /// <summary>
     /// Enabling inputs and getting grid instance
@@ -29,6 +28,7 @@ public class PlayerInteraction : MonoBehaviour
         _playerControls = new PlayerControls();
         _playerControls.Enable();
         _playerControls.InGame.Interact.performed += ctx => Interact();
+        _currentInteractable = null;
     }
 
     /// <summary>
@@ -50,7 +50,7 @@ public class PlayerInteraction : MonoBehaviour
         // Finding coordinates of the adjacent square
         Vector3 cellPositionToCheck = 
             _gridBase.GetCellPositionInDirection(transform.position, 
-            _playerMovement.FacingDirection);
+            _facingDirection);
 
         Vector3Int cellCoordinatesToCheck = _gridBase.WorldToCell(cellPositionToCheck);
 
@@ -64,8 +64,19 @@ public class PlayerInteraction : MonoBehaviour
             IInteractable interactable;
             if (entry.GetGameObject.TryGetComponent<IInteractable>(out interactable))
             {
+                _currentInteractable = interactable;
                 interactable.OnInteract();
             }
         }
+    }
+
+    public void GetDirection(Vector3 direction)
+    {
+        if (_currentInteractable != null)
+        {
+            _currentInteractable.OnLeave();
+            _currentInteractable = null;
+        }
+        _facingDirection = direction;
     }
 }

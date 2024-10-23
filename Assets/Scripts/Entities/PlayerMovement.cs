@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Cole Stranczek
-*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson
+*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson, David Henvick
 *    Date Created: 9/22/24
 *    Description: Script that handles the player's movement along
 *    the grid
@@ -15,6 +15,8 @@ using UnityEngine.Windows;
 
 public class PlayerMovement : MonoBehaviour, IGridEntry
 {
+    [SerializeField] private PlayerInteraction _playerInteraction;
+
     private PlayerControls _input;
     public Vector3 FacingDirection { get; private set; }
 
@@ -26,6 +28,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
 
     [SerializeField]
     private Vector3 _positionOffset;
+
+    
 
     // Start is called before the first frame update
     void Start()
@@ -63,6 +67,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     public void MoveDownPerformed(InputAction.CallbackContext obj)
     {
         FacingDirection = Vector3.back;
+        _playerInteraction.GetDirection(FacingDirection);
 
         // Move down if there is no wall below the player or if ghost mode is enabled
         var downMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.back);
@@ -85,6 +90,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     private void MoveUpPerformed(InputAction.CallbackContext obj)
     {
         FacingDirection = Vector3.forward;
+        _playerInteraction.GetDirection(FacingDirection);
 
         // Move up if there is no wall above the player or if ghost mode is enabled
         var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
@@ -106,6 +112,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     private void MoveLeftPerformed(InputAction.CallbackContext obj)
     {
         FacingDirection = Vector3.left;
+        _playerInteraction.GetDirection(FacingDirection);
 
         // Move left if there is no wall to the left of the player or if ghost mode is enabled
         var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
@@ -127,6 +134,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     private void MoveRightPerformed(InputAction.CallbackContext obj)
     {
         FacingDirection = Vector3.right;
+        _playerInteraction.GetDirection(FacingDirection);
 
         // Move Right if there is no wall to the right of the player or if ghost mode is enabled
         var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
