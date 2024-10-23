@@ -31,6 +31,7 @@ public class NPCScript : MonoBehaviour, IInteractable
     [InfoBox("This adjusts the base typing speed. 2 is the slowest, 10 is the fastest", EInfoBoxType.Normal)]
     [Range(2f, 10f)] [SerializeField] private float _typingSpeed = 5f;
     [SerializeField] private List<DialogueEntry> _dialogueEntries;
+    private bool _IsTalking;
 
     //dialogue options
     private int _currentDialogue = 0;
@@ -68,9 +69,11 @@ public class NPCScript : MonoBehaviour, IInteractable
         if (CheckForEntries())
             _dialogueBox.SetText(_dialogueEntries[_currentDialogue]._text);
         _dialogueBox.gameObject.SetActive(false);
+        _IsTalking = false;
         _occupied = false;
         _currentTypingSpeed = Mathf.Clamp(
             _typingSpeed - _dialogueEntries[_currentDialogue]._adjustTypingSpeed, 2f, 15f) / 100f;
+
     }
 
     /// <summary>
@@ -79,55 +82,55 @@ public class NPCScript : MonoBehaviour, IInteractable
     /// </summary>
     public void AdvanceDialogue()
     {
-        if (!_occupied)
+        if (!_IsTalking)
         {
-            return;
-        }
+            if (CheckForEntries())
+            {
+                if (_typingCoroutine != null)
+                {
+                    StopCoroutine(_typingCoroutine);
+                }
+                _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue]._text));
+            }
 
-        if (!CheckForEntries())
-        {
-            return;
-        } 
-
-        // skips the typing to show complete text
-        if (_isTyping)
-        {
-            FinishTyping();
-            return;
-        }
-
-        if (_currentDialogue < _dialogueEntries.Count - 1)
-        {
-            _currentDialogue++;             
+            _dialogueBox.gameObject.SetActive(true);
+            _occupied = true;
+            _IsTalking = true;
         }
         else
         {
-            _currentDialogue = 0;
-        }
+            if (!_occupied)
+            {
+                return;
+            }
 
-        if (_typingCoroutine != null)
-        {
-            StopCoroutine(_typingCoroutine);
-        }
-        _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue]._text));
-    }
+            if (!CheckForEntries())
+            {
+                return;
+            }
 
-    /// <summary>
-    /// use this to show the dialogue of the npc
-    /// </summary>
-    public void ShowDialogue()
-    {
-        if (CheckForEntries())
-        {
+            // skips the typing to show complete text
+            if (_isTyping)
+            {
+                FinishTyping();
+                return;
+            }
+
+            if (_currentDialogue < _dialogueEntries.Count - 1)
+            {
+                _currentDialogue++;
+            }
+            else
+            {
+                _currentDialogue = 0;
+            }
+
             if (_typingCoroutine != null)
             {
                 StopCoroutine(_typingCoroutine);
             }
             _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue]._text));
         }
-
-        _dialogueBox.gameObject.SetActive(true);
-        _occupied = true;
     }
 
     /// <summary>
@@ -137,6 +140,7 @@ public class NPCScript : MonoBehaviour, IInteractable
     {
         _dialogueBox.gameObject.SetActive(false);
         _occupied = false;
+        _isTyping = false;
 
         if (_typingCoroutine != null)
         {
