@@ -13,6 +13,7 @@ using FMODUnity;
 using FMOD.Studio;
 using System;
 using NaughtyAttributes;
+using System.Security.Cryptography;
 
 [Serializable]
 public struct DialogueEntry 
@@ -59,7 +60,14 @@ public class NPCScript : MonoBehaviour, IInteractable
     {
         AdvanceDialogue();
     }
-
+    /// <summary>
+    /// This function will be implemented for when the player is no longer interacting with the interactable
+    /// from IInteractable
+    /// </summary>
+    public void OnLeave()
+    {
+        HideDialogue();
+    }
     /// <summary>
     /// Start is called before the first frame update
     /// used here to grabe the dialogue ui item and to set the occupied variable
