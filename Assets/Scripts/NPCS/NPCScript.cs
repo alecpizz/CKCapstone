@@ -89,7 +89,7 @@ public class NPCScript : MonoBehaviour, IInteractable
     }
 
     /// <summary>
-    /// is used to advance the current dialogue
+    /// is used to advance the current dialogue or show the dialogue if it is not already
     /// is called by player when the interact key is used
     /// </summary>
     public void AdvanceDialogue()

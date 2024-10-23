@@ -70,6 +70,12 @@ public class PlayerInteraction : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// This is a function built to do two things. 
+    /// first it is built so that this script has access to the current direction that the player is facing, without circular dependencies.
+    /// second is to call the OnLeave function for the current interactable and to clear that very same variable after.
+    /// </summary>
+    /// <param name="direction"></param> a vector that represents the direction the player is currently facing.
     public void GetDirection(Vector3 direction)
     {
         if (_currentInteractable != null)

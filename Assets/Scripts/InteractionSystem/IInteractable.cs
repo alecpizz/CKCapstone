@@ -20,6 +20,7 @@ public interface IInteractable
     /// for an interactable object
     /// </summary>
     public void OnInteract();
+
     /// <summary>
     /// This function will be implemented for when the player is no longer interacting with the interactable
     /// </summary>
