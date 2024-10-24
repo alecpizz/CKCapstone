@@ -33,6 +33,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     [SerializeField]
     private float delayTime = 0.5f;
 
+    private bool _enemiesPresent = true;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -44,6 +46,11 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         _input = new PlayerControls();
         _input.InGame.Enable();
         _input.InGame.Movement.performed += MovementPerformed;
+
+        if (GameObject.FindGameObjectsWithTag("Enemy") != null)
+        {
+            _enemiesPresent = false;
+        }
     }
 
     /// <summary>
@@ -87,7 +94,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     {
         yield return null;
 
-        if (GameObject.FindGameObjectsWithTag("Enemy") != null)
+        if (_enemiesPresent)
         {
             yield return new WaitForSeconds(delayTime);
             enemiesMoved = true;
