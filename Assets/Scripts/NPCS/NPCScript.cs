@@ -212,11 +212,6 @@ public class NPCScript : MonoBehaviour, IInteractable
             else
             {
                 _dialogueBox.text += letter;
-                var tempText = new GameObject("tempText").AddComponent<TextMeshProUGUI>();
-                tempText.text = letter.ToString();
-                tempText.font = _dialogueBox.font;
-                tempText.fontSize = _dialogueBox.fontSize;
-                Destroy(tempText.gameObject);
 
                 // Apply delays based on punctuation
                 switch (letter)
