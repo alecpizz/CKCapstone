@@ -27,6 +27,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
 
     [SerializeField]
     private Vector3 _positionOffset;
+    [SerializeField]
+    private PlayerInteraction _playerInteraction;
 
     [SerializeField]
     private float delayTime = 0.5f;
@@ -57,7 +59,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     {
         Vector2 key = context.ReadValue<Vector2>();
         Vector3 direction = new(key.x, 0, key.y);
-        Vector3 lastPos = gameObject.transform.position;
+        _playerInteraction.SetDirection(direction);
 
         // Move if there is no wall below the player or if ghost mode is enabled
         var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);

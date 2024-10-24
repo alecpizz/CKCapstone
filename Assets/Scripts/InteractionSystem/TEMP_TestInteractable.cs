@@ -1,10 +1,11 @@
 /******************************************************************
 *    Author: Nick Grinstead
-*    Contributors: 
+*    Contributors: David Henvick
 *    Date Created: 10/10/24
 *    Description: Testing script being used in GYM_InteractionTesting.
 *    Prints a message when interacted with.
 *******************************************************************/
+using System.Diagnostics;
 using UnityEngine;
 
 public class TEMP_TestInteractable : MonoBehaviour, IInteractable
@@ -16,6 +17,13 @@ public class TEMP_TestInteractable : MonoBehaviour, IInteractable
     /// </summary>
     public void OnInteract()
     {
-        Debug.Log("You successfully interacted with an object");
+        UnityEngine.Debug.Log("You successfully interacted with an object");
+    }
+    /// <summary>
+    /// Called by PlayerInteraction to print a message
+    /// </summary>
+    public void OnLeave()
+    {
+        UnityEngine.Debug.Log("You successfully left an interaction with an object");
     }
 }
