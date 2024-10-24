@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Cole Stranczek
-*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson
+*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson, Alec Pizziferro
 *    Date Created: 9/22/24
 *    Description: Script that handles the player's movement along
 *    the grid
@@ -14,7 +14,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.Windows;
 
-public class PlayerMovement : MonoBehaviour, IGridEntry
+public class PlayerMovement : MonoBehaviour, IGridEntry, ITurnListener
 {
     private PlayerControls _input;
     public Vector3 FacingDirection { get; private set; }
@@ -41,11 +41,17 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         _input.InGame.Movement.performed += MovementPerformed;
     }
 
+    private void OnEnable()
+    {
+        Register();
+    }
+
     /// <summary>
     /// Unregistering from input actions
     /// </summary>
     private void OnDisable()
     {
+        UnRegister();
         _input.InGame.Disable();
         _input.InGame.Movement.performed -= MovementPerformed;
     }
@@ -56,13 +62,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         Vector3 direction = new(key.x, 0, key.y);
 
         // Move if there is no wall below the player or if ghost mode is enabled
-        var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
-        if ((GridBase.Instance.CellIsEmpty(move) && enemiesMoved == true) ||
-            (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
-        {
-            gameObject.transform.position = move + _positionOffset;
-            GridBase.Instance.UpdateEntry(this);
-        }
+       
     }
 
     /// <summary>
@@ -82,5 +82,32 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
 
             SceneController.Instance.ReloadCurrentScene();
         }
+    }
+
+    public TurnType TurnType { get => TurnType.Player; }
+    public bool TurnComplete { get; set; }
+    public bool TurnStarted { get; set; }
+
+    public void PerformTurn(Vector3 direction)
+    {
+        var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
+        if ((GridBase.Instance.CellIsEmpty(move) && enemiesMoved == true) ||
+            (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
+        {
+            gameObject.transform.position = move + _positionOffset;
+            GridBase.Instance.UpdateEntry(this);
+        }
+
+        TurnComplete = true;
+    }
+
+    public void Register()
+    {
+        RoundManager.Instance.RegisterListener(this);
+    }
+
+    public void UnRegister()
+    {
+        RoundManager.Instance.UnRegisterListener(this);
     }
 }

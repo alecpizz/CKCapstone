@@ -6,13 +6,14 @@
 *    from movement to causing a failstate with the player
 *******************************************************************/
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using NaughtyAttributes;
 
-public class EnemyBehavior : MonoBehaviour, IGridEntry
+public class EnemyBehavior : MonoBehaviour, IGridEntry, ITurnListener
 {
     public bool IsTransparent { get => true; }
     public Vector3 Position { get => transform.position; }
@@ -54,12 +55,17 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
         _atStart = true;
     }
 
+    private void OnEnable()
+    {
+        Register();
+    }
 
     /// <summary>
     /// Unregisters from player input
     /// </summary>
     private void OnDisable()
     {
+        UnRegister();
         _input.InGame.Disable();
         _input.InGame.Movement.performed -= EnemyMove;
     }
@@ -78,7 +84,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
         var nextPos = movePoints[_currentPoint].transform.position;
         var currentPos = gameObject.transform.position;
 
-        StartCoroutine(DelayedPlayerInput());
     }
 
     /// <summary>
@@ -135,5 +140,25 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
 
         transform.position = movePoints[_currentPoint].transform.position;
         _playerMoveRef.enemiesMoved = true;
+        TurnComplete = true;
+    }
+
+    public TurnType TurnType { get => TurnType.World; }
+    public bool TurnComplete { get; set; }
+    public bool TurnStarted { get; set; }
+
+    public void PerformTurn(Vector3 direction)
+    {
+        StartCoroutine(DelayedPlayerInput());
+    }
+
+    public void Register()
+    {
+        RoundManager.Instance.RegisterListener(this);
+    }
+
+    public void UnRegister()
+    {
+        RoundManager.Instance.UnRegisterListener(this);
     }
 }
