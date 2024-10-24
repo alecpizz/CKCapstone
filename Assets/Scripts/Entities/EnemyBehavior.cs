@@ -57,7 +57,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
         _input.InGame.Movement.performed += EnemyMove;
 
         _playerMoveRef = _player.GetComponent<PlayerMovement>();
-        //GridBase.Instance.AddEntry(this);
 
         // Make sure enemiess are always seen at the start
         _atStart = true;
@@ -154,6 +153,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
                     moveInDirection = Vector3.left;
                 }
             }
+
+            /// <summary>
+            /// For loop repeats enemy moving over a tile in the direction given until either it sees another object in that direction
+            /// that isn't the player (will move into players but not walls/enemies).
+            /// </summary>
             for (int i = 0; i < pointTiles; i++)
             {
                 var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveInDirection);

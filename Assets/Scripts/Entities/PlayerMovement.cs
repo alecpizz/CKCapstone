@@ -77,6 +77,10 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         }
     }
 
+    /// <summary>
+    /// Coroutine that makes the player wait to let the enemies finish moving before
+    /// being able to move again.
+    /// </summary>
     IEnumerator delayNextInput()
     {
         yield return null;
