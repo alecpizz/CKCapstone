@@ -35,11 +35,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
     //Wait time between enemy moving each individual tile while on path to next destination
     [SerializeField] private float _waitTime = 0.05f;
 
-    //List of Move Point Scriptable Objects
-    //[SerializeField] private List<MovePoints> _movePoints;
-
-    //Move Point struct list
-
+    //List of movePoint structs that contain a direction enum and a tiles to move integer.
     public enum Direction { Up, Down, Left, Right }
 
     [System.Serializable]
@@ -48,7 +44,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
         public Direction direction;
         public int tilesToMove;
     }
-
     [SerializeField] private List<movePoints> _movePoints;
 
     //Check true in the inspector if the enemy is moving in a circular pattern (doesn't want to move back and forth)
@@ -101,7 +96,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
     }
 
     /// <summary>
-    /// Coroutine that handles the enemy's movement along the provided points in the scriptable object list
+    /// Coroutine that handles the enemy's movement along the provided points in the struct object list
     /// </summary>
     /// <returns></returns>
     IEnumerator DelayedInput()
@@ -125,7 +120,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
             _playerMoveRef.enemiesMoved = false;
 
             /// <summary>
-            /// Looks at current point the the scriptable object list to pull the current direction (string) and amount of tiles to move in direction (int)
+            /// Looks at current point the the struct object list to pull the current direction (string) and amount of tiles to move in direction (int)
             /// </summary>
             var point = _movePoints[_currentPoint];
             var pointDirection = point.direction;
@@ -177,9 +172,19 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
             for (int i = 0; i < pointTiles; i++)
             {
                 var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveInDirection);
+
+                //Checks if the next cell contains an object
                 if (!GridBase.Instance.CellIsEmpty(move))
                 {
-                    if (_playerMoveRef.Position.x != move.x && _playerMoveRef.Position.z != move.z)
+                    //Uses player's current x and z position and enemy's y position to check whether or not the player is in the next cell.
+                    var checkPlayerPos = new Vector3(0,0,0);
+                    checkPlayerPos.x = _playerMoveRef.Position.x;
+                    checkPlayerPos.z = _playerMoveRef.Position.z;
+                    checkPlayerPos.y = move.y;
+
+                    //If the next cell contains an object that is not in both the x and z position of the player then the loop breaks
+                    //enemy can't move into other enemies, walls, etc.
+                    if (move != checkPlayerPos)
                     {
                         break;
                     }
