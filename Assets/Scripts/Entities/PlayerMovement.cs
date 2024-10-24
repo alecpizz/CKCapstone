@@ -19,7 +19,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     private PlayerControls _input;
     public Vector3 FacingDirection { get; private set; }
 
-    public bool playerMoved;
+    public bool playerMoved = true;
     public bool enemiesMoved = true;
     public bool IsTransparent { get => true; }
     public Vector3 Position { get => transform.position; }
@@ -27,6 +27,9 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
 
     [SerializeField]
     private Vector3 _positionOffset;
+
+    [SerializeField]
+    private float delayTime = 0.5f;
 
     // Start is called before the first frame update
     void Start()
@@ -54,14 +57,33 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     {
         Vector2 key = context.ReadValue<Vector2>();
         Vector3 direction = new(key.x, 0, key.y);
+        Vector3 lastPos = gameObject.transform.position;
 
         // Move if there is no wall below the player or if ghost mode is enabled
         var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
         if ((GridBase.Instance.CellIsEmpty(move) && enemiesMoved == true) ||
             (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
         {
+            playerMoved = true;
             gameObject.transform.position = move + _positionOffset;
             GridBase.Instance.UpdateEntry(this);
+            StartCoroutine(delayNextInput());
+        }
+
+        if (gameObject.transform.position == lastPos)
+        {
+            playerMoved = false;
+        }
+    }
+
+    IEnumerator delayNextInput()
+    {
+        yield return null;
+
+        if (GameObject.FindGameObjectsWithTag("Enemy") != null)
+        {
+            yield return new WaitForSeconds(delayTime);
+            enemiesMoved = true;
         }
     }
 

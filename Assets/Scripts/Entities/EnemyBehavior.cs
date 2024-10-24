@@ -103,9 +103,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
         /// <summary>
         /// Checks to see if all enemies have finished moving via a bool in the player script (needs to be reworked) and if the enemy is currently frozen by the harmony beam
         /// </summary>
-        //if (_playerMoveRef.enemiesMoved == true && enemyFrozen == false)
-        //if (enemyFrozen == false)
-        //{
         if (_atStart)
         {
             _playerMoveRef.enemiesMoved = false;
@@ -208,4 +205,3 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
         }
     }
 }
-//}
