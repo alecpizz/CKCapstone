@@ -140,8 +140,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
                 for (int i = 0; i < pointTiles; i++)
                 {
                     var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveInDirection);
-                    if (!GridBase.Instance.CellIsEmpty(move))
+                    if (!GridBase.Instance.CellIsEmpty(move) && _playerMoveRef.Position.x != move.x && _playerMoveRef.Position.z != move.z)
                     {
+                        Debug.Log(move);
+                        Debug.Log(_playerMoveRef.Position);
                         break;
                     }
                     gameObject.transform.position = move + _positionOffset;
@@ -193,7 +195,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
                 for (int i = 0; i < pointTiles; i++)
                 {
                     var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveInDirection);
-                    if (!GridBase.Instance.CellIsEmpty(move))
+                    if (!GridBase.Instance.CellIsEmpty(move) && _playerMoveRef.Position.x != move.x && _playerMoveRef.Position.z != move.z)
                     {
                         break;
                     }
