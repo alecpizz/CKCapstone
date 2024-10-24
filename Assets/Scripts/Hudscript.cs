@@ -13,19 +13,26 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using NaughtyAttributes;
+using Unity.VisualScripting;
 
-public class HUDscript : MonoBehaviour
+public class HUDscript : MonoBehaviour, ITimeListener
 {
     [Required][SerializeField] private TextMeshProUGUI _collectedNotesUI;
     [SerializeField] private float _messageWaitTime;
     [SerializeField] private GameObject _doorUnlockMessage;
     [SerializeField] private GameObject _incorrectMessage;
     [SerializeField] private TextMeshProUGUI _sequenceUI;
-    [SerializeField] private GameObject Note1;
-    [SerializeField] private GameObject Note2;
-    [SerializeField] private GameObject Note3;
-    [SerializeField] private GameObject Note4;
-    [SerializeField] private GameObject Note5;
+    [SerializeField] private GameObject note1;
+    [SerializeField] private GameObject note2;
+    [SerializeField] private GameObject note3;
+    [SerializeField] private GameObject note4;
+    [SerializeField] private GameObject note5;
+    [SerializeField] private TextMeshProUGUI _timeSignatureUIy;
+    [SerializeField] private TextMeshProUGUI _timeSignatureUIx;
+    private TimeSignatureManager _timeSigManager;
+    [SerializeField] private bool timeSignature;
+
+
 
 
     private List<int> _notes;
@@ -51,10 +58,29 @@ public class HUDscript : MonoBehaviour
             }
         }
 
+        _timeSigManager = TimeSignatureManager.Instance;
+
+        if (_timeSigManager != null)
+        {
+            _timeSigManager.RegisterTimeListener(this);
+        }
+
+
         // WinChecker.CollectedNote += UpdateCollectedNotesText;
         WinChecker.CollectedNote += UpdateColectedNotesIcons;
         WinChecker.GotCorrectSequence += DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence += DisplayIncorrectMessage;
+    }
+
+    public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
+    {
+        throw new System.NotImplementedException();
+
+        Debug.Log("New player time: " + newTimeSignature.x +
+            "\nNew Enemy Time: " + newTimeSignature.y);
+
+        _timeSignatureUIy.text = newTimeSignature.y.ToString();
+        _timeSignatureUIx.text = newTimeSignature.x.ToString();
     }
 
     /// <summary>
@@ -66,6 +92,11 @@ public class HUDscript : MonoBehaviour
         WinChecker.CollectedNote -= UpdateColectedNotesIcons;
         WinChecker.GotCorrectSequence -= DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence -= DisplayIncorrectMessage;
+
+        if (_timeSigManager != null)
+        {
+            _timeSigManager.UnregisterTimeListener(this);
+        }
     }
 
     /// <summary>
@@ -77,27 +108,30 @@ public class HUDscript : MonoBehaviour
     //     _collectedNotesUI.text += " " + collectedNote;
     // }
 
+    /// <summary>
+    /// Display newly collected note in UI onces collected, image edition
+    /// </summary>
     private void UpdateColectedNotesIcons(int collectedNote)
     {
-        if (Note1.activeSelf == false)
+        if (note1.activeSelf == false)
         {
-            Note1.SetActive(true);
+            note1.SetActive(true);
         }
-        else if (Note2.activeSelf == false)
+        else if (note2.activeSelf == false)
         {
-            Note2.SetActive(true);
+            note2.SetActive(true);
         }
-        else if (Note3.activeSelf == false)
+        else if (note3.activeSelf == false)
         {
-            Note3.SetActive(true);
+            note3.SetActive(true);
         }
-        else if (Note4.activeSelf == false)
+        else if (note4.activeSelf == false)
         {
-            Note4.SetActive(true);
+            note4.SetActive(true);
         }
-        else if (Note5.activeSelf == false)
+        else if (note5.activeSelf == false)
         {
-            Note5.SetActive(true);
+            note5.SetActive(true);
         }
     }
 
