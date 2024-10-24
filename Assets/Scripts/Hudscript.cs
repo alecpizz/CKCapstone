@@ -1,6 +1,6 @@
 /******************************************************************
-*    Author: Rider Hagen 
-*    Contributors:  Nick Grinstead
+*    Author: Nick Grinstead 
+*    Contributors:  Rider Hagen
 *    Date Created: 9/28/24
 *    Description: Temporary script that updates UI to reflect the 
 *       player's progress with collecting the correct melody.
@@ -21,6 +21,12 @@ public class HUDscript : MonoBehaviour
     [SerializeField] private GameObject _doorUnlockMessage;
     [SerializeField] private GameObject _incorrectMessage;
     [SerializeField] private TextMeshProUGUI _sequenceUI;
+    [SerializeField] private GameObject Note1;
+    [SerializeField] private GameObject Note2;
+    [SerializeField] private GameObject Note3;
+    [SerializeField] private GameObject Note4;
+    [SerializeField] private GameObject Note5;
+
 
     private List<int> _notes;
 
@@ -45,7 +51,8 @@ public class HUDscript : MonoBehaviour
             }
         }
 
-        WinChecker.CollectedNote += UpdateCollectedNotesText;
+        // WinChecker.CollectedNote += UpdateCollectedNotesText;
+        WinChecker.CollectedNote += UpdateColectedNotesIcons;
         WinChecker.GotCorrectSequence += DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence += DisplayIncorrectMessage;
     }
@@ -55,7 +62,8 @@ public class HUDscript : MonoBehaviour
     /// </summary>
     private void OnDisable()
     {
-        WinChecker.CollectedNote -= UpdateCollectedNotesText;
+        // WinChecker.CollectedNote -= UpdateCollectedNotesText;
+        WinChecker.CollectedNote -= UpdateColectedNotesIcons;
         WinChecker.GotCorrectSequence -= DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence -= DisplayIncorrectMessage;
     }
@@ -64,9 +72,33 @@ public class HUDscript : MonoBehaviour
     /// Display newly collected note in UI onces collected
     /// </summary>
     /// <param name="collectedNote">new note as int</param>
-    private void UpdateCollectedNotesText(int collectedNote)
+    // private void UpdateCollectedNotesText(int collectedNote)
+    // {
+    //     _collectedNotesUI.text += " " + collectedNote;
+    // }
+
+    private void UpdateColectedNotesIcons(int collectedNote)
     {
-        _collectedNotesUI.text += " " + collectedNote;
+        if (Note1.activeSelf == false)
+        {
+            Note1.SetActive(true);
+        }
+        else if (Note2.activeSelf == false)
+        {
+            Note2.SetActive(true);
+        }
+        else if (Note3.activeSelf == false)
+        {
+            Note3.SetActive(true);
+        }
+        else if (Note4.activeSelf == false)
+        {
+            Note4.SetActive(true);
+        }
+        else if (Note5.activeSelf == false)
+        {
+            Note5.SetActive(true);
+        }
     }
 
     /// <summary>
