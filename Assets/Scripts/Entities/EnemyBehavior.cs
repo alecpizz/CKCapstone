@@ -99,7 +99,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
         }
 
         /// <summary>
-        /// Checks to see if all enemies have finished moving via a bool in the player script (needs to be reworked) and if the enemy is currently frozen by the harmony beam
+        /// Checks to see if all enemies have finished moving via a bool in the player script and if the enemy is currently frozen by the harmony beam
         /// </summary>
         /// 
         yield return new WaitForSeconds(0.1f);

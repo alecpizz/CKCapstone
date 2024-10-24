@@ -1,3 +1,9 @@
+/******************************************************************
+*    Author: Mitchell Young
+*    Contributors: Mitchell Young
+*    Date Created: 10/21/24
+*    Description: Script that handles Move Point scriptable objects.
+*******************************************************************/
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
