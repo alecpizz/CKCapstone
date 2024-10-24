@@ -47,7 +47,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         _input.InGame.Enable();
         _input.InGame.Movement.performed += MovementPerformed;
 
-        if (GameObject.FindGameObjectsWithTag("Enemy") != null)
+        if (GameObject.FindGameObjectsWithTag("Enemy") == null)
         {
             _enemiesPresent = false;
         }
