@@ -38,6 +38,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
     //List of Move Point Scriptable Objects
     [SerializeField] private List<MovePoints> _movePoints;
 
+    //Check true in the inspector if the enemy is moving in a circular pattern (doesn't want to move back and forth)
+    [SerializeField] private bool _circularMovement = false;
+
     public bool enemyFrozen = false;
 
     // Start is called before the first frame update
@@ -186,7 +189,14 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
             {
                 if (_currentPoint >= _movePoints.Count - 1)
                 {
-                    _atStart = false;
+                    if (!_circularMovement)
+                    {
+                        _atStart = false;
+                    }
+                    else
+                    {
+                        _currentPoint = 0;
+                    }
                 }
                 else
                 {
