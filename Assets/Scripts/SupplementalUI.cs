@@ -8,6 +8,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SupplementalUI : MonoBehaviour
 {
@@ -22,6 +23,9 @@ public class SupplementalUI : MonoBehaviour
     //ideally a value between 0.5 and 4
     [SerializeField] private float _textFadeSpeed;
 
+    //background panel
+    [SerializeField] private GameObject _panel;
+
     /* This is being replaced with a unity icon
 
     //an orange sphere that indicates where the trigger is on the
@@ -33,6 +37,9 @@ public class SupplementalUI : MonoBehaviour
     //color variable for making the text fade in and out
     private Color _textColor;
 
+    //color variable for the background panel
+    private Color _panelColor;
+
     /// <summary>
     /// Assigns the color value based on the text UI, and makes it 
     /// transparent.
@@ -41,6 +48,8 @@ public class SupplementalUI : MonoBehaviour
     {
         _textColor = _text.color;
         _textColor.a = 0;
+        _panelColor = _panel.GetComponent<Image>().color;
+        _panelColor.a = 0;
     }
 
     /// <summary>
@@ -105,6 +114,12 @@ public class SupplementalUI : MonoBehaviour
     /// <returns></returns>
     private IEnumerator FadingIn()
     {
+        while (_panelColor.a < 0.9f)
+        {
+            _panelColor.a += (Time.deltaTime * _textFadeSpeed);
+            yield return null;
+        }
+
         while (_textColor.a < 1)
         {
             _textColor.a += (Time.deltaTime * _textFadeSpeed);
@@ -123,6 +138,12 @@ public class SupplementalUI : MonoBehaviour
             _textColor.a -= (Time.deltaTime * _textFadeSpeed);
             yield return null;
         }
+
+        while (_panelColor.a > 0)
+        {
+            _panelColor.a -= (Time.deltaTime * _textFadeSpeed);
+            yield return null;
+        }
     }
 
     /// <summary>
@@ -138,7 +159,18 @@ public class SupplementalUI : MonoBehaviour
                 _camera.transform.eulerAngles;
         }
 
+        //makes the background always face the camera if it isn't already
+        if (_panel.transform.localEulerAngles !=
+            _camera.transform.eulerAngles)
+        {
+            _panel.transform.localEulerAngles =
+                _camera.transform.eulerAngles;
+        }
+
         //updates the UI text color
         _text.color = _textColor;
+
+        //updates background panel color
+        _panel.GetComponent<Image>().color = _panelColor;
     }
 }
