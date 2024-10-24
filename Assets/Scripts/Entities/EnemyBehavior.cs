@@ -95,8 +95,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
     /// <param name="myDirection"></param>
     public void FindDirection(Direction myDirection)
     {
-        if (_atStart)
-        {
             switch (myDirection)
             {
                 case Direction.Up:
@@ -114,28 +112,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
                 default:
                     break;
             }
-        }
-        else
-        {
-            //In reverse for going back through the list
-            switch (myDirection)
-            {
-                case Direction.Up:
-                    moveInDirection = Vector3.back;
-                    break;
-                case Direction.Down:
-                    moveInDirection = Vector3.forward;
-                    break;
-                case Direction.Left:
-                    moveInDirection = Vector3.right;
-                    break;
-                case Direction.Right:
-                    moveInDirection = Vector3.left;
-                    break;
-                default:
-                    break;
-            }
-        }
     }
 
     /// <summary>
@@ -167,6 +143,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
             var pointDirection = point.direction;
             var pointTiles = point.tilesToMove;
             FindDirection(pointDirection);
+
+            //Reverses move direction if going back through the list
+            if (!_atStart)
+            {
+                moveInDirection = -moveInDirection;
+            }
 
             /// <summary>
             /// For loop repeats enemy moving over a tile in the direction given until either it sees another object in that direction
