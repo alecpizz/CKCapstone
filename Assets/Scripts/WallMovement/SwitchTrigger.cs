@@ -21,7 +21,7 @@ public class SwitchTrigger : MonoBehaviour
     private bool _isTriggered = false;
 
     //for registering walls to a switch
-    [SerializeField] private List<ParentSwitch> _moveWalls = new List<ParentSwitch>();
+    [SerializeField] private List<ParentSwitch> _affectedObjects = new List<ParentSwitch>();
 
 
     /// <summary>
