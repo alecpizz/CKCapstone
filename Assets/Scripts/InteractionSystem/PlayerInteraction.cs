@@ -76,7 +76,7 @@ public class PlayerInteraction : MonoBehaviour
     /// second is to call the OnLeave function for the current interactable and to clear that very same variable after.
     /// </summary>
     /// <param name="direction"></param> a vector that represents the direction the player is currently facing.
-    public void GetDirection(Vector3 direction)
+    public void SetDirection(Vector3 direction)
     {
         if (_currentInteractable != null)
         {

@@ -42,7 +42,6 @@ public class NPCScript : MonoBehaviour, IInteractable
     private Coroutine _typingCoroutine;
     private bool _isTyping = false;
     private string _currentFullText;
-    private List<GameObject> bouncingLetters;
 
     // FIXME: waiting until new AudioManager update gets pushed
     //private EventInstance _currentInstance;
@@ -189,8 +188,6 @@ public class NPCScript : MonoBehaviour, IInteractable
 
         bool style = false;
         string currentTag = "";
-        float currentXPosition = 0f; // Tracks the horizontal position for letters
-        bouncingLetters = new();
 
         foreach (char letter in dialogue.ToCharArray())
         {
@@ -219,7 +216,6 @@ public class NPCScript : MonoBehaviour, IInteractable
                 tempText.text = letter.ToString();
                 tempText.font = _dialogueBox.font;
                 tempText.fontSize = _dialogueBox.fontSize;
-                currentXPosition += tempText.preferredWidth;
                 Destroy(tempText.gameObject);
 
                 // Apply delays based on punctuation
