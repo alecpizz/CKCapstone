@@ -19,7 +19,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     private PlayerControls _input;
     public Vector3 FacingDirection { get; private set; }
 
-    public bool playerMoved = true;
+    public bool playerMoved = false;
     public bool enemiesMoved = true;
     public bool IsTransparent { get => true; }
     public Vector3 Position { get => transform.position; }
@@ -61,6 +61,12 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
 
         // Move if there is no wall below the player or if ghost mode is enabled
         var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
+        if (!GridBase.Instance.CellIsEmpty(move))
+        {
+            playerMoved = false;
+            StartCoroutine(delayNextInput());
+        }
+
         if ((GridBase.Instance.CellIsEmpty(move) && enemiesMoved == true) ||
             (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
         {
@@ -68,11 +74,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
             gameObject.transform.position = move + _positionOffset;
             GridBase.Instance.UpdateEntry(this);
             StartCoroutine(delayNextInput());
-        }
-
-        if (gameObject.transform.position == lastPos)
-        {
-            playerMoved = false;
         }
     }
 
