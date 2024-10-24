@@ -35,15 +35,15 @@ public class SwitchTrigger : MonoBehaviour
         {
             _isTriggered = !_isTriggered;
 
-            for (int i = 0; i < _moveWalls.Count; i++)
+            for (int i = 0; i < _affectedObjects.Count; i++)
             {
                 if (_isTriggered)
                 {
-                    _moveWalls[i].SwitchActivation();
+                    _affectedObjects[i].SwitchActivation();
                 }
                 else
                 {
-                    _moveWalls[i].SwitchDeactivation();
+                    _affectedObjects[i].SwitchDeactivation();
                 }
             }
         }
