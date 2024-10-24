@@ -57,12 +57,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
         moveInDirection = new Vector3(0, 0, 0);
 
         GridBase.Instance.AddEntry(this);
-
-        // Getting player input for the sake of triggering enemy movement.
-        // There's 100% a better way to do this but every attempt Mitchell
-        // and I made to just get a bool from the player script to signal
-        // when it's moving didn't work, so this was just done to get 
-        // SOMETHING working
         _input = new PlayerControls();
         _input.InGame.Enable();
         _input.InGame.Movement.performed += EnemyMove;
@@ -96,6 +90,55 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
     }
 
     /// <summary>
+    /// Function that tells the enemy which direction to move in
+    /// </summary>
+    /// <param name="myDirection"></param>
+    public void FindDirection(Direction myDirection)
+    {
+        if (_atStart)
+        {
+            switch (myDirection)
+            {
+                case Direction.Up:
+                    moveInDirection = Vector3.forward;
+                    break;
+                case Direction.Down:
+                    moveInDirection = Vector3.back;
+                    break;
+                case Direction.Left:
+                    moveInDirection = Vector3.left;
+                    break;
+                case Direction.Right:
+                    moveInDirection = Vector3.right;
+                    break;
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            //In reverse for going back through the list
+            switch (myDirection)
+            {
+                case Direction.Up:
+                    moveInDirection = Vector3.back;
+                    break;
+                case Direction.Down:
+                    moveInDirection = Vector3.forward;
+                    break;
+                case Direction.Left:
+                    moveInDirection = Vector3.right;
+                    break;
+                case Direction.Right:
+                    moveInDirection = Vector3.left;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    /// <summary>
     /// Coroutine that handles the enemy's movement along the provided points in the struct object list
     /// </summary>
     /// <returns></returns>
@@ -112,58 +155,18 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
         /// <summary>
         /// Checks to see if all enemies have finished moving via a bool in the player script and if the enemy is currently frozen by the harmony beam
         /// </summary>
-        /// 
         yield return new WaitForSeconds(0.1f);
         if (_playerMoveRef.playerMoved == true && enemyFrozen == false)
         {
-
             _playerMoveRef.enemiesMoved = false;
 
             /// <summary>
-            /// Looks at current point the the struct object list to pull the current direction (string) and amount of tiles to move in direction (int)
+            /// Looks at current point the the struct object list to pull the current direction (enum) and amount of tiles to move in direction (int)
             /// </summary>
             var point = _movePoints[_currentPoint];
             var pointDirection = point.direction;
             var pointTiles = point.tilesToMove;
-            if (_atStart)
-            {
-                if (point.direction == Direction.Up)
-                {
-                    moveInDirection = Vector3.forward;
-                }
-                if (pointDirection == Direction.Down)
-                {
-                    moveInDirection = Vector3.back;
-                }
-                if (pointDirection == Direction.Left)
-                {
-                    moveInDirection = Vector3.left;
-                }
-                if (pointDirection == Direction.Right)
-                {
-                    moveInDirection = Vector3.right;
-                }
-            }
-            else
-            {
-                //In reverse for going back through the list
-                if (pointDirection == Direction.Up)
-                {
-                    moveInDirection = Vector3.back;
-                }
-                if (pointDirection == Direction.Down)
-                {
-                    moveInDirection = Vector3.forward;
-                }
-                if (pointDirection == Direction.Left)
-                {
-                    moveInDirection = Vector3.right;
-                }
-                if (pointDirection == Direction.Right)
-                {
-                    moveInDirection = Vector3.left;
-                }
-            }
+            FindDirection(pointDirection);
 
             /// <summary>
             /// For loop repeats enemy moving over a tile in the direction given until either it sees another object in that direction
@@ -177,7 +180,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
                 if (!GridBase.Instance.CellIsEmpty(move))
                 {
                     //Uses player's current x and z position and enemy's y position to check whether or not the player is in the next cell.
-                    var checkPlayerPos = new Vector3(0,0,0);
+                    var checkPlayerPos = new Vector3(0, 0, 0);
                     checkPlayerPos.x = _playerMoveRef.Position.x;
                     checkPlayerPos.z = _playerMoveRef.Position.z;
                     checkPlayerPos.y = move.y;
