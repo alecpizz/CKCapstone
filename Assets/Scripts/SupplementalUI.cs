@@ -5,6 +5,7 @@
 *    Description: This is a trigger for supplemental UI to show up 
 *    whenever the player comes into contact.
 *******************************************************************/
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -21,15 +22,16 @@ public class SupplementalUI : MonoBehaviour
     //ideally a value between 0.5 and 4
     [SerializeField] private float _textFadeSpeed;
 
+    /* This is being replaced with a unity icon
+
     //an orange sphere that indicates where the trigger is on the
     //canvas; this will help designers when placing it on the grid
-    [SerializeField] private GameObject _triggerIndicator;
+    //[SerializeField] private GameObject _triggerIndicator;
+
+    ^^^ this is being replaced with a unity icon */
 
     //color variable for making the text fade in and out
-    private Color color;
-
-    //is the text currently fading out?
-    private bool fadingOut;
+    private Color _textColor;
 
     /// <summary>
     /// Assigns the color value based on the text UI, and makes it 
@@ -37,11 +39,8 @@ public class SupplementalUI : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        color = _text.color;
-        color.a = 0;
-
-        //hides the trigger indicator when playing
-        _triggerIndicator.SetActive(false);
+        _textColor = _text.color;
+        _textColor.a = 0;
     }
 
     /// <summary>
@@ -51,11 +50,15 @@ public class SupplementalUI : MonoBehaviour
     /// <param name="other">the player</param>
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Player") && fadingOut)
+        if (other.gameObject.CompareTag("Player"))
         {
-            fadingOut = false;
+            StopAllCoroutines();
+            StartCoroutine("FadingIn");
         }
     }
+
+    /* Commenting out OnTriggerStay in case a bug shows up involving 
+       player collision
 
     /// <summary>
     /// Tells the text to start fading in if the player is still 
@@ -80,6 +83,9 @@ public class SupplementalUI : MonoBehaviour
         }
     }
 
+    Commenting out OnTriggerStay in case a bug shows up involving
+    player collision */
+
     /// <summary>
     /// Tells the text to start fading out when the player leaves.
     /// </summary>
@@ -88,7 +94,34 @@ public class SupplementalUI : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            fadingOut = true;
+            StopAllCoroutines();
+            StartCoroutine("FadingOut");
+        }
+    }
+
+    /// <summary>
+    /// Fades the text in.
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator FadingIn()
+    {
+        while (_textColor.a < 1)
+        {
+            _textColor.a += (Time.deltaTime * _textFadeSpeed);
+            yield return null;
+        }
+    }
+
+    /// <summary>
+    /// Fades the text out.
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator FadingOut()
+    {
+        while (_textColor.a > 0)
+        {
+            _textColor.a -= (Time.deltaTime * _textFadeSpeed);
+            yield return null;
         }
     }
 
@@ -105,13 +138,7 @@ public class SupplementalUI : MonoBehaviour
                 _camera.transform.eulerAngles;
         }
 
-        //lowers the opacity of the UI when prompted
-        if (fadingOut && color.a > 0)
-        {
-            color.a -= (Time.deltaTime * _textFadeSpeed);
-        }
-
         //updates the UI text color
-        _text.color = color;
+        _text.color = _textColor;
     }
 }
