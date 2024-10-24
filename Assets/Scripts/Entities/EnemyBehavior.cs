@@ -36,7 +36,20 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
     [SerializeField] private float _waitTime = 0.05f;
 
     //List of Move Point Scriptable Objects
-    [SerializeField] private List<MovePoints> _movePoints;
+    //[SerializeField] private List<MovePoints> _movePoints;
+
+    //Move Point struct list
+
+    public enum Direction { Up, Down, Left, Right }
+
+    [System.Serializable]
+    public struct movePoints
+    {
+        public Direction direction;
+        public int tilesToMove;
+    }
+
+    [SerializeField] private List<movePoints> _movePoints;
 
     //Check true in the inspector if the enemy is moving in a circular pattern (doesn't want to move back and forth)
     [SerializeField] private bool _circularMovement = false;
@@ -114,24 +127,24 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
             /// <summary>
             /// Looks at current point the the scriptable object list to pull the current direction (string) and amount of tiles to move in direction (int)
             /// </summary>
-            var usingPoint = _movePoints[_currentPoint];
-            var pointDirection = usingPoint.direction;
-            var pointTiles = usingPoint.tilesToMove;
+            var point = _movePoints[_currentPoint];
+            var pointDirection = point.direction;
+            var pointTiles = point.tilesToMove;
             if (_atStart)
             {
-                if (pointDirection == "Up" || pointDirection == "up")
+                if (point.direction == Direction.Up)
                 {
                     moveInDirection = Vector3.forward;
                 }
-                if (pointDirection == "Down" || pointDirection == "down")
+                if (pointDirection == Direction.Down)
                 {
                     moveInDirection = Vector3.back;
                 }
-                if (pointDirection == "Left" || pointDirection == "left")
+                if (pointDirection == Direction.Left)
                 {
                     moveInDirection = Vector3.left;
                 }
-                if (pointDirection == "Right" || pointDirection == "right")
+                if (pointDirection == Direction.Right)
                 {
                     moveInDirection = Vector3.right;
                 }
@@ -139,19 +152,19 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
             else
             {
                 //In reverse for going back through the list
-                if (pointDirection == "Up" || pointDirection == "up")
+                if (pointDirection == Direction.Up)
                 {
                     moveInDirection = Vector3.back;
                 }
-                if (pointDirection == "Down" || pointDirection == "down")
+                if (pointDirection == Direction.Down)
                 {
                     moveInDirection = Vector3.forward;
                 }
-                if (pointDirection == "Left" || pointDirection == "left")
+                if (pointDirection == Direction.Left)
                 {
                     moveInDirection = Vector3.right;
                 }
-                if (pointDirection == "Right" || pointDirection == "right")
+                if (pointDirection == Direction.Right)
                 {
                     moveInDirection = Vector3.left;
                 }
@@ -166,11 +179,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
                 var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveInDirection);
                 if (!GridBase.Instance.CellIsEmpty(move))
                 {
-                    if (_playerMoveRef.Position.x == move.x && _playerMoveRef.Position.z == move.z)
-                    {
-
-                    }
-                    else
+                    if (_playerMoveRef.Position.x != move.x && _playerMoveRef.Position.z != move.z)
                     {
                         break;
                     }

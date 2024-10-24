@@ -73,7 +73,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         if (!GridBase.Instance.CellIsEmpty(move))
         {
             playerMoved = false;
-            StartCoroutine(delayNextInput());
+            StartCoroutine(DelayNextInput());
         }
 
         if ((GridBase.Instance.CellIsEmpty(move) && enemiesMoved == true) ||
@@ -82,7 +82,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
             playerMoved = true;
             gameObject.transform.position = move + _positionOffset;
             GridBase.Instance.UpdateEntry(this);
-            StartCoroutine(delayNextInput());
+            StartCoroutine(DelayNextInput());
         }
     }
 
@@ -90,7 +90,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     /// Coroutine that makes the player wait to let the enemies finish moving before
     /// being able to move again.
     /// </summary>
-    IEnumerator delayNextInput()
+    IEnumerator DelayNextInput()
     {
         yield return null;
 
