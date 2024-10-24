@@ -106,17 +106,17 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
         yield return new WaitForSeconds(0.1f);
         if (_playerMoveRef.playerMoved == true && enemyFrozen == false)
         {
+
+            _playerMoveRef.enemiesMoved = false;
+
+            /// <summary>
+            /// Looks at current point the the scriptable object list to pull the current direction (string) and amount of tiles to move in direction (int)
+            /// </summary>
+            var usingPoint = _movePoints[_currentPoint];
+            var pointDirection = usingPoint.direction;
+            var pointTiles = usingPoint.tilesToMove;
             if (_atStart)
             {
-                _playerMoveRef.enemiesMoved = false;
-
-                /// <summary>
-                /// Looks at current point the the scriptable object list to pull the current direction (string) and amount of tiles to move in direction (int)
-                /// </summary>
-                var usingPoint = _movePoints[_currentPoint];
-                var pointDirection = usingPoint.direction;
-                var pointTiles = usingPoint.tilesToMove;
-
                 if (pointDirection == "Up" || pointDirection == "up")
                 {
                     moveInDirection = Vector3.forward;
@@ -133,47 +133,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
                 {
                     moveInDirection = Vector3.right;
                 }
-
-                /// <summary>
-                /// Uses a loop to determine how many tiles to move in a direction based on the current scriptable object's variables
-                /// </summary>
-                for (int i = 0; i < pointTiles; i++)
-                {
-                    var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveInDirection);
-                    if (!GridBase.Instance.CellIsEmpty(move) && _playerMoveRef.Position.x != move.x && _playerMoveRef.Position.z != move.z)
-                    {
-                        Debug.Log(move);
-                        Debug.Log(_playerMoveRef.Position);
-                        break;
-                    }
-                    gameObject.transform.position = move + _positionOffset;
-                    GridBase.Instance.UpdateEntry(this);
-
-                    yield return new WaitForSeconds(_waitTime);
-                }
-
-                /// <summary>
-                /// If the current point is equal to the length of the list then the if/else statement 
-                /// will check the atStart bool and concurrently reverse through the list
-                /// </summary>
-                if (_currentPoint >= _movePoints.Count - 1)
-                {
-                    _atStart = false;
-                }
-                else
-                {
-                    _currentPoint++;
-                }
             }
             else
             {
-
-                _playerMoveRef.enemiesMoved = false;
-
-                var usingPoint = _movePoints[_currentPoint];
-                var pointDirection = usingPoint.direction;
-                var pointTiles = usingPoint.tilesToMove;
-
                 //In reverse for going back through the list
                 if (pointDirection == "Up" || pointDirection == "up")
                 {
@@ -191,20 +153,44 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
                 {
                     moveInDirection = Vector3.left;
                 }
-
-                for (int i = 0; i < pointTiles; i++)
+            }
+            for (int i = 0; i < pointTiles; i++)
+            {
+                var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveInDirection);
+                if (!GridBase.Instance.CellIsEmpty(move))
                 {
-                    var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveInDirection);
-                    if (!GridBase.Instance.CellIsEmpty(move) && _playerMoveRef.Position.x != move.x && _playerMoveRef.Position.z != move.z)
+                    if (_playerMoveRef.Position.x == move.x && _playerMoveRef.Position.z == move.z)
+                    {
+
+                    }
+                    else
                     {
                         break;
                     }
-                    gameObject.transform.position = move + _positionOffset;
-                    GridBase.Instance.UpdateEntry(this);
-
-                    yield return new WaitForSeconds(_waitTime);
                 }
+                gameObject.transform.position = move + _positionOffset;
+                GridBase.Instance.UpdateEntry(this);
 
+                yield return new WaitForSeconds(_waitTime);
+            }
+
+            /// <summary>
+            /// If the current point is equal to the length of the list then the if/else statement 
+            /// will check the atStart bool and concurrently reverse through the list
+            /// </summary>
+            if (_atStart == true)
+            {
+                if (_currentPoint >= _movePoints.Count - 1)
+                {
+                    _atStart = false;
+                }
+                else
+                {
+                    _currentPoint++;
+                }
+            }
+            else
+            {
                 if (_currentPoint <= 0)
                 {
                     _atStart = true;
