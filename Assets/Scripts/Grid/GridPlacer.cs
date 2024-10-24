@@ -37,6 +37,10 @@ public class GridPlacer : MonoBehaviour, IGridEntry
     [SerializeField] [BoxGroup("Settings")]
     private bool _disableGridCell = false;
 
+    [Space]
+    [SerializeField] [BoxGroup("Settings")]
+    private bool _isVisable = true;
+
     /// <summary>
     /// Places the object on the grid and updates its position. Also disables the mesh rendere on transparent grid objects
     /// </summary>
@@ -51,9 +55,9 @@ public class GridPlacer : MonoBehaviour, IGridEntry
         {
             GridBase.Instance.DisableCellVisual(GridBase.Instance.WorldToCell(transform.position));
         }
-        if (IsTransparent)
+        if (!_isVisable && gameObject.TryGetComponent(out Renderer renderer))
         {
-            gameObject.GetComponent<MeshRenderer>().enabled = false;
+            renderer.enabled = false;
         }
     }
 
