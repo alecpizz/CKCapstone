@@ -1,44 +1,31 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Serialization;
 
-
-public enum TurnType
+public enum TurnState
 {
-    None = 0,
-    Player = 1,
-    World = 2
+    Player = 0,
+    World = 1,
+    None = 2,
 }
 
 public interface ITurnListener
 {
-    TurnType TurnType { get; }
+    TurnState TurnState { get; }
     bool TurnComplete { get; set; }
-    bool TurnStarted { get; set; }
     void PerformTurn(Vector3 direction);
-    void Register();
-    void UnRegister();
 }
 
-public class TurnComparer : IComparer<TurnType>
-{
-    public int Compare(TurnType x, TurnType y) => x - y;
-}
 
 [DefaultExecutionOrder(-5000)]
-public class RoundManager : MonoBehaviour
+public sealed class RoundManager : MonoBehaviour
 {
-    [SerializeField] [ReadOnly] private TurnType turnType = TurnType.Player;
+    [SerializeField] private TurnState turnState = TurnState.None;
     public static RoundManager Instance { get; private set; }
-    private Dictionary<TurnType, List<ITurnListener>> _turnListeners;
-    private int _currentTurnIndex;
-    public Action<Vector2Int> OnWorldUpdate;
-    public Action<Vector2Int> OnPlayerUpdate;
+    private Dictionary<TurnState, List<ITurnListener>> _turnListeners;
+    private readonly Dictionary<ITurnListener, bool> _listenerStates = new();
     private PlayerControls _playerControls;
+    private Vector3 _lastMovementInput;
 
     private void Awake()
     {
@@ -54,95 +41,85 @@ public class RoundManager : MonoBehaviour
 
         _playerControls = new PlayerControls();
         _turnListeners =
-            new Dictionary<TurnType, List<ITurnListener>>
+            new Dictionary<TurnState, List<ITurnListener>>
             {
-                {TurnType.Player, new List<ITurnListener>()},
-                {TurnType.World, new List<ITurnListener>()},
-                {TurnType.None, new List<ITurnListener>()}
+                { TurnState.Player, new List<ITurnListener>() },
+                { TurnState.World, new List<ITurnListener>() },
+                { TurnState.None, new List<ITurnListener>() }
             };
     }
 
     private void OnEnable()
     {
         _playerControls.Enable();
-        _playerControls.InGame.Movement.performed += MovePerformed;
+        _playerControls.InGame.Movement.performed += MovementOnperformed;
     }
 
-    private void MovePerformed(InputAction.CallbackContext obj)
-    {
-        Vector3 input = obj.ReadValue<Vector2>();
-        Vector3 dir = new Vector3(input.x, 0, input.y);
-        UpdateTurn(dir);
-    }
-
-    private void UpdateTurn(Vector3 direction)
-    {
-        foreach (var pair in _turnListeners)
-        {
-            if (pair.Key != (TurnType) _currentTurnIndex) continue;
-            foreach (var turnListener in pair.Value)
-            {
-                if (!turnListener.TurnStarted)
-                {
-                    turnListener.TurnStarted = true;
-                    turnListener.PerformTurn(direction);
-                    continue;
-                }
-
-                if (!turnListener.TurnComplete)
-                {
-                    continue;
-                }
-
-                turnListener.TurnComplete = false;
-                turnListener.TurnStarted = false;
-                if (turnListener != pair.Value[^1]) continue;
-                //done
-                _currentTurnIndex = ++_currentTurnIndex % _turnListeners.Count;
-                if ((TurnType) _currentTurnIndex != TurnType.World)
-                {
-                    UpdateTurn(direction);
-                }
-            }
-        }
-        // if (!_turnListeners[_currentTurnIndex].TurnStarted)
-        // {
-        //     _turnListeners[_currentTurnIndex].PerformTurn(direction);
-        //     _turnListeners[_currentTurnIndex].TurnStarted = true;
-        //     return;
-        // }
-        //
-        // if (!_turnListeners[_currentTurnIndex].TurnComplete)
-        // {
-        //     return;
-        // }
-        //
-        // _turnListeners[_currentTurnIndex].TurnStarted = false;
-        // _turnListeners[_currentTurnIndex].TurnComplete = false;
-        // _currentTurnIndex = ++_currentTurnIndex % _turnListeners.Count;
-        // print(_currentTurnIndex);
-        // UpdateTurn(direction);
-    }
 
     private void OnDisable()
     {
-        _playerControls.InGame.Movement.performed -= MovePerformed;
+        _playerControls.InGame.Movement.performed -= MovementOnperformed;
         _playerControls.Disable();
     }
 
+    private void MovementOnperformed(InputAction.CallbackContext obj)
+    {
+        if (turnState != TurnState.None) return;
 
-    public bool IsPlayerTurn => turnType >= TurnType.Player;
-    public bool IsWorldTurn => turnType == TurnType.World;
+        Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>();
+        Vector3 dir = new Vector3(input.x, 0f, input.y);
+        _lastMovementInput = dir;
+
+        //we now wait on the update method to catch the end of the players turn
+        //perform the turn now so that it's frame perfect.
+        foreach (var turnListener in _turnListeners[TurnState.Player])
+        {
+            if (_listenerStates[turnListener]) continue;
+            turnListener.PerformTurn(_lastMovementInput);
+            _listenerStates[turnListener] = true;
+        }
+        turnState = TurnState.Player;
+    }
+
+    private void Update()
+    {
+        if (turnState == TurnState.None) return;
+        //unecessary turn start for the player, needed for anyone else
+        foreach (var turnListener in _turnListeners[turnState]) 
+        {
+            if (_listenerStates[turnListener]) continue;
+            turnListener.PerformTurn(_lastMovementInput);
+            _listenerStates[turnListener] = true;
+        }
+
+        foreach (var turnListener in _turnListeners[turnState])
+        {
+            if (!turnListener.TurnComplete) return;
+        }
+
+        //this state has completed, reset the turn progress and move on to the next turn.
+        foreach (var turnListener in _turnListeners[turnState])
+        {
+            _listenerStates[turnListener] = false;
+            turnListener.TurnComplete = false;
+        }
+        turnState++;
+    }
+    
 
     public void RegisterListener(ITurnListener listener)
     {
-        _turnListeners[listener.TurnType].Add(listener);
-        _currentTurnIndex = (int)TurnType.Player;
+        _turnListeners[listener.TurnState].Add(listener);
+        _listenerStates.Add(listener, false);
+        //we added something during mid turn!
+        if (listener.TurnState != turnState) return;
+        listener.PerformTurn(_lastMovementInput);
+        _listenerStates[listener] = true;
     }
 
     public void UnRegisterListener(ITurnListener listener)
     {
-        _turnListeners[listener.TurnType].Add(listener);
-        _currentTurnIndex = (int)TurnType.Player;
+        _turnListeners[listener.TurnState].Remove(listener);
+        _listenerStates.Remove(listener);
     }
 }

@@ -43,7 +43,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITurnListener
 
     private void OnEnable()
     {
-        Register();
+        RoundManager.Instance.RegisterListener(this);
     }
 
     /// <summary>
@@ -51,7 +51,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITurnListener
     /// </summary>
     private void OnDisable()
     {
-        UnRegister();
+        RoundManager.Instance.UnRegisterListener(this);
         _input.InGame.Disable();
         _input.InGame.Movement.performed -= MovementPerformed;
     }
@@ -84,7 +84,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITurnListener
         }
     }
 
-    public TurnType TurnType { get => TurnType.Player; }
+    public TurnState TurnState { get => TurnState.Player; }
     public bool TurnComplete { get; set; }
     public bool TurnStarted { get; set; }
 
@@ -101,13 +101,4 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITurnListener
         TurnComplete = true;
     }
 
-    public void Register()
-    {
-        RoundManager.Instance.RegisterListener(this);
-    }
-
-    public void UnRegister()
-    {
-        RoundManager.Instance.UnRegisterListener(this);
-    }
 }

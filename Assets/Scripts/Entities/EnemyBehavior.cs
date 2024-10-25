@@ -27,7 +27,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITurnListener
     [SerializeField] private bool _atStart;
     [SerializeField] private int _currentPoint = 0;
 
-    private PlayerMovement _playerMoveRef;
     [SerializeField] private float _moveRate = 1f;
     [SerializeField] private float _waitTime = 1f;
 
@@ -48,7 +47,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITurnListener
         _input.InGame.Enable();
         _input.InGame.Movement.performed += EnemyMove;
 
-        _playerMoveRef = _player.GetComponent<PlayerMovement>();
         //GridBase.Instance.AddEntry(this);
 
         // Make sure enemiess are always seen at the start
@@ -57,7 +55,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITurnListener
 
     private void OnEnable()
     {
-        Register();
+        RoundManager.Instance?.RegisterListener(this);
     }
 
     /// <summary>
@@ -65,7 +63,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITurnListener
     /// </summary>
     private void OnDisable()
     {
-        UnRegister();
+        RoundManager.Instance?.UnRegisterListener(this);
         _input.InGame.Disable();
         _input.InGame.Movement.performed -= EnemyMove;
     }
@@ -94,12 +92,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITurnListener
     {
         yield return null;
 
-        if (_playerMoveRef.enemiesMoved == true && enemyFrozen == false)
+        if (enemyFrozen == false)
         {
             if (_atStart)
             {
                 _currentPoint++;
-                _playerMoveRef.enemiesMoved = false;
                 StartCoroutine(MoveOverTime2());
 
                 if (_currentPoint == movePoints.Count - 1)
@@ -110,7 +107,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITurnListener
             else
             {
                 _currentPoint--;
-                _playerMoveRef.enemiesMoved = false;
                 StartCoroutine(MoveOverTime2());
 
                 if (_currentPoint == 0)
@@ -139,26 +135,15 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITurnListener
         //GridBase.Instance.UpdateEntry(this);
 
         transform.position = movePoints[_currentPoint].transform.position;
-        _playerMoveRef.enemiesMoved = true;
         TurnComplete = true;
     }
 
-    public TurnType TurnType { get => TurnType.World; }
+    public TurnState TurnState { get => TurnState.World; }
     public bool TurnComplete { get; set; }
     public bool TurnStarted { get; set; }
 
     public void PerformTurn(Vector3 direction)
     {
         StartCoroutine(DelayedPlayerInput());
-    }
-
-    public void Register()
-    {
-        RoundManager.Instance.RegisterListener(this);
-    }
-
-    public void UnRegister()
-    {
-        RoundManager.Instance.UnRegisterListener(this);
     }
 }
