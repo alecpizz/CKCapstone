@@ -40,6 +40,9 @@ public class SupplementalUI : MonoBehaviour
     //color variable for the background panel
     private Color _panelColor;
 
+    //image component of the UI panel
+    private Image _panelBackground; 
+
     /// <summary>
     /// Assigns the color value based on the text UI, and makes it 
     /// transparent.
@@ -48,7 +51,8 @@ public class SupplementalUI : MonoBehaviour
     {
         _textColor = _text.color;
         _textColor.a = 0;
-        _panelColor = _panel.GetComponent<Image>().color;
+        _panelBackground = _panel.GetComponent<Image>();
+        _panelColor = _panelBackground.color;
         _panelColor.a = 0;
     }
 
@@ -171,6 +175,6 @@ public class SupplementalUI : MonoBehaviour
         _text.color = _textColor;
 
         //updates background panel color
-        _panel.GetComponent<Image>().color = _panelColor;
+        _panelBackground.color = _panelColor;
     }
 }
