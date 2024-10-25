@@ -39,7 +39,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
     public enum Direction { Up, Down, Left, Right }
 
     [System.Serializable]
-    public struct movePoints
+    private struct movePoints
     {
         public Direction direction;
         public int tilesToMove;
