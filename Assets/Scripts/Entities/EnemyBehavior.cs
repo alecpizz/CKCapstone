@@ -95,23 +95,23 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
     /// <param name="myDirection"></param>
     public void FindDirection(Direction myDirection)
     {
-            switch (myDirection)
-            {
-                case Direction.Up:
-                    moveInDirection = Vector3.forward;
-                    break;
-                case Direction.Down:
-                    moveInDirection = Vector3.back;
-                    break;
-                case Direction.Left:
-                    moveInDirection = Vector3.left;
-                    break;
-                case Direction.Right:
-                    moveInDirection = Vector3.right;
-                    break;
-                default:
-                    break;
-            }
+        switch (myDirection)
+        {
+            case Direction.Up:
+                moveInDirection = Vector3.forward;
+                break;
+            case Direction.Down:
+                moveInDirection = Vector3.back;
+                break;
+            case Direction.Left:
+                moveInDirection = Vector3.left;
+                break;
+            case Direction.Right:
+                moveInDirection = Vector3.right;
+                break;
+            default:
+                break;
+        }
     }
 
     /// <summary>
@@ -157,23 +157,25 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
             for (int i = 0; i < pointTiles; i++)
             {
                 var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveInDirection);
+                var entries = GridBase.Instance.GetCellEntries(move);
+                bool breakLoop = false;
 
-                //Checks if the next cell contains an object
-                if (!GridBase.Instance.CellIsEmpty(move))
+                //If the next cell contains an object that is not the player then the loop breaks
+                //enemy can't move into other enemies, walls, etc.
+                foreach (var entry in entries)
                 {
-                    //Uses player's current x and z position and enemy's y position to check whether or not the player is in the next cell.
-                    var checkPlayerPos = new Vector3(0, 0, 0);
-                    checkPlayerPos.x = _playerMoveRef.Position.x;
-                    checkPlayerPos.z = _playerMoveRef.Position.z;
-                    checkPlayerPos.y = move.y;
-
-                    //If the next cell contains an object that is not in both the x and z position of the player then the loop breaks
-                    //enemy can't move into other enemies, walls, etc.
-                    if (move != checkPlayerPos)
+                    if (entry.GetGameObject != _player)
                     {
+                        breakLoop = true;
                         break;
                     }
                 }
+
+                if (breakLoop == true)
+                {
+                    break;
+                }
+
                 gameObject.transform.position = move + _positionOffset;
                 GridBase.Instance.UpdateEntry(this);
 
