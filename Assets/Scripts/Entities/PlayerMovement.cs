@@ -19,7 +19,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     private PlayerControls _input;
     public Vector3 FacingDirection { get; private set; }
 
-    public bool playerMoved;
+    public bool playerMoved = false;
     public bool enemiesMoved = true;
     public bool IsTransparent { get => true; }
     public Vector3 Position { get => transform.position; }
@@ -27,6 +27,13 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
 
     [SerializeField]
     private Vector3 _positionOffset;
+    [SerializeField]
+    private PlayerInteraction _playerInteraction;
+
+    [SerializeField]
+    private float delayTime = 0.5f;
+
+    private bool _enemiesPresent = true;
 
     // Start is called before the first frame update
     void Start()
@@ -39,6 +46,11 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         _input = new PlayerControls();
         _input.InGame.Enable();
         _input.InGame.Movement.performed += MovementPerformed;
+
+        if (GameObject.FindGameObjectsWithTag("Enemy") == null)
+        {
+            _enemiesPresent = false;
+        }
     }
 
     /// <summary>
@@ -54,14 +66,38 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     {
         Vector2 key = context.ReadValue<Vector2>();
         Vector3 direction = new(key.x, 0, key.y);
+        _playerInteraction.SetDirection(direction);
 
         // Move if there is no wall below the player or if ghost mode is enabled
         var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
+        if (!GridBase.Instance.CellIsEmpty(move))
+        {
+            playerMoved = false;
+            StartCoroutine(DelayNextInput());
+        }
+
         if ((GridBase.Instance.CellIsEmpty(move) && enemiesMoved == true) ||
             (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
         {
+            playerMoved = true;
             gameObject.transform.position = move + _positionOffset;
             GridBase.Instance.UpdateEntry(this);
+            StartCoroutine(DelayNextInput());
+        }
+    }
+
+    /// <summary>
+    /// Coroutine that makes the player wait to let the enemies finish moving before
+    /// being able to move again.
+    /// </summary>
+    IEnumerator DelayNextInput()
+    {
+        yield return null;
+
+        if (_enemiesPresent)
+        {
+            yield return new WaitForSeconds(delayTime);
+            enemiesMoved = true;
         }
     }
 

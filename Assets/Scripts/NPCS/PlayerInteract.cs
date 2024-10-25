@@ -36,7 +36,7 @@ public class PlayerInteract : MonoBehaviour
         _npc = collision.gameObject.GetComponent<NPCScript>();
         if ( _npc != null)
         {
-            _npc.ShowDialogue();
+            //_npc.ShowDialogue();
         }
     }
 
