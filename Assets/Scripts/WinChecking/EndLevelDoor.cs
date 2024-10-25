@@ -37,7 +37,7 @@ public class EndLevelDoor : MonoBehaviour
     /// Called when correct sequence is created to open door
     /// </summary>
     [Button]
-    private void UnlockDoor()
+    public void UnlockDoor()
     {
         // TODO: update door visuals here
 
