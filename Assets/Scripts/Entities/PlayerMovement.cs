@@ -43,7 +43,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener
 
         GridBase.Instance.AddEntry(this);
 
-        TimeSignatureManager.Instance.RegisterTimeListener(this);
+        if (TimeSignatureManager.Instance != null)
+            TimeSignatureManager.Instance.RegisterTimeListener(this);
 
         // Referencing and setup of the Input Action functions
         _input = new PlayerControls();
@@ -59,7 +60,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener
         _input.InGame.Disable();
         _input.InGame.Movement.performed -= MovementPerformed;
 
-        TimeSignatureManager.Instance.UnregisterTimeListener(this);
+        if (TimeSignatureManager.Instance != null)
+            TimeSignatureManager.Instance.UnregisterTimeListener(this);
     }
 
     /// <summary>
