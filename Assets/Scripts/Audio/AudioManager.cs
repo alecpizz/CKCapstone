@@ -114,7 +114,7 @@ public class AudioManager : MonoBehaviour
     /// </summary>
     /// <param name="audioEvent">the desired sound instance</param>
     /// <param name="paused">true if paused, false if not</param>
-    public void ToggleSound(EventInstance audioEvent, bool paused)
+    public void PauseSound(EventInstance audioEvent, bool paused)
     {
         if (audioEvent.isValid())
         {
