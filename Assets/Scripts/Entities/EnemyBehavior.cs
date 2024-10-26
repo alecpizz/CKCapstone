@@ -1,18 +1,19 @@
 /******************************************************************
 *    Author: Cole Stranczek
-*    Contributors: Cole Stranczek, Mitchell Young
+*    Contributors: Cole Stranczek, Mitchell Young, Alec Pizziferro
 *    Date Created: 10/3/24
 *    Description: Script that handles the behavior of the enemy,
 *    from movement to causing a failstate with the player
 *******************************************************************/
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using NaughtyAttributes;
 
-public class EnemyBehavior : MonoBehaviour, IGridEntry
+public class EnemyBehavior : MonoBehaviour, IGridEntry, ITurnListener
 {
     public bool IsTransparent { get => true; }
     public Vector3 moveInDirection { get; private set; }
@@ -23,7 +24,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
 
     public GameObject GetGameObject { get => gameObject; }
 
-    private PlayerControls _input;
 
     [Required] [SerializeField] private GameObject _player;
 
@@ -57,9 +57,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
         moveInDirection = new Vector3(0, 0, 0);
 
         GridBase.Instance.AddEntry(this);
-        _input = new PlayerControls();
-        _input.InGame.Enable();
-        _input.InGame.Movement.performed += EnemyMove;
+        
 
         _playerMoveRef = _player.GetComponent<PlayerMovement>();
 
@@ -68,13 +66,17 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
     }
 
 
+    private void OnEnable()
+    {
+        RoundManager.Instance.RegisterListener(this);
+    }
+
     /// <summary>
     /// Unregisters from player input
     /// </summary>
     private void OnDisable()
     {
-        _input.InGame.Disable();
-        _input.InGame.Movement.performed -= EnemyMove;
+        RoundManager.Instance.UnRegisterListener(this);    
     }
 
     /// <summary>
@@ -216,5 +218,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
                 }
             }
         }
+        RoundManager.Instance.CompleteTurn(this);
+    }
+
+    public TurnState TurnState => TurnState.World;
+    public void BeginTurn(Vector3 direction)
+    {
+        StartCoroutine(DelayedInput());
     }
 }

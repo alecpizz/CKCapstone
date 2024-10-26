@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Cole Stranczek
-*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson
+*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson, Alec Pizziferro
 *    Date Created: 9/22/24
 *    Description: Script that handles the player's movement along
 *    the grid
@@ -14,7 +14,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.Windows;
 
-public class PlayerMovement : MonoBehaviour, IGridEntry
+public class PlayerMovement : MonoBehaviour, IGridEntry, ITurnListener
 {
     private PlayerControls _input;
     public Vector3 FacingDirection { get; private set; }
@@ -43,9 +43,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         GridBase.Instance.AddEntry(this);
 
         // Referencing and setup of the Input Action functions
-        _input = new PlayerControls();
-        _input.InGame.Enable();
-        _input.InGame.Movement.performed += MovementPerformed;
 
         if (GameObject.FindGameObjectsWithTag("Enemy") == null)
         {
@@ -53,38 +50,19 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
         }
     }
 
+    private void OnEnable()
+    {
+        RoundManager.Instance.RegisterListener(this);
+    }
+
     /// <summary>
     /// Unregistering from input actions
     /// </summary>
     private void OnDisable()
     {
-        _input.InGame.Disable();
-        _input.InGame.Movement.performed -= MovementPerformed;
+        RoundManager.Instance.UnRegisterListener(this);
     }
-
-    public void MovementPerformed(InputAction.CallbackContext context)
-    {
-        Vector2 key = context.ReadValue<Vector2>();
-        Vector3 direction = new(key.x, 0, key.y);
-        _playerInteraction.SetDirection(direction);
-
-        // Move if there is no wall below the player or if ghost mode is enabled
-        var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
-        if (!GridBase.Instance.CellIsEmpty(move))
-        {
-            playerMoved = false;
-            StartCoroutine(DelayNextInput());
-        }
-
-        if ((GridBase.Instance.CellIsEmpty(move) && enemiesMoved == true) ||
-            (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
-        {
-            playerMoved = true;
-            gameObject.transform.position = move + _positionOffset;
-            GridBase.Instance.UpdateEntry(this);
-            StartCoroutine(DelayNextInput());
-        }
-    }
+    
 
     /// <summary>
     /// Coroutine that makes the player wait to let the enemies finish moving before
@@ -99,6 +77,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
             yield return new WaitForSeconds(delayTime);
             enemiesMoved = true;
         }
+        RoundManager.Instance.CompleteTurn(this);
     }
 
     /// <summary>
@@ -117,6 +96,27 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
             Time.timeScale = 0f;
 
             SceneController.Instance.ReloadCurrentScene();
+        }
+    }
+
+    public TurnState TurnState { get; }
+    public void BeginTurn(Vector3 direction)
+    {
+        _playerInteraction.SetDirection(direction);
+        var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
+        if (!GridBase.Instance.CellIsEmpty(move))
+        {
+            playerMoved = false;
+            StartCoroutine(DelayNextInput());
+        }
+
+        if ((GridBase.Instance.CellIsEmpty(move)) ||
+            (DebugMenuManager.Instance.GhostMode))
+        {
+            playerMoved = true;
+            gameObject.transform.position = move + _positionOffset;
+            GridBase.Instance.UpdateEntry(this);
+            StartCoroutine(DelayNextInput());
         }
     }
 }
