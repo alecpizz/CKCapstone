@@ -9,7 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//inherits methods from the ParentSwitch script
+//inherits methods from IParentSwitch
 public class HarmonySwitch : MonoBehaviour, IParentSwitch
 {
 

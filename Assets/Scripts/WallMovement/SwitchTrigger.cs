@@ -2,8 +2,8 @@
 *    Author: Josephine Qualls
 *    Contributors: Josh Eddy, Alec Pizziferro
 *    Date Created: 10/10/2024
-*    Description: Switch that moves walls.
-*    Only moves registered walls.
+*    Description: Switch that moves mechanics.
+*    Only moves registered mechanics.
 *******************************************************************/
 
 
@@ -21,7 +21,7 @@ public class SwitchTrigger : MonoBehaviour
     //on/off variable for switch
     private bool _isTriggered = false;
 
-    //for registering walls to a switch
+    //for registering mechanics to a switch
     [SerializeReference] private List<MovingWall> _affectedWalls = new List<MovingWall>();
     [SerializeReference] private List<ReflectionSwitch> _affectedReflectors = new List<ReflectionSwitch>();
     [SerializeReference] private List<HarmonySwitch> _affectedBeams = new List<HarmonySwitch>();
@@ -38,6 +38,7 @@ public class SwitchTrigger : MonoBehaviour
         {
             _isTriggered = !_isTriggered;
 
+            //changes the walls
             for (int i = 0; i < _affectedWalls.Count; i++)
             {
                 if (_isTriggered)
@@ -50,6 +51,7 @@ public class SwitchTrigger : MonoBehaviour
                 }
             }
 
+            //changes the reflection cubes
             for (int i = 0; i < _affectedReflectors.Count; i++)
             {
                 if (_isTriggered)
@@ -62,6 +64,7 @@ public class SwitchTrigger : MonoBehaviour
                 }
             }
 
+            //changes the harmony beams
             for (int i = 0; i < _affectedBeams.Count; i++)
             {
                 if (_isTriggered)

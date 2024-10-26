@@ -15,6 +15,7 @@ using UnityEngine;
 /// <summary>
 /// Class that determines how the walls move
 /// Also operates the ghost wall indicators
+/// Inherits from IParentSwitch and IGridEntry
 /// </summary>
 public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
 {
