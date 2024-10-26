@@ -65,12 +65,14 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         // Make sure enemiess are always seen at the start
         _atStart = true;
 
-        TimeSignatureManager.Instance.RegisterTimeListener(this);
+        if (TimeSignatureManager.Instance != null)
+            TimeSignatureManager.Instance.RegisterTimeListener(this);
     }
 
     private void OnEnable()
     {
-        RoundManager.Instance.RegisterListener(this);
+        if (RoundManager.Instance != null)
+            RoundManager.Instance.RegisterListener(this);
     }
 
 
@@ -79,8 +81,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     /// </summary>
     private void OnDisable()
     {
-        RoundManager.Instance.UnRegisterListener(this);
-        TimeSignatureManager.Instance.UnregisterTimeListener(this);
+        if (RoundManager.Instance != null)
+            RoundManager.Instance.UnRegisterListener(this);
+        if (TimeSignatureManager.Instance != null)
+            TimeSignatureManager.Instance.UnregisterTimeListener(this);
     }
 
     /// <summary>

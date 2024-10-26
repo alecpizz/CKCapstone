@@ -36,13 +36,15 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
         GridBase.Instance.AddEntry(this);
 
-        TimeSignatureManager.Instance.RegisterTimeListener(this);
+        if (TimeSignatureManager.Instance != null)
+            TimeSignatureManager.Instance.RegisterTimeListener(this);
 
     }
 
     private void OnEnable()
     {
-        RoundManager.Instance.RegisterListener(this);
+        if (RoundManger.Instance != null)
+            RoundManager.Instance.RegisterListener(this);
     }
 
     /// <summary>
@@ -50,8 +52,10 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// </summary>
     private void OnDisable()
     {
-        RoundManager.Instance.UnRegisterListener(this);
-        TimeSignatureManager.Instance.UnregisterTimeListener(this);
+        if (RoundManager.Instance != null)
+            RoundManager.Instance.UnRegisterListener(this);
+        if (TimeSignatureManager.Instance != null)
+            TimeSignatureManager.Instance.UnregisterTimeListener(this);
     }
 
 
