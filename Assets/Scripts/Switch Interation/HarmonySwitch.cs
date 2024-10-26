@@ -19,7 +19,6 @@ public class HarmonySwitch : ParentSwitch
     public override void SwitchActivation()
     {
         gameObject.transform.eulerAngles = new Vector3(0f, gameObject.transform.eulerAngles.y + 180, 0f);
-        print("I work");
     }
 
     /// <summary>
@@ -28,8 +27,6 @@ public class HarmonySwitch : ParentSwitch
     public override void SwitchDeactivation()
     {
         gameObject.transform.eulerAngles = new Vector3(0f, gameObject.transform.eulerAngles.y - 180, 0f);
-
-        print("I also work");
     }
 
 
