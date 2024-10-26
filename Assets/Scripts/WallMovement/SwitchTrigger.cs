@@ -10,6 +10,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -21,7 +22,9 @@ public class SwitchTrigger : MonoBehaviour
     private bool _isTriggered = false;
 
     //for registering walls to a switch
-    [SerializeReference] private List<IParentSwitch> _affectedObjects = new List<IParentSwitch>();
+    [SerializeReference] private List<MovingWall> _affectedWalls = new List<MovingWall>();
+    [SerializeReference] private List<ReflectionSwitch> _affectedReflectors = new List<ReflectionSwitch>();
+    [SerializeReference] private List<HarmonySwitch> _affectedBeams = new List<HarmonySwitch>();
 
 
     /// <summary>
@@ -35,15 +38,39 @@ public class SwitchTrigger : MonoBehaviour
         {
             _isTriggered = !_isTriggered;
 
-            for (int i = 0; i < _affectedObjects.Count; i++)
+            for (int i = 0; i < _affectedWalls.Count; i++)
             {
                 if (_isTriggered)
                 {
-                    _affectedObjects[i].SwitchActivation();
+                    _affectedWalls[i].SwitchActivation();
                 }
                 else
                 {
-                    _affectedObjects[i].SwitchDeactivation();
+                    _affectedWalls[i].SwitchDeactivation();
+                }
+            }
+
+            for (int i = 0; i < _affectedReflectors.Count; i++)
+            {
+                if (_isTriggered)
+                {
+                    _affectedReflectors[i].SwitchActivation();
+                }
+                else
+                {
+                    _affectedReflectors[i].SwitchDeactivation();
+                }
+            }
+
+            for (int i = 0; i < _affectedBeams.Count; i++)
+            {
+                if (_isTriggered)
+                {
+                    _affectedBeams[i].SwitchActivation();
+                }
+                else
+                {
+                    _affectedBeams[i].SwitchDeactivation();
                 }
             }
         }
