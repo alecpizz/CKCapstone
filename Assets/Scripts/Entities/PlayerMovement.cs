@@ -36,8 +36,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener
     [SerializeField]
     private float _delayTime = 0.1f;
 
-    private bool _enemiesPresent = true;
-
     private bool _playerMovementComplete = true;
     private int _playerMovementTiming = 1;
     private TimeSignatureManager _timeSigManager;
@@ -59,11 +57,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener
         _input = new PlayerControls();
         _input.InGame.Enable();
         _input.InGame.Movement.performed += MovementPerformed;
-
-        if (GameObject.FindGameObjectsWithTag("Enemy") == null)
-        {
-            _enemiesPresent = false;
-        }
     }
 
     /// <summary>
@@ -99,43 +92,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener
 
             StartCoroutine(MovementDelay(direction));
         }
-
-        //Vector2 key = context.ReadValue<Vector2>();
-        //Vector3 direction = new(key.x, 0, key.y);
-        //_playerInteraction.SetDirection(direction);
-
-        //// Move if there is no wall below the player or if ghost mode is enabled
-        //var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
-        //if (!GridBase.Instance.CellIsEmpty(move))
-        //{
-        //    playerMoved = false;
-        //    StartCoroutine(DelayNextInput());
-        //}
-
-        //if ((GridBase.Instance.CellIsEmpty(move) && enemiesMoved == true) ||
-        //    (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
-        //{
-        //    playerMoved = true;
-        //    gameObject.transform.position = move + _positionOffset;
-        //    GridBase.Instance.UpdateEntry(this);
-        //    StartCoroutine(DelayNextInput());
-        //}
     }
-
-    /// <summary>
-    /// Coroutine that makes the player wait to let the enemies finish moving before
-    /// being able to move again.
-    /// </summary>
-    //IEnumerator DelayNextInput()
-    //{
-    //    yield return null;
-
-    //    if (_enemiesPresent)
-    //    {
-    //        yield return new WaitForSeconds(_delayTime);
-    //        enemiesMoved = true;
-    //    }
-    //}
 
     /// <summary>
     /// Helper coroutine for performing movement with a delay
