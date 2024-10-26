@@ -2336,11 +2336,16 @@ PrefabInstance:
     - target: {fileID: 2218283480543364310, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
         type: 3}
       propertyPath: _waitTime
-      value: 5
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 2218283480543364310, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
         type: 3}
       propertyPath: movePoints.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2218283480543364310, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
+        type: 3}
+      propertyPath: _movePoints.Array.size
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2218283480543364310, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
@@ -2358,6 +2363,21 @@ PrefabInstance:
       propertyPath: movePoints.Array.data[2]
       value: 
       objectReference: {fileID: 1167637611}
+    - target: {fileID: 2218283480543364310, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
+        type: 3}
+      propertyPath: _movePoints.Array.data[0].tilesToMove
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2218283480543364310, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
+        type: 3}
+      propertyPath: _movePoints.Array.data[1].tilesToMove
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2218283480543364310, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
+        type: 3}
+      propertyPath: _movePoints.Array.data[2].tilesToMove
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2833258578220505359, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
         type: 3}
       propertyPath: m_Mesh
@@ -5140,6 +5160,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2218283480543364310, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
         type: 3}
+      propertyPath: _movePoints.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2218283480543364310, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
+        type: 3}
       propertyPath: movePoints.Array.data[0]
       value: 
       objectReference: {fileID: 2000057436}
@@ -5153,6 +5178,21 @@ PrefabInstance:
       propertyPath: movePoints.Array.data[2]
       value: 
       objectReference: {fileID: 1450389608}
+    - target: {fileID: 2218283480543364310, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
+        type: 3}
+      propertyPath: _movePoints.Array.data[0].tilesToMove
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2218283480543364310, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
+        type: 3}
+      propertyPath: _movePoints.Array.data[1].tilesToMove
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2218283480543364310, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
+        type: 3}
+      propertyPath: _movePoints.Array.data[2].tilesToMove
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2833258578220505359, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
         type: 3}
       propertyPath: m_Mesh
@@ -8593,6 +8633,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2218283480543364310, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
         type: 3}
+      propertyPath: _movePoints.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2218283480543364310, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
+        type: 3}
       propertyPath: movePoints.Array.data[0]
       value: 
       objectReference: {fileID: 2132116945}
@@ -8606,6 +8651,21 @@ PrefabInstance:
       propertyPath: movePoints.Array.data[2]
       value: 
       objectReference: {fileID: 778767437}
+    - target: {fileID: 2218283480543364310, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
+        type: 3}
+      propertyPath: _movePoints.Array.data[0].tilesToMove
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2218283480543364310, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
+        type: 3}
+      propertyPath: _movePoints.Array.data[1].tilesToMove
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2218283480543364310, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
+        type: 3}
+      propertyPath: _movePoints.Array.data[2].tilesToMove
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2833258578220505359, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
         type: 3}
       propertyPath: m_Mesh
@@ -11268,6 +11328,7 @@ Transform:
   - {fileID: 852098775}
   - {fileID: 48182191}
   - {fileID: 582574808}
+  - {fileID: 1856218980}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1686897891
@@ -12953,6 +13014,51 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1848354347}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1856218979
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1856218980}
+  - component: {fileID: 1856218981}
+  m_Layer: 0
+  m_Name: TimeSigManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1856218980
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1856218979}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1668554404}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1856218981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1856218979}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aadadef5ee3b1041abbbb4c30cc6e5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _timeSignature: {x: 1, y: 1}
 --- !u!1 &1875734920
 GameObject:
   m_ObjectHideFlags: 0
