@@ -47,8 +47,8 @@ public interface ITurnListener
 [DefaultExecutionOrder(-5000)]
 public sealed class RoundManager : MonoBehaviour
 {
-    [SerializeField] private TurnState turnState = TurnState.None;
     public static RoundManager Instance { get; private set; }
+    private TurnState _turnState = TurnState.None;
     private readonly Dictionary<TurnState, List<ITurnListener>> _turnListeners = new();
     private readonly Dictionary<TurnState, int> _completedTurnCounts = new();
     private PlayerControls _playerControls;
@@ -57,17 +57,17 @@ public sealed class RoundManager : MonoBehaviour
     /// <summary>
     /// Whether someone is having their turn.
     /// </summary>
-    public bool TurnInProgress => turnState != TurnState.None;
+    public bool TurnInProgress => _turnState != TurnState.None;
 
     /// <summary>
     /// Whether it's the player's turn.
     /// </summary>
-    public bool IsPlayerTurn => turnState == TurnState.Player;
+    public bool IsPlayerTurn => _turnState == TurnState.Player;
 
     /// <summary>
     /// Whether it's the world's turn.
     /// </summary>
-    public bool IsWorldTurn => turnState == TurnState.World;
+    public bool IsWorldTurn => _turnState == TurnState.World;
 
     /// <summary>
     /// Sets the singleton instance and initializes the dictionaries for
@@ -120,13 +120,13 @@ public sealed class RoundManager : MonoBehaviour
     /// <param name="obj"></param>
     private void MovementPerformed(InputAction.CallbackContext obj)
     {
-        if (turnState != TurnState.None) return;
+        if (_turnState != TurnState.None) return;
 
         Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>();
         Vector3 dir = new Vector3(input.x, 0f, input.y);
         _lastMovementInput = dir;
 
-        turnState = TurnState.Player;
+        _turnState = TurnState.Player;
         //we now wait on the update method to catch the end of the players turn
         //perform the turn now so that it's frame perfect.
         foreach (var turnListener in _turnListeners[TurnState.Player])
@@ -141,7 +141,7 @@ public sealed class RoundManager : MonoBehaviour
     /// <param name="listener"></param>
     public void CompleteTurn(ITurnListener listener)
     {
-        if (listener.TurnState != turnState) //don't complete if it's not our turn. this shouldn't happen
+        if (listener.TurnState != _turnState) //don't complete if it's not our turn. this shouldn't happen
         {
             Debug.LogError("Tried to complete turn while it wasn't our turn state.");
             return;
@@ -153,25 +153,25 @@ public sealed class RoundManager : MonoBehaviour
         _completedTurnCounts[listener.TurnState] = 0;
 
         //find out who's turn is next, if it's nobody's, stop.
-        var next = GetNextTurn(turnState);
+        var next = GetNextTurn(_turnState);
         if (next is null or TurnState.None)
         {
-            turnState = TurnState.None;
+            _turnState = TurnState.None;
             return;
         }
 
         //begin the next group's turns.
-        turnState = next.Value;
-        if (_turnListeners[turnState].Count == 0)
+        _turnState = next.Value;
+        if (_turnListeners[_turnState].Count == 0)
         {
-            next = GetNextTurn(turnState);
+            next = GetNextTurn(_turnState);
             if (next is null or TurnState.None)
             {
-                turnState = TurnState.None;
+                _turnState = TurnState.None;
                 return;
             }
         }
-        foreach (var turnListener in _turnListeners[turnState])
+        foreach (var turnListener in _turnListeners[_turnState])
         {
             turnListener.BeginTurn(_lastMovementInput);
         }
@@ -189,7 +189,7 @@ public sealed class RoundManager : MonoBehaviour
         if (_turnListeners[listener.TurnState].Contains(listener)) return;
         _turnListeners[listener.TurnState].Add(listener);
         //we added something during mid turn!
-        if (listener.TurnState != turnState) return;
+        if (listener.TurnState != _turnState) return;
         listener.BeginTurn(_lastMovementInput);
     }
 
