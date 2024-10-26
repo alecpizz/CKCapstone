@@ -53,6 +53,21 @@ public sealed class RoundManager : MonoBehaviour
     private readonly Dictionary<TurnState, int> _completedTurnCounts = new();
     private PlayerControls _playerControls;
     private Vector3 _lastMovementInput;
+    
+    /// <summary>
+    /// Whether someone is having their turn.
+    /// </summary>
+    public bool TurnInProgress => turnState != TurnState.None;
+
+    /// <summary>
+    /// Whether it's the player's turn.
+    /// </summary>
+    public bool IsPlayerTurn => turnState == TurnState.Player;
+
+    /// <summary>
+    /// Whether it's the world's turn.
+    /// </summary>
+    public bool IsWorldTurn => turnState == TurnState.World;
 
     /// <summary>
     /// Sets the singleton instance and initializes the dictionaries for
@@ -119,21 +134,6 @@ public sealed class RoundManager : MonoBehaviour
             turnListener.BeginTurn(_lastMovementInput);
         }
     }
-
-    /// <summary>
-    /// Whether someone is having their turn.
-    /// </summary>
-    public bool TurnInProgress => turnState != TurnState.None;
-
-    /// <summary>
-    /// Whether it's the player's turn.
-    /// </summary>
-    public bool IsPlayerTurn => turnState == TurnState.Player;
-
-    /// <summary>
-    /// Whether it's the world's turn.
-    /// </summary>
-    public bool IsWorldTurn => turnState == TurnState.World;
 
     /// <summary>
     /// Call this method to complete the turn of the entity.
