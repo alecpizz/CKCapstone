@@ -1,11 +1,12 @@
 /******************************************************************
 *    Author: Cole Stranczek
-*    Contributors: Cole Stranczek, Mitchell Young, Nick Grinstead
+*    Contributors: Cole Stranczek, Mitchell Young, Nick Grinstead, Alec Pizziferro
 *    Date Created: 10/3/24
 *    Description: Script that handles the behavior of the enemy,
 *    from movement to causing a failstate with the player
 *******************************************************************/
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,7 +14,7 @@ using UnityEngine.InputSystem;
 using NaughtyAttributes;
 using Unity.VisualScripting;
 
-public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
+public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
 {
     public bool IsTransparent { get => true; }
     public Vector3 moveInDirection { get; private set; }
@@ -60,12 +61,16 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
         GridBase.Instance.AddEntry(this);
 
         _playerMoveRef = _player.GetComponent<PlayerMovement>();
-        _playerMoveRef.PlayerFinishedMoving += EnemyMove;
 
         // Make sure enemiess are always seen at the start
         _atStart = true;
 
         TimeSignatureManager.Instance.RegisterTimeListener(this);
+    }
+
+    private void OnEnable()
+    {
+        RoundManager.Instance.RegisterListener(this);
     }
 
 
@@ -74,8 +79,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
     /// </summary>
     private void OnDisable()
     {
-        _playerMoveRef.PlayerFinishedMoving -= EnemyMove;
-
+        RoundManager.Instance.UnRegisterListener(this);
         TimeSignatureManager.Instance.UnregisterTimeListener(this);
     }
 
@@ -85,10 +89,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
     /// <param name="obj"></param>
     public void EnemyMove()
     {
-        if (_playerMoveRef.enemiesMoved == true)
-        {
+        // if (_playerMoveRef.enemiesMoved == true)
+        // {
             StartCoroutine(DelayedInput());
-        }
+        // }
     }
 
     /// <summary>
@@ -135,10 +139,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
         /// and if the enemy is currently frozen by the harmony beam
         /// </summary>
         yield return new WaitForSeconds(0.1f);
-        if (_playerMoveRef.PlayerMoved && !enemyFrozen)
+        if (!enemyFrozen)
         {
-            _playerMoveRef.enemiesMoved = false;
-
             for (int i = 0; i < _enemyMovementTime; ++i)
             {
                 /// <summary>
@@ -226,7 +228,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
             }
         }
 
-        _playerMoveRef.enemiesMoved = true;
+        RoundManager.Instance.CompleteTurn(this);
     }
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
@@ -235,5 +237,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
 
         if (_enemyMovementTime <= 0)
             _enemyMovementTime = 1;
+    }
+
+    public TurnState TurnState => TurnState.World;
+    public void BeginTurn(Vector3 direction)
+    {
+        EnemyMove();
     }
 }

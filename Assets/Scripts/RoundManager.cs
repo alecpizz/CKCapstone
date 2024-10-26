@@ -162,6 +162,15 @@ public sealed class RoundManager : MonoBehaviour
 
         //begin the next group's turns.
         turnState = next.Value;
+        if (_turnListeners[turnState].Count == 0)
+        {
+            next = GetNextTurn(turnState);
+            if (next is null or TurnState.None)
+            {
+                turnState = TurnState.None;
+                return;
+            }
+        }
         foreach (var turnListener in _turnListeners[turnState])
         {
             turnListener.BeginTurn(_lastMovementInput);
