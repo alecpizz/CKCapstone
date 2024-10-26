@@ -135,14 +135,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITurnListener
         //GridBase.Instance.UpdateEntry(this);
 
         transform.position = movePoints[_currentPoint].transform.position;
-        TurnComplete = true;
+        RoundManager.Instance.CompleteTurn(this);
     }
 
     public TurnState TurnState { get => TurnState.World; }
-    public bool TurnComplete { get; set; }
-    public bool TurnStarted { get; set; }
 
-    public void PerformTurn(Vector3 direction)
+    public void BeginTurn(Vector3 direction)
     {
         StartCoroutine(DelayedPlayerInput());
     }

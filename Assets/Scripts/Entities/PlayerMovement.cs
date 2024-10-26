@@ -85,10 +85,9 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITurnListener
     }
 
     public TurnState TurnState { get => TurnState.Player; }
-    public bool TurnComplete { get; set; }
     public bool TurnStarted { get; set; }
 
-    public void PerformTurn(Vector3 direction)
+    public void BeginTurn(Vector3 direction)
     {
         var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
         if ((GridBase.Instance.CellIsEmpty(move) && enemiesMoved == true) ||
@@ -98,7 +97,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITurnListener
             GridBase.Instance.UpdateEntry(this);
         }
 
-        TurnComplete = true;
+        RoundManager.Instance.CompleteTurn(this);
     }
 
 }

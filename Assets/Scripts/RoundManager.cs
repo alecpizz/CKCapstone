@@ -1,7 +1,18 @@
+/******************************************************************
+ *    Author: Alec Pizziferro
+ *    Contributors: N/A
+ *    Date Created: 10/22/24
+ *    Description: Manager for turn based movement mechanics.
+ *******************************************************************/
+
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// Enum for the current state. Must contain a delimiter.
+/// Contains Player, World and None.
+/// </summary>
 public enum TurnState
 {
     Player = 0,
@@ -9,24 +20,44 @@ public enum TurnState
     None = 2,
 }
 
+/// <summary>
+/// Interface for something that needs its turn managed.
+/// Both methods must be implemented.
+/// </summary>
 public interface ITurnListener
 {
+    /// <summary>
+    /// The category of turn this entity will be a part of.
+    /// </summary>
     TurnState TurnState { get; }
-    bool TurnComplete { get; set; }
-    void PerformTurn(Vector3 direction);
+
+    /// <summary>
+    /// Method that gets called when the entity's turn begins.
+    /// This should be used to start a movement animation or
+    /// some other logic. 
+    /// </summary>
+    /// <param name="direction">The user input direction.</param>
+    void BeginTurn(Vector3 direction);
 }
 
 
+/// <summary>
+/// Manager for turn based movement mechanics.
+/// </summary>
 [DefaultExecutionOrder(-5000)]
 public sealed class RoundManager : MonoBehaviour
 {
     [SerializeField] private TurnState turnState = TurnState.None;
     public static RoundManager Instance { get; private set; }
-    private Dictionary<TurnState, List<ITurnListener>> _turnListeners;
-    private readonly Dictionary<ITurnListener, bool> _listenerStates = new();
+    private readonly Dictionary<TurnState, List<ITurnListener>> _turnListeners = new();
+    private readonly Dictionary<TurnState, int> _completedTurnCounts = new();
     private PlayerControls _playerControls;
     private Vector3 _lastMovementInput;
 
+    /// <summary>
+    /// Sets the singleton instance and initializes the dictionaries for
+    /// state tracking.
+    /// </summary>
     private void Awake()
     {
         if (Instance == null)
@@ -40,29 +71,39 @@ public sealed class RoundManager : MonoBehaviour
         }
 
         _playerControls = new PlayerControls();
-        _turnListeners =
-            new Dictionary<TurnState, List<ITurnListener>>
-            {
-                { TurnState.Player, new List<ITurnListener>() },
-                { TurnState.World, new List<ITurnListener>() },
-                { TurnState.None, new List<ITurnListener>() }
-            };
+
+        for (int i = 0; i <= (int)TurnState.None; i++)
+        {
+            _turnListeners.Add((TurnState)i, new List<ITurnListener>());
+            _completedTurnCounts.Add((TurnState)i, 0);
+        }
     }
 
+    /// <summary>
+    /// Enables the player controls and hooks a callback for movement input.
+    /// </summary>
     private void OnEnable()
     {
         _playerControls.Enable();
-        _playerControls.InGame.Movement.performed += MovementOnperformed;
+        _playerControls.InGame.Movement.performed += MovementPerformed;
     }
 
-
+    /// <summary>
+    /// Disables the player controls and un-hooks a callback for movement input.
+    /// </summary>
     private void OnDisable()
     {
-        _playerControls.InGame.Movement.performed -= MovementOnperformed;
+        _playerControls.InGame.Movement.performed -= MovementPerformed;
         _playerControls.Disable();
     }
 
-    private void MovementOnperformed(InputAction.CallbackContext obj)
+    /// <summary>
+    /// Invoked when a movement input is pressed.
+    /// Will attempt to move if possible, but if it's not the player's turn
+    /// the movement will be rejected.
+    /// </summary>
+    /// <param name="obj"></param>
+    private void MovementPerformed(InputAction.CallbackContext obj)
     {
         if (turnState != TurnState.None) return;
 
@@ -70,56 +111,102 @@ public sealed class RoundManager : MonoBehaviour
         Vector3 dir = new Vector3(input.x, 0f, input.y);
         _lastMovementInput = dir;
 
+        turnState = TurnState.Player;
         //we now wait on the update method to catch the end of the players turn
         //perform the turn now so that it's frame perfect.
         foreach (var turnListener in _turnListeners[TurnState.Player])
         {
-            if (_listenerStates[turnListener]) continue;
-            turnListener.PerformTurn(_lastMovementInput);
-            _listenerStates[turnListener] = true;
+            turnListener.BeginTurn(_lastMovementInput);
         }
-        turnState = TurnState.Player;
     }
 
-    private void Update()
+    /// <summary>
+    /// Whether someone is having their turn.
+    /// </summary>
+    public bool TurnInProgress => turnState != TurnState.None;
+
+    /// <summary>
+    /// Whether it's the player's turn.
+    /// </summary>
+    public bool IsPlayerTurn => turnState == TurnState.Player;
+
+    /// <summary>
+    /// Whether it's the world's turn.
+    /// </summary>
+    public bool IsWorldTurn => turnState == TurnState.World;
+
+    /// <summary>
+    /// Call this method to complete the turn of the entity.
+    /// </summary>
+    /// <param name="listener"></param>
+    public void CompleteTurn(ITurnListener listener)
     {
-        if (turnState == TurnState.None) return;
-        //unecessary turn start for the player, needed for anyone else
-        foreach (var turnListener in _turnListeners[turnState]) 
+        if (listener.TurnState != turnState) //don't complete if it's not our turn. this shouldn't happen
         {
-            if (_listenerStates[turnListener]) continue;
-            turnListener.PerformTurn(_lastMovementInput);
-            _listenerStates[turnListener] = true;
+            Debug.LogError("Tried to complete turn while it wasn't our turn state.");
+            return;
         }
 
-        foreach (var turnListener in _turnListeners[turnState])
+        //check if all entities in this turn state have completed their turn.
+        _completedTurnCounts[listener.TurnState]++;
+        if (_completedTurnCounts[listener.TurnState] < _turnListeners[listener.TurnState].Count) return;
+        _completedTurnCounts[listener.TurnState] = 0;
+
+        //find out who's turn is next, if it's nobody's, stop.
+        var next = GetNextTurn(turnState);
+        if (next is null or TurnState.None)
         {
-            if (!turnListener.TurnComplete) return;
+            turnState = TurnState.None;
+            return;
         }
 
-        //this state has completed, reset the turn progress and move on to the next turn.
+        //begin the next group's turns.
+        turnState = next.Value;
         foreach (var turnListener in _turnListeners[turnState])
         {
-            _listenerStates[turnListener] = false;
-            turnListener.TurnComplete = false;
+            turnListener.BeginTurn(_lastMovementInput);
         }
-        turnState++;
     }
-    
 
+    /// <summary>
+    /// Registers the listener to the manager.
+    /// Will attempt to start the entity's turn
+    /// if possible. 
+    /// </summary>
+    /// <param name="listener">The listener to add.</param>
     public void RegisterListener(ITurnListener listener)
     {
+        if (listener == null) return;
+        if (_turnListeners[listener.TurnState].Contains(listener)) return;
         _turnListeners[listener.TurnState].Add(listener);
-        _listenerStates.Add(listener, false);
         //we added something during mid turn!
         if (listener.TurnState != turnState) return;
-        listener.PerformTurn(_lastMovementInput);
-        _listenerStates[listener] = true;
+        listener.BeginTurn(_lastMovementInput);
     }
 
+    /// <summary>
+    /// Removes the listener from the manager.
+    /// </summary>
+    /// <param name="listener">The listener to remove.</param>
     public void UnRegisterListener(ITurnListener listener)
     {
+        if (listener == null) return;
+        if (!_turnListeners[listener.TurnState].Contains(listener)) return;
         _turnListeners[listener.TurnState].Remove(listener);
-        _listenerStates.Remove(listener);
+    }
+
+    /// <summary>
+    /// Helper method to get the next turn state.
+    /// </summary>
+    /// <param name="turnState">The turn state to compare against.</param>
+    /// <returns>A future turn, can be null.</returns>
+    private static TurnState? GetNextTurn(TurnState turnState)
+    {
+        return turnState switch
+        {
+            TurnState.Player => TurnState.World,
+            TurnState.World => TurnState.None,
+            _ => null
+        };
     }
 }
