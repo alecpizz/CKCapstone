@@ -15,8 +15,9 @@ using UnityEngine;
 /// <summary>
 /// Class that determines how the walls move
 /// Also operates the ghost wall indicators
+/// Inherits from IParentSwitch and IGridEntry
 /// </summary>
-public class MovingWall : MonoBehaviour, IGridEntry
+public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
 {
     //original position of wall and ghost
     private Vector3 _originWall;
@@ -50,7 +51,7 @@ public class MovingWall : MonoBehaviour, IGridEntry
     /// When switch is turned on
     /// Allows Player to move where wall once was
     /// </summary>
-    public void WallIsMoved()
+    public void SwitchActivation()
     {
         transform.position = _originGhost;
         _wallGhost.transform.position = _originWall;
@@ -62,7 +63,7 @@ public class MovingWall : MonoBehaviour, IGridEntry
     /// Now that switch is off
     /// Allows Player to move where wall once was
     /// </summary>
-    public void WallMoveBack()
+    public void SwitchDeactivation()
     {
         transform.position = _originWall;
         _wallGhost.transform.position = _originGhost;

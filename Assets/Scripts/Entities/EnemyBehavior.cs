@@ -67,7 +67,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
         // Make sure enemiess are always seen at the start
         _atStart = true;
 
-        TimeSignatureManager.Instance.RegisterTimeListener(this);
+        if (TimeSignatureManager.Instance != null)
+            TimeSignatureManager.Instance.RegisterTimeListener(this);
     }
 
 
@@ -78,7 +79,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
     {
         _playerMoveRef.PlayerFinishedMoving -= EnemyMove;
 
-        TimeSignatureManager.Instance.UnregisterTimeListener(this);
+        if (TimeSignatureManager.Instance != null)
+            TimeSignatureManager.Instance.UnregisterTimeListener(this);
     }
 
     /// <summary>
