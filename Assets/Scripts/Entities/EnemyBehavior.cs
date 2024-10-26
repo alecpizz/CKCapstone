@@ -6,142 +6,215 @@
 *    from movement to causing a failstate with the player
 *******************************************************************/
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using NaughtyAttributes;
 
-public class EnemyBehavior : MonoBehaviour, IGridEntry, ITurnListener
+public class EnemyBehavior : MonoBehaviour, IGridEntry
 {
     public bool IsTransparent { get => true; }
+    public Vector3 moveInDirection { get; private set; }
     public Vector3 Position { get => transform.position; }
+
+    [SerializeField]
+    private Vector3 _positionOffset;
+
     public GameObject GetGameObject { get => gameObject; }
 
     private PlayerControls _input;
 
-    [Required][SerializeField] private GameObject _player;
-    [SerializeField] private int _tilesMoved;
+    [Required] [SerializeField] private GameObject _player;
 
     [SerializeField] private bool _atStart;
     [SerializeField] private int _currentPoint = 0;
 
-    [SerializeField] private float _moveRate = 1f;
-    [SerializeField] private float _waitTime = 1f;
+    private PlayerMovement _playerMoveRef;
 
-    public List<GameObject> movePoints = new List<GameObject>();
+    //Wait time between enemy moving each individual tile while on path to next destination
+    [SerializeField] private float _waitTime = 0.05f;
+
+    //List of movePoint structs that contain a direction enum and a tiles to move integer.
+    public enum Direction { Up, Down, Left, Right }
+
+    [System.Serializable]
+    private struct movePoints
+    {
+        public Direction direction;
+        public int tilesToMove;
+    }
+    [SerializeField] private List<movePoints> _movePoints;
+
+    //Check true in the inspector if the enemy is moving in a circular pattern (doesn't want to move back and forth)
+    [SerializeField] private bool _circularMovement = false;
 
     public bool enemyFrozen = false;
-
 
     // Start is called before the first frame update
     void Start()
     {
-        // Getting player input for the sake of triggering enemy movement.
-        // There's 100% a better way to do this but every attempt Mitchell
-        // and I made to just get a bool from the player script to signal
-        // when it's moving didn't work, so this was just done to get 
-        // SOMETHING working
+        moveInDirection = new Vector3(0, 0, 0);
+
+        GridBase.Instance.AddEntry(this);
         _input = new PlayerControls();
         _input.InGame.Enable();
         _input.InGame.Movement.performed += EnemyMove;
 
-        //GridBase.Instance.AddEntry(this);
+        _playerMoveRef = _player.GetComponent<PlayerMovement>();
 
         // Make sure enemiess are always seen at the start
         _atStart = true;
     }
 
-    private void OnEnable()
-    {
-        RoundManager.Instance?.RegisterListener(this);
-    }
 
     /// <summary>
     /// Unregisters from player input
     /// </summary>
     private void OnDisable()
     {
-        RoundManager.Instance?.UnRegisterListener(this);
         _input.InGame.Disable();
         _input.InGame.Movement.performed -= EnemyMove;
     }
 
     /// <summary>
-    /// Function that handles the enemy's movement along the provided points in the list
+    /// Function that calls the DelayedInput coroutine
     /// </summary>
     /// <param name="obj"></param>
     public void EnemyMove(InputAction.CallbackContext obj)
     {
-        var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
-        var downMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.back);
-        var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
-        var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
-
-        var nextPos = movePoints[_currentPoint].transform.position;
-        var currentPos = gameObject.transform.position;
-
+        if (_playerMoveRef.enemiesMoved == true)
+        {
+            StartCoroutine(DelayedInput());
+        }
     }
 
     /// <summary>
-    /// Delays the input from the player by 1 frame so that the player moves before enemies lock out their movement
+    /// Function that tells the enemy which direction to move in
+    /// </summary>
+    /// <param name="myDirection"></param>
+    public void FindDirection(Direction myDirection)
+    {
+        switch (myDirection)
+        {
+            case Direction.Up:
+                moveInDirection = Vector3.forward;
+                break;
+            case Direction.Down:
+                moveInDirection = Vector3.back;
+                break;
+            case Direction.Left:
+                moveInDirection = Vector3.left;
+                break;
+            case Direction.Right:
+                moveInDirection = Vector3.right;
+                break;
+            default:
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Coroutine that handles the enemy's movement along the provided points in the struct object list
     /// </summary>
     /// <returns></returns>
-    IEnumerator DelayedPlayerInput()
+    IEnumerator DelayedInput()
     {
         yield return null;
 
-        if (enemyFrozen == false)
+        if (_currentPoint > _movePoints.Count - 1)
         {
-            if (_atStart)
-            {
-                _currentPoint++;
-                StartCoroutine(MoveOverTime2());
+            Debug.Log(_movePoints.Count - 1);
+            _currentPoint = _movePoints.Count - 1;
+        }
 
-                if (_currentPoint == movePoints.Count - 1)
+        /// <summary>
+        /// Checks to see if all enemies have finished moving via a bool in the player script and if the enemy is currently frozen by the harmony beam
+        /// </summary>
+        yield return new WaitForSeconds(0.1f);
+        if (_playerMoveRef.playerMoved == true && enemyFrozen == false)
+        {
+            _playerMoveRef.enemiesMoved = false;
+
+            /// <summary>
+            /// Looks at current point the the struct object list to pull the current direction (enum) and amount of tiles to move in direction (int)
+            /// </summary>
+            var point = _movePoints[_currentPoint];
+            var pointDirection = point.direction;
+            var pointTiles = point.tilesToMove;
+            FindDirection(pointDirection);
+
+            //Reverses move direction if going back through the list
+            if (!_atStart)
+            {
+                moveInDirection = -moveInDirection;
+            }
+
+            /// <summary>
+            /// For loop repeats enemy moving over a tile in the direction given until either it sees another object in that direction
+            /// that isn't the player (will move into players but not walls/enemies).
+            /// </summary>
+            for (int i = 0; i < pointTiles; i++)
+            {
+                var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveInDirection);
+                var entries = GridBase.Instance.GetCellEntries(move);
+                bool breakLoop = false;
+
+                //If the next cell contains an object that is not the player then the loop breaks
+                //enemy can't move into other enemies, walls, etc.
+                foreach (var entry in entries)
                 {
-                    _atStart = false;
+                    if (entry.GetGameObject != _player)
+                    {
+                        breakLoop = true;
+                        break;
+                    }
+                }
+
+                if (breakLoop == true)
+                {
+                    break;
+                }
+
+                gameObject.transform.position = move + _positionOffset;
+                GridBase.Instance.UpdateEntry(this);
+
+                yield return new WaitForSeconds(_waitTime);
+            }
+
+            /// <summary>
+            /// If the current point is equal to the length of the list then the if/else statement 
+            /// will check the atStart bool and concurrently reverse through the list
+            /// </summary>
+            if (_atStart == true)
+            {
+                if (_currentPoint >= _movePoints.Count - 1)
+                {
+                    if (!_circularMovement)
+                    {
+                        _atStart = false;
+                    }
+                    else
+                    {
+                        _currentPoint = 0;
+                    }
+                }
+                else
+                {
+                    _currentPoint++;
                 }
             }
             else
             {
-                _currentPoint--;
-                StartCoroutine(MoveOverTime2());
-
-                if (_currentPoint == 0)
+                if (_currentPoint <= 0)
                 {
                     _atStart = true;
                 }
+                else
+                {
+                    _currentPoint--;
+                }
             }
         }
-    }
-
-    /// <summary>
-    /// Function moves enemy from either current x or z position on the grid to next x or z position on the grid.
-    /// </summary>
-    /// <returns></returns>
-    IEnumerator MoveOverTime2()
-    {
-        Vector3 startPos = transform.position;
-
-        for (float i = 0; i <= _waitTime; i += Time.deltaTime)
-        {
-            yield return null;
-            transform.position = Vector3.Lerp(startPos, movePoints[_currentPoint].transform.position, i / _waitTime);
-            //Debug.Log(i);
-        }
-
-        //GridBase.Instance.UpdateEntry(this);
-
-        transform.position = movePoints[_currentPoint].transform.position;
-        RoundManager.Instance.CompleteTurn(this);
-    }
-
-    public TurnState TurnState { get => TurnState.World; }
-
-    public void BeginTurn(Vector3 direction)
-    {
-        StartCoroutine(DelayedPlayerInput());
     }
 }
