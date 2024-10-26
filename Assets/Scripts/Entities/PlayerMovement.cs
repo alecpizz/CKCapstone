@@ -43,7 +43,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
     private void OnEnable()
     {
-        if (RoundManger.Instance != null)
+        if (RoundManager.Instance != null)
             RoundManager.Instance.RegisterListener(this);
     }
 
