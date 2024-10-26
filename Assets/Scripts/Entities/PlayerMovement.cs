@@ -10,6 +10,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.Windows;
@@ -79,17 +80,17 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener
     /// <param name="context">Input callback context</param>
     public void MovementPerformed(InputAction.CallbackContext context)
     {
-        if (_playerMovementComplete && enemiesMoved)
+        Vector2 key = context.ReadValue<Vector2>();
+        Vector3 direction = new(key.x, 0, key.y);
+
+        _playerInteraction.SetDirection(direction);
+
+        var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
+
+        if ((GridBase.Instance.CellIsEmpty(move) || DebugMenuManager.Instance.GhostMode) &&
+                _playerMovementComplete && enemiesMoved)
         {
-            Debug.Log("Entered if");
-
             _playerMovementComplete = false;
-
-            Vector2 key = context.ReadValue<Vector2>();
-            Vector3 direction = new(key.x, 0, key.y);
-
-            _playerInteraction.SetDirection(direction);
-
             StartCoroutine(MovementDelay(direction));
         }
     }
