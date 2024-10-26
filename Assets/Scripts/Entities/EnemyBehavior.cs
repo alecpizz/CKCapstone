@@ -51,7 +51,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
     public bool enemyFrozen = false;
 
     private int _enemyMovementTime = 1;
-    private TimeSignatureManager _timeSigManager;
 
     // Start is called before the first frame update
     void Start()
@@ -66,11 +65,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
         // Make sure enemiess are always seen at the start
         _atStart = true;
 
-        _timeSigManager = TimeSignatureManager.Instance;
-        if (_timeSigManager != null)
-        {
-            _timeSigManager.RegisterTimeListener(this);
-        }
+        TimeSignatureManager.Instance.RegisterTimeListener(this);
     }
 
 
@@ -79,12 +74,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
     /// </summary>
     private void OnDisable()
     {
-        _playerMoveRef.PlayerFinishedMoving += EnemyMove;
+        _playerMoveRef.PlayerFinishedMoving -= EnemyMove;
 
-        if (_timeSigManager != null)
-        {
-            _timeSigManager.UnregisterTimeListener(this);
-        }
+        TimeSignatureManager.Instance.UnregisterTimeListener(this);
     }
 
     /// <summary>

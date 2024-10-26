@@ -8,12 +8,8 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
-using UnityEngine.Windows;
 
 public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener
 {
@@ -39,7 +35,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener
 
     private bool _playerMovementComplete = true;
     private int _playerMovementTiming = 1;
-    private TimeSignatureManager _timeSigManager;
 
     // Start is called before the first frame update
     void Start()
@@ -48,11 +43,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener
 
         GridBase.Instance.AddEntry(this);
 
-        _timeSigManager = TimeSignatureManager.Instance;
-        if (_timeSigManager != null)
-        {
-            _timeSigManager.RegisterTimeListener(this);
-        }
+        TimeSignatureManager.Instance.RegisterTimeListener(this);
 
         // Referencing and setup of the Input Action functions
         _input = new PlayerControls();
@@ -68,10 +59,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener
         _input.InGame.Disable();
         _input.InGame.Movement.performed -= MovementPerformed;
 
-        if (_timeSigManager != null)
-        {
-            _timeSigManager.UnregisterTimeListener(this);
-        }
+        TimeSignatureManager.Instance.UnregisterTimeListener(this);
     }
 
     /// <summary>
@@ -86,7 +74,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener
         _playerInteraction.SetDirection(direction);
 
         var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
-
         if ((GridBase.Instance.CellIsEmpty(move) || DebugMenuManager.Instance.GhostMode) &&
                 _playerMovementComplete && enemiesMoved)
         {
