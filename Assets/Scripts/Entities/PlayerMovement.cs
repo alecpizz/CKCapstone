@@ -16,10 +16,13 @@ using UnityEngine.Windows;
 
 public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener
 {
+    public Action PlayerFinishedMoving;
+
     private PlayerControls _input;
     public Vector3 FacingDirection { get; private set; }
 
-    public bool playerMoved = false;
+    public bool PlayerMoved { get => _playerMovementComplete; 
+        private set => _playerMovementComplete = value; }
     public bool enemiesMoved = true;
     public bool IsTransparent { get => true; }
     public Vector3 Position { get => transform.position; }
@@ -31,7 +34,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener
     private PlayerInteraction _playerInteraction;
 
     [SerializeField]
-    private float delayTime = 0.5f;
+    private float _delayTime = 0.1f;
 
     private bool _enemiesPresent = true;
 
@@ -83,42 +86,56 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener
     /// <param name="context">Input callback context</param>
     public void MovementPerformed(InputAction.CallbackContext context)
     {
-        Vector2 key = context.ReadValue<Vector2>();
-        Vector3 direction = new(key.x, 0, key.y);
-        _playerInteraction.SetDirection(direction);
-
-        // Move if there is no wall below the player or if ghost mode is enabled
-        var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
-        if (!GridBase.Instance.CellIsEmpty(move))
+        if (_playerMovementComplete && enemiesMoved)
         {
-            playerMoved = false;
-            StartCoroutine(DelayNextInput());
+            Debug.Log("Entered if");
+
+            _playerMovementComplete = false;
+
+            Vector2 key = context.ReadValue<Vector2>();
+            Vector3 direction = new(key.x, 0, key.y);
+
+            _playerInteraction.SetDirection(direction);
+
+            StartCoroutine(MovementDelay(direction));
         }
 
-        if ((GridBase.Instance.CellIsEmpty(move) && enemiesMoved == true) ||
-            (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
-        {
-            playerMoved = true;
-            gameObject.transform.position = move + _positionOffset;
-            GridBase.Instance.UpdateEntry(this);
-            StartCoroutine(DelayNextInput());
-        }
+        //Vector2 key = context.ReadValue<Vector2>();
+        //Vector3 direction = new(key.x, 0, key.y);
+        //_playerInteraction.SetDirection(direction);
+
+        //// Move if there is no wall below the player or if ghost mode is enabled
+        //var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
+        //if (!GridBase.Instance.CellIsEmpty(move))
+        //{
+        //    playerMoved = false;
+        //    StartCoroutine(DelayNextInput());
+        //}
+
+        //if ((GridBase.Instance.CellIsEmpty(move) && enemiesMoved == true) ||
+        //    (DebugMenuManager.Instance.GhostMode && enemiesMoved == true))
+        //{
+        //    playerMoved = true;
+        //    gameObject.transform.position = move + _positionOffset;
+        //    GridBase.Instance.UpdateEntry(this);
+        //    StartCoroutine(DelayNextInput());
+        //}
     }
 
     /// <summary>
     /// Coroutine that makes the player wait to let the enemies finish moving before
     /// being able to move again.
     /// </summary>
-    IEnumerator DelayNextInput()
-    {
-        yield return null;
+    //IEnumerator DelayNextInput()
+    //{
+    //    yield return null;
 
-        if (_enemiesPresent)
-        {
-            yield return new WaitForSeconds(delayTime);
-            enemiesMoved = true;
-        }
-    }
+    //    if (_enemiesPresent)
+    //    {
+    //        yield return new WaitForSeconds(_delayTime);
+    //        enemiesMoved = true;
+    //    }
+    //}
 
     /// <summary>
     /// Helper coroutine for performing movement with a delay
@@ -137,11 +154,16 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener
                 gameObject.transform.position = move + _positionOffset;
                 GridBase.Instance.UpdateEntry(this);
             }
+            else
+            {
+                break;
+            }
 
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(_delayTime);
         }
 
         _playerMovementComplete = true;
+        PlayerFinishedMoving?.Invoke();
     }
 
     /// <summary>

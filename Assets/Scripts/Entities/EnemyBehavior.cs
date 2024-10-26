@@ -23,7 +23,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
 
     public GameObject GetGameObject { get => gameObject; }
 
-    private PlayerControls _input;
+    //private PlayerControls _input;
 
     [Required] [SerializeField] private GameObject _player;
 
@@ -57,11 +57,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
         moveInDirection = new Vector3(0, 0, 0);
 
         GridBase.Instance.AddEntry(this);
-        _input = new PlayerControls();
-        _input.InGame.Enable();
-        _input.InGame.Movement.performed += EnemyMove;
+        //_input = new PlayerControls();
+        //_input.InGame.Enable();
+        //_input.InGame.Movement.performed += EnemyMove;
 
         _playerMoveRef = _player.GetComponent<PlayerMovement>();
+        _playerMoveRef.PlayerFinishedMoving += EnemyMove;
 
         // Make sure enemiess are always seen at the start
         _atStart = true;
@@ -73,15 +74,16 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
     /// </summary>
     private void OnDisable()
     {
-        _input.InGame.Disable();
-        _input.InGame.Movement.performed -= EnemyMove;
+        //_input.InGame.Disable();
+        //_input.InGame.Movement.performed -= EnemyMove;
+        _playerMoveRef.PlayerFinishedMoving += EnemyMove;
     }
 
     /// <summary>
     /// Function that calls the DelayedInput coroutine
     /// </summary>
     /// <param name="obj"></param>
-    public void EnemyMove(InputAction.CallbackContext obj)
+    public void EnemyMove()
     {
         if (_playerMoveRef.enemiesMoved == true)
         {
@@ -132,7 +134,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
         /// Checks to see if all enemies have finished moving via a bool in the player script and if the enemy is currently frozen by the harmony beam
         /// </summary>
         yield return new WaitForSeconds(0.1f);
-        if (_playerMoveRef.playerMoved == true && enemyFrozen == false)
+        if (_playerMoveRef.PlayerMoved && !enemyFrozen)
         {
             _playerMoveRef.enemiesMoved = false;
 
@@ -216,5 +218,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry
                 }
             }
         }
+
+        _playerMoveRef.enemiesMoved = true;
     }
 }
