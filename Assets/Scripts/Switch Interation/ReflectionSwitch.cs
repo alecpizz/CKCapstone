@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //inherits methods from the ParentSwitch script
-public class ReflectionSwitch : ParentSwitch
+public class ReflectionSwitch : MonoBehaviour, IParentSwitch
 {
     //Assign relevant reflection cube
     [SerializeField] ReflectiveObject mirror;
@@ -18,16 +18,16 @@ public class ReflectionSwitch : ParentSwitch
     /// <summary>
     /// When switch is on, the reflection will face the opposite direction
     /// </summary>
-    public override void SwitchActivation()
+    public void SwitchActivation()
     {
-        //mirror.SetReflection();
+        mirror.ChangeDirection(false);
     }
 
     /// <summary>
     /// When switch is off, the reflection will face the original direction
     /// </summary>
-    public override void SwitchDeactivation()
+    public void SwitchDeactivation()
     {
-        //mirror.SetReflection();
+        mirror.ChangeDirection(true);
     }
 }

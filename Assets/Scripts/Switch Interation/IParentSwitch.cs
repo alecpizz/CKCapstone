@@ -10,12 +10,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ParentSwitch : MonoBehaviour
+public interface IParentSwitch
 {
     /// <summary>
     /// Empty method that will be overridden for anything affected by the switch turning on
     /// </summary>
-    public virtual void SwitchActivation()
+    public void SwitchActivation()
     {
 
     }
@@ -23,7 +23,7 @@ public class ParentSwitch : MonoBehaviour
     /// <summary>
     /// Empty method that will be overridden for anything affected by the switch turning off
     /// </summary>
-    public virtual void SwitchDeactivation()
+    public void SwitchDeactivation()
     {
 
     }
