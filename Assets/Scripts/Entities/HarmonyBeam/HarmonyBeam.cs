@@ -14,7 +14,12 @@ public class HarmonyBeam : MonoBehaviour
     [SerializeField] private EventReference _harmonySound = default;
     [SerializeField] private EventReference _enemyHarmonization = default;
 
+    [Space]
+    [SerializeField]
+    private bool _toggled = true;
+
     // Array for managing the multiple child particle systems
+    [Header("Particles")]
     [SerializeField] private ParticleSystem[] _beamParticleSystems;
     [SerializeField] private GameObject _enemyHitEffectPrefab;
     [SerializeField] private GameObject _wallCollisionEffectPrefab;
@@ -26,8 +31,9 @@ public class HarmonyBeam : MonoBehaviour
 
     // There is a better way to do this, but this works for now
     private HashSet<EnemyBehavior> _currentlyHitEnemies = new(); // Checks enemy hit states every fixed frame
+    private HashSet<ReflectiveObject> _currentlyHitReflectors = new(); // Same but for reflective objects
+    private HashSet<ReflectiveObject> _previouslyHitReflectors = new();
 
-    private bool _toggled = true;
     private const float _laserDistance = 50f;
 
     // Used for cutting the beam after it is blocked
@@ -92,6 +98,7 @@ public class HarmonyBeam : MonoBehaviour
         const int maxReflections = 10;
 
         _currentlyHitEnemies = new();  // Track enemies hit in this frame
+        _currentlyHitReflectors = new(); 
 
         float blockedDistance = distance;
         bool wallHit = false;
@@ -124,14 +131,20 @@ public class HarmonyBeam : MonoBehaviour
                 }
                 else if (hit.collider.TryGetComponent(out ReflectiveObject reflectiveObject))
                 {
+                    hitSomething = true;
+
+                    if (_currentlyHitReflectors.Contains(reflectiveObject))
+                        continue;
+
+                    _currentlyHitReflectors.Add(reflectiveObject);
+
                     // Notify the ReflectiveObject that it has been hit
-                    reflectiveObject.ToggleBeam();
+                    reflectiveObject.ToggleBeam(true);
 
                     currentDirection = reflectiveObject.GetReflectionDirection(currentDirection);
                     currentStartPosition = hit.point;
                     remainingDistance -= hit.distance;
                     reflections++;
-                    hitSomething = true;
                     break;                   
                 }
                 else if (hit.collider.CompareTag("Wall"))
@@ -190,6 +203,18 @@ public class HarmonyBeam : MonoBehaviour
             _enemyHitStates[enemy] = false;
             HarmonyBeamManager.Instance.BeamStopsHittingEnemy(enemy);
         }
+
+        // Untoggles unused relfective objects
+        foreach (ReflectiveObject r in _previouslyHitReflectors)
+        {
+            if (!_currentlyHitReflectors.Contains(r))
+            {
+                r.ToggleBeam(false);
+            }
+        }
+
+        // Clears previous reflectors and replaces it with the ones captured this tick
+        _previouslyHitReflectors = _currentlyHitReflectors;
     }
 
     /// <summary>
@@ -339,6 +364,41 @@ public class HarmonyBeam : MonoBehaviour
         }
         DisableWallCollisionEffect();
         RemoveObsoleteEnemyEffects();
+        AudioManager.Instance.PauseSound(_beamKey, _toggled);
+    }
+
+    /// <summary>
+    /// Updates the beam based on the parameter passed, instead of automatically checking the toggle state.
+    /// </summary>
+    /// <param name="toggle"></param>
+    public void ToggleBeam(bool toggle)
+    {
+        if (toggle)
+        {
+            if (_toggled)
+                return;
+
+            foreach (var particleSystem in _beamParticleSystems)
+            {
+                particleSystem.Play();
+            }
+        }
+        else
+        {
+            if (!_toggled)
+                return;
+
+            foreach (var particleSystem in _beamParticleSystems)
+            {
+                particleSystem.Stop();
+            }
+
+            DisableWallCollisionEffect();
+            RemoveObsoleteEnemyEffects();
+        }
+
+        _toggled = toggle;
+
         AudioManager.Instance.PauseSound(_beamKey, _toggled);
     }
 }
