@@ -20,14 +20,14 @@ public class ReflectiveObject : MonoBehaviour
         // Rotate the cube based on _reflectLeft boolean
         if (_reflectLeft)
         {
-            transform.rotation = Quaternion.Euler(0, -90, 0); // Rotate -90 degrees if reflecting left
+            transform.Rotate(new(0, -90, 0)); // Rotate -90 degrees if reflecting left
         }
         else
         {
-            transform.rotation = Quaternion.Euler(0, 90, 0);  // Rotate 90 degrees if reflecting right
+            transform.Rotate(new(0, 90, 0)); // Rotate 90 degrees if reflecting right
         }
 
-        ToggleBeam();
+        //ToggleBeam();
     }
 
     /// <summary>
@@ -49,9 +49,10 @@ public class ReflectiveObject : MonoBehaviour
     /// <summary>
     /// Enables the reflective HarmonyBeam instance.
     /// </summary>
-    public void ToggleBeam()
+    public void ToggleBeam(bool toggle)
     {
-        _harmonyBeam.ToggleBeam();
+        Debug.Log("Toggling Beam: " + toggle);
+        _harmonyBeam.ToggleBeam(toggle);
     }
 
     /// <summary>
