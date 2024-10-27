@@ -11,6 +11,25 @@ public class ReflectiveObject : MonoBehaviour
 {
     [SerializeField] private bool _reflectLeft = true;
 
+    private HarmonyBeam _harmonyBeam;
+
+    private void Start()
+    {
+        _harmonyBeam = GetComponent<HarmonyBeam>();
+
+        // Rotate the cube based on _reflectLeft boolean
+        if (_reflectLeft)
+        {
+            transform.Rotate(new(0, -90, 0)); // Rotate -90 degrees if reflecting left
+        }
+        else
+        {
+            transform.Rotate(new(0, 90, 0)); // Rotate 90 degrees if reflecting right
+        }
+
+        //ToggleBeam();
+    }
+
     /// <summary>
     /// Returns the new direction for the beam after reflecting
     /// </summary>
@@ -24,6 +43,32 @@ public class ReflectiveObject : MonoBehaviour
         else
         {
             return Quaternion.Euler(0, 90, 0) * incomingDirection;   // Rotate 90 degrees (right)
+        }
+    }
+
+    /// <summary>
+    /// Enables the reflective HarmonyBeam instance.
+    /// </summary>
+    public void ToggleBeam(bool toggle)
+    {
+        Debug.Log("Toggling Beam: " + toggle);
+        _harmonyBeam.ToggleBeam(toggle);
+    }
+
+    /// <summary>
+    /// Toggles the direction of the reflection
+    /// </summary>
+    /// <param name="left">true for left, false for right</param>
+    public void ChangeDirection(bool left = true)
+    {
+        _reflectLeft = left;
+        if (_reflectLeft)
+        {
+            transform.rotation = Quaternion.Euler(0, -90, 0); // Rotate -90 degrees (left)
+        }
+        else
+        {
+            transform.rotation = Quaternion.Euler(0, 90, 0); // Rotate -90 degrees (left)
         }
     }
 }
