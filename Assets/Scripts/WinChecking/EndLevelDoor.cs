@@ -13,9 +13,9 @@ public class EndLevelDoor : MonoBehaviour
 {
     [Scene]
     [SerializeField] private int _levelIndexToLoad = 0;
-
     [SerializeField]
     bool _isUnlocked = false;
+    DoorGlow doorGlow;
 
     /// <summary>
     /// Registers to win checker action
@@ -36,12 +36,14 @@ public class EndLevelDoor : MonoBehaviour
     /// <summary>
     /// Called when correct sequence is created to open door
     /// </summary>
-    [Button]
     public void UnlockDoor()
     {
-        // TODO: update door visuals here
-
         _isUnlocked = true;
+         if (doorGlow != null)
+        {
+            // Call the UnlockDoor method from EndLevelDoor
+            doorGlow.GlowAndUnlockDoor();
+        }
     }
 
     // TODO: this OnTriggerEnter method can be replaced with grid data checking
