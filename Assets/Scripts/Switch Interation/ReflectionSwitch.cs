@@ -13,14 +13,14 @@ using UnityEngine;
 public class ReflectionSwitch : MonoBehaviour, IParentSwitch
 {
     //Assign relevant reflection cube
-    [SerializeField] ReflectiveObject mirror;
+    [SerializeField] ReflectiveObject _mirror;
 
     /// <summary>
     /// When switch is on, the reflection will face the opposite direction
     /// </summary>
     public void SwitchActivation()
     {
-        mirror.ChangeDirection(false);
+        _mirror.ChangeDirection(false);
     }
 
     /// <summary>
@@ -28,6 +28,6 @@ public class ReflectionSwitch : MonoBehaviour, IParentSwitch
     /// </summary>
     public void SwitchDeactivation()
     {
-        mirror.ChangeDirection(true);
+        _mirror.ChangeDirection(true);
     }
 }
