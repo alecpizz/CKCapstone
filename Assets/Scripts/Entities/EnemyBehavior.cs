@@ -32,7 +32,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
     private PlayerMovement _playerMoveRef;
 
     //Wait time between enemy moving each individual tile while on path to next destination
-    [SerializeField] private float _waitTime = 0.05f;
+    [SerializeField] private float _waitTime = 0.5f;
 
     //List of movePoint structs that contain a direction enum and a tiles to move integer.
     public enum Direction { Up, Down, Left, Right }
@@ -52,6 +52,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
 
     private int _enemyMovementTime = 1;
 
+    [SerializeField] private float _tempMoveTime = 0.5f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -65,7 +67,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
         // Make sure enemiess are always seen at the start
         _atStart = true;
 
-        TimeSignatureManager.Instance.RegisterTimeListener(this);
+        if (TimeSignatureManager.Instance != null)
+            TimeSignatureManager.Instance.RegisterTimeListener(this);
     }
 
 
@@ -76,7 +79,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
     {
         _playerMoveRef.PlayerFinishedMoving -= EnemyMove;
 
-        TimeSignatureManager.Instance.UnregisterTimeListener(this);
+        if (TimeSignatureManager.Instance != null)
+            TimeSignatureManager.Instance.UnregisterTimeListener(this);
     }
 
     /// <summary>
@@ -163,7 +167,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
                 /// </summary>
                 for (int j = 0; j < pointTiles; j++)
                 {
-                    var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, 
+                    var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position,
                         moveInDirection);
                     var entries = GridBase.Instance.GetCellEntries(move);
                     bool breakLoop = false;
@@ -184,10 +188,15 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
                         break;
                     }
 
-                    gameObject.transform.position = move + _positionOffset;
-                    GridBase.Instance.UpdateEntry(this);
+                    Vector3 startPos = transform.position;
 
-                    yield return new WaitForSeconds(_waitTime);
+                    for (float k = 0; k <= _tempMoveTime; k += Time.deltaTime)
+                    {
+                        transform.position = Vector3.Lerp(startPos, move + _positionOffset, k / _tempMoveTime);
+                        yield return null;
+                    }
+
+                    GridBase.Instance.UpdateEntry(this);
                 }
 
                 /// <summary>
