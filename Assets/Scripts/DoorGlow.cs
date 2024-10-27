@@ -14,18 +14,6 @@ public class DoorGlow : MonoBehaviour
     [SerializeField] private Color glowColor = Color.yellow; // Set the glow color
     [SerializeField] private float glowIntensity = 15.0f; // Intensity of the glow
     
-    private void Start()
-    {
-        // Register to the same event EndLevelDoor uses if needed
-        WinChecker.GotCorrectSequence += GlowAndUnlockDoor;
-    }
-
-    private void OnDisable()
-    {
-        // Unregister the event to prevent errors
-        WinChecker.GotCorrectSequence -= GlowAndUnlockDoor;
-    }
-
     // Combined method to trigger door unlocking and visuals
     public void GlowAndUnlockDoor()
     {
