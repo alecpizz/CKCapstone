@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using NaughtyAttributes;
+using PrimeTween;
 using Unity.VisualScripting;
 
 public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
@@ -90,18 +91,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     }
 
     /// <summary>
-    /// Function that calls the DelayedInput coroutine
-    /// </summary>
-    /// <param name="obj"></param>
-    public void EnemyMove()
-    {
-        // if (_playerMoveRef.enemiesMoved == true)
-        // {
-            StartCoroutine(DelayedInput());
-        // }
-    }
-
-    /// <summary>
     /// Function that tells the enemy which direction to move in
     /// </summary>
     /// <param name="myDirection"></param>
@@ -130,9 +119,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     /// Coroutine that handles the enemy's movement along the provided points in the struct object list
     /// </summary>
     /// <returns></returns>
-    IEnumerator DelayedInput()
+    private IEnumerator DelayedInput()
     {
-        yield return null;
 
         if (_currentPoint > _movePoints.Count - 1)
         {
@@ -144,7 +132,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         /// Checks to see if all enemies have finished moving via a bool in the player script 
         /// and if the enemy is currently frozen by the harmony beam
         /// </summary>
-        yield return new WaitForSeconds(0.1f);
+       
         if (!enemyFrozen)
         {
             for (int i = 0; i < _enemyMovementTime; ++i)
@@ -192,13 +180,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                         break;
                     }
 
-                    Vector3 startPos = transform.position;
-
-                    for (float k = 0; k <= _tempMoveTime; k += Time.deltaTime)
-                    {
-                        transform.position = Vector3.Lerp(startPos, move + _positionOffset, k / _tempMoveTime);
-                        yield return null;
-                    }
+                    yield return Tween.Position(transform, 
+                        move + _positionOffset, _tempMoveTime).ToYieldInstruction();
 
                     GridBase.Instance.UpdateEntry(this);
                 }
@@ -253,6 +236,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     public TurnState TurnState => TurnState.World;
     public void BeginTurn(Vector3 direction)
     {
-        EnemyMove();
+        StartCoroutine(DelayedInput());
     }
 }

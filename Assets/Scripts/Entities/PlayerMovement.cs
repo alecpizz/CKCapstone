@@ -28,6 +28,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     private float _delayTime = 0.1f;
 
     private int _playerMovementTiming = 1;
+    private WaitForSeconds _waitForSeconds;
 
     // Start is called before the first frame update
     void Start()
@@ -39,6 +40,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.RegisterTimeListener(this);
 
+        _waitForSeconds = new WaitForSeconds(_delayTime);
     }
 
     private void OnEnable()
@@ -81,7 +83,10 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                 break;
             }
 
-            yield return new WaitForSeconds(_delayTime);
+            if (_playerMovementTiming > 1)
+            {
+                yield return _waitForSeconds;
+            }
         }
 
         RoundManager.Instance.CompleteTurn(this);
