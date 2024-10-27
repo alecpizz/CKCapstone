@@ -493,6 +493,7 @@ MonoBehaviour:
   _snapToGrid: 1
   offset: {x: 0, y: 0, z: 0}
   _disableGridCell: 0
+  _isVisable: 1
 --- !u!65 &160213366
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -721,6 +722,7 @@ MonoBehaviour:
   _snapToGrid: 1
   offset: {x: 0, y: 0, z: 0}
   _disableGridCell: 0
+  _isVisable: 1
 --- !u!65 &166510124
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1120,21 +1122,6 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 141339540878061802, guid: dda7842c0387e794a8c66ddc56220932,
         type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 141339540878061802, guid: dda7842c0387e794a8c66ddc56220932,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 141339540878061802, guid: dda7842c0387e794a8c66ddc56220932,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 141339540878061802, guid: dda7842c0387e794a8c66ddc56220932,
-        type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.22
       objectReference: {fileID: 0}
@@ -1183,69 +1170,15 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 141339540878061802, guid: dda7842c0387e794a8c66ddc56220932,
-        type: 3}
-      propertyPath: m_ConstrainProportionsScale
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 790089715027950951, guid: dda7842c0387e794a8c66ddc56220932,
-        type: 3}
-      propertyPath: _isUnlocked
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 790089715027950951, guid: dda7842c0387e794a8c66ddc56220932,
-        type: 3}
-      propertyPath: _levelIndexToLoad
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2058720860621896847, guid: dda7842c0387e794a8c66ddc56220932,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 4300004, guid: ab402a8bf9fedf444b0dcfae747a48e6, type: 3}
-    - target: {fileID: 2100414882445564415, guid: dda7842c0387e794a8c66ddc56220932,
-        type: 3}
-      propertyPath: <TargetNoteSequence>k__BackingField.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 2100414882445564415, guid: dda7842c0387e794a8c66ddc56220932,
-        type: 3}
-      propertyPath: <TargetNoteSequence>k__BackingField.Array.data[1]
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2100414882445564415, guid: dda7842c0387e794a8c66ddc56220932,
-        type: 3}
-      propertyPath: <TargetNoteSequence>k__BackingField.Array.data[2]
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2100414882445564415, guid: dda7842c0387e794a8c66ddc56220932,
-        type: 3}
-      propertyPath: <TargetNoteSequence>k__BackingField.Array.data[3]
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 2690820641389626621, guid: dda7842c0387e794a8c66ddc56220932,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 37848fde6590b7b469e7034ebf30b2a1, type: 2}
     - target: {fileID: 7410545637726630488, guid: dda7842c0387e794a8c66ddc56220932,
         type: 3}
       propertyPath: m_Name
       value: PRE_Door
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 790089715027950951, guid: dda7842c0387e794a8c66ddc56220932, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7410545637726630488, guid: dda7842c0387e794a8c66ddc56220932,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1658393361}
-    - targetCorrespondingSourceObject: {fileID: 7410545637726630488, guid: dda7842c0387e794a8c66ddc56220932,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1658393367}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dda7842c0387e794a8c66ddc56220932, type: 3}
 --- !u!1 &311062409
 GameObject:
@@ -3298,6 +3231,7 @@ MonoBehaviour:
   _snapToGrid: 1
   offset: {x: 0, y: 0, z: 0}
   _disableGridCell: 0
+  _isVisable: 1
 --- !u!65 &719183938
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3738,6 +3672,7 @@ MonoBehaviour:
   _snapToGrid: 1
   offset: {x: 0, y: 0, z: 0}
   _disableGridCell: 0
+  _isVisable: 1
 --- !u!65 &780550962
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4201,6 +4136,7 @@ MonoBehaviour:
   _snapToGrid: 1
   offset: {x: 0, y: 0, z: 0}
   _disableGridCell: 0
+  _isVisable: 1
 --- !u!65 &918082459
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4925,6 +4861,7 @@ MonoBehaviour:
   _snapToGrid: 1
   offset: {x: 0, y: 0, z: 0}
   _disableGridCell: 0
+  _isVisable: 1
 --- !u!65 &1019303128
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6835,6 +6772,7 @@ MonoBehaviour:
   _snapToGrid: 1
   offset: {x: 0, y: 0, z: 0}
   _disableGridCell: 0
+  _isVisable: 1
 --- !u!65 &1284863177
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7700,6 +7638,7 @@ MonoBehaviour:
   _snapToGrid: 1
   offset: {x: 0, y: 0, z: 0}
   _disableGridCell: 0
+  _isVisable: 1
 --- !u!65 &1445284685
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7943,6 +7882,7 @@ MonoBehaviour:
   _snapToGrid: 1
   offset: {x: 0, y: 0, z: 0}
   _disableGridCell: 0
+  _isVisable: 1
 --- !u!65 &1467216789
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8682,6 +8622,7 @@ MonoBehaviour:
   _snapToGrid: 1
   offset: {x: 0, y: 0, z: 0}
   _disableGridCell: 0
+  _isVisable: 1
 --- !u!65 &1542498861
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8804,6 +8745,7 @@ MonoBehaviour:
   _snapToGrid: 1
   offset: {x: 0, y: 0, z: 0}
   _disableGridCell: 0
+  _isVisable: 1
 --- !u!65 &1552144346
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9407,41 +9349,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1653815044}
   m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &1658393352 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7410545637726630488, guid: dda7842c0387e794a8c66ddc56220932,
-    type: 3}
-  m_PrefabInstance: {fileID: 275176733}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1658393361
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1658393352}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 053aec07ed215fc48a353bd461b1df98, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _levelIndexToLoad: 1
-  _isUnlocked: 0
---- !u!114 &1658393367
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1658393352}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfc91dd78a7d4004f88121ea8cf7f186, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  doorMaterial: {fileID: 2100000, guid: 37848fde6590b7b469e7034ebf30b2a1, type: 2}
-  glowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  glowIntensity: 4
 --- !u!1 &1675419890
 GameObject:
   m_ObjectHideFlags: 0
@@ -10776,6 +10683,7 @@ MonoBehaviour:
   _snapToGrid: 1
   offset: {x: 0, y: 0, z: 0}
   _disableGridCell: 0
+  _isVisable: 1
 --- !u!65 &2023045897
 BoxCollider:
   m_ObjectHideFlags: 0
