@@ -17,6 +17,11 @@ public class EndLevelDoor : MonoBehaviour
     bool _isUnlocked = false;
     DoorGlow doorGlow;
 
+    private void Awake()
+    {
+        doorGlow = GetComponent<DoorGlow>();
+    }
+
     /// <summary>
     /// Registers to win checker action
     /// </summary>
