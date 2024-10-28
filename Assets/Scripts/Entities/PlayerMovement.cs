@@ -138,5 +138,9 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         {
             StartCoroutine(MovementDelay(direction));
         }
+        else
+        {
+            RoundManager.Instance.CompleteTurn(this);
+        }
     }
 }
