@@ -6,9 +6,11 @@
 *    the grid
 *******************************************************************/
 
+using PrimeTween;
 using System;
 using System.Collections;
 using UnityEngine;
+using PrimeTween;
 using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
@@ -26,6 +28,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
     [SerializeField]
     private float _delayTime = 0.1f;
+
+    [SerializeField] private float _movementTime = 0.25f;
 
     private int _playerMovementTiming = 1;
     private WaitForSeconds _waitForSeconds;
@@ -75,7 +79,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             if ((GridBase.Instance.CellIsEmpty(move)) ||
                 (DebugMenuManager.Instance.GhostMode))
             {
-                gameObject.transform.position = move + _positionOffset;
+                yield return Tween.Position(transform,
+                    move + _positionOffset, duration: _movementTime, Ease.OutBack).ToYieldInstruction();
                 GridBase.Instance.UpdateEntry(this);
             }
             else
