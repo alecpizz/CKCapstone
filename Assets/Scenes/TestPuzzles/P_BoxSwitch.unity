@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: ee03cd679c493bd47bcd2dd5c38aac92, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -193,6 +193,11 @@ PrefabInstance:
     - target: {fileID: 4567295051755325514, guid: fd6dc7887eb99fd4bad0f59f6f18c88f,
         type: 3}
       propertyPath: _collectableNumber
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6490731150861352024, guid: fd6dc7887eb99fd4bad0f59f6f18c88f,
+        type: 3}
+      propertyPath: _initialShineDelay
       value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -1338,6 +1343,31 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8661034151007840895, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: _noteImages.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8661034151007840895, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: _noteImages.Array.data[0]
+      value: 
+      objectReference: {fileID: 452068899}
+    - target: {fileID: 8661034151007840895, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: _noteImages.Array.data[1]
+      value: 
+      objectReference: {fileID: 452068898}
+    - target: {fileID: 8661034151007840895, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: _noteImages.Array.data[2]
+      value: 
+      objectReference: {fileID: 452068897}
+    - target: {fileID: 8661034151007840895, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: _noteImages.Array.data[3]
+      value: 
+      objectReference: {fileID: 452068896}
     - target: {fileID: 8902230939137655927, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -1358,6 +1388,30 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dbb0dd27c6fab3344aab4441094b0849, type: 3}
+--- !u!1 &452068896 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5146550149004915142, guid: dbb0dd27c6fab3344aab4441094b0849,
+    type: 3}
+  m_PrefabInstance: {fileID: 452068895}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &452068897 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5988472316225394234, guid: dbb0dd27c6fab3344aab4441094b0849,
+    type: 3}
+  m_PrefabInstance: {fileID: 452068895}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &452068898 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5790386792720959143, guid: dbb0dd27c6fab3344aab4441094b0849,
+    type: 3}
+  m_PrefabInstance: {fileID: 452068895}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &452068899 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1456734254579160918, guid: dbb0dd27c6fab3344aab4441094b0849,
+    type: 3}
+  m_PrefabInstance: {fileID: 452068895}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &497836022 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
@@ -1472,6 +1526,11 @@ PrefabInstance:
     - target: {fileID: 2100414882445564415, guid: dda7842c0387e794a8c66ddc56220932,
         type: 3}
       propertyPath: <TargetNoteSequence>k__BackingField.Array.data[3]
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2136362874793484460, guid: dda7842c0387e794a8c66ddc56220932,
+        type: 3}
+      propertyPath: _levelIndexToLoad
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7410545637726630488, guid: dda7842c0387e794a8c66ddc56220932,
@@ -4158,6 +4217,11 @@ PrefabInstance:
       propertyPath: _collectableNumber
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 6490731150861352024, guid: 59e70b5db7c3e7343b3db46469ba40dd,
+        type: 3}
+      propertyPath: _initialShineDelay
+      value: 4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4390,6 +4454,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6490731150861352024, guid: b0166a074e6ae514cb01bb76362f419d,
+        type: 3}
+      propertyPath: _initialShineDelay
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

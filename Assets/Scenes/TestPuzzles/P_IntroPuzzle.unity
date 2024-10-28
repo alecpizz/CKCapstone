@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: ee03cd679c493bd47bcd2dd5c38aac92, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -1042,6 +1042,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8238545795121980506, guid: 29be6e5e8c47e8c4881dca10f2ce81ce,
         type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.47
+      objectReference: {fileID: 0}
+    - target: {fileID: 8238545795121980506, guid: 29be6e5e8c47e8c4881dca10f2ce81ce,
+        type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.9961947
       objectReference: {fileID: 0}
@@ -1052,38 +1057,48 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8238545795121980506, guid: 29be6e5e8c47e8c4881dca10f2ce81ce,
         type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 1.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8238545795121980506, guid: 29be6e5e8c47e8c4881dca10f2ce81ce,
+        type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8721745127747591927, guid: 29be6e5e8c47e8c4881dca10f2ce81ce,
         type: 3}
       propertyPath: _dialogueEntries.Array.size
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8721745127747591927, guid: 29be6e5e8c47e8c4881dca10f2ce81ce,
         type: 3}
       propertyPath: _dialogueEntries.Array.data[0]._text
-      value: This is an old tape recorder
+      value: An old, scratched up cassette tape
       objectReference: {fileID: 0}
     - target: {fileID: 8721745127747591927, guid: 29be6e5e8c47e8c4881dca10f2ce81ce,
         type: 3}
       propertyPath: _dialogueEntries.Array.data[1]._text
-      value: This reminds me of good times
+      value: Gifting a harmonica to a 5 year old should be illegal...
       objectReference: {fileID: 0}
     - target: {fileID: 8721745127747591927, guid: 29be6e5e8c47e8c4881dca10f2ce81ce,
         type: 3}
       propertyPath: _dialogueEntries.Array.data[2]._text
-      value: he couldnt get it out and he said.......... never mind
+      value: ...although it made for a fun recording
+      objectReference: {fileID: 0}
+    - target: {fileID: 8721745127747591927, guid: 29be6e5e8c47e8c4881dca10f2ce81ce,
+        type: 3}
+      propertyPath: _dialogueEntries.Array.data[0]._adjustTypingSpeed
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 8721745127747591927, guid: 29be6e5e8c47e8c4881dca10f2ce81ce,
         type: 3}
       propertyPath: _dialogueEntries.Array.data[1]._adjustTypingSpeed
-      value: 0.6
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 8721745127747591927, guid: 29be6e5e8c47e8c4881dca10f2ce81ce,
         type: 3}
       propertyPath: _dialogueEntries.Array.data[2]._adjustTypingSpeed
-      value: -1.84
+      value: 0.3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1853,6 +1868,11 @@ PrefabInstance:
         type: 3}
       propertyPath: _isUnlocked
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2136362874793484460, guid: dda7842c0387e794a8c66ddc56220932,
+        type: 3}
+      propertyPath: _levelIndexToLoad
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7410545637726630488, guid: dda7842c0387e794a8c66ddc56220932,
         type: 3}
@@ -4753,7 +4773,7 @@ PrefabInstance:
     - target: {fileID: 1021733745888454797, guid: 4b4ed906bab175f468c3e8cc2650a794,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.6700001
+      value: 1.2
       objectReference: {fileID: 0}
     - target: {fileID: 1021733745888454797, guid: 4b4ed906bab175f468c3e8cc2650a794,
         type: 3}
