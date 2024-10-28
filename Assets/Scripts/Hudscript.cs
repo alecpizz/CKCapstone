@@ -22,18 +22,11 @@ public class HUDscript : MonoBehaviour, ITimeListener
     [SerializeField] private GameObject _doorUnlockMessage;
     [SerializeField] private GameObject _incorrectMessage;
     [SerializeField] private TextMeshProUGUI _sequenceUI;
-    [SerializeField] private GameObject note1;
-    [SerializeField] private GameObject note2;
-    [SerializeField] private GameObject note3;
-    [SerializeField] private GameObject note4;
-    [SerializeField] private GameObject note5;
+    [SerializeField] private GameObject[] _noteImages;
     [SerializeField] private TextMeshProUGUI _timeSignatureUIy;
     [SerializeField] private TextMeshProUGUI _timeSignatureUIx;
     private TimeSignatureManager _timeSigManager;
     [SerializeField] private bool timeSignature;
-
-
-
 
     private List<int> _notes;
 
@@ -65,7 +58,6 @@ public class HUDscript : MonoBehaviour, ITimeListener
             _timeSigManager.RegisterTimeListener(this);
         }
 
-
         // WinChecker.CollectedNote += UpdateCollectedNotesText;
         WinChecker.CollectedNote += UpdateColectedNotesIcons;
         WinChecker.GotCorrectSequence += DisplayDoorUnlockMessage;
@@ -74,11 +66,6 @@ public class HUDscript : MonoBehaviour, ITimeListener
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
     {
-        throw new System.NotImplementedException();
-
-        Debug.Log("New player time: " + newTimeSignature.x +
-            "\nNew Enemy Time: " + newTimeSignature.y);
-
         _timeSignatureUIy.text = newTimeSignature.y.ToString();
         _timeSignatureUIx.text = newTimeSignature.x.ToString();
     }
@@ -100,38 +87,13 @@ public class HUDscript : MonoBehaviour, ITimeListener
     }
 
     /// <summary>
-    /// Display newly collected note in UI onces collected
-    /// </summary>
-    /// <param name="collectedNote">new note as int</param>
-    // private void UpdateCollectedNotesText(int collectedNote)
-    // {
-    //     _collectedNotesUI.text += " " + collectedNote;
-    // }
-
-    /// <summary>
     /// Display newly collected note in UI onces collected, image edition
     /// </summary>
     private void UpdateColectedNotesIcons(int collectedNote)
     {
-        if (note1.activeSelf == false)
+        if (collectedNote >= 0 && collectedNote < _noteImages.Length)
         {
-            note1.SetActive(true);
-        }
-        else if (note2.activeSelf == false)
-        {
-            note2.SetActive(true);
-        }
-        else if (note3.activeSelf == false)
-        {
-            note3.SetActive(true);
-        }
-        else if (note4.activeSelf == false)
-        {
-            note4.SetActive(true);
-        }
-        else if (note5.activeSelf == false)
-        {
-            note5.SetActive(true);
+            _noteImages[collectedNote].SetActive(true);
         }
     }
 
