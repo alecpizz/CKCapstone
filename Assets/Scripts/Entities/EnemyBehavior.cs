@@ -238,4 +238,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     {
         StartCoroutine(DelayedInput());
     }
+
+    public void ForceTurnEnd()
+    {
+        StopAllCoroutines();
+        RoundManager.Instance.CompleteTurn(this);
+    }
 }

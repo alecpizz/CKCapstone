@@ -38,6 +38,8 @@ public interface ITurnListener
     /// </summary>
     /// <param name="direction">The user input direction.</param>
     void BeginTurn(Vector3 direction);
+
+    void ForceTurnEnd();
 }
 
 

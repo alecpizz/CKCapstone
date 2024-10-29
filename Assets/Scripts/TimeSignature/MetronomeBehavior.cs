@@ -31,7 +31,11 @@ public class MetronomeBehavior : MonoBehaviour
         {
             ActivateMetronome();
 
-            // TODO: stop player movement here
+            PlayerMovement playerMovement;
+            if (other.gameObject.TryGetComponent<PlayerMovement>(out playerMovement))
+            {
+                playerMovement.ForceTurnEnd();
+            }
         }
     }
 }

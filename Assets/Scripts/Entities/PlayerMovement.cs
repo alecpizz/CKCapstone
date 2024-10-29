@@ -141,4 +141,10 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             RoundManager.Instance.CompleteTurn(this);
         }
     }
+
+    public void ForceTurnEnd()
+    {
+        StopAllCoroutines();
+        RoundManager.Instance.CompleteTurn(this);
+    }
 }
