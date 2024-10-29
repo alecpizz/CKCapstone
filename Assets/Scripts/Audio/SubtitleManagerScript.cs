@@ -29,7 +29,8 @@ public class SubtitleManager : MonoBehaviour
 
 
     /// <summary>
-    /// called on scene begin. used to set variables
+    /// called on scene begin. used to set variables, cut up the _subtitleText string into sentences, 
+    /// and lastly start the dialogue audio.
     /// </summary>
     void Start()
     {
