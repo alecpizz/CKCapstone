@@ -139,7 +139,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         }
         else
         {
-            RoundManager.Instance.CompleteTurn(this);
+            RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
         }
     }
 }

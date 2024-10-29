@@ -178,6 +178,32 @@ public sealed class RoundManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Attempts to repeat a turn state if possible.
+    /// </summary>
+    /// <param name="listener">The listener to repeat a turn.</param>
+    public void RequestRepeatTurnStateRepeat(ITurnListener listener)
+    {
+        if (listener.TurnState != _turnState)
+        {
+            return;
+        }
+
+        _completedTurnCounts[listener.TurnState] = 0;
+        var prev = GetPreviousTurn(listener.TurnState);
+        if (prev is null or TurnState.None)
+        {
+            _turnState = TurnState.None;
+            return;
+        }
+
+        _turnState = prev.Value;
+        foreach (var turnListener in _turnListeners[_turnState])
+        {
+            turnListener.BeginTurn(_lastMovementInput);
+        }
+    }
+
+    /// <summary>
     /// Registers the listener to the manager.
     /// Will attempt to start the entity's turn
     /// if possible. 
@@ -215,6 +241,21 @@ public sealed class RoundManager : MonoBehaviour
         {
             TurnState.Player => TurnState.World,
             TurnState.World => TurnState.None,
+            _ => null
+        };
+    }
+
+    /// <summary>
+    /// Helper method to get the previous turn state.
+    /// </summary>
+    /// <param name="turnState">The turn state to compare against.</param>
+    /// <returns>A past turn, can be null.</returns>
+    private static TurnState? GetPreviousTurn(TurnState turnState)
+    {
+        return turnState switch
+        {
+            TurnState.Player => TurnState.None,
+            TurnState.World => TurnState.Player,
             _ => null
         };
     }
