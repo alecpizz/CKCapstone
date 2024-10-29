@@ -1,0 +1,37 @@
+/******************************************************************
+*    Author: Nick Grinstead
+*    Contributors: 
+*    Date Created: 10/28/24
+*    Description: Checks for collisions with the player and then 
+*       calls the TimeSignatureManager to update the time signature.
+*******************************************************************/
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class MetronomeBehavior : MonoBehaviour
+{
+    /// <summary>
+    /// Toggles the time signature on the manager if there is one
+    /// </summary>
+    private void ActivateMetronome()
+    {
+        if (TimeSignatureManager.Instance != null)
+            TimeSignatureManager.Instance.ToggleTimeSignature();
+    }
+
+    /// <summary>
+    /// Activates the metronome and stops player movement in response 
+    /// to a collision with the player.
+    /// </summary>
+    /// <param name="other">Data from a collision</param>
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            ActivateMetronome();
+
+            // TODO: stop player movement here
+        }
+    }
+}

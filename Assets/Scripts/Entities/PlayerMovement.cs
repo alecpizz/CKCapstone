@@ -14,7 +14,6 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
 {
-
     public Vector3 FacingDirection { get; private set; }
     public bool IsTransparent { get => true; }
     public Vector3 Position { get => transform.position; }
