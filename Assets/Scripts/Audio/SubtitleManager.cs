@@ -20,24 +20,26 @@ public class SubtitleManager : MonoBehaviour
 
     private string[] _subtitleArray;
     private static int _currentIndex;
-    private EventReference _currentDialogue;
+    private EventInstance _currentDialogue;
+    private bool _isPlaying;
 
-    private int _characterIndex;
     private char _currentCharacter;
     private string _currentString;
+
+
 
     /// <summary>
     /// called on scene begin. used to set variables
     /// </summary>
     void Start()
     {
-
         //setting up for string division;
         _subtitleArray = new string[_sentences];
-        _characterIndex = 0;
         _currentCharacter = '\0';
         _currentIndex = 0;
         _currentString = "";
+
+
 
         for(int i = 0; i < _subtitleText.Length; i++)
         {
@@ -47,7 +49,6 @@ public class SubtitleManager : MonoBehaviour
                 _currentString = _currentString + _currentCharacter;
                 _subtitleArray[_currentIndex] = _currentString;
                 _currentIndex++;
-                UnityEngine.Debug.Log(_currentString);
                 _currentString = "";
             }
             else
@@ -55,31 +56,52 @@ public class SubtitleManager : MonoBehaviour
                 _currentString = _currentString + _currentCharacter;
             }
         }
+        _currentIndex = 0;
 
+        //playing first segment
         _subtitleObject.text = _subtitleArray[0];
-        PlaySegment(0);
+        _currentDialogue = AudioManager.Instance.PlaySound(_dialogue);
+    }
 
-        for (int i = 1; i < _sentences; i++)
+    /// <summary>
+    /// called on tics
+    /// used to find if the current line of dialogue is finished
+    /// </summary>
+    private void Update()
+    {
+        if (!IsPlaying(_currentDialogue))
         {
-            
+            AudioManager.Instance.StopSound(_currentDialogue);
+            NextSegment();
         }
+    }
 
-       
+    /// <summary>
+    /// this is used to see if the current audio is still playing
+    /// </summary>
+    /// <param name="instance"></param> instance of audio
+    /// <returns></returns> whether sound is still playing
+    bool IsPlaying(FMOD.Studio.EventInstance instance)
+    {
+        FMOD.Studio.PLAYBACK_STATE state;
+        instance.getPlaybackState(out state);
+        return state != FMOD.Studio.PLAYBACK_STATE.STOPPED;
     }
 
     /// <summary>
     /// called to play currently set up sound
     /// </summary>
-    void PlaySegment(int index)
-    {
-        //_currentDialogue = PlaySound(_dialogue);
-    }
 
     void NextSegment()
     {
         _currentIndex++;
+
         //set next soundbyte
-        _subtitleObject.text = _subtitleArray[_currentIndex];
-        PlaySegment(_currentIndex);
+        if (_currentIndex < _sentences)
+        {
+            _subtitleObject.text = _subtitleArray[_currentIndex];
+            _currentDialogue.setParameterByName("Sample Sentence", _currentIndex + 1);
+            _currentDialogue = AudioManager.Instance.PlaySound(_dialogue);
+        }
     }
 }
