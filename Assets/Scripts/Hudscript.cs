@@ -1,6 +1,6 @@
 /******************************************************************
-*    Author: Rider Hagen 
-*    Contributors:  Nick Grinstead
+*    Author: Nick Grinstead 
+*    Contributors:  Rider Hagen
 *    Date Created: 9/28/24
 *    Description: Temporary script that updates UI to reflect the 
 *       player's progress with collecting the correct melody.
@@ -13,14 +13,20 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using NaughtyAttributes;
+using Unity.VisualScripting;
 
-public class HUDscript : MonoBehaviour
+public class HUDscript : MonoBehaviour, ITimeListener
 {
     [Required][SerializeField] private TextMeshProUGUI _collectedNotesUI;
     [SerializeField] private float _messageWaitTime;
     [SerializeField] private GameObject _doorUnlockMessage;
     [SerializeField] private GameObject _incorrectMessage;
     [SerializeField] private TextMeshProUGUI _sequenceUI;
+    [SerializeField] private GameObject[] _noteImages;
+    [SerializeField] private TextMeshProUGUI _timeSignatureUIy;
+    [SerializeField] private TextMeshProUGUI _timeSignatureUIx;
+    private TimeSignatureManager _timeSigManager;
+    [SerializeField] private bool timeSignature;
 
     private List<int> _notes;
 
@@ -45,9 +51,23 @@ public class HUDscript : MonoBehaviour
             }
         }
 
-        WinChecker.CollectedNote += UpdateCollectedNotesText;
+        _timeSigManager = TimeSignatureManager.Instance;
+
+        if (_timeSigManager != null)
+        {
+            _timeSigManager.RegisterTimeListener(this);
+        }
+
+        // WinChecker.CollectedNote += UpdateCollectedNotesText;
+        WinChecker.CollectedNote += UpdateColectedNotesIcons;
         WinChecker.GotCorrectSequence += DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence += DisplayIncorrectMessage;
+    }
+
+    public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
+    {
+        _timeSignatureUIy.text = newTimeSignature.y.ToString();
+        _timeSignatureUIx.text = newTimeSignature.x.ToString();
     }
 
     /// <summary>
@@ -55,18 +75,26 @@ public class HUDscript : MonoBehaviour
     /// </summary>
     private void OnDisable()
     {
-        WinChecker.CollectedNote -= UpdateCollectedNotesText;
+        // WinChecker.CollectedNote -= UpdateCollectedNotesText;
+        WinChecker.CollectedNote -= UpdateColectedNotesIcons;
         WinChecker.GotCorrectSequence -= DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence -= DisplayIncorrectMessage;
+
+        if (_timeSigManager != null)
+        {
+            _timeSigManager.UnregisterTimeListener(this);
+        }
     }
 
     /// <summary>
-    /// Display newly collected note in UI onces collected
+    /// Display newly collected note in UI onces collected, image edition
     /// </summary>
-    /// <param name="collectedNote">new note as int</param>
-    private void UpdateCollectedNotesText(int collectedNote)
+    private void UpdateColectedNotesIcons(int collectedNote)
     {
-        _collectedNotesUI.text += " " + collectedNote;
+        if (collectedNote >= 0 && collectedNote < _noteImages.Length)
+        {
+            _noteImages[collectedNote].SetActive(true);
+        }
     }
 
     /// <summary>

@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Cole Stranczek
-*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson
+*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson, Alec Pizziferro
 *    Date Created: 9/22/24
 *    Description: Script that handles the player's movement along
 *    the grid
@@ -8,19 +8,14 @@
 
 using System;
 using System.Collections;
+using PrimeTween;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener
+public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
 {
-    public Action PlayerFinishedMoving;
 
-    private PlayerControls _input;
     public Vector3 FacingDirection { get; private set; }
-
-    public bool PlayerMoved { get => _playerMovementComplete; 
-        private set => _playerMovementComplete = value; }
-    public bool enemiesMoved = true;
     public bool IsTransparent { get => true; }
     public Vector3 Position { get => transform.position; }
     public GameObject GetGameObject { get => gameObject; }
@@ -33,8 +28,10 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener
     [SerializeField]
     private float _delayTime = 0.1f;
 
-    private bool _playerMovementComplete = true;
+    [SerializeField] private float _movementTime = 0.25f;
+
     private int _playerMovementTiming = 1;
+    private WaitForSeconds _waitForSeconds;
 
     // Start is called before the first frame update
     void Start()
@@ -43,12 +40,16 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener
 
         GridBase.Instance.AddEntry(this);
 
-        TimeSignatureManager.Instance.RegisterTimeListener(this);
+        if (TimeSignatureManager.Instance != null)
+            TimeSignatureManager.Instance.RegisterTimeListener(this);
 
-        // Referencing and setup of the Input Action functions
-        _input = new PlayerControls();
-        _input.InGame.Enable();
-        _input.InGame.Movement.performed += MovementPerformed;
+        _waitForSeconds = new WaitForSeconds(_delayTime);
+    }
+
+    private void OnEnable()
+    {
+        if (RoundManager.Instance != null)
+            RoundManager.Instance.RegisterListener(this);
     }
 
     /// <summary>
@@ -56,31 +57,12 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener
     /// </summary>
     private void OnDisable()
     {
-        _input.InGame.Disable();
-        _input.InGame.Movement.performed -= MovementPerformed;
-
-        TimeSignatureManager.Instance.UnregisterTimeListener(this);
+        if (RoundManager.Instance != null)
+            RoundManager.Instance.UnRegisterListener(this);
+        if (TimeSignatureManager.Instance != null)
+            TimeSignatureManager.Instance.UnregisterTimeListener(this);
     }
 
-    /// <summary>
-    /// Moves the player to the next grid tile if able
-    /// </summary>
-    /// <param name="context">Input callback context</param>
-    public void MovementPerformed(InputAction.CallbackContext context)
-    {
-        Vector2 key = context.ReadValue<Vector2>();
-        Vector3 direction = new(key.x, 0, key.y);
-
-        _playerInteraction.SetDirection(direction);
-
-        var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
-        if ((GridBase.Instance.CellIsEmpty(move) || DebugMenuManager.Instance.GhostMode) &&
-                _playerMovementComplete && enemiesMoved)
-        {
-            _playerMovementComplete = false;
-            StartCoroutine(MovementDelay(direction));
-        }
-    }
 
     /// <summary>
     /// Helper coroutine for performing movement with a delay
@@ -96,7 +78,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener
             if ((GridBase.Instance.CellIsEmpty(move)) ||
                 (DebugMenuManager.Instance.GhostMode))
             {
-                gameObject.transform.position = move + _positionOffset;
+                yield return Tween.Position(transform, 
+                    move + _positionOffset, duration: _movementTime, Ease.OutBack).ToYieldInstruction();
                 GridBase.Instance.UpdateEntry(this);
             }
             else
@@ -104,11 +87,13 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener
                 break;
             }
 
-            yield return new WaitForSeconds(_delayTime);
+            if (_playerMovementTiming > 1)
+            {
+                yield return _waitForSeconds;
+            }
         }
 
-        _playerMovementComplete = true;
-        PlayerFinishedMoving?.Invoke();
+        RoundManager.Instance.CompleteTurn(this);
     }
 
     /// <summary>
@@ -140,5 +125,21 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener
 
         if (_playerMovementTiming <= 0)
             _playerMovementTiming = 1;
+    }
+
+    public TurnState TurnState => TurnState.Player;
+    public void BeginTurn(Vector3 direction)
+    {
+        _playerInteraction.SetDirection(direction);
+
+        var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
+        if ((GridBase.Instance.CellIsEmpty(move) || DebugMenuManager.Instance.GhostMode))
+        {
+            StartCoroutine(MovementDelay(direction));
+        }
+        else
+        {
+            RoundManager.Instance.CompleteTurn(this);
+        }
     }
 }

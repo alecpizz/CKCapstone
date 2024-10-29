@@ -1,19 +1,21 @@
 /******************************************************************
 *    Author: Cole Stranczek
-*    Contributors: Cole Stranczek, Mitchell Young, Nick Grinstead
+*    Contributors: Cole Stranczek, Mitchell Young, Nick Grinstead, Alec Pizziferro
 *    Date Created: 10/3/24
 *    Description: Script that handles the behavior of the enemy,
 *    from movement to causing a failstate with the player
 *******************************************************************/
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using NaughtyAttributes;
+using PrimeTween;
 using Unity.VisualScripting;
 
-public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
+public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
 {
     public bool IsTransparent { get => true; }
     public Vector3 moveInDirection { get; private set; }
@@ -32,7 +34,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
     private PlayerMovement _playerMoveRef;
 
     //Wait time between enemy moving each individual tile while on path to next destination
-    [SerializeField] private float _waitTime = 0.05f;
+    [SerializeField] private float _waitTime = 0.5f;
 
     //List of movePoint structs that contain a direction enum and a tiles to move integer.
     public enum Direction { Up, Down, Left, Right }
@@ -52,6 +54,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
 
     private int _enemyMovementTime = 1;
 
+    [SerializeField] private float _tempMoveTime = 0.5f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -60,12 +64,18 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
         GridBase.Instance.AddEntry(this);
 
         _playerMoveRef = _player.GetComponent<PlayerMovement>();
-        _playerMoveRef.PlayerFinishedMoving += EnemyMove;
 
         // Make sure enemiess are always seen at the start
         _atStart = true;
 
-        TimeSignatureManager.Instance.RegisterTimeListener(this);
+        if (TimeSignatureManager.Instance != null)
+            TimeSignatureManager.Instance.RegisterTimeListener(this);
+    }
+
+    private void OnEnable()
+    {
+        if (RoundManager.Instance != null)
+            RoundManager.Instance.RegisterListener(this);
     }
 
 
@@ -74,21 +84,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
     /// </summary>
     private void OnDisable()
     {
-        _playerMoveRef.PlayerFinishedMoving -= EnemyMove;
-
-        TimeSignatureManager.Instance.UnregisterTimeListener(this);
-    }
-
-    /// <summary>
-    /// Function that calls the DelayedInput coroutine
-    /// </summary>
-    /// <param name="obj"></param>
-    public void EnemyMove()
-    {
-        if (_playerMoveRef.enemiesMoved == true)
-        {
-            StartCoroutine(DelayedInput());
-        }
+        if (RoundManager.Instance != null)
+            RoundManager.Instance.UnRegisterListener(this);
+        if (TimeSignatureManager.Instance != null)
+            TimeSignatureManager.Instance.UnregisterTimeListener(this);
     }
 
     /// <summary>
@@ -120,9 +119,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
     /// Coroutine that handles the enemy's movement along the provided points in the struct object list
     /// </summary>
     /// <returns></returns>
-    IEnumerator DelayedInput()
+    private IEnumerator DelayedInput()
     {
-        yield return null;
 
         if (_currentPoint > _movePoints.Count - 1)
         {
@@ -134,11 +132,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
         /// Checks to see if all enemies have finished moving via a bool in the player script 
         /// and if the enemy is currently frozen by the harmony beam
         /// </summary>
-        yield return new WaitForSeconds(0.1f);
-        if (_playerMoveRef.PlayerMoved && !enemyFrozen)
+       
+        if (!enemyFrozen)
         {
-            _playerMoveRef.enemiesMoved = false;
-
             for (int i = 0; i < _enemyMovementTime; ++i)
             {
                 /// <summary>
@@ -163,7 +159,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
                 /// </summary>
                 for (int j = 0; j < pointTiles; j++)
                 {
-                    var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, 
+                    var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position,
                         moveInDirection);
                     var entries = GridBase.Instance.GetCellEntries(move);
                     bool breakLoop = false;
@@ -184,10 +180,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
                         break;
                     }
 
-                    gameObject.transform.position = move + _positionOffset;
-                    GridBase.Instance.UpdateEntry(this);
+                    yield return Tween.Position(transform, 
+                        move + _positionOffset, _tempMoveTime, ease: Ease.Linear).ToYieldInstruction();
 
-                    yield return new WaitForSeconds(_waitTime);
+                    GridBase.Instance.UpdateEntry(this);
                 }
 
                 /// <summary>
@@ -226,7 +222,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
             }
         }
 
-        _playerMoveRef.enemiesMoved = true;
+        RoundManager.Instance.CompleteTurn(this);
     }
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
@@ -235,5 +231,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener
 
         if (_enemyMovementTime <= 0)
             _enemyMovementTime = 1;
+    }
+
+    public TurnState TurnState => TurnState.World;
+    public void BeginTurn(Vector3 direction)
+    {
+        StartCoroutine(DelayedInput());
     }
 }
