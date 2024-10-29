@@ -28,6 +28,11 @@ public class EndLevelDoor : MonoBehaviour
     private void Start()
     {
         WinChecker.GotCorrectSequence += UnlockDoor;
+
+        if (_isUnlocked)
+        {
+            UnlockDoor();
+        }
     }
 
     /// <summary>
