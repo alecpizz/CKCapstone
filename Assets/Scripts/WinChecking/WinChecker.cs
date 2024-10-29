@@ -8,8 +8,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using NaughtyAttributes;
-
+using SaintsField;
+using SaintsField.Playa;
 public class WinChecker : MonoBehaviour
 {
     public static WinChecker Instance { get; private set; }
@@ -21,7 +21,7 @@ public class WinChecker : MonoBehaviour
     [field: SerializeField] public List<int> TargetNoteSequence { get; private set; } = new List<int>();
 
     [InfoBox("For visualization purposes, don't edit this",
-        EInfoBoxType.Normal)]
+        EMessageType.Info)]
     [SerializeField] private List<int> _collectedSequence = new List<int>();
 
     /// <summary>
