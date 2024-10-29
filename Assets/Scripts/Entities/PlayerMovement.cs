@@ -6,10 +6,11 @@
 *    the grid
 *******************************************************************/
 
+using PrimeTween;
 using System;
 using System.Collections;
-using PrimeTween;
 using UnityEngine;
+using PrimeTween;
 using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
@@ -77,7 +78,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             if ((GridBase.Instance.CellIsEmpty(move)) ||
                 (DebugMenuManager.Instance.GhostMode))
             {
-                yield return Tween.Position(transform, 
+                yield return Tween.Position(transform,
                     move + _positionOffset, duration: _movementTime, Ease.OutBack).ToYieldInstruction();
                 GridBase.Instance.UpdateEntry(this);
             }
@@ -138,7 +139,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         }
         else
         {
-            RoundManager.Instance.CompleteTurn(this);
+            RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
         }
     }
 
