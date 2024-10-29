@@ -142,6 +142,9 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         }
     }
 
+    /// <summary>
+    /// Called by switches to end the player turn early
+    /// </summary>
     public void ForceTurnEnd()
     {
         StopAllCoroutines();

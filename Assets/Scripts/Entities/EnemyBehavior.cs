@@ -239,6 +239,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         StartCoroutine(DelayedInput());
     }
 
+    /// <summary>
+    /// Can force enemy turn to end early
+    /// </summary>
     public void ForceTurnEnd()
     {
         StopAllCoroutines();
