@@ -245,6 +245,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     public void ForceTurnEnd()
     {
         StopAllCoroutines();
+        GridBase.Instance.UpdateEntry(this);
         RoundManager.Instance.CompleteTurn(this);
     }
 }
