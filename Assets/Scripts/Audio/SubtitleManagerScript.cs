@@ -1,3 +1,10 @@
+/******************************************************************
+*    Author: David Henvick
+*    Contributors: 
+*    Date Created: 10/30/2024
+*    Description: this is the script that is used control the subtitling system for cutscenes
+*******************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -32,7 +39,7 @@ public class SubtitleManager : MonoBehaviour
     /// called on scene begin. used to set variables, cut up the _subtitleText string into sentences, 
     /// and lastly start the dialogue audio.
     /// </summary>
-    void Start()
+    private void Start()
     {
         //setting up for string division;
         _subtitleArray = new string[_sentences];
@@ -82,7 +89,7 @@ public class SubtitleManager : MonoBehaviour
     /// </summary>
     /// <param name="instance"></param> instance of audio
     /// <returns></returns> whether sound is still playing
-    bool IsPlaying(FMOD.Studio.EventInstance instance)
+    private bool IsPlaying(FMOD.Studio.EventInstance instance)
     {
         FMOD.Studio.PLAYBACK_STATE state;
         instance.getPlaybackState(out state);
@@ -93,7 +100,7 @@ public class SubtitleManager : MonoBehaviour
     /// called to play currently set up sound
     /// </summary>
 
-    void NextSegment()
+    private void NextSegment()
     {
         _currentIndex++;
 
