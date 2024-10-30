@@ -44,10 +44,6 @@ public class SubtitleManager : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        //setting up audio detection (whether it is playing or not)
-        _callback = new EVENT_CALLBACK(EventCallback);
-        _currentDialogue.setCallback(_callback, EVENT_CALLBACK_TYPE.STOPPED);
-        _currentDialogue.start();
         //setting up for string division;
         _subtitleArray = new string[_sentences];
         _currentCharacter = '\0';
@@ -73,9 +69,10 @@ public class SubtitleManager : MonoBehaviour
         }
         _currentIndex = 0;
 
-        //playing first segment
-        _subtitleObject.text = _subtitleArray[0];
-        _currentDialogue = AudioManager.Instance.PlaySound(_dialogue);
+        //setting up audio detection (whether it is playing or not)
+        _callback = new EVENT_CALLBACK(EventCallback);
+        _currentDialogue.setCallback(_callback, EVENT_CALLBACK_TYPE.STOPPED);
+        _currentDialogue.start();
     }
 
 
@@ -93,8 +90,7 @@ public class SubtitleManager : MonoBehaviour
             FMOD.Studio.EventInstance eventInstance = new EventInstance(instance);
             NextSegment();
         }
-
-        return RESULT.OK;
+        return result;
     }
 
     /// <summary>
