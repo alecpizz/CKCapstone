@@ -25,9 +25,6 @@ public class SubtitleManager : MonoBehaviour
     //visual set up
     [SerializeField] private TMP_Text _subtitleObject;
 
-    //untested
-    private EVENT_CALLBACK _callback;
-
     private string[] _subtitleArray;
     private static int _currentIndex;
     private EventInstance _currentDialogue;
@@ -44,10 +41,6 @@ public class SubtitleManager : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        //setting up audio detection (whether it is playing or not)
-        _callback = new EVENT_CALLBACK(EventCallback);
-        _currentDialogue.setCallback(_callback, EVENT_CALLBACK_TYPE.STOPPED);
-        _currentDialogue.start();
         //setting up for string division;
         _subtitleArray = new string[_sentences];
         _currentCharacter = '\0';
@@ -78,25 +71,6 @@ public class SubtitleManager : MonoBehaviour
         _currentDialogue = AudioManager.Instance.PlaySound(_dialogue);
     }
 
-
-    /// <summary>
-    /// untested
-    /// </summary>
-    /// <param name="type"></param>
-    /// <param name="instance"></param>
-    /// <param name="paramPtr"></param>
-    /// <returns></returns>
-    FMOD.RESULT EventCallback(EVENT_CALLBACK_TYPE type, IntPtr instance, IntPtr paramPtr)
-    {
-        if (type is EVENT_CALLBACK_TYPE.STOPPED)
-        {
-            FMOD.Studio.EventInstance eventInstance = new EventInstance(instance);
-            NextSegment();
-        }
-
-        return RESULT.OK;
-    }
-
     /// <summary>
     /// called on tics
     /// used to find if the current line of dialogue is finished
@@ -106,6 +80,7 @@ public class SubtitleManager : MonoBehaviour
         if (!IsPlaying(_currentDialogue))
         {
             AudioManager.Instance.StopSound(_currentDialogue);
+            NextSegment();
         }
     }
 
