@@ -180,8 +180,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                         break;
                     }
 
-                    yield return Tween.Position(transform, 
-                        move + _positionOffset, _tempMoveTime, ease: Ease.Linear).ToYieldInstruction();
+                    yield return Tween.Position(transform,
+                        move + _positionOffset, _tempMoveTime, ease: Ease.OutBack).OnUpdate<EnemyBehavior>(target: this, (target, tween) =>
+                        {
+                            GridBase.Instance.UpdateEntry(this);
+                        }).ToYieldInstruction();
 
                     GridBase.Instance.UpdateEntry(this);
                 }
