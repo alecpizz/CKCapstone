@@ -13,6 +13,8 @@ using UnityEngine;
 using PrimeTween;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
+using FMODUnity;
+using FMOD.Studio;
 
 public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
 {
@@ -36,6 +38,10 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
     //to tell when player finishes a move
     public UnityEvent OnPlayerMoveComplete;
+
+    // Event references for the player movement sounds
+    [SerializeField] private EventReference _playerMove = default;
+    [SerializeField] private EventReference _playerCantMove = default;
 
     // Start is called before the first frame update
     void Start()
@@ -106,7 +112,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// <param name="collision">Data from collision</param>
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Enemy"))
+        if (!DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("Enemy"))
         {
             // Checks if the enemy is frozen; if they are, doesn't reload the scene
             EnemyBehavior enemy = collision.collider.GetComponent<EnemyBehavior>();
@@ -139,11 +145,13 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
         if ((GridBase.Instance.CellIsEmpty(move) || DebugMenuManager.Instance.GhostMode))
         {
+            AudioManager.Instance.PlaySound(_playerMove);
             StartCoroutine(MovementDelay(direction));
             OnPlayerMoveComplete?.Invoke(); //keeps track of movement completion
         }
         else
         {
+            AudioManager.Instance.PlaySound(_playerCantMove);
             RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
         }
     }
