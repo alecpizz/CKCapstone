@@ -38,6 +38,11 @@ public interface ITurnListener
     /// </summary>
     /// <param name="direction">The user input direction.</param>
     void BeginTurn(Vector3 direction);
+
+    /// <summary>
+    /// Method that gets called to end an entity's turn early.
+    /// </summary>
+    void ForceTurnEnd();
 }
 
 
