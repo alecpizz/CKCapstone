@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Nick Grinstead
-*    Contributors: 
+*    Contributors: David Galmines
 *    Date Created: 9/24/24
 *    Description: Door unlocks when action on WinChecker is invoked.
 *       If door is unlocked and player walks into it, a new scene will load.
@@ -17,6 +17,8 @@ public class EndLevelDoor : MonoBehaviour
     bool _isUnlocked = false;
     DoorGlow doorGlow;
 
+    [SerializeField] private ParticleSystem _unlockedParticles;
+
     private void Awake()
     {
         doorGlow = GetComponent<DoorGlow>();
@@ -32,6 +34,12 @@ public class EndLevelDoor : MonoBehaviour
         if (_isUnlocked)
         {
             UnlockDoor();
+        }
+        else
+        {
+            //prevent VFX particles from playing immediately if
+            //notes are not collected
+            _unlockedParticles.Pause();
         }
     }
 
@@ -53,6 +61,9 @@ public class EndLevelDoor : MonoBehaviour
         {
             // Call the UnlockDoor method from EndLevelDoor
             doorGlow.GlowAndUnlockDoor();
+
+            //play "door unlocked" VFX
+            _unlockedParticles.Play();
         }
     }
 

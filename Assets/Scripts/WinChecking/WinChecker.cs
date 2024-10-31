@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Nick Grinstead
-*    Contributors: David Galmines
+*    Contributors:
 *    Date Created: 9/24/24
 *    Description: Tracks what notes the player has collected and
 *       handles checking if the player has the correct sequence.
@@ -63,9 +63,6 @@ public class WinChecker : MonoBehaviour
     private void Start()
     {
         CollectedNote += CollectNote;
-
-        //prevent VFX particles from playing immediately
-        _unlockedParticles.Pause();
     }
 
     /// <summary>
@@ -102,9 +99,6 @@ public class WinChecker : MonoBehaviour
             {
                 Debug.Log("Correct Sequence");
                 GotCorrectSequence?.Invoke();
-
-                //play "door unlocked" VFX
-                _unlockedParticles.Play();
             }
             else
             {
