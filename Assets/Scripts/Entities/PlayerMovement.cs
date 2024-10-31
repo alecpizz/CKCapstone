@@ -102,7 +102,12 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// <param name="collision">Data from collision</param>
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Enemy"))
+        //if player invincibility is enabled enemies will not kill you
+        if (DebugMenuManager.Instance.Invincibility)
+        {
+            //You won't die
+        }
+        else if (collision.gameObject.CompareTag("Enemy"))
         {
             // Checks if the enemy is frozen; if they are, doesn't reload the scene
             EnemyBehavior enemy = collision.collider.GetComponent<EnemyBehavior>();
