@@ -1,7 +1,7 @@
 /******************************************************************
 *    Author: David Henvick
 *    Contributors: 
-*    Date Created: 10/30/2024
+*    Date Created: 10/28/2024
 *    Description: this is the script that is used control the subtitling system for cutscenes
 *******************************************************************/
 
@@ -24,14 +24,15 @@ public class SubtitleManager : MonoBehaviour
 
     //visual set up
     [SerializeField] private TMP_Text _subtitleObject;
-
+    
+    //variables for string splitting
     private string[] _subtitleArray;
-    private static int _currentIndex;
-    private EventInstance _currentDialogue;
-    private bool _isPlaying;
-
     private char _currentCharacter;
     private string _currentString;
+
+    //FMOD stuffs
+    private static int _currentIndex;
+    private EventInstance _currentDialogue;
 
 
 
@@ -48,7 +49,7 @@ public class SubtitleManager : MonoBehaviour
         _currentString = "";
 
 
-
+        //splitting string to sentence array
         for(int i = 0; i < _subtitleText.Length; i++)
         {
             _currentCharacter = _subtitleText[i];
