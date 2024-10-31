@@ -10,6 +10,9 @@ using UnityEngine;
 
 public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity
 {
+    public bool AllowLaserPassThrough => true;
+    public bool HitWrapAround => false;
+    public Vector3 Position => transform.position;
     private HarmonyBeam _harmonyBeam;
     private Vector3 _fwdDir;
 
@@ -53,19 +56,23 @@ public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity
         }
     }
 
-    public bool AllowLaserPassThrough { get => true; }
-    public void OnLaserHit(RaycastHit hit)
+    /// <summary>
+    /// When this object is hit by a laser, turn on the beam, and check for objects.
+    /// </summary>
+    public void OnLaserHit()
     {
         _harmonyBeam.ToggleBeam(true);
-        _harmonyBeam.DetectObjects();
+        _harmonyBeam.ScanForObjects();
     }
 
+    /// <summary>
+    /// When this object is non longer being hit by a laser, turn off the beam
+    /// and check for any exited objects.
+    /// </summary>
     public void OnLaserExit()
     {
         _harmonyBeam.ToggleBeam(false);
-        _harmonyBeam.DetectObjects();
+        _harmonyBeam.ScanForObjects();
     }
 
-    public bool HitWrapAround { get => false; }
-    public Vector3 Position { get => transform.position; }
 }
