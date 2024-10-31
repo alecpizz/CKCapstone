@@ -35,7 +35,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     private GameObject _activeWallEffect; // Instance of the active wall collision effect
     private readonly List<IHarmonyBeamEntity> _hitEntities = new();
     private readonly HashSet<IHarmonyBeamEntity> _prevHitEntities = new();
-    private readonly Dictionary<IHarmonyBeamEntity, GameObject> _hitEffectEntities = new();
+    private readonly Dictionary<IHarmonyBeamEntity, GameObject> _wrappedEnemyFX = new();
     private bool _enemyGrabbedAudioPlaying = false;
     private EventInstance _beamInstance;
     private EventInstance _enemyGrabbedInstance;
@@ -52,6 +52,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
             _activeWallEffect = Instantiate(_wallCollisionEffectPrefab);
             _activeWallEffect.SetActive(false);
         }
+        ScanForObjects();
     }
 
     /// <summary>
@@ -157,12 +158,12 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
                         //spawn some enemy vfx
                         if (entity.HitWrapAround)
                         {
-                            if (!_hitEffectEntities.ContainsKey(entity))
+                            if (!_wrappedEnemyFX.ContainsKey(entity))
                             {
                                 GameObject enemyFX = Instantiate(_enemyHitEffectPrefab, entity.Position,
                                     Quaternion.identity);
-                                _hitEffectEntities.TryAdd(entity, enemyFX);
-                                _hitEffectEntities[entity] = enemyFX;
+                                _wrappedEnemyFX.TryAdd(entity, enemyFX);
+                                _wrappedEnemyFX[entity] = enemyFX;
                                 _enemyGrabbedInstance = AudioManager.Instance.PlaySound(_enemyHarmonization);
                             }
 
@@ -262,9 +263,9 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
             if (_hitEntities.Contains(harmonyBeamEntity)) continue;
             //disable any hit enemy vfx here too :)
             harmonyBeamEntity.OnLaserExit();
-            if (!_hitEffectEntities.TryGetValue(harmonyBeamEntity, out var fx)) continue;
+            if (!_wrappedEnemyFX.TryGetValue(harmonyBeamEntity, out var fx)) continue;
             Destroy(fx.gameObject);
-            _hitEntities.Remove(harmonyBeamEntity);
+            _wrappedEnemyFX.Remove(harmonyBeamEntity);
         }
     }
 }
