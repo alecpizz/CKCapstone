@@ -81,6 +81,11 @@ public class MenuManager : MonoBehaviour
         _tutorialCanvas.SetActive(true);
     }
 
+    public void DeactivateTutorialCanvas()
+    {
+        _tutorialCanvas.SetActive(false);
+    }
+
     /// <summary>
     /// Loads the first scene when a button is pressed
     /// </summary>
