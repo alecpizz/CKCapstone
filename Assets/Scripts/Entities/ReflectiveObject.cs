@@ -5,45 +5,28 @@
 *    Description: Script that handles harmony beam reflections
 *******************************************************************/
 
+
 using UnityEngine;
 
-public class ReflectiveObject : MonoBehaviour
+public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity
 {
-    [SerializeField] private bool _reflectLeft = true;
-
     private HarmonyBeam _harmonyBeam;
+    private Vector3 _fwdDir;
 
     private void Start()
     {
+        _fwdDir = transform.forward;
         _harmonyBeam = GetComponent<HarmonyBeam>();
-
-        // Rotate the cube based on _reflectLeft boolean
-        if (_reflectLeft)
-        {
-            transform.Rotate(new(0, -90, 0)); // Rotate -90 degrees if reflecting left
-        }
-        else
-        {
-            transform.Rotate(new(0, 90, 0)); // Rotate 90 degrees if reflecting right
-        }
-
-        //ToggleBeam();
+        _harmonyBeam.ToggleBeam(false);
     }
 
     /// <summary>
     /// Returns the new direction for the beam after reflecting
     /// </summary>
     /// <param name="incomingDirection">direction the original laser is coming from</param>
-    public Vector3 GetReflectionDirection(Vector3 incomingDirection)
+    public Vector3 GetReflectionDirection()
     {
-        if (_reflectLeft)
-        {
-            return Quaternion.Euler(0, -90, 0) * incomingDirection;  // Rotate -90 degrees (left)
-        }
-        else
-        {
-            return Quaternion.Euler(0, 90, 0) * incomingDirection;   // Rotate 90 degrees (right)
-        }
+        return transform.forward;
     }
 
     /// <summary>
@@ -51,7 +34,6 @@ public class ReflectiveObject : MonoBehaviour
     /// </summary>
     public void ToggleBeam(bool toggle)
     {
-        Debug.Log("Toggling Beam: " + toggle);
         _harmonyBeam.ToggleBeam(toggle);
     }
 
@@ -59,16 +41,28 @@ public class ReflectiveObject : MonoBehaviour
     /// Toggles the direction of the reflection
     /// </summary>
     /// <param name="left">true for left, false for right</param>
-    public void ChangeDirection(bool left = true)
+    public void FlipDirection(bool flip = true)
     {
-        _reflectLeft = left;
-        if (_reflectLeft)
+        if (flip)
         {
-            transform.rotation = Quaternion.Euler(0, -90, 0); // Rotate -90 degrees (left)
+            transform.forward = -_fwdDir;
         }
         else
         {
-            transform.rotation = Quaternion.Euler(0, 90, 0); // Rotate -90 degrees (left)
+            transform.forward = _fwdDir;
         }
     }
+
+    public bool AllowLaserPassThrough { get => true; }
+    public void OnLaserHit(RaycastHit hit)
+    {
+        _harmonyBeam.ToggleBeam(true);
+    }
+
+    public void OnLaserExit()
+    {
+        _harmonyBeam.ToggleBeam(false);
+    }
+
+    public bool HitWrapAround { get => false; }
 }

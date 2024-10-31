@@ -15,7 +15,7 @@ using NaughtyAttributes;
 using PrimeTween;
 using Unity.VisualScripting;
 
-public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
+public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener, IHarmonyBeamEntity
 {
     public bool IsTransparent { get => true; }
     public Vector3 moveInDirection { get; private set; }
@@ -238,4 +238,17 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     {
         StartCoroutine(DelayedInput());
     }
+
+    public bool AllowLaserPassThrough { get => true; }
+    public void OnLaserHit(RaycastHit hit)
+    {
+        enemyFrozen = true;
+    }
+
+    public void OnLaserExit()
+    {
+        enemyFrozen = false;
+    }
+
+    public bool HitWrapAround { get => true; }
 }
