@@ -250,11 +250,17 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     }
     
     public bool AllowLaserPassThrough { get => true; }
-    public void OnLaserHit(RaycastHit hit)
+    /// <summary>
+    /// Freezes the enemy.
+    /// </summary>
+    public void OnLaserHit()
     {
         EnemyFrozen = true;
     }
 
+    /// <summary>
+    /// Unfreezes the enemy.
+    /// </summary>
     public void OnLaserExit()
     {
         EnemyFrozen = false;
