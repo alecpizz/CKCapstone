@@ -82,6 +82,14 @@ public class MenuManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Clicking the button on the tutorial screen deactivates the tutorial canvas.
+    /// </summary>
+    public void DeactivateTutorialCanvas()
+    {
+        _tutorialCanvas.SetActive(false);
+    }
+
+    /// <summary>
     /// Loads the first scene when a button is pressed
     /// </summary>
     public void StartGame()
