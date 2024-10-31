@@ -221,11 +221,6 @@ public class GridBase : MonoBehaviour
         return true;
     }
 
-    public bool CellIsEdge(Vector3Int cell)
-    {
-        return cell.x == 0 || cell.z == 0 || cell.x == _gridSize - 1 || cell.z == _gridSize - 1;
-    }
-
     /// <summary>
     /// Checks if the cell contains any objects.
     /// </summary>
