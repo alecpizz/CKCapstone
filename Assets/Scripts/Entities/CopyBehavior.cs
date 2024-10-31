@@ -3,12 +3,13 @@
 *    Contributors: Mitchell Young
 *    Date Created: 10/30/24
 *    Description: Script that handles the behavior of the copy
-*    entity that matches player movement.
+*    enemy that matches player movement.
 *******************************************************************/
 
 using System.Collections;
 using System.Collections.Generic;
 using PrimeTween;
+using NaughtyAttributes;
 using UnityEngine;
 
 public class CopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
@@ -21,8 +22,9 @@ public class CopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListe
     private Vector3 _positionOffset;
     [SerializeField]
     private PlayerInteraction _playerInteraction;
+    [Required] [SerializeField] private GameObject _player;
 
-    [SerializeField] private float _movementTime = 0.25f;
+    private float _movementTime = 0.55f;
 
     private int _copyMovementTiming = 1;
     private WaitForSeconds _waitForSeconds;
@@ -59,12 +61,33 @@ public class CopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListe
 
         for (int i = 0; i < _copyMovementTiming; ++i)
         {
-            // Moves if there is no wall below the copy entity
+            // Moves if there is no objects in the next grid space
             var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
+            var entries = GridBase.Instance.GetCellEntries(move);
+            bool breakLoop = false;
             if (GridBase.Instance.CellIsEmpty(move))
             {
+                //If the next cell contains an object that is not the player then the loop breaks
+                //enemy can't move into other enemies, walls, etc.
+                foreach (var entry in entries)
+                {
+                    if (entry.GetGameObject != _player)
+                    {
+                        breakLoop = true;
+                        break;
+                    }
+                }
+
+                if (breakLoop == true)
+                {
+                    break;
+                }
                 yield return Tween.Position(transform,
-                    move + _positionOffset, duration: _movementTime, Ease.OutBack).ToYieldInstruction();
+                        move + _positionOffset, _movementTime, ease: Ease.OutBack).OnUpdate<CopyBehavior>(target: this, (target, tween) =>
+                        {
+                            GridBase.Instance.UpdateEntry(this);
+                        }).ToYieldInstruction();
+
                 GridBase.Instance.UpdateEntry(this);
             }
             else

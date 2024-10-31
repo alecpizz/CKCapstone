@@ -1,9 +1,8 @@
 /******************************************************************
-*    Author: Cole Stranczek
+*    Author: Mitchell Young
 *    Contributors: Cole Stranczek, Mitchell Young, Nick Grinstead, Alec Pizziferro
-*    Date Created: 10/3/24
-*    Description: Script that handles the behavior of the enemy,
-*    from movement to causing a failstate with the player
+*    Date Created: 10/31/24
+*    Description: Script that handles the behavior of the son enemy
 *******************************************************************/
 
 using System;
@@ -15,7 +14,7 @@ using NaughtyAttributes;
 using PrimeTween;
 using Unity.VisualScripting;
 
-public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
+public class SonEnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
 {
     public bool IsTransparent { get => true; }
     public Vector3 moveInDirection { get; private set; }
@@ -30,7 +29,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
     [SerializeField] private bool _atStart;
     [SerializeField] private int _currentPoint = 0;
-    
+
     //Wait time between enemy moving each individual tile while on path to next destination
     [SerializeField] private float _waitTime = 0.5f;
 
@@ -52,7 +51,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
     private int _enemyMovementTime = 1;
 
-    [SerializeField] private float _tempMoveTime = 0.55f;
+    private float _tempMoveTime = 0.55f;
 
     // Start is called before the first frame update
     void Start()
@@ -128,7 +127,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         /// Checks to see if all enemies have finished moving via a bool in the player script 
         /// and if the enemy is currently frozen by the harmony beam
         /// </summary>
-       
+
         if (!enemyFrozen)
         {
             for (int i = 0; i < _enemyMovementTime; ++i)
@@ -176,8 +175,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                         break;
                     }
 
-                    yield return Tween.Position(transform, 
-                        move + _positionOffset, _tempMoveTime, ease: Ease.OutBack).OnUpdate<EnemyBehavior>(target: this, (target, tween) => 
+                    yield return Tween.Position(transform,
+                        move + _positionOffset, _tempMoveTime, ease: Ease.OutBack).OnUpdate<SonEnemyBehavior>(target: this, (target, tween) =>
                         {
                             GridBase.Instance.UpdateEntry(this);
                         }).ToYieldInstruction();
