@@ -17,7 +17,8 @@ public enum TurnState
 {
     Player = 0,
     World = 1,
-    None = 2,
+    Enemy = 2,
+    None = 3,
 }
 
 /// <summary>
@@ -245,7 +246,8 @@ public sealed class RoundManager : MonoBehaviour
         return turnState switch
         {
             TurnState.Player => TurnState.World,
-            TurnState.World => TurnState.None,
+            TurnState.World => TurnState.Enemy,
+            TurnState.Enemy => TurnState.None,
             _ => null
         };
     }
@@ -261,6 +263,7 @@ public sealed class RoundManager : MonoBehaviour
         {
             TurnState.Player => TurnState.None,
             TurnState.World => TurnState.Player,
+            TurnState.Enemy => TurnState.World,
             _ => null
         };
     }

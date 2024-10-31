@@ -18,7 +18,7 @@ using UnityEditor;
 /// A script that handles a harmony beam, and invoking
 /// exiting and entering for the harmony beam.
 /// </summary>
-public class HarmonyBeam : MonoBehaviour
+public class HarmonyBeam : MonoBehaviour, ITurnListener
 {
     [SerializeField] private EventReference _harmonySound = default;
     [SerializeField] private EventReference _enemyHarmonization = default;
@@ -70,13 +70,23 @@ public class HarmonyBeam : MonoBehaviour
 #endif
     }
 
+    private void OnEnable()
+    {
+        RoundManager.Instance.RegisterListener(this);
+    }
+
+    private void OnDisable()
+    {
+        RoundManager.Instance.RegisterListener(this);
+    }
+
     /// <summary>
     /// Every frame, attempt to shoot a laser in the forward direction.
     /// </summary>
     private void FixedUpdate()
     {
         //no real reason to do this every update. could probably tie into rounds system but would have weird visuals.
-        ShootLaser(transform.position, transform.forward, raycastDistance);
+        //ShootLaser(transform.position, transform.forward, raycastDistance);
     }
 
     /// <summary>
@@ -101,45 +111,45 @@ public class HarmonyBeam : MonoBehaviour
             //we hit some things
             // if (size > 0)
             // {
-                //we hit some things
-                // for (int i = 0; i < size; i++)
-                // {
-                //     var hit = _raycastHitCache[i];
-                //     var entity = hit.collider.GetComponentInParent<IHarmonyBeamEntity>();
-                //     if (entity != null)
-                //     {
-                //         UpdateWallEffect(false);
-                //         //TODO: prevent this from firing over and over.
-                //         entity.OnLaserHit(hit);
-                //         _hitEntities.Add(entity);
-                //         if (entity.HitWrapAround)
-                //         {
-                //             //enemy vfx, gross due to aformentioned TODO
-                //             if (!_hitEffectEntities.ContainsKey(entity) || 
-                //                 (_hitEffectEntities.ContainsKey(entity) && _hitEffectEntities[entity] == null))
-                //             {
-                //                 GameObject enemyFX = Instantiate(_enemyHitEffectPrefab, entity.Position,
-                //                     Quaternion.identity);
-                //                 _hitEffectEntities.TryAdd(entity, enemyFX);
-                //                 _hitEffectEntities[entity] = enemyFX;
-                //                 _enemyGrabbedInstance = AudioManager.Instance.PlaySound(_enemyHarmonization);
-                //             }
-                //
-                //             enemyHit = true;
-                //         }
-                //
-                //         if (!entity.AllowLaserPassThrough)
-                //         {
-                //             break;
-                //         }
-                //     }
-                //     else
-                //     {
-                //         //we hit something else, but it's untagged/no component, assume stopping.
-                //         UpdateWallEffect(true, hit.point, hit.normal);
-                //         break;
-                //     }
-                // }
+            //we hit some things
+            // for (int i = 0; i < size; i++)
+            // {
+            //     var hit = _raycastHitCache[i];
+            //     var entity = hit.collider.GetComponentInParent<IHarmonyBeamEntity>();
+            //     if (entity != null)
+            //     {
+            //         UpdateWallEffect(false);
+            //         //TODO: prevent this from firing over and over.
+            //         entity.OnLaserHit(hit);
+            //         _hitEntities.Add(entity);
+            //         if (entity.HitWrapAround)
+            //         {
+            //             //enemy vfx, gross due to aformentioned TODO
+            //             if (!_hitEffectEntities.ContainsKey(entity) || 
+            //                 (_hitEffectEntities.ContainsKey(entity) && _hitEffectEntities[entity] == null))
+            //             {
+            //                 GameObject enemyFX = Instantiate(_enemyHitEffectPrefab, entity.Position,
+            //                     Quaternion.identity);
+            //                 _hitEffectEntities.TryAdd(entity, enemyFX);
+            //                 _hitEffectEntities[entity] = enemyFX;
+            //                 _enemyGrabbedInstance = AudioManager.Instance.PlaySound(_enemyHarmonization);
+            //             }
+            //
+            //             enemyHit = true;
+            //         }
+            //
+            //         if (!entity.AllowLaserPassThrough)
+            //         {
+            //             break;
+            //         }
+            //     }
+            //     else
+            //     {
+            //         //we hit something else, but it's untagged/no component, assume stopping.
+            //         UpdateWallEffect(true, hit.point, hit.normal);
+            //         break;
+            //     }
+            // }
             // }
             // else
 
@@ -155,12 +165,13 @@ public class HarmonyBeam : MonoBehaviour
                     print("edging");
                     stop = true;
                 }
-                Debug.Log(nextCell.ToString());
+
+            
                 var entries = GridBase.Instance.GetCellEntries(nextCell);
                 foreach (var gridEntry in entries)
                 {
                     if (gridEntry == null) continue;
-                    if(gridEntry.GetGameObject.TryGetComponent(out IHarmonyBeamEntity entity))
+                    if (gridEntry.GetGameObject.TryGetComponent(out IHarmonyBeamEntity entity))
                     {
                         Debug.Log("hit");
                         entity.OnLaserHit(default);
@@ -169,13 +180,13 @@ public class HarmonyBeam : MonoBehaviour
                             stop = true;
                         }
                     }
-                    else if(!gridEntry.IsTransparent)
+                    else if (!gridEntry.IsTransparent)
                     {
                         stop = true;
                     }
                 }
             }
-            
+
             {
                 //didn't hit anything
                 UpdateWallEffect(false);
@@ -240,7 +251,7 @@ public class HarmonyBeam : MonoBehaviour
                 particleSystem.Stop();
             }
         }
-        
+
         AudioManager.Instance.PauseSound(_beamInstance, beamActive);
     }
 
@@ -268,4 +279,79 @@ public class HarmonyBeam : MonoBehaviour
     }
 
     #endregion
+
+    public TurnState TurnState
+    {
+        get => TurnState.World;
+    }
+
+    public void BeginTurn(Vector3 direction)
+    {
+        _hitEntities.Clear();
+        if (beamActive)
+        {
+            var currTilePos = (transform.position);
+            var fwd = transform.forward;
+            bool stop = false;
+            while (!stop)
+            {
+                var nextCell = GridBase.Instance.GetCellPositionInDirection(currTilePos, fwd);
+                currTilePos = nextCell;
+                if (GridBase.Instance.CellIsEdge(GridBase.Instance.WorldToCell(nextCell)))
+                {
+                    stop = true;
+                }
+
+                if (!GridBase.Instance.CellIsTransparent(nextCell))
+                {
+                }
+
+                var entries = GridBase.Instance.GetCellEntries(nextCell);
+                foreach (var gridEntry in entries)
+                {
+                    if (gridEntry == null) continue;
+                    if (gridEntry.GetGameObject.TryGetComponent(out IHarmonyBeamEntity entity))
+                    {
+                        if (!_prevHitEntities.Contains(entity))
+                        {
+                            entity.OnLaserHit(default);
+                        }
+                        _hitEntities.Add(entity);
+                        if (!entity.AllowLaserPassThrough)
+                        {
+                            stop = true;
+                        }
+
+                        if (entity.HitWrapAround)
+                        {
+                        }
+                    }
+                    else if (!gridEntry.IsTransparent)
+                    {
+                        stop = true;
+                    }
+                }
+            }
+        }
+        else
+        {
+            
+        }
+        
+        foreach (var harmonyBeamEntity in _prevHitEntities)
+        {
+            if (!_hitEntities.Contains(harmonyBeamEntity))
+            {
+                harmonyBeamEntity.OnLaserExit();
+            }
+        }
+        _prevHitEntities.Clear();
+        _hitEntities.ForEach(entity => _prevHitEntities.Add(entity));
+        
+        RoundManager.Instance.CompleteTurn(this);
+    }
+
+    public void ForceTurnEnd()
+    {
+    }
 }
