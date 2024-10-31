@@ -81,6 +81,9 @@ public class MenuManager : MonoBehaviour
         _tutorialCanvas.SetActive(true);
     }
 
+    /// <summary>
+    /// Clicking the button on the tutorial screen deactivates the tutorial canvas.
+    /// </summary>
     public void DeactivateTutorialCanvas()
     {
         _tutorialCanvas.SetActive(false);
