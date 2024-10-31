@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Cole Stranczek
-*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson, Alec Pizziferro
+*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson, Alec Pizziferro, Josephine Qualls
 *    Date Created: 9/22/24
 *    Description: Script that handles the player's movement along
 *    the grid
@@ -12,6 +12,7 @@ using System.Collections;
 using UnityEngine;
 using PrimeTween;
 using UnityEngine.InputSystem;
+using UnityEngine.Events;
 
 public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
 {
@@ -32,6 +33,9 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
     private int _playerMovementTiming = 1;
     private WaitForSeconds _waitForSeconds;
+
+    //to tell when player finishes a move
+    public UnityEvent OnPlayerMoveComplete;
 
     // Start is called before the first frame update
     void Start()
@@ -136,6 +140,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         if ((GridBase.Instance.CellIsEmpty(move) || DebugMenuManager.Instance.GhostMode))
         {
             StartCoroutine(MovementDelay(direction));
+            OnPlayerMoveComplete?.Invoke(); //keeps track of movement completion
         }
         else
         {
