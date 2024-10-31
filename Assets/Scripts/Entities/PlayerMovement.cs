@@ -6,14 +6,15 @@
 *    the grid
 *******************************************************************/
 
+using PrimeTween;
 using System;
 using System.Collections;
 using UnityEngine;
+using PrimeTween;
 using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
 {
-
     public Vector3 FacingDirection { get; private set; }
     public bool IsTransparent { get => true; }
     public Vector3 Position { get => transform.position; }
@@ -26,6 +27,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
     [SerializeField]
     private float _delayTime = 0.1f;
+
+    [SerializeField] private float _movementTime = 0.25f;
 
     private int _playerMovementTiming = 1;
     private WaitForSeconds _waitForSeconds;
@@ -75,7 +78,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             if ((GridBase.Instance.CellIsEmpty(move)) ||
                 (DebugMenuManager.Instance.GhostMode))
             {
-                gameObject.transform.position = move + _positionOffset;
+                yield return Tween.Position(transform,
+                    move + _positionOffset, duration: _movementTime, Ease.OutBack).ToYieldInstruction();
                 GridBase.Instance.UpdateEntry(this);
             }
             else
@@ -135,7 +139,17 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         }
         else
         {
-            RoundManager.Instance.CompleteTurn(this);
+            RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
         }
+    }
+
+    /// <summary>
+    /// Called by switches to end the player turn early
+    /// </summary>
+    public void ForceTurnEnd()
+    {
+        StopAllCoroutines();
+        GridBase.Instance.UpdateEntry(this);
+        RoundManager.Instance.CompleteTurn(this);
     }
 }

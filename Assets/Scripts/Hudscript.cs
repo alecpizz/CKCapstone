@@ -66,6 +66,11 @@ public class HUDscript : MonoBehaviour, ITimeListener
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
     {
+        if (_timeSignatureUIx == null || _timeSignatureUIy == null)
+        {
+            Debug.LogWarning("Missing hud elements");
+            return;
+        }
         _timeSignatureUIy.text = newTimeSignature.y.ToString();
         _timeSignatureUIx.text = newTimeSignature.x.ToString();
     }
@@ -91,7 +96,7 @@ public class HUDscript : MonoBehaviour, ITimeListener
     /// </summary>
     private void UpdateColectedNotesIcons(int collectedNote)
     {
-        if (collectedNote >= 0 && collectedNote < _notes.Count)
+        if (collectedNote >= 0 && collectedNote < _noteImages.Length)
         {
             _noteImages[collectedNote].SetActive(true);
         }
