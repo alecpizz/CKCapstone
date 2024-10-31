@@ -12,6 +12,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 /// <summary>
 /// Class for actions taken once switch is triggered
@@ -36,6 +37,12 @@ public class SwitchTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            PlayerMovement playerMovement;
+            if (other.gameObject.TryGetComponent<PlayerMovement>(out playerMovement))
+            {
+                playerMovement.ForceTurnEnd();
+            }
+
             _isTriggered = !_isTriggered;
 
             //changes the walls
