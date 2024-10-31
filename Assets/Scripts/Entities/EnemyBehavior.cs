@@ -132,92 +132,90 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         /// Checks to see if all enemies have finished moving via a bool in the player script 
         /// and if the enemy is currently frozen by the harmony beam
         /// </summary>
-       
-        if (!enemyFrozen)
+
+
+        for (int i = 0; i < _enemyMovementTime && !enemyFrozen; ++i)
         {
-            for (int i = 0; i < _enemyMovementTime; ++i)
+            /// <summary>
+            /// Looks at current point the the struct object list to pull the current 
+            /// direction (enum) and amount of tiles to move in direction (int)
+            /// </summary>
+            var point = _movePoints[_currentPoint];
+            var pointDirection = point.direction;
+            var pointTiles = point.tilesToMove;
+            FindDirection(pointDirection);
+
+            //Reverses move direction if going back through the list
+            if (!_atStart)
             {
-                /// <summary>
-                /// Looks at current point the the struct object list to pull the current 
-                /// direction (enum) and amount of tiles to move in direction (int)
-                /// </summary>
-                var point = _movePoints[_currentPoint];
-                var pointDirection = point.direction;
-                var pointTiles = point.tilesToMove;
-                FindDirection(pointDirection);
+                moveInDirection = -moveInDirection;
+            }
 
-                //Reverses move direction if going back through the list
-                if (!_atStart)
+            /// <summary>
+            /// For loop repeats enemy moving over a tile in the direction given until 
+            /// either it sees another object in that direction
+            /// that isn't the player (will move into players but not walls/enemies).
+            /// </summary>
+            for (int j = 0; j < pointTiles; j++)
+            {
+                var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position,
+                    moveInDirection);
+                var entries = GridBase.Instance.GetCellEntries(move);
+                bool breakLoop = false;
+
+                //If the next cell contains an object that is not the player then the loop breaks
+                //enemy can't move into other enemies, walls, etc.
+                foreach (var entry in entries)
                 {
-                    moveInDirection = -moveInDirection;
-                }
-
-                /// <summary>
-                /// For loop repeats enemy moving over a tile in the direction given until 
-                /// either it sees another object in that direction
-                /// that isn't the player (will move into players but not walls/enemies).
-                /// </summary>
-                for (int j = 0; j < pointTiles; j++)
-                {
-                    var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position,
-                        moveInDirection);
-                    var entries = GridBase.Instance.GetCellEntries(move);
-                    bool breakLoop = false;
-
-                    //If the next cell contains an object that is not the player then the loop breaks
-                    //enemy can't move into other enemies, walls, etc.
-                    foreach (var entry in entries)
+                    if (entry.GetGameObject != _player)
                     {
-                        if (entry.GetGameObject != _player)
-                        {
-                            breakLoop = true;
-                            break;
-                        }
-                    }
-
-                    if (breakLoop == true)
-                    {
+                        breakLoop = true;
                         break;
                     }
-
-                    yield return Tween.Position(transform, 
-                        move + _positionOffset, _tempMoveTime, ease: Ease.Linear).ToYieldInstruction();
-
-                    GridBase.Instance.UpdateEntry(this);
                 }
 
-                /// <summary>
-                /// If the current point is equal to the length of the list then the if/else statement 
-                /// will check the atStart bool and concurrently reverse through the list
-                /// </summary>
-                if (_atStart == true)
+                if (breakLoop == true)
                 {
-                    if (_currentPoint >= _movePoints.Count - 1)
+                    break;
+                }
+
+                yield return Tween.Position(transform,
+                    move + _positionOffset, _tempMoveTime, ease: Ease.Linear).ToYieldInstruction();
+
+                GridBase.Instance.UpdateEntry(this);
+            }
+
+            /// <summary>
+            /// If the current point is equal to the length of the list then the if/else statement 
+            /// will check the atStart bool and concurrently reverse through the list
+            /// </summary>
+            if (_atStart == true)
+            {
+                if (_currentPoint >= _movePoints.Count - 1)
+                {
+                    if (!_circularMovement)
                     {
-                        if (!_circularMovement)
-                        {
-                            _atStart = false;
-                        }
-                        else
-                        {
-                            _currentPoint = 0;
-                        }
+                        _atStart = false;
                     }
                     else
                     {
-                        _currentPoint++;
+                        _currentPoint = 0;
                     }
                 }
                 else
                 {
-                    if (_currentPoint <= 0)
-                    {
-                        _atStart = true;
-                    }
-                    else
-                    {
-                        _currentPoint--;
-                    }
+                    _currentPoint++;
+                }
+            }
+            else
+            {
+                if (_currentPoint <= 0)
+                {
+                    _atStart = true;
+                }
+                else
+                {
+                    _currentPoint--;
                 }
             }
         }

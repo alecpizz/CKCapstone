@@ -22,7 +22,7 @@ public class HarmonyBeam : MonoBehaviour
 {
     [SerializeField] private EventReference _harmonySound = default;
     [SerializeField] private EventReference _enemyHarmonization = default;
-    [SerializeField] private float raycastDistance = 10f;
+    [SerializeField] private float raycastDistance = 25f;
     [Space] [SerializeField] private bool beamActive = true;
 
     // Array for managing the multiple child particle systems
@@ -76,8 +76,6 @@ public class HarmonyBeam : MonoBehaviour
     private void FixedUpdate()
     {
         //no real reason to do this every update. could probably tie into rounds system but would have weird visuals.
-        if (_tick++ % TickRate != 0) return;
-        _tick = 0;
         ShootLaser(transform.position, transform.forward, raycastDistance);
     }
 
@@ -101,49 +99,83 @@ public class HarmonyBeam : MonoBehaviour
         if (beamActive)
         {
             //we hit some things
-            if (size > 0)
-            {
+            // if (size > 0)
+            // {
                 //we hit some things
-                for (int i = 0; i < size; i++)
+                // for (int i = 0; i < size; i++)
+                // {
+                //     var hit = _raycastHitCache[i];
+                //     var entity = hit.collider.GetComponentInParent<IHarmonyBeamEntity>();
+                //     if (entity != null)
+                //     {
+                //         UpdateWallEffect(false);
+                //         //TODO: prevent this from firing over and over.
+                //         entity.OnLaserHit(hit);
+                //         _hitEntities.Add(entity);
+                //         if (entity.HitWrapAround)
+                //         {
+                //             //enemy vfx, gross due to aformentioned TODO
+                //             if (!_hitEffectEntities.ContainsKey(entity) || 
+                //                 (_hitEffectEntities.ContainsKey(entity) && _hitEffectEntities[entity] == null))
+                //             {
+                //                 GameObject enemyFX = Instantiate(_enemyHitEffectPrefab, entity.Position,
+                //                     Quaternion.identity);
+                //                 _hitEffectEntities.TryAdd(entity, enemyFX);
+                //                 _hitEffectEntities[entity] = enemyFX;
+                //                 _enemyGrabbedInstance = AudioManager.Instance.PlaySound(_enemyHarmonization);
+                //             }
+                //
+                //             enemyHit = true;
+                //         }
+                //
+                //         if (!entity.AllowLaserPassThrough)
+                //         {
+                //             break;
+                //         }
+                //     }
+                //     else
+                //     {
+                //         //we hit something else, but it's untagged/no component, assume stopping.
+                //         UpdateWallEffect(true, hit.point, hit.normal);
+                //         break;
+                //     }
+                // }
+            // }
+            // else
+
+            var currTilePos = (transform.position);
+            var fwd = transform.forward;
+            bool stop = false;
+            while (!stop)
+            {
+                var nextCell = GridBase.Instance.GetCellPositionInDirection(currTilePos, transform.forward);
+                currTilePos = nextCell;
+                if (GridBase.Instance.CellIsEdge(GridBase.Instance.WorldToCell(nextCell)))
                 {
-                    var hit = _raycastHitCache[i];
-                    var entity = hit.collider.GetComponentInParent<IHarmonyBeamEntity>();
-                    if (entity != null)
+                    print("edging");
+                    stop = true;
+                }
+                Debug.Log(nextCell.ToString());
+                var entries = GridBase.Instance.GetCellEntries(nextCell);
+                foreach (var gridEntry in entries)
+                {
+                    if (gridEntry == null) continue;
+                    if(gridEntry.GetGameObject.TryGetComponent(out IHarmonyBeamEntity entity))
                     {
-                        UpdateWallEffect(false);
-                        //TODO: prevent this from firing over and over.
-                        entity.OnLaserHit(hit);
-                        _hitEntities.Add(entity);
-                        if (entity.HitWrapAround)
-                        {
-                            //enemy vfx, gross due to aformentioned TODO
-                            if (!_hitEffectEntities.ContainsKey(entity) || 
-                                (_hitEffectEntities.ContainsKey(entity) && _hitEffectEntities[entity] == null))
-                            {
-                                GameObject enemyFX = Instantiate(_enemyHitEffectPrefab, entity.Position,
-                                    Quaternion.identity);
-                                _hitEffectEntities.TryAdd(entity, enemyFX);
-                                _hitEffectEntities[entity] = enemyFX;
-                                _enemyGrabbedInstance = AudioManager.Instance.PlaySound(_enemyHarmonization);
-                            }
-
-                            enemyHit = true;
-                        }
-
+                        Debug.Log("hit");
+                        entity.OnLaserHit(default);
                         if (!entity.AllowLaserPassThrough)
                         {
-                            break;
+                            stop = true;
                         }
                     }
-                    else
+                    else if(!gridEntry.IsTransparent)
                     {
-                        //we hit something else, but it's untagged/no component, assume stopping.
-                        UpdateWallEffect(true, hit.point, hit.normal);
-                        break;
+                        stop = true;
                     }
                 }
             }
-            else
+            
             {
                 //didn't hit anything
                 UpdateWallEffect(false);

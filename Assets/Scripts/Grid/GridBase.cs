@@ -221,6 +221,11 @@ public class GridBase : MonoBehaviour
         return true;
     }
 
+    public bool CellIsEdge(Vector3Int cell)
+    {
+        return cell.x == 0 || cell.z == 0 || cell.x == _gridSize - 1 || cell.z == _gridSize - 1;
+    }
+
     /// <summary>
     /// Checks if the cell contains any objects.
     /// </summary>
@@ -283,6 +288,11 @@ public class GridBase : MonoBehaviour
     public Vector3 GetCellPositionInDirection(Vector3 position, Vector3 dir)
     {
         return CellToWorld(WorldToCell(position) + Vector3ToInt(dir.normalized));
+    }
+    
+    public Vector3Int GetCellInDirection(Vector3Int cell, Vector3 dir)
+    {
+        return WorldToCell(CellToWorld(cell + Vector3ToInt(dir.normalized)));
     }
 
     /// <summary>
