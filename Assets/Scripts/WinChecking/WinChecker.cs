@@ -18,7 +18,7 @@ public class WinChecker : MonoBehaviour
     public static Action GotCorrectSequence;
     public static Action GotWrongSequence;
 
-    [field:SerializeField] public List<int> TargetNoteSequence { get; private set; } = new List<int>();
+    [field: SerializeField] public List<int> TargetNoteSequence { get; private set; } = new List<int>();
 
     [InfoBox("For visualization purposes, don't edit this",
         EInfoBoxType.Normal)]
@@ -31,6 +31,9 @@ public class WinChecker : MonoBehaviour
     /// <returns>true if note matches next one in sequence</returns>
     public bool CheckForCollection(int noteToCollect)
     {
+        if (TargetNoteSequence.Count == 0)
+            return true;
+
         if (_collectedSequence.Count < TargetNoteSequence.Count)
         {
             return TargetNoteSequence[_collectedSequence.Count] == noteToCollect;

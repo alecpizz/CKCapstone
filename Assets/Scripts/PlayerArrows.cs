@@ -29,10 +29,10 @@ public class PlayerArrows : MonoBehaviour
     [SerializeField] private GameObject _arrow4;
 
     //The variable calculated from BPM, beats per second
-    private float timingBetweenEachBeat;
+    private float _timingBetweenEachBeat;
 
     //Is the pulsating coroutine allowed to restart?
-    private bool canRestartCoroutine;
+    private bool _canRestartCoroutine;
 
     /// <summary>
     /// Calculates the beats per second from BPM, & starts the 
@@ -40,7 +40,7 @@ public class PlayerArrows : MonoBehaviour
     /// </summary>
     void Start()
     {
-        timingBetweenEachBeat = _bpm / 60;
+        _timingBetweenEachBeat = _bpm / 60;
         StartCoroutine("Pulse");
     }
 
@@ -53,7 +53,7 @@ public class PlayerArrows : MonoBehaviour
         //shorthands for arrow scales
         
         //if coroutine is active...
-        if (!canRestartCoroutine)
+        if (!_canRestartCoroutine)
         {
             Vector3 scale1 = _arrow1.transform.localScale;
             Vector3 scaleMod = new Vector3(0, _pulseSpeed * Time.deltaTime,  0f);
@@ -70,7 +70,7 @@ public class PlayerArrows : MonoBehaviour
         }
 
         //if coroutine is not active...
-        if (canRestartCoroutine)
+        if (_canRestartCoroutine)
         {
             //...activate it
             StartCoroutine("Pulse");
@@ -84,7 +84,7 @@ public class PlayerArrows : MonoBehaviour
     private IEnumerator Pulse()
     {
         //coroutine is active
-        canRestartCoroutine = false;
+        _canRestartCoroutine = false;
         //grow the arrows to max size
         _arrow1.transform.localScale = new Vector3(0.23f, _maxYScale, 
             0.63f);
@@ -96,9 +96,9 @@ public class PlayerArrows : MonoBehaviour
             0.63f);
         //wait depending on the BPM to end the coroutine
         //beats per second is converted to seconds per beat
-        yield return new WaitForSeconds(1 / timingBetweenEachBeat);
+        yield return new WaitForSeconds(1 / _timingBetweenEachBeat);
         //coroutine is no longer active
-        canRestartCoroutine = true;
+        _canRestartCoroutine = true;
         yield return null;
     }
 }

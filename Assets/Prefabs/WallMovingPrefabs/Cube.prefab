@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 1572918131682193785}
   - component: {fileID: 4922018640303246038}
   - component: {fileID: 3262031987149162471}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube
-  m_TagString: Untagged
+  m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -64,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 23b4a9f14f8dc8f408dab289e5dec1d0, type: 2}
+  - {fileID: 2100000, guid: f5e8d2c2d61284741bf8f281d8c945ce, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -119,9 +119,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 814452625f34aba4ab827682fb17a231, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTransparent: 0
-  snapToGrid: 1
-  disableGridCell: 0
+  _isTransparent: 0
+  _snapToGrid: 1
+  offset: {x: 0, y: 0.5, z: 0}
+  _disableGridCell: 0
 --- !u!114 &3262031987149162471
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -135,5 +136,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _wallGrid: {fileID: 4922018640303246038}
-  _wallGhost: {fileID: 7928538480310620146, guid: bbf76e0bf49170b4e820a998d6cc8101,
-    type: 3}
+  _wallGhost: {fileID: 0}

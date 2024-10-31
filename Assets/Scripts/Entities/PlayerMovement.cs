@@ -1,30 +1,37 @@
 /******************************************************************
 *    Author: Cole Stranczek
-*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein
+*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson, Alec Pizziferro
 *    Date Created: 9/22/24
 *    Description: Script that handles the player's movement along
 *    the grid
 *******************************************************************/
 
+using PrimeTween;
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using PrimeTween;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
-using UnityEngine.Windows;
 
-public class PlayerMovement : MonoBehaviour, IGridEntry
+public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
 {
-
-
-    private PlayerControls _input;
     public Vector3 FacingDirection { get; private set; }
-
-    public bool playerMoved;
-    public bool enemiesMoved = true;
     public bool IsTransparent { get => true; }
     public Vector3 Position { get => transform.position; }
     public GameObject GetGameObject { get => gameObject; }
+
+    [SerializeField]
+    private Vector3 _positionOffset;
+    [SerializeField]
+    private PlayerInteraction _playerInteraction;
+
+    [SerializeField]
+    private float _delayTime = 0.1f;
+
+    [SerializeField] private float _movementTime = 0.25f;
+
+    private int _playerMovementTiming = 1;
+    private WaitForSeconds _waitForSeconds;
 
     // Start is called before the first frame update
     void Start()
@@ -33,13 +40,16 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
 
         GridBase.Instance.AddEntry(this);
 
-        // Referencing and setup of the Input Action functions
-        _input = new PlayerControls();
-        _input.InGame.Enable();
-        _input.InGame.MoveUp.performed += MoveUpPerformed;
-        _input.InGame.MoveDown.performed += MoveDownPerformed;
-        _input.InGame.MoveLeft.performed += MoveLeftPerformed;
-        _input.InGame.MoveRight.performed += MoveRightPerformed;
+        if (TimeSignatureManager.Instance != null)
+            TimeSignatureManager.Instance.RegisterTimeListener(this);
+
+        _waitForSeconds = new WaitForSeconds(_delayTime);
+    }
+
+    private void OnEnable()
+    {
+        if (RoundManager.Instance != null)
+            RoundManager.Instance.RegisterListener(this);
     }
 
     /// <summary>
@@ -47,104 +57,99 @@ public class PlayerMovement : MonoBehaviour, IGridEntry
     /// </summary>
     private void OnDisable()
     {
-        _input.InGame.Disable();
-        _input.InGame.MoveUp.performed -= MoveUpPerformed;
-        _input.InGame.MoveDown.performed -= MoveDownPerformed;
-        _input.InGame.MoveLeft.performed -= MoveLeftPerformed;
-        _input.InGame.MoveRight.performed -= MoveRightPerformed;
+        if (RoundManager.Instance != null)
+            RoundManager.Instance.UnRegisterListener(this);
+        if (TimeSignatureManager.Instance != null)
+            TimeSignatureManager.Instance.UnregisterTimeListener(this);
+    }
+
+
+    /// <summary>
+    /// Helper coroutine for performing movement with a delay
+    /// </summary>
+    /// <param name="moveDirection">Direction of player movement</param>
+    /// <returns>Waits for short delay while moving</returns>
+    private IEnumerator MovementDelay(Vector3 moveDirection)
+    {
+        for (int i = 0; i < _playerMovementTiming; i++)
+        {
+            // Move if there is no wall below the player or if ghost mode is enabled
+            var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
+            if ((GridBase.Instance.CellIsEmpty(move)) ||
+                (DebugMenuManager.Instance.GhostMode))
+            {
+                yield return Tween.Position(transform,
+                    move + _positionOffset, duration: _movementTime, Ease.OutBack).ToYieldInstruction();
+                GridBase.Instance.UpdateEntry(this);
+            }
+            else
+            {
+                break;
+            }
+
+            if (_playerMovementTiming > 1)
+            {
+                yield return _waitForSeconds;
+            }
+        }
+
+        RoundManager.Instance.CompleteTurn(this);
     }
 
     /// <summary>
-    /// Handles the downward movement of the player when the respective control
-    /// binding is triggered
+    /// Reloads scene when player hits an enemy
     /// </summary>
-    /// <param name="obj"></param>
-    public void MoveDownPerformed(InputAction.CallbackContext obj)
-    {
-        FacingDirection = Vector3.back;
-
-        // Move down if there is no wall below the player or if ghost mode is enabled
-        var downMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.back);
-        if ((GridBase.Instance.CellIsEmpty(downMove) && enemiesMoved == true) || 
-            (DebugMenuManager.instance.ghostMode && enemiesMoved == true))
-        {
-            gameObject.transform.position = downMove;
-            GridBase.Instance.UpdateEntry(this);
-        }
-        else
-            Debug.Log(enemiesMoved);
-        Debug.Log("IS empty: " + GridBase.Instance.CellIsEmpty(downMove));
-    }
-
-    /// <summary>
-    /// Handles the upward movement of the player when the respective control
-    /// binding is triggered
-    /// </summary>
-    /// <param name="obj"></param>
-    private void MoveUpPerformed(InputAction.CallbackContext obj)
-    {
-        FacingDirection = Vector3.forward;
-
-        // Move up if there is no wall above the player or if ghost mode is enabled
-        var upMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.forward);
-        if ((GridBase.Instance.CellIsEmpty(upMove) && enemiesMoved == true) || 
-            (DebugMenuManager.instance.ghostMode && enemiesMoved == true))
-        {
-            gameObject.transform.position = upMove;
-            GridBase.Instance.UpdateEntry(this);
-        }
-        playerMoved = true;
-        
-    }
-
-    /// <summary>
-    /// Handles the leftward movement of the player when the respective control
-    /// binding is triggered
-    /// </summary>
-    /// <param name="obj"></param>
-    private void MoveLeftPerformed(InputAction.CallbackContext obj)
-    {
-        FacingDirection = Vector3.left;
-
-        // Move left if there is no wall to the left of the player or if ghost mode is enabled
-        var leftMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.left);
-        if ((GridBase.Instance.CellIsEmpty(leftMove) && enemiesMoved == true) || 
-            (DebugMenuManager.instance.ghostMode && enemiesMoved == true))
-        {
-           gameObject.transform.position = leftMove;
-           GridBase.Instance.UpdateEntry(this);
-        }
-
-        playerMoved = true;
-    }
-
-    /// <summary>
-    /// Handles the rightward movement of the player when the respective control
-    /// binding is triggered
-    /// </summary>
-    /// <param name="obj"></param>
-    private void MoveRightPerformed(InputAction.CallbackContext obj)
-    {
-        FacingDirection = Vector3.right;
-
-        // Move Right if there is no wall to the right of the player or if ghost mode is enabled
-        var rightMove = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, Vector3.right);
-        if((GridBase.Instance.CellIsEmpty(rightMove) && enemiesMoved == true) || 
-            (DebugMenuManager.instance.ghostMode && enemiesMoved == true))
-        {
-           gameObject.transform.position = rightMove;
-           GridBase.Instance.UpdateEntry(this);   
-        }
-
-        playerMoved = true; 
-    }
-
+    /// <param name="collision">Data from collision</param>
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "Enemy")
+        if (collision.gameObject.CompareTag("Enemy"))
         {
-            Scene scene = SceneManager.GetActiveScene();
-            SceneManager.LoadScene(scene.name);
+            // Checks if the enemy is frozen; if they are, doesn't reload the scene
+            EnemyBehavior enemy = collision.collider.GetComponent<EnemyBehavior>();
+            if (enemy == null || enemy.enemyFrozen)
+                return;
+
+            Time.timeScale = 0f;
+
+            SceneController.Instance.ReloadCurrentScene();
         }
+    }
+
+    /// <summary>
+    /// Receives the new player movement speed when time signature updates
+    /// </summary>
+    /// <param name="newTimeSignature">The new time signature</param>
+    public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
+    {
+        _playerMovementTiming = newTimeSignature.x;
+
+        if (_playerMovementTiming <= 0)
+            _playerMovementTiming = 1;
+    }
+
+    public TurnState TurnState => TurnState.Player;
+    public void BeginTurn(Vector3 direction)
+    {
+        _playerInteraction.SetDirection(direction);
+
+        var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
+        if ((GridBase.Instance.CellIsEmpty(move) || DebugMenuManager.Instance.GhostMode))
+        {
+            StartCoroutine(MovementDelay(direction));
+        }
+        else
+        {
+            RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
+        }
+    }
+
+    /// <summary>
+    /// Called by switches to end the player turn early
+    /// </summary>
+    public void ForceTurnEnd()
+    {
+        StopAllCoroutines();
+        GridBase.Instance.UpdateEntry(this);
+        RoundManager.Instance.CompleteTurn(this);
     }
 }
