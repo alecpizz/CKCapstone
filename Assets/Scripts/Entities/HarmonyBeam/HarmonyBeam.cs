@@ -14,6 +14,10 @@ using FMODUnity;
 using UnityEditor;
 #endif
 
+/// <summary>
+/// A script that handles a harmony beam, and invoking
+/// exiting and entering for the harmony beam.
+/// </summary>
 public class HarmonyBeam : MonoBehaviour
 {
     [SerializeField] private EventReference _harmonySound = default;
@@ -30,58 +34,33 @@ public class HarmonyBeam : MonoBehaviour
 
     private const int MaxReflections = 10;
 
-    private static readonly float[] Distances = { 1, 2, 3, 4, 5, 6 };
-
-    private static readonly float[] AlphaRiseValues = { 8, 10, 11.5f, 12.5f, 13, 13.5f };
-
     private readonly RaycastHit[] _raycastHitCache = new RaycastHit[MaxReflections];
-    private readonly List<IHarmonyBeamEntity> _prevHitEntities = new();
+    private readonly List<IHarmonyBeamEntity> _hitEntities = new();
+    private readonly HashSet<IHarmonyBeamEntity> _prevHitEntities = new();
+    private Dictionary<IHarmonyBeamEntity, GameObject> _hitEffectEntities = new();
 
-    // Used for cutting the beam after it is blocked
-    private int _alphaFadeID;
-    private int _alphaRiseID;
-    private Material _beamMat;
     private int _tick = 0;
     private const int TickRate = 3;
+    private bool _enemyGrabbedAudioPlaying = false;
+    private EventInstance _beamInstance;
+    private EventInstance _enemyGrabbedInstance;
 
-    private EventInstance _beamKey;
-    private EventInstance _enemyKey;
-
-
-    void Awake()
-    {
-        // Initialize the property IDs
-        _alphaFadeID = Shader.PropertyToID("_AlphaFade");
-        _alphaRiseID = Shader.PropertyToID("_AlphaRise");
-
-        var renderer = _beamParticleSystems[0].GetComponent<Renderer>();
-        if (renderer != null)
-        {
-            // Check materials in the renderer
-            for (int i = 0; i < renderer.materials.Length; i++)
-            {
-                if (renderer.materials[i].name.Contains("MAT_HarmonyBeam 1"))
-                {
-                    _beamMat = renderer.materials[i];
-                    break;
-                }
-            }
-        }
-    }
-
+    /// <summary>
+    /// Starts sound playback and instantiates a wall effect if possible.
+    /// </summary>
     private void Start()
     {
-        _beamKey = AudioManager.Instance.PlaySound(_harmonySound);
+        _beamInstance = AudioManager.Instance.PlaySound(_harmonySound);
         if (_wallCollisionEffectPrefab != null)
         {
             _activeWallEffect = Instantiate(_wallCollisionEffectPrefab);
             _activeWallEffect.SetActive(false);
         }
-        // Will be done later
-        //_enemyKey = AudioManager.Instance.PlaySound(_enemyHarmonization);
-        //AudioManager.Instance.PauseSound(_enemyKey, true);
     }
 
+    /// <summary>
+    /// Draws a gizmo for the beam.
+    /// </summary>
     private void OnDrawGizmos()
     {
 #if UNITY_EDITOR
@@ -91,14 +70,14 @@ public class HarmonyBeam : MonoBehaviour
 #endif
     }
 
-    private void Update()
+    /// <summary>
+    /// Every frame, attempt to shoot a laser in the forward direction.
+    /// </summary>
+    private void FixedUpdate()
     {
         //no real reason to do this every update. could probably tie into rounds system but would have weird visuals.
         if (_tick++ % TickRate != 0) return;
         _tick = 0;
-        _prevHitEntities.ForEach(entity => entity.OnLaserExit());
-        _prevHitEntities.Clear();
-        if (!beamActive) return;
         ShootLaser(transform.position, transform.forward, raycastDistance);
     }
 
@@ -110,7 +89,6 @@ public class HarmonyBeam : MonoBehaviour
     /// <param name="distance">distance the laser will go</param>
     private void ShootLaser(Vector3 startPosition, Vector3 direction, float distance)
     {
-        UpdateWallEffect(false);
         Vector3 currentStartPosition = startPosition;
         Vector3 currentDirection = direction;
         float remainingDistance = distance;
@@ -118,148 +96,88 @@ public class HarmonyBeam : MonoBehaviour
         var size = Physics.RaycastNonAlloc(currentStartPosition, currentDirection, _raycastHitCache,
             remainingDistance);
 
-        if (size > 0)
+        _hitEntities.Clear();
+        bool enemyHit = false;
+        if (beamActive)
         {
             //we hit some things
-            for (int i = 0; i < size; i++)
+            if (size > 0)
             {
-                var hit = _raycastHitCache[i];
-                var entity = hit.collider.GetComponentInParent<IHarmonyBeamEntity>();
-                if (entity != null)
+                //we hit some things
+                for (int i = 0; i < size; i++)
                 {
-                    entity.OnLaserHit(hit);
-                    _prevHitEntities.Add(entity);
-                    if (entity.HitWrapAround)
+                    var hit = _raycastHitCache[i];
+                    var entity = hit.collider.GetComponentInParent<IHarmonyBeamEntity>();
+                    if (entity != null)
                     {
-                        //enemy vfx
-                    }
+                        UpdateWallEffect(false);
+                        //TODO: prevent this from firing over and over.
+                        entity.OnLaserHit(hit);
+                        _hitEntities.Add(entity);
+                        if (entity.HitWrapAround)
+                        {
+                            //enemy vfx, gross due to aformentioned TODO
+                            if (!_hitEffectEntities.ContainsKey(entity) || 
+                                (_hitEffectEntities.ContainsKey(entity) && _hitEffectEntities[entity] == null))
+                            {
+                                GameObject enemyFX = Instantiate(_enemyHitEffectPrefab, entity.Position,
+                                    Quaternion.identity);
+                                _hitEffectEntities.TryAdd(entity, enemyFX);
+                                _hitEffectEntities[entity] = enemyFX;
+                                _enemyGrabbedInstance = AudioManager.Instance.PlaySound(_enemyHarmonization);
+                            }
 
-                    if (!entity.AllowLaserPassThrough)
+                            enemyHit = true;
+                        }
+
+                        if (!entity.AllowLaserPassThrough)
+                        {
+                            break;
+                        }
+                    }
+                    else
                     {
+                        //we hit something else, but it's untagged/no component, assume stopping.
+                        UpdateWallEffect(true, hit.point, hit.normal);
                         break;
                     }
                 }
-                else
-                {
-                    //we hit something else, but it's untagged/no component, assume stopping.
-                    UpdateWallEffect(true, hit.point, hit.normal);
-                    break;
-                }
+            }
+            else
+            {
+                //didn't hit anything
+                UpdateWallEffect(false);
             }
         }
-        else
+
+        //check for anyone who's left.
+        foreach (var harmonyBeamEntity in _prevHitEntities)
         {
-            //didn't hit anything
-            UpdateWallEffect(false);
+            if (_hitEntities.Contains(harmonyBeamEntity)) continue;
+            //disable any hit enemy vfx here too :)
+            harmonyBeamEntity.OnLaserExit();
+            if (!_hitEffectEntities.TryGetValue(harmonyBeamEntity, out var fx)) continue;
+            Destroy(fx.gameObject);
+            _hitEntities.Remove(harmonyBeamEntity);
         }
-        // while (remainingDistance > 0 && reflections < MaxReflections)
-        // {
-        //     bool hitSomething = false;
-        //     foreach (RaycastHit hit in hits)
-        //     {
-        //         if (hit.collider.TryGetComponent(out EnemyBehavior enemyBehavior))
-        //         {
-        //             _currentlyHitEnemies.Add(enemyBehavior); // Track the hit enemy behavior
-        //
-        //             if (!enemyBehavior.enemyFrozen)
-        //             {
-        //                 HarmonyBeamManager.Instance.BeamHitsEnemy(enemyBehavior);
-        //             }
-        //
-        //             // Will do later
-        //             //AudioManager.Instance.PauseSound(_enemyKey, false);
-        //
-        //             _enemyHitStates[enemyBehavior] = true;
-        //
-        //             // Handle enemy hit effect
-        //             HandleEnemyHitEffect(enemyBehavior);
-        //         }
-        //         else if (hit.collider.TryGetComponent(out ReflectiveObject reflectiveObject))
-        //         {
-        //             hitSomething = true;
-        //
-        //             if (_currentlyHitReflectors.Contains(reflectiveObject))
-        //                 continue;
-        //
-        //             _currentlyHitReflectors.Add(reflectiveObject);
-        //
-        //             // Notify the ReflectiveObject that it has been hit
-        //             reflectiveObject.ToggleBeam(true);
-        //
-        //             currentDirection = reflectiveObject.GetReflectionDirection(currentDirection);
-        //             currentStartPosition = hit.point;
-        //             remainingDistance -= hit.distance;
-        //             reflections++;
-        //             break;
-        //         }
-        //         else if (hit.collider.CompareTag("Wall"))
-        //         {
-        //             // Update the blocked distance and handle wall collision effect
-        //             blockedDistance = Vector3.Distance(startPosition, hit.point);
-        //
-        //             // Pass the hit point and normal to the effect handler
-        //             HandleWallCollisionEffect(hit.point, hit.normal);
-        //
-        //             wallHit = true;
-        //             remainingDistance = 0;
-        //             hitSomething = true;
-        //             break;
-        //         }
-        //         else
-        //         {
-        //             // Non-wall hit, ignore for wall effect
-        //             blockedDistance = Vector3.Distance(startPosition, hit.point);
-        //             remainingDistance = 0;
-        //             hitSomething = true;
-        //             break;
-        //         }
-        //     }
-        //
-        //     if (!hitSomething)
-        //     {
-        //         break;
-        //     }
-        // }
-        //
-        // // If no wall is hit, remove the wall collision effect
-        // if (!wallHit)
-        // {
-        //     DisableWallCollisionEffect();
-        // }
-        //
-        // // Adjust Alpha values based on blocked distance
-        // _beamMat.SetFloat(_alphaRiseID, ConvertWorldUnitsToAlphaRise(blockedDistance));
-        //
-        // // Remove effects from enemies that are no longer being hit
-        // RemoveObsoleteEnemyEffects();
-        //
-        // // Handle enemies that are no longer being hit
-        // List<EnemyBehavior> enemiesToUnfreeze = new();
-        // foreach (var enemy in _enemyHitStates.Keys)
-        // {
-        //     if (_enemyHitStates[enemy] && !_currentlyHitEnemies.Contains(enemy))
-        //     {
-        //         enemiesToUnfreeze.Add(enemy);
-        //     }
-        // }
-        //
-        // foreach (EnemyBehavior enemy in enemiesToUnfreeze)
-        // {
-        //     _enemyHitStates[enemy] = false;
-        //     HarmonyBeamManager.Instance.BeamStopsHittingEnemy(enemy);
-        // }
-        //
-        // // Untoggles unused relfective objects
-        // foreach (ReflectiveObject r in _previouslyHitReflectors)
-        // {
-        //     if (!_currentlyHitReflectors.Contains(r))
-        //     {
-        //         r.ToggleBeam(false);
-        //     }
-        // }
-        //
-        // // Clears previous reflectors and replaces it with the ones captured this tick
-        // _previouslyHitReflectors = _currentlyHitReflectors;
+
+        //try and play enemy audio if it state changed.
+        if (enemyHit != _enemyGrabbedAudioPlaying)
+        {
+            _enemyGrabbedAudioPlaying = enemyHit;
+            if (_enemyGrabbedAudioPlaying)
+            {
+                _enemyGrabbedInstance = AudioManager.Instance.PlaySound(_enemyHarmonization);
+            }
+            else
+            {
+                AudioManager.Instance.StopSound(_enemyGrabbedInstance);
+            }
+        }
+
+        _prevHitEntities.Clear();
+
+        _hitEntities.ForEach(entity => { _prevHitEntities.Add(entity); });
     }
 
 
@@ -289,112 +207,12 @@ public class HarmonyBeam : MonoBehaviour
             {
                 particleSystem.Stop();
             }
-
-            DisableWallCollisionEffect();
-            RemoveObsoleteEnemyEffects();
         }
-
-        AudioManager.Instance.PauseSound(_beamKey, beamActive);
+        
+        AudioManager.Instance.PauseSound(_beamInstance, beamActive);
     }
 
     #region VFX
-
-    /// <summary>
-    /// Interpolates alphaRise based on blocked distance using a piecewise linear approximation.
-    /// </summary>
-    /// <param name="blockedDistance">The distance at which the beam is blocked (in world units)</param>
-    /// <param name="distances">Array of known distances in world units</param>
-    /// <param name="alphaRiseValues">Array of corresponding alphaRise values</param>
-    /// <returns>Interpolated alphaRise value</returns>
-    private float InterpolateAlphaRise(float blockedDistance, float[] distances, float[] alphaRiseValues)
-    {
-        // Clamp the blockedDistance to the range of known distances
-        blockedDistance = Mathf.Clamp(blockedDistance, distances[0], distances[^1]);
-
-        // Iterate over distances to find the closest segment
-        for (int i = 0; i < distances.Length - 1; i++)
-        {
-            if (blockedDistance >= distances[i] && blockedDistance <= distances[i + 1])
-            {
-                // Perform linear interpolation between the two points
-                float t = (blockedDistance - distances[i]) / (distances[i + 1] - distances[i]);
-                return Mathf.Lerp(alphaRiseValues[i], alphaRiseValues[i + 1], t);
-            }
-        }
-
-        // If no segment is found, return the last value (shouldn't happen due to clamping)
-        return alphaRiseValues[^1];
-    }
-
-    /// <summary>
-    /// Converts a blocked distance in world units to the appropriate alphaRise value based on the current AlphaFade.
-    /// </summary>
-    /// <param name="blockedDistance">The distance at which the beam is blocked (in world units)</param>
-    /// <returns>The corresponding alphaRise value</returns>
-    private float ConvertWorldUnitsToAlphaRise(float blockedDistance)
-    {
-        // Set the current AlphaFade value from the material to 16
-        // (16 is the value I made a dataset for)
-        _beamMat.SetFloat(_alphaFadeID, 16f);
-
-        // Use AlphaFade = 16 dataset
-        return InterpolateAlphaRise(blockedDistance, Distances, AlphaRiseValues);
-    }
-
-    /// <summary>
-    /// Disables the wall collision effect when it's no longer needed.
-    /// </summary>
-    private void DisableWallCollisionEffect()
-    {
-        if (_activeWallEffect != null)
-        {
-            _activeWallEffect.SetActive(false);
-        }
-    }
-
-    /// <summary>
-    /// Handles the visual effect when the beam hits an enemy.
-    /// </summary>
-    /// <param name="enemy">The enemy being hit</param>
-    private void HandleEnemyHitEffect(EnemyBehavior enemy)
-    {
-        if (_enemyHitEffectPrefab != null)
-        {
-            // if (!_activeEnemyEffects.ContainsKey(enemy))
-            {
-                // Instantiate the effect and parent it to the enemy
-                GameObject enemyEffect = Instantiate(_enemyHitEffectPrefab);
-                enemyEffect.transform.SetParent(enemy.transform, true);
-                enemyEffect.transform.localPosition = Vector3.zero;
-                // _activeEnemyEffects[enemy] = enemyEffect;
-            }
-        }
-    }
-
-    /// <summary>
-    /// Removes the visual effect from enemies that are no longer being hit.
-    /// </summary>
-    /// <param name="currentlyHitEnemies">Set of enemies currently being hit</param>
-    private void RemoveObsoleteEnemyEffects()
-    {
-        List<EnemyBehavior> enemiesToRemove = new();
-
-        // Find enemies that are no longer hit
-        // foreach (var kvp in _activeEnemyEffects)
-        {
-            // if (!_currentlyHitEnemies.Contains(kvp.Key))
-            {
-                // kvp.Value.SetActive(false);
-                // enemiesToRemove.Add(kvp.Key);
-            }
-        }
-
-        // Remove the effects from the dictionary
-        foreach (var enemy in enemiesToRemove)
-        {
-            // _activeEnemyEffects.Remove(enemy);
-        }
-    }
 
     /// <summary>
     /// Handles the visual effect when the beam hits a wall.
@@ -410,6 +228,7 @@ public class HarmonyBeam : MonoBehaviour
             Vector3 surfacePosition = hitPosition.Value + hitNormal.Value * 0.05f;
             _activeWallEffect.transform.position = surfacePosition;
         }
+
         if (_activeWallEffect.activeSelf != active)
         {
             _activeWallEffect.SetActive(active);

@@ -65,4 +65,5 @@ public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity
     }
 
     public bool HitWrapAround { get => false; }
+    public Vector3 Position { get => transform.position; }
 }
