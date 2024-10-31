@@ -6,6 +6,7 @@
  *******************************************************************/
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using FMOD.Studio;
@@ -22,8 +23,8 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
 {
     [SerializeField] private EventReference _harmonySound = default;
     [SerializeField] private EventReference _enemyHarmonization = default;
-    [SerializeField] private float raycastDistance = 25f;
     [Space] [SerializeField] private bool beamActive = true;
+    [SerializeField] private float beamDetectionWaitTime = 0.1f;
 
     // Array for managing the multiple child particle systems
     [Header("Particles")] [SerializeField] private ParticleSystem[] _beamParticleSystems;
@@ -32,18 +33,16 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
 
     private GameObject _activeWallEffect; // Instance of the active wall collision effect
 
-    private const int MaxReflections = 10;
 
-    private readonly RaycastHit[] _raycastHitCache = new RaycastHit[MaxReflections];
     private readonly List<IHarmonyBeamEntity> _hitEntities = new();
     private readonly HashSet<IHarmonyBeamEntity> _prevHitEntities = new();
     private Dictionary<IHarmonyBeamEntity, GameObject> _hitEffectEntities = new();
-
-    private int _tick = 0;
-    private const int TickRate = 3;
+    private List<Vector3> _debugTiles = new();
     private bool _enemyGrabbedAudioPlaying = false;
     private EventInstance _beamInstance;
     private EventInstance _enemyGrabbedInstance;
+    private Collider _prevHitCollider;
+    
 
     /// <summary>
     /// Starts sound playback and instantiates a wall effect if possible.
@@ -58,18 +57,6 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
         }
     }
 
-    /// <summary>
-    /// Draws a gizmo for the beam.
-    /// </summary>
-    private void OnDrawGizmos()
-    {
-#if UNITY_EDITOR
-        Handles.color = Color.red;
-        Handles.DrawLine(transform.position, transform.position + transform.forward * raycastDistance,
-            10f);
-#endif
-    }
-
     private void OnEnable()
     {
         RoundManager.Instance.RegisterListener(this);
@@ -80,13 +67,10 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
         RoundManager.Instance.RegisterListener(this);
     }
 
-    /// <summary>
-    /// Every frame, attempt to shoot a laser in the forward direction.
-    /// </summary>
-    private void FixedUpdate()
+    private void OnDrawGizmos()
     {
-        //no real reason to do this every update. could probably tie into rounds system but would have weird visuals.
-        //ShootLaser(transform.position, transform.forward, raycastDistance);
+        Gizmos.color = Color.green;
+        _debugTiles.ForEach(tile => Gizmos.DrawSphere(tile, 0.5f));
     }
 
     /// <summary>
@@ -101,8 +85,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
         Vector3 currentDirection = direction;
         float remainingDistance = distance;
 
-        var size = Physics.RaycastNonAlloc(currentStartPosition, currentDirection, _raycastHitCache,
-            remainingDistance);
+        
 
         _hitEntities.Clear();
         bool enemyHit = false;
@@ -152,40 +135,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
             // }
             // }
             // else
-
-            var currTilePos = (transform.position);
-            var fwd = transform.forward;
-            bool stop = false;
-            while (!stop)
-            {
-                var nextCell = GridBase.Instance.GetCellPositionInDirection(currTilePos, transform.forward);
-                currTilePos = nextCell;
-                if (GridBase.Instance.CellIsEdge(GridBase.Instance.WorldToCell(nextCell)))
-                {
-                    print("edging");
-                    stop = true;
-                }
-
             
-                var entries = GridBase.Instance.GetCellEntries(nextCell);
-                foreach (var gridEntry in entries)
-                {
-                    if (gridEntry == null) continue;
-                    if (gridEntry.GetGameObject.TryGetComponent(out IHarmonyBeamEntity entity))
-                    {
-                        Debug.Log("hit");
-                        entity.OnLaserHit(default);
-                        if (!entity.AllowLaserPassThrough)
-                        {
-                            stop = true;
-                        }
-                    }
-                    else if (!gridEntry.IsTransparent)
-                    {
-                        stop = true;
-                    }
-                }
-            }
 
             {
                 //didn't hit anything
@@ -243,6 +193,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
             {
                 particleSystem.Play();
             }
+            _prevHitEntities.Clear();
         }
         else
         {
@@ -254,8 +205,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
 
         AudioManager.Instance.PauseSound(_beamInstance, beamActive);
     }
-
-    #region VFX
+    
 
     /// <summary>
     /// Handles the visual effect when the beam hits a wall.
@@ -278,16 +228,26 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
         }
     }
 
-    #endregion
-
-    public TurnState TurnState
-    {
-        get => TurnState.World;
-    }
+    public TurnState TurnState => TurnState.World;
 
     public void BeginTurn(Vector3 direction)
     {
+        StartCoroutine(WaitForPotentialBlockers());
+    }
+
+    private IEnumerator WaitForPotentialBlockers()
+    {
+        //gross! we shouldn't have to wait, but the moving walls/platforms aren't turn based currently... 
+        yield return new WaitForSeconds(beamDetectionWaitTime);
+        DetectObjects();
+
+        RoundManager.Instance.CompleteTurn(this);
+    }
+
+    public void DetectObjects()
+    {
         _hitEntities.Clear();
+        _debugTiles.Clear();
         if (beamActive)
         {
             var currTilePos = (transform.position);
@@ -296,15 +256,12 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
             while (!stop)
             {
                 var nextCell = GridBase.Instance.GetCellPositionInDirection(currTilePos, fwd);
-                currTilePos = nextCell;
-                if (GridBase.Instance.CellIsEdge(GridBase.Instance.WorldToCell(nextCell)))
+                _debugTiles.Add(currTilePos);
+                if (currTilePos == nextCell) //no where to go :(
                 {
                     stop = true;
                 }
-
-                if (!GridBase.Instance.CellIsTransparent(nextCell))
-                {
-                }
+                currTilePos = nextCell;
 
                 var entries = GridBase.Instance.GetCellEntries(nextCell);
                 foreach (var gridEntry in entries)
@@ -331,6 +288,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
                         stop = true;
                     }
                 }
+
             }
         }
         else
@@ -347,11 +305,10 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
         }
         _prevHitEntities.Clear();
         _hitEntities.ForEach(entity => _prevHitEntities.Add(entity));
-        
-        RoundManager.Instance.CompleteTurn(this);
     }
 
     public void ForceTurnEnd()
     {
+       
     }
 }

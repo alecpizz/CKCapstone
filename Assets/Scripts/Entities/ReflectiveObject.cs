@@ -57,11 +57,13 @@ public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity
     public void OnLaserHit(RaycastHit hit)
     {
         _harmonyBeam.ToggleBeam(true);
+        _harmonyBeam.DetectObjects();
     }
 
     public void OnLaserExit()
     {
         _harmonyBeam.ToggleBeam(false);
+        _harmonyBeam.DetectObjects();
     }
 
     public bool HitWrapAround { get => false; }

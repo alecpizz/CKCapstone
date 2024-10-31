@@ -149,7 +149,8 @@ public sealed class RoundManager : MonoBehaviour
     {
         if (listener.TurnState != _turnState) //don't complete if it's not our turn. this shouldn't happen
         {
-            Debug.LogError("Tried to complete turn while it wasn't our turn state.");
+            Debug.LogError("Tried to complete turn while it wasn't our turn state." +
+                           $" Listener {listener.TurnState}, state {_turnState}");
             return;
         }
 

@@ -50,7 +50,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     //Check true in the inspector if the enemy is moving in a circular pattern (doesn't want to move back and forth)
     [SerializeField] private bool _circularMovement = false;
 
-    public bool enemyFrozen = false;
+    public bool EnemyFrozen { get; private set; } = false;
 
     private int _enemyMovementTime = 1;
 
@@ -133,7 +133,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         /// and if the enemy is currently frozen by the harmony beam
         /// </summary>
        
-        if (!enemyFrozen)
+        if (!EnemyFrozen)
         {
             for (int i = 0; i < _enemyMovementTime; ++i)
             {
@@ -252,12 +252,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     public bool AllowLaserPassThrough { get => true; }
     public void OnLaserHit(RaycastHit hit)
     {
-        enemyFrozen = true;
+        EnemyFrozen = true;
     }
 
     public void OnLaserExit()
     {
-        enemyFrozen = false;
+        EnemyFrozen = false;
     }
 
     public bool HitWrapAround { get => true; }

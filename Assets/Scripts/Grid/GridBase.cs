@@ -287,7 +287,7 @@ public class GridBase : MonoBehaviour
     /// <returns></returns>
     public Vector3 GetCellPositionInDirection(Vector3 position, Vector3 dir)
     {
-        return CellToWorld(WorldToCell(position) + Vector3ToInt(dir.normalized));
+        return CellToWorld(WorldToCell(position + dir.normalized * _grid.cellSize.x));
     }
     
     public Vector3Int GetCellInDirection(Vector3Int cell, Vector3 dir)
