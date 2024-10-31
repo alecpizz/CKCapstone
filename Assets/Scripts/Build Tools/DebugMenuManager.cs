@@ -259,9 +259,16 @@ public class DebugMenuManager : MonoBehaviour
     /// </summary>
     public void SceneChange(int sceneID)
     {
-        Time.timeScale = 1f;
-        EventSystem.current.SetSelectedGameObject(null);
-        SceneManager.LoadScene(sceneID);
+        if(sceneID >= SceneManager.sceneCountInBuildSettings)
+        {
+            SceneManager.LoadScene(0);
+        }
+        else
+        {
+            Time.timeScale = 1f;
+            EventSystem.current.SetSelectedGameObject(null);
+            SceneManager.LoadScene(sceneID);
+        }   
     }
 
     /// <summary>
