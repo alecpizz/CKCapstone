@@ -14,6 +14,7 @@ using UnityEngine.InputSystem;
 using NaughtyAttributes;
 using PrimeTween;
 using Unity.VisualScripting;
+using FMODUnity;
 
 public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
 {
@@ -55,6 +56,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     private int _enemyMovementTime = 1;
 
     [SerializeField] private float _tempMoveTime = 0.5f;
+
+    // Event reference for the enemy movement sound
+    [SerializeField] private EventReference _enemyMove = default;
 
     // Start is called before the first frame update
     void Start()
@@ -186,6 +190,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                             GridBase.Instance.UpdateEntry(this);
                         }).ToYieldInstruction();
 
+                    AudioManager.Instance.PlaySound(_enemyMove);
                     GridBase.Instance.UpdateEntry(this);
                 }
 

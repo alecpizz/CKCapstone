@@ -124,6 +124,17 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""8ecda596-4cca-4e85-9f8b-033c927e2217"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Restart"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""26f0631a-cfca-4c46-9d9d-05b940571bf8"",
                     ""path"": ""<Keyboard>/escape"",
                     ""interactions"": """",
