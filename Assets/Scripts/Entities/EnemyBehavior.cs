@@ -184,10 +184,13 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                         break;
                     }
 
-                    AudioManager.Instance.PlaySound(_enemyMove);
-                    yield return Tween.Position(transform, 
-                        move + _positionOffset, _tempMoveTime, ease: Ease.Linear).ToYieldInstruction();
+                    yield return Tween.Position(transform,
+                        move + _positionOffset, _tempMoveTime, ease: Ease.OutBack).OnUpdate<EnemyBehavior>(target: this, (target, tween) =>
+                        {
+                            GridBase.Instance.UpdateEntry(this);
+                        }).ToYieldInstruction();
 
+                    AudioManager.Instance.PlaySound(_enemyMove);
                     GridBase.Instance.UpdateEntry(this);
                 }
 
