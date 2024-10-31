@@ -24,8 +24,8 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     public TurnState TurnState => TurnState.World;
     [SerializeField] private EventReference _harmonySound = default;
     [SerializeField] private EventReference _enemyHarmonization = default;
-    [Space] [SerializeField] private bool beamActive = true;
-    [SerializeField] private float beamDetectionWaitTime = 0.1f;
+    [Space] [SerializeField] private bool _beamActive = true;
+    [SerializeField] private float _beamDetectionWaitTime = 0.1f;
 
     // Array for managing the multiple child particle systems
     [Header("Particles")] [SerializeField] private ParticleSystem[] _beamParticleSystems;
@@ -76,12 +76,12 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     /// <param name="toggle">Whether the beam should be on or off.</param>
     public void ToggleBeam(bool toggle)
     {
-        if (toggle == beamActive)
+        if (toggle == _beamActive)
         {
             return;
         }
 
-        beamActive = toggle;
+        _beamActive = toggle;
 
         if (toggle)
         {
@@ -100,7 +100,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
             }
         }
 
-        AudioManager.Instance.PauseSound(_beamInstance, beamActive);
+        AudioManager.Instance.PauseSound(_beamInstance, _beamActive);
     }
     
     /// <summary>
@@ -120,7 +120,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
         _hitEntities.Clear();
         bool enemyHit = false;
         Vector3? hitPoint = null;
-        if (beamActive)
+        if (_beamActive)
         {
             var currTilePos = (transform.position);
             var fwd = transform.forward;
@@ -203,7 +203,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     private IEnumerator WaitForPotentialBlockers()
     {
         //gross! we shouldn't have to wait, but the moving walls/platforms aren't turn based currently... 
-        yield return new WaitForSeconds(beamDetectionWaitTime);
+        yield return new WaitForSeconds(_beamDetectionWaitTime);
         ScanForObjects();
 
         RoundManager.Instance.CompleteTurn(this);
