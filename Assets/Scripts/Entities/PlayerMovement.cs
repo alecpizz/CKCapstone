@@ -15,7 +15,6 @@ using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
 {
-
     public Vector3 FacingDirection { get; private set; }
     public bool IsTransparent { get => true; }
     public Vector3 Position { get => transform.position; }
@@ -140,7 +139,17 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         }
         else
         {
-            RoundManager.Instance.CompleteTurn(this);
+            RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
         }
+    }
+
+    /// <summary>
+    /// Called by switches to end the player turn early
+    /// </summary>
+    public void ForceTurnEnd()
+    {
+        StopAllCoroutines();
+        GridBase.Instance.UpdateEntry(this);
+        RoundManager.Instance.CompleteTurn(this);
     }
 }

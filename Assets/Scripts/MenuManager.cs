@@ -13,6 +13,7 @@ public class MenuManager : MonoBehaviour
 {
     [SerializeField] private GameObject _pauseScreen;
     [SerializeField] private GameObject _tutorialCanvas;
+    [SerializeField] private GameObject _optionsScreen;
 
     private DebugInputActions _inputActions;
 
@@ -39,6 +40,22 @@ public class MenuManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Invoked to open the options menu
+    /// </summary>
+    public void Options()
+    {
+        _optionsScreen.SetActive(true);
+    }
+
+    /// <summary>
+    /// Invoked to close the options menu
+    /// </summary>
+    public void OptionsClose()
+    {
+        _optionsScreen.SetActive(false);
+    }
+
+    /// <summary>
     /// Invoked to open the pause menu
     /// </summary>
     public void Pause()
@@ -62,6 +79,14 @@ public class MenuManager : MonoBehaviour
     public void ActivateTutorialCanvas()
     {
         _tutorialCanvas.SetActive(true);
+    }
+
+    /// <summary>
+    /// Clicking the button on the tutorial screen deactivates the tutorial canvas.
+    /// </summary>
+    public void DeactivateTutorialCanvas()
+    {
+        _tutorialCanvas.SetActive(false);
     }
 
     /// <summary>

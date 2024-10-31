@@ -251,4 +251,13 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     }
 
     public bool HitWrapAround { get => true; }
+    /// <summary>
+    /// Can force enemy turn to end early
+    /// </summary>
+    public void ForceTurnEnd()
+    {
+        StopAllCoroutines();
+        GridBase.Instance.UpdateEntry(this);
+        RoundManager.Instance.CompleteTurn(this);
+    }
 }
