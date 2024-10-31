@@ -22,27 +22,27 @@ public class DebugMenuManager : MonoBehaviour
     public static DebugMenuManager Instance;
 
     public bool GhostMode { get; private set; } = false;
+    public bool Invincibility { get; private set; } = false;
 
     [SerializeField] private GameObject _debugMenuFirst;
     [SerializeField] private GameObject _quitMenuFirst;
+    [SerializeField] private GameObject _puzzleSelectFirst;
     [SerializeField] private GameObject _debugMenu;
     [SerializeField] private GameObject _quitMenu;
+    [SerializeField] private GameObject _puzzleSelectMenu;
     [SerializeField] private GameObject _fpsCounter;
     [SerializeField] private GameObject _ghostModeReminder;
     [SerializeField] private GameObject _invincibilityReminder;
-    [SerializeField] private GameObject _enemyTurnReminder;
 
     [SerializeField] private TextMeshProUGUI _fpsText;
     [SerializeField] private TextMeshProUGUI _fpsButtonText;
     [SerializeField] private TextMeshProUGUI _ghostModeButtonText;
     [SerializeField] private TextMeshProUGUI _invincibilityButtonText;
-    [SerializeField] private TextMeshProUGUI _enemyTurnButtonText;
 
     private bool _dMenu = false;
     private bool _qMenu = false;
+    private bool _pMenu = false;
     private bool _fpsCount = false;
-    private bool _invincibility = false;
-    private bool _enemyTurn = true;
 
     private int _lastFrameIndex;
     private float[] _frameDeltaTimeArray;
@@ -141,7 +141,9 @@ public class DebugMenuManager : MonoBehaviour
         else if ( _dMenu == true)
         {
             _debugMenu.SetActive(false);
+            _puzzleSelectMenu.SetActive(false);
             _dMenu = false;
+            _pMenu = false;
         }
     }
 
@@ -161,6 +163,28 @@ public class DebugMenuManager : MonoBehaviour
         {
             _quitMenu.SetActive(false);
             _qMenu = false;
+        }
+    }
+
+    /// <summary>
+    /// Method to open and close the puzzle select menu
+    /// </summary>
+    public void TogglePuzzleSelectMenu()
+    {
+        if (_pMenu == false)
+        {
+            _puzzleSelectMenu.SetActive(true);
+            _debugMenu.SetActive(false);
+            _pMenu = true;
+            //Sets the default option for keyboard and controller navigation
+            EventSystem.current.SetSelectedGameObject(_puzzleSelectFirst);
+        }
+        else if (_pMenu == true)
+        {
+            _puzzleSelectMenu.SetActive(false);
+            _debugMenu.SetActive(true);
+            _pMenu = false;
+            EventSystem.current.SetSelectedGameObject(_debugMenuFirst);
         }
     }
 
@@ -203,40 +227,21 @@ public class DebugMenuManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Will toggle player invincibility, currently just displays a notification saying it's on
+    /// Will toggle player invincibility.
     /// </summary>
     public void InvincibilityToggle()
     {
-        if (_invincibility == false)
+        if (Invincibility == false)
         {
             _invincibilityReminder.SetActive(true);
             _invincibilityButtonText.text = "Invincibility: On";
-            _invincibility = true;
+            Invincibility = true;
         }
-        else if (_invincibility == true)
+        else if (Invincibility == true)
         {
             _invincibilityReminder.SetActive(false);
             _invincibilityButtonText.text = "Invincibility: Off";
-            _invincibility = false;
-        }
-    }
-
-    /// <summary>
-    /// Will toggle turning off enemy turns, currently just displays a notification saying enemy turns are off
-    /// </summary>
-    public void EnemyTurnToggle()
-    {
-        if (_enemyTurn == true)
-        {
-            _enemyTurnReminder.SetActive(true);
-            _enemyTurnButtonText.text = "Enemy Turns: Off";
-            _enemyTurn = false;
-        }
-        else if (_enemyTurn == false)
-        {
-            _enemyTurnReminder.SetActive(false);
-            _enemyTurnButtonText.text = "Enemy Turns: On";
-            _enemyTurn = true;
+            Invincibility = false;
         }
     }
 
@@ -254,9 +259,16 @@ public class DebugMenuManager : MonoBehaviour
     /// </summary>
     public void SceneChange(int sceneID)
     {
-        Time.timeScale = 1f;
-        EventSystem.current.SetSelectedGameObject(null);
-        SceneManager.LoadScene(sceneID);
+        if(sceneID >= SceneManager.sceneCountInBuildSettings)
+        {
+            SceneManager.LoadScene(0);
+        }
+        else
+        {
+            Time.timeScale = 1f;
+            EventSystem.current.SetSelectedGameObject(null);
+            SceneManager.LoadScene(sceneID);
+        }   
     }
 
     /// <summary>
