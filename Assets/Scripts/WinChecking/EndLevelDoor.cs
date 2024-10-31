@@ -28,6 +28,11 @@ public class EndLevelDoor : MonoBehaviour
     private void Start()
     {
         WinChecker.GotCorrectSequence += UnlockDoor;
+
+        if (_isUnlocked)
+        {
+            UnlockDoor();
+        }
     }
 
     /// <summary>
@@ -61,6 +66,12 @@ public class EndLevelDoor : MonoBehaviour
     {
         if (_isUnlocked && other.CompareTag("Player"))
         {
+            PlayerMovement playerMovement;
+            if (other.gameObject.TryGetComponent<PlayerMovement>(out playerMovement))
+            {
+                playerMovement.ForceTurnEnd();
+            }
+
             SceneController.Instance.LoadNewScene(_levelIndexToLoad);
         }
         else if (other.CompareTag("Player"))

@@ -66,6 +66,11 @@ public class HUDscript : MonoBehaviour, ITimeListener
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
     {
+        if (_timeSignatureUIx == null || _timeSignatureUIy == null)
+        {
+            Debug.LogWarning("Missing hud elements");
+            return;
+        }
         _timeSignatureUIy.text = newTimeSignature.y.ToString();
         _timeSignatureUIx.text = newTimeSignature.x.ToString();
     }

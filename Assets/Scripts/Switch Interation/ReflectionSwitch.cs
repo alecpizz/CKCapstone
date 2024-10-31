@@ -9,7 +9,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//inherits methods from IParentSwitch
+/// <summary>
+/// Inherits methods from IParentSwitch
+/// </summary>
 public class ReflectionSwitch : MonoBehaviour, IParentSwitch
 {
     //Assign relevant reflection cube

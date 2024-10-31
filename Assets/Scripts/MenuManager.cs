@@ -13,6 +13,7 @@ public class MenuManager : MonoBehaviour
 {
     [SerializeField] private GameObject _pauseScreen;
     [SerializeField] private GameObject _tutorialCanvas;
+    [SerializeField] private GameObject _optionsScreen;
 
     private DebugInputActions _inputActions;
 
@@ -36,6 +37,22 @@ public class MenuManager : MonoBehaviour
     {
         _pauseScreen.SetActive(false);
         Time.timeScale = 1f;
+    }
+
+    /// <summary>
+    /// Invoked to open the options menu
+    /// </summary>
+    public void Options()
+    {
+        _optionsScreen.SetActive(true);
+    }
+
+    /// <summary>
+    /// Invoked to close the options menu
+    /// </summary>
+    public void OptionsClose()
+    {
+        _optionsScreen.SetActive(false);
     }
 
     /// <summary>

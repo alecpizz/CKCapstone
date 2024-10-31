@@ -123,8 +123,8 @@ public class NPCScript : MonoBehaviour, IInteractable
             // skips the typing to show complete text
             if (_isTyping)
             {
-                FinishTyping();
-                return;
+                //FinishTyping();
+                //return;
             }
 
             if (_currentDialogue < _dialogueEntries.Count - 1)
