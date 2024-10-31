@@ -143,6 +143,7 @@ public class DebugMenuManager : MonoBehaviour
             _debugMenu.SetActive(false);
             _puzzleSelectMenu.SetActive(false);
             _dMenu = false;
+            _pMenu = false;
         }
     }
 
