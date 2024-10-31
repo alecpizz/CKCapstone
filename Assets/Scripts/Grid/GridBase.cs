@@ -285,6 +285,13 @@ public class GridBase : MonoBehaviour
         return CellToWorld(WorldToCell(position + dir.normalized * _grid.cellSize.x));
     }
     
+    /// <summary>
+    /// Gets the cell space cell position for a cell in the desired direction, 
+    /// relative to the original position.
+    /// </summary>
+    /// <param name="cell">Cell position</param>
+    /// <param name="dir">The direction to check in. This must be a cardinal direction</param>
+    /// <returns></returns>
     public Vector3Int GetCellInDirection(Vector3Int cell, Vector3 dir)
     {
         return WorldToCell(CellToWorld(cell + Vector3ToInt(dir.normalized)));
