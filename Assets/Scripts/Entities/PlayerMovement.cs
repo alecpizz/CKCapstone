@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Cole Stranczek
-*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson, Alec Pizziferro
+*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson, Alec Pizziferro, Josephine Qualls
 *    Date Created: 9/22/24
 *    Description: Script that handles the player's movement along
 *    the grid
@@ -12,6 +12,7 @@ using System.Collections;
 using UnityEngine;
 using PrimeTween;
 using UnityEngine.InputSystem;
+using UnityEngine.Events;
 using FMODUnity;
 using FMOD.Studio;
 
@@ -34,6 +35,9 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
     private int _playerMovementTiming = 1;
     private WaitForSeconds _waitForSeconds;
+
+    //to tell when player finishes a move
+    public UnityEvent OnPlayerMoveComplete;
 
     // Event references for the player movement sounds
     [SerializeField] private EventReference _playerMove = default;
@@ -143,6 +147,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         {
             AudioManager.Instance.PlaySound(_playerMove);
             StartCoroutine(MovementDelay(direction));
+            OnPlayerMoveComplete?.Invoke(); //keeps track of movement completion
         }
         else
         {
