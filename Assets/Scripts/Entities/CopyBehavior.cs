@@ -1,16 +1,17 @@
 /******************************************************************
 *    Author: Mitchell Young
 *    Contributors: Mitchell Young
-*    Date Created: 10/27/24
-*    Description: Script that handles the behavior of the mirror
-*    entity that matches or mirrors player movement.
+*    Date Created: 10/30/24
+*    Description: Script that handles the behavior of the copy
+*    entity that matches player movement.
 *******************************************************************/
 
 using System.Collections;
 using System.Collections.Generic;
+using PrimeTween;
 using UnityEngine;
 
-public class MirrorEntity : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
+public class CopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
 {
     public bool IsTransparent { get => true; }
     public Vector3 Position { get => transform.position; }
@@ -20,10 +21,10 @@ public class MirrorEntity : MonoBehaviour, IGridEntry, ITimeListener, ITurnListe
     private Vector3 _positionOffset;
     [SerializeField]
     private PlayerInteraction _playerInteraction;
-    [SerializeField]
-    private bool reverseMirror = false;
 
-    private int _mirrorMovementTiming = 1;
+    [SerializeField] private float _movementTime = 0.25f;
+
+    private int _copyMovementTiming = 1;
     private WaitForSeconds _waitForSeconds;
 
     // Start is called before the first frame update
@@ -55,18 +56,15 @@ public class MirrorEntity : MonoBehaviour, IGridEntry, ITimeListener, ITurnListe
     private IEnumerator DelayedInput(Vector3 moveDirection)
     {
         yield return null;
-        if (reverseMirror)
-        {
-            moveDirection = -moveDirection;
-        }
 
-        for (int i = 0; i < _mirrorMovementTiming; ++i)
+        for (int i = 0; i < _copyMovementTiming; ++i)
         {
-            // Moves if there is no wall below the mirror entity
+            // Moves if there is no wall below the copy entity
             var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
             if (GridBase.Instance.CellIsEmpty(move))
             {
-                gameObject.transform.position = move + _positionOffset;
+                yield return Tween.Position(transform,
+                    move + _positionOffset, duration: _movementTime, Ease.OutBack).ToYieldInstruction();
                 GridBase.Instance.UpdateEntry(this);
             }
             else
@@ -75,7 +73,7 @@ public class MirrorEntity : MonoBehaviour, IGridEntry, ITimeListener, ITurnListe
                 break;
             }
 
-            if (_mirrorMovementTiming > 1)
+            if (_copyMovementTiming > 1)
             {
                 yield return _waitForSeconds;
             }
@@ -84,16 +82,16 @@ public class MirrorEntity : MonoBehaviour, IGridEntry, ITimeListener, ITurnListe
         RoundManager.Instance.CompleteTurn(this);
     }
 
-        /// <summary>
-        /// Receives the new player movement speed when time signature updates
-        /// </summary>
-        /// <param name="newTimeSignature">The new time signature</param>
-        public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
+    /// <summary>
+    /// Receives the new player movement speed when time signature updates
+    /// </summary>
+    /// <param name="newTimeSignature">The new time signature</param>
+    public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
     {
-        _mirrorMovementTiming = newTimeSignature.x;
+        _copyMovementTiming = newTimeSignature.x;
 
-        if (_mirrorMovementTiming <= 0)
-            _mirrorMovementTiming = 1;
+        if (_copyMovementTiming <= 0)
+            _copyMovementTiming = 1;
     }
     public TurnState TurnState => TurnState.World;
     public void BeginTurn(Vector3 direction)
