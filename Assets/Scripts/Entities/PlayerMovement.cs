@@ -116,7 +116,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         {
             // Checks if the enemy is frozen; if they are, doesn't reload the scene
             EnemyBehavior enemy = collision.collider.GetComponent<EnemyBehavior>();
-            if (enemy == null || enemy.enemyFrozen)
+            if (enemy == null || enemy.EnemyFrozen)
                 return;
 
             Time.timeScale = 0f;
@@ -124,6 +124,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             SceneController.Instance.ReloadCurrentScene();
         }
     }
+    
 
     /// <summary>
     /// Receives the new player movement speed when time signature updates
