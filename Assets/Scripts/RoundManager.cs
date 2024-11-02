@@ -59,7 +59,7 @@ public sealed class RoundManager : MonoBehaviour
     private readonly Dictionary<TurnState, int> _completedTurnCounts = new();
     private PlayerControls _playerControls;
     private Vector3 _lastMovementInput;
-    
+
     /// <summary>
     /// Whether someone is having their turn.
     /// </summary>
@@ -169,18 +169,24 @@ public sealed class RoundManager : MonoBehaviour
 
         //begin the next group's turns.
         _turnState = next.Value;
-        if (_turnListeners[_turnState].Count == 0)
+
+        while (_turnListeners[_turnState].Count == 0 && _turnState != TurnState.None)
         {
             next = GetNextTurn(_turnState);
-            if (next is null or TurnState.None)
+            if (next is null)
             {
                 _turnState = TurnState.None;
-                return;
+                break;
             }
+            _turnState = next.Value;
         }
-        foreach (var turnListener in _turnListeners[_turnState])
+
+        if (_turnState != TurnState.None)
         {
-            turnListener.BeginTurn(_lastMovementInput);
+            foreach (var turnListener in _turnListeners[_turnState])
+            {
+                turnListener.BeginTurn(_lastMovementInput);
+            }
         }
     }
 
