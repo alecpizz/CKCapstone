@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Josephine Qualls
-*    Contributors: Josh Eddy, Alec Pizziferro
+*    Contributors: Josh Eddy, Alec Pizziferro, Trinity Hutson
 *    Date Created: 10/10/2024
 *    Description: Controls where walls move after switch is triggered.
 *******************************************************************/
@@ -43,7 +43,12 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     void Start()
     {
         _originWall = transform.position;
+        // Maintains same height to ensure consistency when swapping
+        _originWall.y = _wallGhost.transform.position.y;
+
         _originGhost = _wallGhost.transform.position;
+        // Maintains same height to ensure consistency when swapping
+        _originGhost.y = transform.position.y;
     }
 
     /// <summary>

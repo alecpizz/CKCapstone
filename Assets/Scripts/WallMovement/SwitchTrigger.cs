@@ -19,13 +19,16 @@ using static UnityEngine.EventSystems.EventTrigger;
 /// </summary>
 public class SwitchTrigger : MonoBehaviour
 {
-    //on/off variable for switch
+    // on/off variable for switch
     private bool _isTriggered = false;
 
-    //for registering mechanics to a switch
+    // for registering mechanics to a switch
     [SerializeReference] private List<MovingWall> _affectedWalls = new List<MovingWall>();
     [SerializeReference] private List<ReflectionSwitch> _affectedReflectors = new List<ReflectionSwitch>();
     [SerializeReference] private List<HarmonySwitch> _affectedBeams = new List<HarmonySwitch>();
+
+    // Reference to Animator component
+    [SerializeReference] private Animator _animator;
 
 
     /// <summary>
@@ -82,6 +85,23 @@ public class SwitchTrigger : MonoBehaviour
                 {
                     _affectedBeams[i].SwitchDeactivation();
                 }
+            }
+
+            if (_animator != null)
+            {
+                _animator.SetTrigger("Pressed");
+            }
+        }
+    }
+
+    // Visually raises the pressure plate when the player steps off
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            if (_animator != null)
+            {
+                _animator.SetTrigger("Pressed");
             }
         }
     }
