@@ -87,13 +87,10 @@ public class SwitchTrigger : MonoBehaviour
                 }
             }
 
-            // Gets reference to the animator component
-            if (_animator == null)
+            if (_animator != null)
             {
-                _animator = gameObject.GetComponent<Animator>();
+                _animator.SetTrigger("Pressed");
             }
-
-            _animator.SetTrigger("Pressed");
         }
     }
 
@@ -102,7 +99,10 @@ public class SwitchTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            _animator.SetTrigger("Pressed");
+            if (_animator != null)
+            {
+                _animator.SetTrigger("Pressed");
+            }
         }
     }
 }
