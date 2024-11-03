@@ -14,8 +14,9 @@ using UnityEngine.InputSystem;
 using SaintsField;
 using PrimeTween;
 using Unity.VisualScripting;
+using FMODUnity;
 
-public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
+public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener, IHarmonyBeamEntity
 {
     public bool IsTransparent { get => true; }
     public Vector3 moveInDirection { get; private set; }
@@ -50,11 +51,14 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     //Check true in the inspector if the enemy is moving in a circular pattern (doesn't want to move back and forth)
     [SerializeField] private bool _circularMovement = false;
 
-    public bool enemyFrozen = false;
+    public bool EnemyFrozen { get; private set; } = false;
 
     private int _enemyMovementTime = 1;
 
     [SerializeField] private float _tempMoveTime = 0.5f;
+
+    // Event reference for the enemy movement sound
+    [SerializeField] private EventReference _enemyMove = default;
 
     // Start is called before the first frame update
     void Start()
@@ -133,7 +137,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         /// and if the enemy is currently frozen by the harmony beam
         /// </summary>
        
-        if (!enemyFrozen)
+        if (!EnemyFrozen)
         {
             for (int i = 0; i < _enemyMovementTime; ++i)
             {
@@ -180,9 +184,13 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                         break;
                     }
 
-                    yield return Tween.Position(transform, 
-                        move + _positionOffset, _tempMoveTime, ease: Ease.Linear).ToYieldInstruction();
+                    yield return Tween.Position(transform,
+                        move + _positionOffset, _tempMoveTime, ease: Ease.OutBack).OnUpdate<EnemyBehavior>(target: this, (target, tween) =>
+                        {
+                            GridBase.Instance.UpdateEntry(this);
+                        }).ToYieldInstruction();
 
+                    AudioManager.Instance.PlaySound(_enemyMove);
                     GridBase.Instance.UpdateEntry(this);
                 }
 
@@ -221,7 +229,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                 }
             }
         }
-
+        GridBase.Instance.UpdateEntry(this);
         RoundManager.Instance.CompleteTurn(this);
     }
 
@@ -233,9 +241,38 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
             _enemyMovementTime = 1;
     }
 
-    public TurnState TurnState => TurnState.World;
+    public TurnState TurnState => TurnState.Enemy;
     public void BeginTurn(Vector3 direction)
     {
         StartCoroutine(DelayedInput());
     }
+
+    /// <summary>
+    /// Can force enemy turn to end early
+    /// </summary>
+    public void ForceTurnEnd()
+    {
+        StopAllCoroutines();
+        GridBase.Instance.UpdateEntry(this);
+        RoundManager.Instance.CompleteTurn(this);
+    }
+    
+    public bool AllowLaserPassThrough { get => true; }
+    /// <summary>
+    /// Freezes the enemy.
+    /// </summary>
+    public void OnLaserHit()
+    {
+        EnemyFrozen = true;
+    }
+
+    /// <summary>
+    /// Unfreezes the enemy.
+    /// </summary>
+    public void OnLaserExit()
+    {
+        EnemyFrozen = false;
+    }
+
+    public bool HitWrapAround { get => true; }
 }

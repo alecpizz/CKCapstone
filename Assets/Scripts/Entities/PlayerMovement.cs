@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Cole Stranczek
-*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson, Alec Pizziferro
+*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson, Alec Pizziferro, Josephine Qualls
 *    Date Created: 9/22/24
 *    Description: Script that handles the player's movement along
 *    the grid
@@ -12,10 +12,12 @@ using System.Collections;
 using UnityEngine;
 using PrimeTween;
 using UnityEngine.InputSystem;
+using UnityEngine.Events;
+using FMODUnity;
+using FMOD.Studio;
 
 public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
 {
-
     public Vector3 FacingDirection { get; private set; }
     public bool IsTransparent { get => true; }
     public Vector3 Position { get => transform.position; }
@@ -33,6 +35,13 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
     private int _playerMovementTiming = 1;
     private WaitForSeconds _waitForSeconds;
+
+    //to tell when player finishes a move
+    public UnityEvent OnPlayerMoveComplete;
+
+    // Event references for the player movement sounds
+    [SerializeField] private EventReference _playerMove = default;
+    [SerializeField] private EventReference _playerCantMove = default;
 
     // Start is called before the first frame update
     void Start()
@@ -103,11 +112,11 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// <param name="collision">Data from collision</param>
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Enemy"))
+        if (!DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("Enemy"))
         {
             // Checks if the enemy is frozen; if they are, doesn't reload the scene
             EnemyBehavior enemy = collision.collider.GetComponent<EnemyBehavior>();
-            if (enemy == null || enemy.enemyFrozen)
+            if (enemy == null || enemy.EnemyFrozen)
                 return;
 
             Time.timeScale = 0f;
@@ -115,6 +124,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             SceneController.Instance.ReloadCurrentScene();
         }
     }
+    
 
     /// <summary>
     /// Receives the new player movement speed when time signature updates
@@ -136,11 +146,24 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
         if ((GridBase.Instance.CellIsEmpty(move) || DebugMenuManager.Instance.GhostMode))
         {
+            AudioManager.Instance.PlaySound(_playerMove);
             StartCoroutine(MovementDelay(direction));
+            OnPlayerMoveComplete?.Invoke(); //keeps track of movement completion
         }
         else
         {
-            RoundManager.Instance.CompleteTurn(this);
+            AudioManager.Instance.PlaySound(_playerCantMove);
+            RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
         }
+    }
+
+    /// <summary>
+    /// Called by switches to end the player turn early
+    /// </summary>
+    public void ForceTurnEnd()
+    {
+        StopAllCoroutines();
+        GridBase.Instance.UpdateEntry(this);
+        RoundManager.Instance.CompleteTurn(this);
     }
 }

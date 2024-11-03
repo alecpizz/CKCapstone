@@ -17,7 +17,8 @@ public enum TurnState
 {
     Player = 0,
     World = 1,
-    None = 2,
+    Enemy = 2,
+    None = 3,
 }
 
 /// <summary>
@@ -38,6 +39,11 @@ public interface ITurnListener
     /// </summary>
     /// <param name="direction">The user input direction.</param>
     void BeginTurn(Vector3 direction);
+
+    /// <summary>
+    /// Method that gets called to end an entity's turn early.
+    /// </summary>
+    void ForceTurnEnd();
 }
 
 
@@ -53,7 +59,7 @@ public sealed class RoundManager : MonoBehaviour
     private readonly Dictionary<TurnState, int> _completedTurnCounts = new();
     private PlayerControls _playerControls;
     private Vector3 _lastMovementInput;
-    
+
     /// <summary>
     /// Whether someone is having their turn.
     /// </summary>
@@ -143,7 +149,8 @@ public sealed class RoundManager : MonoBehaviour
     {
         if (listener.TurnState != _turnState) //don't complete if it's not our turn. this shouldn't happen
         {
-            Debug.LogError("Tried to complete turn while it wasn't our turn state.");
+            Debug.LogError("Tried to complete turn while it wasn't our turn state." +
+                           $" Listener {listener.TurnState}, state {_turnState}");
             return;
         }
 
@@ -162,15 +169,47 @@ public sealed class RoundManager : MonoBehaviour
 
         //begin the next group's turns.
         _turnState = next.Value;
-        if (_turnListeners[_turnState].Count == 0)
+
+        while (_turnListeners[_turnState].Count == 0 && _turnState != TurnState.None)
         {
             next = GetNextTurn(_turnState);
-            if (next is null or TurnState.None)
+            if (next is null)
             {
                 _turnState = TurnState.None;
-                return;
+                break;
+            }
+            _turnState = next.Value;
+        }
+
+        if (_turnState != TurnState.None)
+        {
+            foreach (var turnListener in _turnListeners[_turnState])
+            {
+                turnListener.BeginTurn(_lastMovementInput);
             }
         }
+    }
+
+    /// <summary>
+    /// Attempts to repeat a turn state if possible.
+    /// </summary>
+    /// <param name="listener">The listener to repeat a turn.</param>
+    public void RequestRepeatTurnStateRepeat(ITurnListener listener)
+    {
+        if (listener.TurnState != _turnState)
+        {
+            return;
+        }
+
+        _completedTurnCounts[listener.TurnState] = 0;
+        var prev = GetPreviousTurn(listener.TurnState);
+        if (prev is null or TurnState.None)
+        {
+            _turnState = TurnState.None;
+            return;
+        }
+
+        _turnState = prev.Value;
         foreach (var turnListener in _turnListeners[_turnState])
         {
             turnListener.BeginTurn(_lastMovementInput);
@@ -214,7 +253,24 @@ public sealed class RoundManager : MonoBehaviour
         return turnState switch
         {
             TurnState.Player => TurnState.World,
-            TurnState.World => TurnState.None,
+            TurnState.World => TurnState.Enemy,
+            TurnState.Enemy => TurnState.None,
+            _ => null
+        };
+    }
+
+    /// <summary>
+    /// Helper method to get the previous turn state.
+    /// </summary>
+    /// <param name="turnState">The turn state to compare against.</param>
+    /// <returns>A past turn, can be null.</returns>
+    private static TurnState? GetPreviousTurn(TurnState turnState)
+    {
+        return turnState switch
+        {
+            TurnState.Player => TurnState.None,
+            TurnState.World => TurnState.Player,
+            TurnState.Enemy => TurnState.World,
             _ => null
         };
     }

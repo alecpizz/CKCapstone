@@ -18,6 +18,11 @@ public class TimeSignatureManager : MonoBehaviour
     [OnValueChanged(nameof(UpdateListeners))]
     [SerializeField] private Vector2Int _timeSignature;
 
+    [InfoBox("This is the time signature that metronomes will toggle to", EInfoBoxType.Normal)]
+    [SerializeField] private Vector2Int _secondaryTimeSignature;
+    private Vector2Int _startingTimeSignature;
+    private bool _isToggled = false;
+
     private List<ITimeListener> _timeListeners = new List<ITimeListener>();
 
     /// <summary>
@@ -40,15 +45,27 @@ public class TimeSignatureManager : MonoBehaviour
         {
             _timeSignature.y = 1;
         }
+
+        if (_secondaryTimeSignature.x <= 0)
+        {
+            _secondaryTimeSignature.x = 1;
+        }
+        if (_secondaryTimeSignature.y <= 0)
+        {
+            _secondaryTimeSignature.y = 1;
+        }
+
+        _startingTimeSignature = _timeSignature;
     }
 
     /// <summary>
-    /// Called to change to a new time signature
+    /// Called by metronomes to toggle between two time signatures
     /// </summary>
-    /// <param name="newTimeSignature">New values for the time signature</param>
-    public void ChangeTimeSignature(Vector2Int newTimeSignature)
+    public void ToggleTimeSignature()
     {
-        _timeSignature = newTimeSignature;
+        _isToggled = !_isToggled;
+
+        _timeSignature = _isToggled ? _secondaryTimeSignature : _startingTimeSignature;
 
         UpdateListeners();
     }

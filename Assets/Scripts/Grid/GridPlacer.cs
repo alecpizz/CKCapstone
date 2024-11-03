@@ -77,9 +77,8 @@ public class GridPlacer : MonoBehaviour, IGridEntry
         if (GridBase.Instance == null) return;
         if (_snapToGrid)
         {
-            transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position));
+            transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position)) + offset;
         }
-        transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position));
         GridBase.Instance.UpdateEntry(this);
     }
 

@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Nick Grinstead
-*    Contributors: 
+*    Contributors:
 *    Date Created: 9/24/24
 *    Description: Tracks what notes the player has collected and
 *       handles checking if the player has the correct sequence.
@@ -17,6 +17,8 @@ public class WinChecker : MonoBehaviour
     public static Action<int> CollectedNote;
     public static Action GotCorrectSequence;
     public static Action GotWrongSequence;
+
+    [SerializeField] private ParticleSystem _unlockedParticles;
 
     [field: SerializeField] public List<int> TargetNoteSequence { get; private set; } = new List<int>();
 
