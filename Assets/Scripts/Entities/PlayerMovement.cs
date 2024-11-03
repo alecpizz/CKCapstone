@@ -85,7 +85,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         {
             // Move if there is no wall below the player or if ghost mode is enabled
             var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
-            if ((GridBase.Instance.CellIsEmpty(move)) ||
+            if ((GridBase.Instance.CellIsTransparent(move)) ||
                 (DebugMenuManager.Instance.GhostMode))
             {
                 yield return Tween.Position(transform,
@@ -139,12 +139,17 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     }
 
     public TurnState TurnState => TurnState.Player;
+
+    /// <summary>
+    /// Invoked by the round manager to start the player's turn
+    /// </summary>
+    /// <param name="direction">The direction the player should move</param>
     public void BeginTurn(Vector3 direction)
     {
         _playerInteraction.SetDirection(direction);
 
         var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
-        if ((GridBase.Instance.CellIsEmpty(move) || DebugMenuManager.Instance.GhostMode))
+        if ((GridBase.Instance.CellIsTransparent(move) || DebugMenuManager.Instance.GhostMode))
         {
             AudioManager.Instance.PlaySound(_playerMove);
             StartCoroutine(MovementDelay(direction));
