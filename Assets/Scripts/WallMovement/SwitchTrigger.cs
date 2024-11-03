@@ -59,15 +59,13 @@ public class SwitchTrigger : MonoBehaviour
                 if (_isTriggered)
                 {
                     _affectedWalls[i].SwitchActivation();
-
-                    AudioManager.Instance.PlaySound(_switchSound);
                 }
                 else
                 {
                     _affectedWalls[i].SwitchDeactivation();
-
-                    AudioManager.Instance.PlaySound(_switchSound);
                 }
+
+                AudioManager.Instance.PlaySound(_switchSound);
             }
 
             //changes the reflection cubes and plays a sound
@@ -76,15 +74,13 @@ public class SwitchTrigger : MonoBehaviour
                 if (_isTriggered)
                 {
                     _affectedReflectors[i].SwitchActivation();
-
-                    AudioManager.Instance.PlaySound(_switchSound);
                 }
                 else
                 {
                     _affectedReflectors[i].SwitchDeactivation();
-
-                    AudioManager.Instance.PlaySound(_switchSound);
                 }
+
+                AudioManager.Instance.PlaySound(_switchSound);
             }
 
             //changes the harmony beams and plays a sound
@@ -93,15 +89,13 @@ public class SwitchTrigger : MonoBehaviour
                 if (_isTriggered)
                 {
                     _affectedBeams[i].SwitchActivation();
-
-                    AudioManager.Instance.PlaySound(_switchSound);
                 }
                 else
                 {
                     _affectedBeams[i].SwitchDeactivation();
-
-                    AudioManager.Instance.PlaySound(_switchSound);
                 }
+
+                AudioManager.Instance.PlaySound(_switchSound);
             }
 
             if (_animator != null)
