@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.EventSystems.EventTrigger;
+using FMODUnity;
+using FMOD.Studio;
 
 /// <summary>
 /// Class for actions taken once switch is triggered
@@ -29,6 +31,12 @@ public class SwitchTrigger : MonoBehaviour
 
     // Reference to Animator component
     [SerializeReference] private Animator _animator;
+
+    //reference for sound of switch
+    EventReference _switchSound = default;
+
+    //instance for sound of switch
+    private EventInstance _switchInstance;
 
 
     /// <summary>
@@ -54,10 +62,14 @@ public class SwitchTrigger : MonoBehaviour
                 if (_isTriggered)
                 {
                     _affectedWalls[i].SwitchActivation();
+                    //Don't have AudioManager for anything yet
+
+                    //_switchInstance = PlaySound(_switchSound);
                 }
                 else
                 {
                     _affectedWalls[i].SwitchDeactivation();
+                    //_switchInstance = PlaySound(_switchSound);
                 }
             }
 
@@ -67,10 +79,12 @@ public class SwitchTrigger : MonoBehaviour
                 if (_isTriggered)
                 {
                     _affectedReflectors[i].SwitchActivation();
+                    //_switchInstance = PlaySound(_switchSound);
                 }
                 else
                 {
                     _affectedReflectors[i].SwitchDeactivation();
+                    //_switchInstance = PlaySound(_switchSound);
                 }
             }
 
@@ -80,10 +94,12 @@ public class SwitchTrigger : MonoBehaviour
                 if (_isTriggered)
                 {
                     _affectedBeams[i].SwitchActivation();
+                    //_switchInstance = PlaySound(_switchSound);
                 }
                 else
                 {
                     _affectedBeams[i].SwitchDeactivation();
+                    //_switchInstance = PlaySound(_switchSound);
                 }
             }
 
