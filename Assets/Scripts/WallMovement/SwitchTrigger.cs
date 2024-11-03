@@ -33,10 +33,7 @@ public class SwitchTrigger : MonoBehaviour
     [SerializeReference] private Animator _animator;
 
     //reference for sound of switch
-    EventReference _switchSound = default;
-
-    //instance for sound of switch
-    private EventInstance _switchInstance;
+    [SerializeField] private EventReference _switchSound = default;
 
 
     /// <summary>
@@ -56,50 +53,54 @@ public class SwitchTrigger : MonoBehaviour
 
             _isTriggered = !_isTriggered;
 
-            //changes the walls
+            //changes the walls and plays a sound
             for (int i = 0; i < _affectedWalls.Count; i++)
             {
                 if (_isTriggered)
                 {
                     _affectedWalls[i].SwitchActivation();
-                    //Don't have AudioManager for anything yet
 
-                    //_switchInstance = PlaySound(_switchSound);
+                    AudioManager.Instance.PlaySound(_switchSound);
                 }
                 else
                 {
                     _affectedWalls[i].SwitchDeactivation();
-                    //_switchInstance = PlaySound(_switchSound);
+
+                    AudioManager.Instance.PlaySound(_switchSound);
                 }
             }
 
-            //changes the reflection cubes
+            //changes the reflection cubes and plays a sound
             for (int i = 0; i < _affectedReflectors.Count; i++)
             {
                 if (_isTriggered)
                 {
                     _affectedReflectors[i].SwitchActivation();
-                    //_switchInstance = PlaySound(_switchSound);
+
+                    AudioManager.Instance.PlaySound(_switchSound);
                 }
                 else
                 {
                     _affectedReflectors[i].SwitchDeactivation();
-                    //_switchInstance = PlaySound(_switchSound);
+
+                    AudioManager.Instance.PlaySound(_switchSound);
                 }
             }
 
-            //changes the harmony beams
+            //changes the harmony beams and plays a sound
             for (int i = 0; i < _affectedBeams.Count; i++)
             {
                 if (_isTriggered)
                 {
                     _affectedBeams[i].SwitchActivation();
-                    //_switchInstance = PlaySound(_switchSound);
+
+                    AudioManager.Instance.PlaySound(_switchSound);
                 }
                 else
                 {
                     _affectedBeams[i].SwitchDeactivation();
-                    //_switchInstance = PlaySound(_switchSound);
+
+                    AudioManager.Instance.PlaySound(_switchSound);
                 }
             }
 
