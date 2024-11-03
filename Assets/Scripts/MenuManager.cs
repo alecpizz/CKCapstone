@@ -17,6 +17,9 @@ public class MenuManager : MonoBehaviour
 
     private DebugInputActions _inputActions;
 
+    public AudioSource audioSource;
+    public AudioClip buttonSound;
+
     private void Awake()
     {
         _inputActions = new DebugInputActions();
@@ -28,6 +31,15 @@ public class MenuManager : MonoBehaviour
     {
         _inputActions.Disable();
         _inputActions.Player.Quit.performed -= ctx => Pause();
+    }
+
+    /// <summary>
+    /// Plays a button sound when invoked
+    /// </summary>
+    public void playClip()
+    {
+        audioSource.clip = buttonSound;
+        audioSource.Play();
     }
 
     /// <summary>
@@ -44,7 +56,10 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void Options()
     {
-        _optionsScreen.SetActive(true);
+        PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
+        {
+            _optionsScreen.SetActive(true);
+        });
     }
 
     /// <summary>
@@ -78,7 +93,10 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void ActivateTutorialCanvas()
     {
-        _tutorialCanvas.SetActive(true);
+        PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
+        {
+            _tutorialCanvas.SetActive(true);
+        });
     }
 
     /// <summary>
@@ -102,6 +120,9 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void Quit()
     {
-        Application.Quit();
+        PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
+        {
+            Application.Quit();
+        });    
     }
 }
