@@ -17,8 +17,7 @@ public class MenuManager : MonoBehaviour
 
     private DebugInputActions _inputActions;
 
-    public AudioSource audioSource;
-    public AudioClip buttonSound;
+
 
     private void Awake()
     {
@@ -31,15 +30,6 @@ public class MenuManager : MonoBehaviour
     {
         _inputActions.Disable();
         _inputActions.Player.Quit.performed -= ctx => Pause();
-    }
-
-    /// <summary>
-    /// Plays a button sound when invoked
-    /// </summary>
-    public void playClip()
-    {
-        audioSource.clip = buttonSound;
-        audioSource.Play();
     }
 
     /// <summary>
