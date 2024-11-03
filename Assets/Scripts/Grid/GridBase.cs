@@ -36,10 +36,10 @@ public class GridBase : MonoBehaviour
     [SerializeField]
     private Material _secondaryGridMat;
 
-    [BoxGroup("Grid Viuals")] [SerializeField]
+    [LayoutStart("Grid Viuals", ELayout.Background | ELayout.TitleBox)] [SerializeField]
     private GameObject _gridPrefab;
 
-    [BoxGroup("Grid Visuals")] [SerializeField] [OnValueChanged(nameof(OnDrawMeshChanged))]
+   [SerializeField] [OnValueChanged(nameof(OnDrawMeshChanged))]
     private bool _drawGridMesh = true;
 
     private Dictionary<Vector3Int, HashSet<IGridEntry>> _gridEntries = new();

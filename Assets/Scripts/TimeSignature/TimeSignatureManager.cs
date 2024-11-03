@@ -18,7 +18,7 @@ public class TimeSignatureManager : MonoBehaviour
     [OnValueChanged(nameof(UpdateListeners))]
     [SerializeField] private Vector2Int _timeSignature;
 
-    [InfoBox("This is the time signature that metronomes will toggle to", EInfoBoxType.Normal)]
+    [InfoBox("This is the time signature that metronomes will toggle to", EMessageType.Info)]
     [SerializeField] private Vector2Int _secondaryTimeSignature;
     private Vector2Int _startingTimeSignature;
     private bool _isToggled = false;
