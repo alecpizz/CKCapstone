@@ -46,6 +46,8 @@ public class GridBase : MonoBehaviour
     [SerializeField] [HideInInspector] private GameObject _gridMeshHolder;
     private Dictionary<Vector3Int, GameObject> _gridObjects = new();
 
+    private const string GridMeshName = "Grid Mesh Holder";
+
     /// <summary>
     /// Grabs the grid component.
     /// </summary>
@@ -345,7 +347,7 @@ public class GridBase : MonoBehaviour
 
         DestroyMesh();
 
-        _gridMeshHolder = new GameObject("Grid Mesh Holder")
+        _gridMeshHolder = new GameObject(GridMeshName)
         {
             transform =
             {
@@ -383,14 +385,15 @@ public class GridBase : MonoBehaviour
     /// </summary>
     private void DestroyMesh()
     {
-        if (_gridMeshHolder == null) return;
+        var gameObj = _gridMeshHolder == null ?
+            transform.Find(GridMeshName).gameObject : _gridMeshHolder;
         if (Application.isPlaying)
         {
-            Destroy(_gridMeshHolder);
+            Destroy(gameObj);
         }
         else
         {
-            DestroyImmediate(_gridMeshHolder);
+            DestroyImmediate(gameObj);
         }
     }
 
