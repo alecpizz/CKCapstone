@@ -44,7 +44,6 @@ public class HarmonyBeamManager : MonoBehaviour
         // If this is the first beam hitting the enemy, freeze it
         if (_enemyHitCounts[enemy] == 1)
         {
-            enemy.enemyFrozen = true;
             Debug.Log("Froze enemy: " + enemy.name);
         }
     }
@@ -58,7 +57,6 @@ public class HarmonyBeamManager : MonoBehaviour
             // If no more beams are hitting the enemy, unfreeze it
             if (_enemyHitCounts[enemy] <= 0)
             {
-                enemy.enemyFrozen = false;
                 Debug.Log("Unfroze enemy: " + enemy.name);
                 _enemyHitCounts.Remove(enemy);  // Remove enemy from tracking
             }
