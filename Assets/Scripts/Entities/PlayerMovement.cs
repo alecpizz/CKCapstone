@@ -43,6 +43,13 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     [SerializeField] private EventReference _playerMove = default;
     [SerializeField] private EventReference _playerCantMove = default;
 
+    public static PlayerMovement Instance;
+    
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     // Start is called before the first frame update
     void Start()
     {

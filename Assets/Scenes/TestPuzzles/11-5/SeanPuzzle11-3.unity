@@ -1147,6 +1147,16 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 627287890}
+    - target: {fileID: 1927230979896276126, guid: 4b4ed906bab175f468c3e8cc2650a794,
+        type: 3}
+      propertyPath: OnPlayerMoveComplete.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 381800725}
+    - target: {fileID: 1927230979896276126, guid: 4b4ed906bab175f468c3e8cc2650a794,
+        type: 3}
+      propertyPath: OnPlayerMoveComplete.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: TurnIncrementation
+      objectReference: {fileID: 0}
     - target: {fileID: 2735164925453966809, guid: 4b4ed906bab175f468c3e8cc2650a794,
         type: 3}
       propertyPath: m_Name
@@ -2269,6 +2279,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 381800723}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &381800725 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5397489267877708842, guid: dbb0dd27c6fab3344aab4441094b0849,
+    type: 3}
+  m_PrefabInstance: {fileID: 381800723}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e56c7dc95d6d4c4484630d90410c89b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!43 &389233717
 Mesh:
   m_ObjectHideFlags: 0
