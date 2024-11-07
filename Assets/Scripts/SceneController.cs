@@ -11,7 +11,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using NaughtyAttributes;
+using SaintsField;
+using SaintsField.Playa;
 using FMODUnity;
 
 public class SceneController : MonoBehaviour
@@ -25,8 +26,7 @@ public class SceneController : MonoBehaviour
     [SerializeField] private Image _circleWipeImage;
     [Required]
     [SerializeField] private Camera _camera;
-    [InfoBox("Needed for screen wipe to center on the player", EInfoBoxType.Warning)]
-    [SerializeField] private Transform _playerTransform;
+    [InfoBox("Needed for screen wipe to center on the player", EMessageType.Warning)]
     [SerializeField] private float _timeForScreenWipe;
     [SerializeField] private bool _shouldFadeInOnLoad;
     [SerializeField] private EventReference _endSound;
@@ -84,14 +84,14 @@ public class SceneController : MonoBehaviour
     private void RepositionCircleWipe()
     {
         // Do circle wipe in center of the screen if there's no player
-        if (_playerTransform == null)
+        if (PlayerMovement.Instance == null)
         {
             _circleWipeImage.materialForRendering.SetVector(_positionOffsetPropId, new Vector2(0, 0));
             return;
         }
 
         // Find where player is in screen space
-        Vector3 screenPos = _camera.WorldToScreenPoint(_playerTransform.position);
+        Vector3 screenPos = _camera.WorldToScreenPoint(PlayerMovement.Instance.transform.position);
 
         // Turn pixel position into percent of screen width and height
         float xPercent = screenPos.x / _camera.pixelWidth;
