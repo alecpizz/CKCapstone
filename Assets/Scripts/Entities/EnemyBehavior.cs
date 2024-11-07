@@ -11,14 +11,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using NaughtyAttributes;
+using SaintsField;
 using PrimeTween;
 using Unity.VisualScripting;
 using FMODUnity;
 
 public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener, IHarmonyBeamEntity
 {
-    public bool IsTransparent { get => true; }
+    public bool IsTransparent { get => false; }
     public bool BlocksHarmonyBeam { get => false; }
     public Vector3 moveInDirection { get; private set; }
     public Vector3 Position { get => transform.position; }

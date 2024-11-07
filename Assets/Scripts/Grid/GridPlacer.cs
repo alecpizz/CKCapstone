@@ -8,7 +8,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using NaughtyAttributes;
+using SaintsField;
+using SaintsField.Playa;
 using UnityEngine;
 
 /// <summary>
@@ -22,7 +23,7 @@ public class GridPlacer : MonoBehaviour, IGridEntry
     public GameObject GetGameObject { get => gameObject; }
 
     [InfoBox("Use this component to add this gameObject to a grid.")]
-    [BoxGroup("Settings")]
+    [LayoutStart("Settings", ELayout.Background | ELayout.TitleBox)]
     [SerializeField] 
     private bool _isTransparent = false;
 
@@ -30,19 +31,18 @@ public class GridPlacer : MonoBehaviour, IGridEntry
     private bool _blocksHarmonyBeam = false;
 
     [Space]
-    [SerializeField] [BoxGroup("Settings")]
+    [SerializeField] 
     private bool _snapToGrid = true;
 
     [SerializeField]
-    [BoxGroup("Settings")]
     private Vector3 offset = Vector3.zero;
 
     [Space]
-    [SerializeField] [BoxGroup("Settings")]
+    [SerializeField] 
     private bool _disableGridCell = false;
 
     [Space]
-    [SerializeField] [BoxGroup("Settings")]
+    [SerializeField] 
     private bool _isVisable = true;
 
     /// <summary>
