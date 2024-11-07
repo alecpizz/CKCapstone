@@ -8,7 +8,7 @@
 *******************************************************************/
 using System.Collections.Generic;
 using UnityEngine;
-using NaughtyAttributes;
+using SaintsField;
 
 public class PlayerInteraction : MonoBehaviour
 {

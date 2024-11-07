@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.EventSystems.EventTrigger;
+using FMODUnity;
+using FMOD.Studio;
 
 /// <summary>
 /// Class for actions taken once switch is triggered
@@ -29,6 +31,9 @@ public class SwitchTrigger : MonoBehaviour
 
     // Reference to Animator component
     [SerializeReference] private Animator _animator;
+
+    //reference for sound of switch
+    [SerializeField] private EventReference _switchSound = default;
 
 
     /// <summary>
@@ -48,7 +53,7 @@ public class SwitchTrigger : MonoBehaviour
 
             _isTriggered = !_isTriggered;
 
-            //changes the walls
+            //changes the walls and plays a sound
             for (int i = 0; i < _affectedWalls.Count; i++)
             {
                 if (_isTriggered)
@@ -59,9 +64,11 @@ public class SwitchTrigger : MonoBehaviour
                 {
                     _affectedWalls[i].SwitchDeactivation();
                 }
+
+                AudioManager.Instance.PlaySound(_switchSound);
             }
 
-            //changes the reflection cubes
+            //changes the reflection cubes and plays a sound
             for (int i = 0; i < _affectedReflectors.Count; i++)
             {
                 if (_isTriggered)
@@ -72,9 +79,11 @@ public class SwitchTrigger : MonoBehaviour
                 {
                     _affectedReflectors[i].SwitchDeactivation();
                 }
+
+                AudioManager.Instance.PlaySound(_switchSound);
             }
 
-            //changes the harmony beams
+            //changes the harmony beams and plays a sound
             for (int i = 0; i < _affectedBeams.Count; i++)
             {
                 if (_isTriggered)
@@ -85,6 +94,8 @@ public class SwitchTrigger : MonoBehaviour
                 {
                     _affectedBeams[i].SwitchDeactivation();
                 }
+
+                AudioManager.Instance.PlaySound(_switchSound);
             }
 
             if (_animator != null)
