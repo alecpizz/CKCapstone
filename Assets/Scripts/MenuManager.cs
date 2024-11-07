@@ -37,6 +37,7 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void Unpause()
     {
+        DebugMenuManager.Instance.PauseMenu = false;
         _pauseScreen.SetActive(false);
         Time.timeScale = 1f;
     }
@@ -65,6 +66,7 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void Pause()
     {
+        DebugMenuManager.Instance.PauseMenu = true;
         _pauseScreen.SetActive(true);
         Time.timeScale = 0f;
     }
