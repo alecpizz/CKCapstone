@@ -13,6 +13,14 @@ public class MetronomeBehavior : MonoBehaviour
 {
     [SerializeField] private GameObject model;
     [SerializeField] private bool tickingSlow = false;
+    [SerializeField] private float durationTime = 2f;
+
+    Animator getAnimator;
+
+    private void Awake()
+    {
+        getAnimator = model.GetComponent<Animator>();
+    }
 
     /// <summary>
     /// Toggles the time signature on the manager if there is one
@@ -36,14 +44,14 @@ public class MetronomeBehavior : MonoBehaviour
 
             if (!tickingSlow)
             {
-                model.GetComponent<Animator>().SetBool("TickingFast", true);
-                StartCoroutine(waitASec());
+                getAnimator.SetBool("TickingFast", true);
+                StartCoroutine(waitForDuration());
                 tickingSlow = false;
             }
             else
             {
-                model.GetComponent<Animator>().SetBool("TickingSlow", true);
-                StartCoroutine(waitASec());
+                getAnimator.SetBool("TickingSlow", true);
+                StartCoroutine(waitForDuration());
                 tickingSlow = true;
             }
 
@@ -55,11 +63,16 @@ public class MetronomeBehavior : MonoBehaviour
         }
     }
 
-    IEnumerator waitASec()
+    /// <summary>
+    /// Waits for the duration float time amount before setting the animator variables to false. 
+    /// This returns the model to its default animation.
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator waitForDuration()
     {
-        yield return new WaitForSeconds(2f);
-        model.GetComponent<Animator>().SetBool("TickingFast", false);
-        model.GetComponent<Animator>().SetBool("TickingSlow", false);
+        yield return new WaitForSeconds(durationTime);
+        getAnimator.SetBool("TickingFast", false);
+        getAnimator.SetBool("TickingSlow", false);
     }
 
 }
