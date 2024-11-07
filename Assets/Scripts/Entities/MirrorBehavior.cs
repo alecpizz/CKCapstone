@@ -9,7 +9,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using PrimeTween;
-using NaughtyAttributes;
 using UnityEngine;
 
 public class MirrorBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
@@ -22,7 +21,7 @@ public class MirrorBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     private Vector3 _positionOffset;
     [SerializeField]
     private PlayerInteraction _playerInteraction;
-    [Required] [SerializeField] private GameObject _player;
+    [SerializeField] private GameObject _player;
 
     private float _movementTime = 0.55f;
 
@@ -64,7 +63,7 @@ public class MirrorBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             // Moves if there is no objects in the next grid space
             var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
             var entries = GridBase.Instance.GetCellEntries(move);
-            bool breakLoop = false;
+            bool canMove = true;
 
             if (GridBase.Instance.CellIsEmpty(move))
             {
@@ -74,25 +73,28 @@ public class MirrorBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                 {
                     if (entry.GetGameObject != _player)
                     {
-                        breakLoop = true;
+                        canMove = false;
                         break;
                     }
                 }
-
-                if (breakLoop == true)
+                if (canMove == true)
                 {
-                    break;
-                }
-                yield return Tween.Position(transform,
+                    yield return Tween.Position(transform,
                         move + _positionOffset, _movementTime, ease: Ease.OutBack).OnUpdate<MirrorBehavior>(target: this, (target, tween) =>
                         {
                             GridBase.Instance.UpdateEntry(this);
                         }).ToYieldInstruction();
+                }
 
                 GridBase.Instance.UpdateEntry(this);
             }
             else
             {
+                if (_mirrorMovementTiming > 1)
+                {
+                    yield return _waitForSeconds;
+                }
+
                 RoundManager.Instance.CompleteTurn(this);
                 break;
             }
@@ -122,5 +124,11 @@ public class MirrorBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     {
         _playerInteraction.SetDirection(direction);
         StartCoroutine(DelayedInput(direction));
+    }
+    public void ForceTurnEnd()
+    {
+        StopAllCoroutines();
+        GridBase.Instance.UpdateEntry(this);
+        RoundManager.Instance.CompleteTurn(this);
     }
 }

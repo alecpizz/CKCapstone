@@ -10,7 +10,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using NaughtyAttributes;
 using PrimeTween;
 using Unity.VisualScripting;
 
@@ -25,7 +24,7 @@ public class SonEnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnL
 
     public GameObject GetGameObject { get => gameObject; }
 
-    [Required] [SerializeField] private GameObject _player;
+    [SerializeField] private GameObject _player;
 
     [SerializeField] private bool _atStart;
     [SerializeField] private int _currentPoint = 0;
@@ -235,5 +234,11 @@ public class SonEnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnL
     public void BeginTurn(Vector3 direction)
     {
         StartCoroutine(DelayedInput());
+    }
+    public void ForceTurnEnd()
+    {
+        StopAllCoroutines();
+        GridBase.Instance.UpdateEntry(this);
+        RoundManager.Instance.CompleteTurn(this);
     }
 }

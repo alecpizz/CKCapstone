@@ -11,7 +11,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using SaintsField;
 using PrimeTween;
 using Unity.VisualScripting;
 using FMODUnity;
@@ -27,7 +26,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
     public GameObject GetGameObject { get => gameObject; }
 
-    [Required] [SerializeField] private GameObject _player;
+    [SerializeField] private GameObject _player;
 
     [SerializeField] private bool _atStart;
     [SerializeField] private int _currentPoint = 0;

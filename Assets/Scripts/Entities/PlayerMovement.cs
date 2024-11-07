@@ -43,6 +43,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     [SerializeField] private EventReference _playerMove = default;
     [SerializeField] private EventReference _playerCantMove = default;
 
+    [SerializeField] private bool _enemyFound = false;
+
     public static PlayerMovement Instance;
     
     private void Awake()
@@ -92,16 +94,20 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         {
             // Move if there is no wall below the player or if ghost mode is enabled
             var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
-            if ((GridBase.Instance.CellIsTransparent(move)) ||
+
+            if (_enemyFound)
+            {
+                yield return Tween.Position(transform,
+                   move + _positionOffset, duration: _movementTime, Ease.OutBack).ToYieldInstruction();
+                GridBase.Instance.UpdateEntry(this);
+            }
+
+            if ((GridBase.Instance.CellIsEmpty(move)) ||
                 (DebugMenuManager.Instance.GhostMode))
             {
                 yield return Tween.Position(transform,
                     move + _positionOffset, duration: _movementTime, Ease.OutBack).ToYieldInstruction();
                 GridBase.Instance.UpdateEntry(this);
-            }
-            else
-            {
-                break;
             }
 
             if (_playerMovementTiming > 1)
@@ -156,6 +162,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         _playerInteraction.SetDirection(direction);
 
         var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
+        var entries = GridBase.Instance.GetCellEntries(move);
         if ((GridBase.Instance.CellIsTransparent(move) || DebugMenuManager.Instance.GhostMode))
         {
             AudioManager.Instance.PlaySound(_playerMove);
@@ -164,8 +171,24 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         }
         else
         {
-            AudioManager.Instance.PlaySound(_playerCantMove);
-            RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
+            //Allows the player to move into the cell if an enemy is found
+            if (!GridBase.Instance.CellIsEmpty(move))
+            {
+                foreach (var entry in entries)
+                {
+                    if (entry.GetGameObject.tag == "Enemy")
+                    {
+                        _enemyFound = true;
+                        StartCoroutine(MovementDelay(direction));
+                    }
+                }
+            }
+
+            if (!_enemyFound)
+            {
+                AudioManager.Instance.PlaySound(_playerCantMove);
+                RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
+            }
         }
     }
 

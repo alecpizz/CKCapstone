@@ -9,7 +9,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using PrimeTween;
-using NaughtyAttributes;
 using UnityEngine;
 
 public class CopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
@@ -22,7 +21,7 @@ public class CopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListe
     private Vector3 _positionOffset;
     [SerializeField]
     private PlayerInteraction _playerInteraction;
-    [Required] [SerializeField] private GameObject _player;
+    [SerializeField] private GameObject _player;
 
     private float _movementTime = 0.55f;
 
@@ -64,7 +63,8 @@ public class CopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListe
             // Moves if there is no objects in the next grid space
             var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
             var entries = GridBase.Instance.GetCellEntries(move);
-            bool breakLoop = false;
+            bool canMove = true;
+
             if (GridBase.Instance.CellIsEmpty(move))
             {
                 //If the next cell contains an object that is not the player then the loop breaks
@@ -73,25 +73,26 @@ public class CopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListe
                 {
                     if (entry.GetGameObject != _player)
                     {
-                        breakLoop = true;
+                        canMove = false;
                         break;
                     }
                 }
-
-                if (breakLoop == true)
+                if (canMove == true)
                 {
-                    break;
-                }
-                yield return Tween.Position(transform,
+                    yield return Tween.Position(transform,
                         move + _positionOffset, _movementTime, ease: Ease.OutBack).OnUpdate<CopyBehavior>(target: this, (target, tween) =>
                         {
                             GridBase.Instance.UpdateEntry(this);
                         }).ToYieldInstruction();
-
-                GridBase.Instance.UpdateEntry(this);
+                }
             }
             else
             {
+                if (_copyMovementTiming > 1)
+                {
+                    yield return _waitForSeconds;
+                }
+
                 RoundManager.Instance.CompleteTurn(this);
                 break;
             }
@@ -121,5 +122,12 @@ public class CopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListe
     {
         _playerInteraction.SetDirection(direction);
         StartCoroutine(DelayedInput(direction));
+    }
+
+    public void ForceTurnEnd()
+    {
+        StopAllCoroutines();
+        GridBase.Instance.UpdateEntry(this);
+        RoundManager.Instance.CompleteTurn(this);
     }
 }
