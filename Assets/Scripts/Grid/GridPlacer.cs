@@ -18,6 +18,7 @@ using UnityEngine;
 public class GridPlacer : MonoBehaviour, IGridEntry
 {
     public bool IsTransparent { get => _isTransparent; }
+    public bool BlocksHarmonyBeam { get => _blocksHarmonyBeam; }
     public Vector3 Position { get => transform.position; }
     public GameObject GetGameObject { get => gameObject; }
 
@@ -25,6 +26,9 @@ public class GridPlacer : MonoBehaviour, IGridEntry
     [LayoutStart("Settings", ELayout.Background | ELayout.TitleBox)]
     [SerializeField] 
     private bool _isTransparent = false;
+
+    [SerializeField]
+    private bool _blocksHarmonyBeam = false;
 
     [Space]
     [SerializeField] 
