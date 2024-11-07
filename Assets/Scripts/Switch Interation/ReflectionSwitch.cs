@@ -22,7 +22,7 @@ public class ReflectionSwitch : MonoBehaviour, IParentSwitch
     /// </summary>
     public void SwitchActivation()
     {
-        _mirror.ChangeDirection(false);
+        _mirror.FlipDirection(false);
     }
 
     /// <summary>
@@ -30,6 +30,6 @@ public class ReflectionSwitch : MonoBehaviour, IParentSwitch
     /// </summary>
     public void SwitchDeactivation()
     {
-        _mirror.ChangeDirection(true);
+        _mirror.FlipDirection(true);
     }
 }
