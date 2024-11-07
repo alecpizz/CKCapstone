@@ -12,24 +12,26 @@ using UnityEngine;
 using FMODUnity;
 using FMOD.Studio;
 using System;
-using NaughtyAttributes;
+using SaintsField;
+using System.Diagnostics;
 
 [Serializable]
-public struct DialogueEntry 
+public struct DialogueEntry
 {
     public EventReference _sound;
     [TextArea] public string _text;
     [InfoBox("This adjusts the speed of the text. " +
-        "A value of -5 slows it down while a value of 5 speeds it up", EInfoBoxType.Normal)]
+        "A value of -5 slows it down while a value of 5 speeds it up", EMessageType.Info)]
     [Range(-5f, 5f)] public float _adjustTypingSpeed;
 }
 
 // TODO: Update this class to implement from IInteractable
-public class NPCScript : MonoBehaviour
+public class NPCScript : MonoBehaviour, IInteractable
 {
     [SerializeField] private TMP_Text _dialogueBox;
-    [InfoBox("This adjusts the base typing speed. 2 is the slowest, 10 is the fastest", EInfoBoxType.Normal)]
-    [Range(2f, 10f)] [SerializeField] private float _typingSpeed = 5f;
+    private bool _isTalking;
+    [InfoBox("This adjusts the base typing speed. 2 is the slowest, 10 is the fastest", EMessageType.Info)]
+    [Range(2f, 10f)][SerializeField] private float _typingSpeed = 5f;
     [SerializeField] private List<DialogueEntry> _dialogueEntries;
 
     //dialogue options
@@ -38,13 +40,37 @@ public class NPCScript : MonoBehaviour
     //used to tell if player is in adjacent square
     private bool _occupied;
     private Coroutine _typingCoroutine;
-    private Coroutine _bounceCoroutine;
     private bool _isTyping = false;
     private string _currentFullText;
-    private List<GameObject> bouncingLetters;
 
     // FIXME: waiting until new AudioManager update gets pushed
     //private EventInstance _currentInstance;
+
+    /// <summary>
+    /// Field to retrieve attached GameObject: from IInteractable
+    /// </summary>
+    public GameObject GetGameObject { get; }
+
+
+    /// <summary>
+    /// This function will be implemented to contain the specific functionality
+    /// for an interactable object: from IInteractable
+    /// This one is used to call the advance dialogue function
+    /// </summary>
+    public void OnInteract()
+    {
+        AdvanceDialogue();
+    }
+
+    /// <summary>
+    /// This function will be implemented for when the player is no longer interacting with the interactable
+    /// this one is used to call the hide dialogue function
+    /// from IInteractable
+    /// </summary>
+    public void OnLeave()
+    {
+        HideDialogue();
+    }
 
     /// <summary>
     /// Start is called before the first frame update
@@ -56,76 +82,69 @@ public class NPCScript : MonoBehaviour
             _dialogueBox.SetText(_dialogueEntries[_currentDialogue]._text);
         _dialogueBox.gameObject.SetActive(false);
         _occupied = false;
+        _isTalking = false;
         _currentTypingSpeed = Mathf.Clamp(
             _typingSpeed - _dialogueEntries[_currentDialogue]._adjustTypingSpeed, 2f, 15f) / 100f;
     }
 
     /// <summary>
-    /// is used to advance the current dialogue
+    /// is used to advance the current dialogue or show the dialogue if it is not already
     /// is called by player when the interact key is used
     /// </summary>
     public void AdvanceDialogue()
     {
-        if (!_occupied)
+        if (!_isTalking)
         {
-            return;
-        }
+            if (CheckForEntries())
+            {
+                if (_typingCoroutine != null)
+                {
+                    StopCoroutine(_typingCoroutine);
+                }
+                _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue]._text));
+            }
 
-        if (!CheckForEntries())
-        {
-            return;
-        } 
-
-        // skips the typing to show complete text
-        if (_isTyping)
-        {
-            FinishTyping();
-            return;
-        }
-
-        if (_currentDialogue < _dialogueEntries.Count - 1)
-        {
-            _currentDialogue++;             
+            _dialogueBox.gameObject.SetActive(true);
+            _occupied = true;
+            _isTalking = true;
         }
         else
         {
-            _currentDialogue = 0;
-        }
+            if (!_occupied)
+            {
+                return;
+            }
 
-        if (_typingCoroutine != null)
-        {
-            StopCoroutine(_typingCoroutine);
-        }
+            if (!CheckForEntries())
+            {
+                return;
+            }
 
-        // adjusts typing speed on a per-entry basis
-        _currentTypingSpeed = Mathf.Clamp(_typingSpeed - _dialogueEntries[_currentDialogue]._adjustTypingSpeed, 2f, 15f) / 100f;
+            // skips the typing to show complete text
+            if (_isTyping)
+            {
+                //FinishTyping();
+                //return;
+            }
 
-        if(_bounceCoroutine != null)
-            StopCoroutine(_bounceCoroutine);
-        // Cleanup bouncing letters
-        foreach (var letter in bouncingLetters)
-        {
-            Destroy(letter);
-        }
-        _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue]._text));
-    }
+            if (_currentDialogue < _dialogueEntries.Count - 1)
+            {
+                _currentDialogue++;
+            }
+            else
+            {
+                _currentDialogue = 0;
+            }
 
-    /// <summary>
-    /// use this to show the dialogue of the npc
-    /// </summary>
-    public void ShowDialogue()
-    {
-        if (CheckForEntries())
-        {
             if (_typingCoroutine != null)
             {
                 StopCoroutine(_typingCoroutine);
             }
+
+            // adjusts typing speed on a per-entry basis
+            _currentTypingSpeed = Mathf.Clamp(_typingSpeed - _dialogueEntries[_currentDialogue]._adjustTypingSpeed, 2f, 15f) / 100f;
             _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue]._text));
         }
-
-        _dialogueBox.gameObject.SetActive(true);
-        _occupied = true;
     }
 
     /// <summary>
@@ -140,6 +159,7 @@ public class NPCScript : MonoBehaviour
         {
             StopCoroutine(_typingCoroutine);
         }
+        _isTalking = false;
     }
 
     /// <summary>
@@ -167,10 +187,7 @@ public class NPCScript : MonoBehaviour
         _dialogueBox.SetText(""); // Clear the dialogue box
 
         bool style = false;
-        bool isBouncing = false;
         string currentTag = "";
-        float currentXPosition = 0f; // Tracks the horizontal position for letters
-        bouncingLetters = new();
 
         foreach (char letter in dialogue.ToCharArray())
         {
@@ -187,58 +204,14 @@ public class NPCScript : MonoBehaviour
                 {
                     style = false;
 
-                    // Check for custom bounce tag
-                    if (currentTag == "<bounce>")
-                    {
-                        isBouncing = true;
-                    }
-                    else if (currentTag == "</bounce>")
-                    {
-                        isBouncing = false;
-                    }
-                    else
-                    {
-                        _dialogueBox.text += currentTag;
-                    }
+                    _dialogueBox.text += currentTag;
 
                     currentTag = "";
                 }
             }
             else
             {
-                if (isBouncing)
-                {
-                    // Create a new GameObject for the bouncing letter
-                    var letterObj = new GameObject($"letter_{letter}");
-                    var textComponent = letterObj.AddComponent<TextMeshProUGUI>();
-                    textComponent.text = letter.ToString();
-                    textComponent.alignment = TMPro.TextAlignmentOptions.Center;
-                    textComponent.font = _dialogueBox.font; // Match font with the main dialogue box
-                    textComponent.fontSize = _dialogueBox.fontSize; // Match font size
-                    letterObj.transform.SetParent(_dialogueBox.transform, false);
-
-                    // Adjust the position of the letter
-                    RectTransform rectTransform = letterObj.GetComponent<RectTransform>();
-                    rectTransform.anchoredPosition = new Vector2(currentXPosition, 0);
-
-                    // Update the horizontal position for the next letter
-                    currentXPosition += 15;
-
-                    // Start the bounce animation for the letter
-                    _bounceCoroutine = StartCoroutine(BounceLetter(letterObj));
-                    bouncingLetters.Add(letterObj);
-                }
-                else
-                {
-                    // Add the letter directly to the dialogue box text and adjust the position
-                    _dialogueBox.text += letter;
-                    var tempText = new GameObject("tempText").AddComponent<TextMeshProUGUI>();
-                    tempText.text = letter.ToString();
-                    tempText.font = _dialogueBox.font;
-                    tempText.fontSize = _dialogueBox.fontSize;
-                    currentXPosition += tempText.preferredWidth;
-                    Destroy(tempText.gameObject);
-                }
+                _dialogueBox.text += letter;
 
                 // Apply delays based on punctuation
                 switch (letter)
@@ -261,23 +234,6 @@ public class NPCScript : MonoBehaviour
         _isTyping = false;
     }
 
-    // Coroutine to make the letter bounce up and down
-    private IEnumerator BounceLetter(GameObject letterObj)
-    {
-        RectTransform rectTransform = letterObj.GetComponent<RectTransform>();
-        Vector3 startPosition = rectTransform.anchoredPosition;
-        float bounceHeight = 5f; // Adjust the bounce height
-        float bounceSpeed = 3f;  // Adjust the speed of the bounce
-
-        while (letterObj)
-        {
-            float offset = Mathf.Sin(Time.time * bounceSpeed) * bounceHeight;
-            rectTransform.anchoredPosition = startPosition + new Vector3(-15, offset + 15, 0);
-            yield return null;
-        }
-    }
-
-
     /// <summary>
     /// Makes sure the NPC has dialogue entries
     /// </summary>
@@ -286,7 +242,7 @@ public class NPCScript : MonoBehaviour
     {
         if (_dialogueEntries.Count == 0)
         {
-            Debug.LogWarning("No entries in " + gameObject.name + ", please add some.");
+            UnityEngine.Debug.LogWarning("No entries in " + gameObject.name + ", please add some.");
             _dialogueBox.SetText("No Entries in NPC.");
             return false;
         }

@@ -5,25 +5,74 @@
 *    Description: Script that handles harmony beam reflections
 *******************************************************************/
 
+
 using UnityEngine;
 
-public class ReflectiveObject : MonoBehaviour
+public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity
 {
-    [SerializeField] private bool _reflectLeft = true;
+    public bool AllowLaserPassThrough => true;
+    public bool HitWrapAround => false;
+    public Vector3 Position => transform.position;
+    private HarmonyBeam _harmonyBeam;
+    private Vector3 _fwdDir;
+
+    private void Start()
+    {
+        _fwdDir = transform.forward;
+        _harmonyBeam = GetComponent<HarmonyBeam>();
+        _harmonyBeam.ToggleBeam(false);
+    }
 
     /// <summary>
     /// Returns the new direction for the beam after reflecting
     /// </summary>
     /// <param name="incomingDirection">direction the original laser is coming from</param>
-    public Vector3 GetReflectionDirection(Vector3 incomingDirection)
+    public Vector3 GetReflectionDirection()
     {
-        if (_reflectLeft)
+        return transform.forward;
+    }
+
+    /// <summary>
+    /// Enables the reflective HarmonyBeam instance.
+    /// </summary>
+    public void ToggleBeam(bool toggle)
+    {
+        _harmonyBeam.ToggleBeam(toggle);
+    }
+
+    /// <summary>
+    /// Toggles the direction of the reflection
+    /// </summary>
+    /// <param name="left">true for left, false for right</param>
+    public void FlipDirection(bool flip = true)
+    {
+        if (flip)
         {
-            return Quaternion.Euler(0, -90, 0) * incomingDirection;  // Rotate -90 degrees (left)
+            transform.forward = -_fwdDir;
         }
         else
         {
-            return Quaternion.Euler(0, 90, 0) * incomingDirection;   // Rotate 90 degrees (right)
+            transform.forward = _fwdDir;
         }
     }
+
+    /// <summary>
+    /// When this object is hit by a laser, turn on the beam, and check for objects.
+    /// </summary>
+    public void OnLaserHit()
+    {
+        _harmonyBeam.ToggleBeam(true);
+        _harmonyBeam.ScanForObjects();
+    }
+
+    /// <summary>
+    /// When this object is non longer being hit by a laser, turn off the beam
+    /// and check for any exited objects.
+    /// </summary>
+    public void OnLaserExit()
+    {
+        _harmonyBeam.ToggleBeam(false);
+        _harmonyBeam.ScanForObjects();
+    }
+
 }

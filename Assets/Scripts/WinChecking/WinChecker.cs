@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Nick Grinstead
-*    Contributors: 
+*    Contributors:
 *    Date Created: 9/24/24
 *    Description: Tracks what notes the player has collected and
 *       handles checking if the player has the correct sequence.
@@ -8,8 +8,8 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using NaughtyAttributes;
-
+using SaintsField;
+using SaintsField.Playa;
 public class WinChecker : MonoBehaviour
 {
     public static WinChecker Instance { get; private set; }
@@ -18,10 +18,12 @@ public class WinChecker : MonoBehaviour
     public static Action GotCorrectSequence;
     public static Action GotWrongSequence;
 
+    [SerializeField] private ParticleSystem _unlockedParticles;
+
     [field: SerializeField] public List<int> TargetNoteSequence { get; private set; } = new List<int>();
 
     [InfoBox("For visualization purposes, don't edit this",
-        EInfoBoxType.Normal)]
+        EMessageType.Info)]
     [SerializeField] private List<int> _collectedSequence = new List<int>();
 
     /// <summary>

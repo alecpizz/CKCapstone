@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Josephine Qualls
-*    Contributors: Josh Eddy, Alec Pizziferro
+*    Contributors: Josh Eddy, Alec Pizziferro, Trinity Hutson
 *    Date Created: 10/10/2024
 *    Description: Controls where walls move after switch is triggered.
 *******************************************************************/
@@ -15,8 +15,9 @@ using UnityEngine;
 /// <summary>
 /// Class that determines how the walls move
 /// Also operates the ghost wall indicators
+/// Inherits from IParentSwitch and IGridEntry
 /// </summary>
-public class MovingWall : MonoBehaviour, IGridEntry
+public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
 {
     //original position of wall and ghost
     private Vector3 _originWall;
@@ -42,7 +43,12 @@ public class MovingWall : MonoBehaviour, IGridEntry
     void Start()
     {
         _originWall = transform.position;
+        // Maintains same height to ensure consistency when swapping
+        _originWall.y = _wallGhost.transform.position.y;
+
         _originGhost = _wallGhost.transform.position;
+        // Maintains same height to ensure consistency when swapping
+        _originGhost.y = transform.position.y;
     }
 
     /// <summary>
@@ -50,7 +56,7 @@ public class MovingWall : MonoBehaviour, IGridEntry
     /// When switch is turned on
     /// Allows Player to move where wall once was
     /// </summary>
-    public void WallIsMoved()
+    public void SwitchActivation()
     {
         transform.position = _originGhost;
         _wallGhost.transform.position = _originWall;
@@ -62,7 +68,7 @@ public class MovingWall : MonoBehaviour, IGridEntry
     /// Now that switch is off
     /// Allows Player to move where wall once was
     /// </summary>
-    public void WallMoveBack()
+    public void SwitchDeactivation()
     {
         transform.position = _originWall;
         _wallGhost.transform.position = _originGhost;

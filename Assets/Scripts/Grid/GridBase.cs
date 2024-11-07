@@ -9,7 +9,8 @@
 
 using System;
 using System.Collections.Generic;
-using NaughtyAttributes;
+using SaintsField;
+using SaintsField.Playa;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -26,22 +27,27 @@ public class GridBase : MonoBehaviour
     [InfoBox("Assign this to draw the grid gizmos.")] [SerializeField]
     private Grid _grid;
 
-    [BoxGroup("Grid Parameters")] [SerializeField] [MinValue(2)]
+    [LayoutStart("Grid Parameters", ELayout.Background | ELayout.TitleBox)] [SerializeField] [MinValue(2)]
     private int _gridSize = 8;
 
-    [BoxGroup("Grid Visuals")] [SerializeField]
+    [SerializeField]
     private Material _primaryGridMat;
 
-    [BoxGroup("Grid Visuals")] [SerializeField]
+    [SerializeField]
     private Material _secondaryGridMat;
 
-    [BoxGroup("Grid Visuals")] [SerializeField] [OnValueChanged(nameof(OnDrawMeshChanged))]
+    [LayoutStart("Grid Viuals", ELayout.Background | ELayout.TitleBox)] [SerializeField]
+    private GameObject _gridPrefab;
+
+   [SerializeField] [OnValueChanged(nameof(OnDrawMeshChanged))]
     private bool _drawGridMesh = true;
 
     private Dictionary<Vector3Int, HashSet<IGridEntry>> _gridEntries = new();
     private Dictionary<IGridEntry, Vector3Int> _gameObjectToGridMap = new();
     [SerializeField] [HideInInspector] private GameObject _gridMeshHolder;
-    private Dictionary<Vector3Int, MeshRenderer> _gridMeshes = new();
+    private Dictionary<Vector3Int, GameObject> _gridObjects = new();
+
+    private const string GridMeshName = "Grid Mesh Holder";
 
     /// <summary>
     /// Grabs the grid component.
@@ -279,7 +285,19 @@ public class GridBase : MonoBehaviour
     /// <returns></returns>
     public Vector3 GetCellPositionInDirection(Vector3 position, Vector3 dir)
     {
-        return CellToWorld(WorldToCell(position) + Vector3ToInt(dir.normalized));
+        return CellToWorld(WorldToCell(position + dir.normalized * _grid.cellSize.x));
+    }
+    
+    /// <summary>
+    /// Gets the cell space cell position for a cell in the desired direction, 
+    /// relative to the original position.
+    /// </summary>
+    /// <param name="cell">Cell position</param>
+    /// <param name="dir">The direction to check in. This must be a cardinal direction</param>
+    /// <returns></returns>
+    public Vector3Int GetCellInDirection(Vector3Int cell, Vector3 dir)
+    {
+        return WorldToCell(CellToWorld(cell + Vector3ToInt(dir.normalized)));
     }
 
     /// <summary>
@@ -299,7 +317,7 @@ public class GridBase : MonoBehaviour
     /// <param name="key"></param>
     public void DisableCellVisual(Vector3Int key)
     {
-        _gridMeshes[key].gameObject.SetActive(false);
+        _gridObjects[key].gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -330,7 +348,7 @@ public class GridBase : MonoBehaviour
 
         DestroyMesh();
 
-        _gridMeshHolder = new GameObject("Grid Mesh Holder")
+        _gridMeshHolder = new GameObject(GridMeshName)
         {
             transform =
             {
@@ -338,7 +356,7 @@ public class GridBase : MonoBehaviour
             }
         };
         _gridMeshHolder.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
-        _gridMeshes.Clear();
+        _gridObjects.Clear();
         
         for (int i = 0; i < _gridSize; i++)
         {
@@ -346,17 +364,18 @@ public class GridBase : MonoBehaviour
             {
                 Vector3Int index = new Vector3Int(i, 0, j);
                 var pos = CellToWorld(new Vector3Int(i, 0, j));
-                var plane = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                var plane = Instantiate(_gridPrefab);
+                //var plane = GameObject.CreatePrimitive(PrimitiveType.Quad);
                 plane.transform.position = pos;
-                plane.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+                //plane.transform.SetPositionAndRotation(pos, Quaternion.Euler(90f, 0f, 0f));
                 var scale = plane.transform.localScale;
-                scale.x = (_grid.cellSize.x);
-                scale.y = (_grid.cellSize.z);
+                //scale.x = (_grid.cellSize.x);
+                //scale.y = (_grid.cellSize.z);
                 plane.transform.localScale = scale;
                 plane.transform.SetParent(_gridMeshHolder.transform, true);
-                plane.GetComponent<MeshRenderer>().material =
-                    i % 2 == 1 ^ j % 2 == 0 ? _primaryGridMat : _secondaryGridMat;
-                _gridMeshes.Add(index, plane.GetComponent<MeshRenderer>());
+                //plane.GetComponent<MeshRenderer>().material =
+                //    i % 2 == 1 ^ j % 2 == 0 ? _primaryGridMat : _secondaryGridMat;
+                _gridObjects.Add(index, plane);
             }
         }
     }
@@ -367,14 +386,15 @@ public class GridBase : MonoBehaviour
     /// </summary>
     private void DestroyMesh()
     {
-        if (_gridMeshHolder == null) return;
+        var gameObj = _gridMeshHolder == null ?
+            transform.Find(GridMeshName).gameObject : _gridMeshHolder;
         if (Application.isPlaying)
         {
-            Destroy(_gridMeshHolder);
+            Destroy(gameObj);
         }
         else
         {
-            DestroyImmediate(_gridMeshHolder);
+            DestroyImmediate(gameObj);
         }
     }
 

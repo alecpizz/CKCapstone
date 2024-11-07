@@ -8,16 +8,15 @@
 *******************************************************************/
 using System.Collections.Generic;
 using UnityEngine;
-using NaughtyAttributes;
+using SaintsField;
 
 public class PlayerInteraction : MonoBehaviour
 {
-    [Required]
-    [SerializeField] private PlayerMovement _playerMovement;
-
     private GridBase _gridBase;
     private PlayerControls _playerControls;
     private HashSet<IGridEntry> _gridEntries;
+    private IInteractable _currentInteractable;
+    private Vector3 _facingDirection;
 
     /// <summary>
     /// Enabling inputs and getting grid instance
@@ -29,6 +28,7 @@ public class PlayerInteraction : MonoBehaviour
         _playerControls = new PlayerControls();
         _playerControls.Enable();
         _playerControls.InGame.Interact.performed += ctx => Interact();
+        _currentInteractable = null;
     }
 
     /// <summary>
@@ -50,7 +50,7 @@ public class PlayerInteraction : MonoBehaviour
         // Finding coordinates of the adjacent square
         Vector3 cellPositionToCheck = 
             _gridBase.GetCellPositionInDirection(transform.position, 
-            _playerMovement.FacingDirection);
+            _facingDirection);
 
         Vector3Int cellCoordinatesToCheck = _gridBase.WorldToCell(cellPositionToCheck);
 
@@ -64,8 +64,25 @@ public class PlayerInteraction : MonoBehaviour
             IInteractable interactable;
             if (entry.GetGameObject.TryGetComponent<IInteractable>(out interactable))
             {
+                _currentInteractable = interactable;
                 interactable.OnInteract();
             }
         }
+    }
+
+    /// <summary>
+    /// This is a function built to do two things. 
+    /// first it is built so that this script has access to the current direction that the player is facing, without circular dependencies.
+    /// second is to call the OnLeave function for the current interactable and to clear that very same variable after.
+    /// </summary>
+    /// <param name="direction"></param> a vector that represents the direction the player is currently facing.
+    public void SetDirection(Vector3 direction)
+    {
+        if (_currentInteractable != null)
+        {
+            _currentInteractable.OnLeave();
+            _currentInteractable = null;
+        }
+        _facingDirection = direction;
     }
 }

@@ -1,21 +1,28 @@
 /******************************************************************
 *    Author: Nick Grinstead
-*    Contributors: 
+*    Contributors: David Galmines
 *    Date Created: 9/24/24
 *    Description: Door unlocks when action on WinChecker is invoked.
 *       If door is unlocked and player walks into it, a new scene will load.
 *******************************************************************/
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using NaughtyAttributes;
+using SaintsField;
 
 public class EndLevelDoor : MonoBehaviour
 {
     [Scene]
     [SerializeField] private int _levelIndexToLoad = 0;
-
     [SerializeField]
     bool _isUnlocked = false;
+    DoorGlow doorGlow;
+
+    [SerializeField] private ParticleSystem _unlockedParticles;
+
+    private void Awake()
+    {
+        doorGlow = GetComponent<DoorGlow>();
+    }
 
     /// <summary>
     /// Registers to win checker action
@@ -23,6 +30,17 @@ public class EndLevelDoor : MonoBehaviour
     private void Start()
     {
         WinChecker.GotCorrectSequence += UnlockDoor;
+
+        if (_isUnlocked)
+        {
+            UnlockDoor();
+        }
+        else
+        {
+            //prevent VFX particles from playing immediately if
+            //notes are not collected
+            _unlockedParticles.Pause();
+        }
     }
 
     /// <summary>
@@ -36,12 +54,17 @@ public class EndLevelDoor : MonoBehaviour
     /// <summary>
     /// Called when correct sequence is created to open door
     /// </summary>
-    [Button]
-    private void UnlockDoor()
+    public void UnlockDoor()
     {
-        // TODO: update door visuals here
-
         _isUnlocked = true;
+         if (doorGlow != null)
+        {
+            // Call the UnlockDoor method from EndLevelDoor
+            doorGlow.GlowAndUnlockDoor();
+
+            //play "door unlocked" VFX
+            _unlockedParticles.Play();
+        }
     }
 
     // TODO: this OnTriggerEnter method can be replaced with grid data checking
@@ -54,6 +77,12 @@ public class EndLevelDoor : MonoBehaviour
     {
         if (_isUnlocked && other.CompareTag("Player"))
         {
+            PlayerMovement playerMovement;
+            if (other.gameObject.TryGetComponent<PlayerMovement>(out playerMovement))
+            {
+                playerMovement.ForceTurnEnd();
+            }
+
             SceneController.Instance.LoadNewScene(_levelIndexToLoad);
         }
         else if (other.CompareTag("Player"))

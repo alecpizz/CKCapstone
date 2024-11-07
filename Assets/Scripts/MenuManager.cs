@@ -13,8 +13,11 @@ public class MenuManager : MonoBehaviour
 {
     [SerializeField] private GameObject _pauseScreen;
     [SerializeField] private GameObject _tutorialCanvas;
+    [SerializeField] private GameObject _optionsScreen;
 
     private DebugInputActions _inputActions;
+
+
 
     private void Awake()
     {
@@ -36,6 +39,25 @@ public class MenuManager : MonoBehaviour
     {
         _pauseScreen.SetActive(false);
         Time.timeScale = 1f;
+    }
+
+    /// <summary>
+    /// Invoked to open the options menu
+    /// </summary>
+    public void Options()
+    {
+        PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
+        {
+            _optionsScreen.SetActive(true);
+        });
+    }
+
+    /// <summary>
+    /// Invoked to close the options menu
+    /// </summary>
+    public void OptionsClose()
+    {
+        _optionsScreen.SetActive(false);
     }
 
     /// <summary>
@@ -61,7 +83,18 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void ActivateTutorialCanvas()
     {
-        _tutorialCanvas.SetActive(true);
+        PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
+        {
+            _tutorialCanvas.SetActive(true);
+        });
+    }
+
+    /// <summary>
+    /// Clicking the button on the tutorial screen deactivates the tutorial canvas.
+    /// </summary>
+    public void DeactivateTutorialCanvas()
+    {
+        _tutorialCanvas.SetActive(false);
     }
 
     /// <summary>
@@ -77,6 +110,9 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void Quit()
     {
-        Application.Quit();
+        PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
+        {
+            Application.Quit();
+        });    
     }
 }

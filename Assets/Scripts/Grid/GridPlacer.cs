@@ -8,7 +8,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using NaughtyAttributes;
+using SaintsField;
+using SaintsField.Playa;
 using UnityEngine;
 
 /// <summary>
@@ -21,24 +22,27 @@ public class GridPlacer : MonoBehaviour, IGridEntry
     public GameObject GetGameObject { get => gameObject; }
 
     [InfoBox("Use this component to add this gameObject to a grid.")]
-    [BoxGroup("Settings")]
+    [LayoutStart("Settings", ELayout.Background | ELayout.TitleBox)]
     [SerializeField] 
     private bool _isTransparent = false;
 
     [Space]
-    [SerializeField] [BoxGroup("Settings")]
+    [SerializeField] 
     private bool _snapToGrid = true;
 
     [SerializeField]
-    [BoxGroup("Settings")]
     private Vector3 offset = Vector3.zero;
 
     [Space]
-    [SerializeField] [BoxGroup("Settings")]
+    [SerializeField] 
     private bool _disableGridCell = false;
 
+    [Space]
+    [SerializeField] 
+    private bool _isVisable = true;
+
     /// <summary>
-    /// Places the object on the grid and updates its position.
+    /// Places the object on the grid and updates its position. Also disables the mesh rendere on transparent grid objects
     /// </summary>
     private void Start()
     {
@@ -50,6 +54,10 @@ public class GridPlacer : MonoBehaviour, IGridEntry
         if (_disableGridCell)
         {
             GridBase.Instance.DisableCellVisual(GridBase.Instance.WorldToCell(transform.position));
+        }
+        if (!_isVisable && gameObject.TryGetComponent(out Renderer renderer))
+        {
+            renderer.enabled = false;
         }
     }
 
@@ -69,9 +77,8 @@ public class GridPlacer : MonoBehaviour, IGridEntry
         if (GridBase.Instance == null) return;
         if (_snapToGrid)
         {
-            transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position));
+            transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position)) + offset;
         }
-        transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position));
         GridBase.Instance.UpdateEntry(this);
     }
 
