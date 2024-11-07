@@ -8,17 +8,17 @@
 *******************************************************************/
 using System.Collections.Generic;
 using UnityEngine;
-using NaughtyAttributes;
+using SaintsField;
 
 public class TimeSignatureManager : MonoBehaviour
 {
     public static TimeSignatureManager Instance;
 
-    [InfoBox("First number is player time, second is enemy time", EInfoBoxType.Normal)]
+    [InfoBox("First number is player time, second is enemy time", EMessageType.Info)]
     [OnValueChanged(nameof(UpdateListeners))]
     [SerializeField] private Vector2Int _timeSignature;
 
-    [InfoBox("This is the time signature that metronomes will toggle to", EInfoBoxType.Normal)]
+    [InfoBox("This is the time signature that metronomes will toggle to", EMessageType.Info)]
     [SerializeField] private Vector2Int _secondaryTimeSignature;
     private Vector2Int _startingTimeSignature;
     private bool _isToggled = false;
