@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Nick Grinstead
-*    Contributors: 
+*    Contributors: Nick Grinstead, Mitchell Young
 *    Date Created: 10/28/24
 *    Description: Checks for collisions with the player and then 
 *       calls the TimeSignatureManager to update the time signature.
@@ -11,6 +11,9 @@ using UnityEngine;
 
 public class MetronomeBehavior : MonoBehaviour
 {
+    [SerializeField] private GameObject model;
+    [SerializeField] private bool tickingSlow = false;
+
     /// <summary>
     /// Toggles the time signature on the manager if there is one
     /// </summary>
@@ -31,6 +34,19 @@ public class MetronomeBehavior : MonoBehaviour
         {
             ActivateMetronome();
 
+            if (!tickingSlow)
+            {
+                model.GetComponent<Animator>().SetBool("TickingFast", true);
+                StartCoroutine(waitASec());
+                tickingSlow = false;
+            }
+            else
+            {
+                model.GetComponent<Animator>().SetBool("TickingSlow", true);
+                StartCoroutine(waitASec());
+                tickingSlow = true;
+            }
+
             PlayerMovement playerMovement;
             if (other.gameObject.TryGetComponent<PlayerMovement>(out playerMovement))
             {
@@ -38,4 +54,12 @@ public class MetronomeBehavior : MonoBehaviour
             }
         }
     }
+
+    IEnumerator waitASec()
+    {
+        yield return new WaitForSeconds(2f);
+        model.GetComponent<Animator>().SetBool("TickingFast", false);
+        model.GetComponent<Animator>().SetBool("TickingSlow", false);
+    }
+
 }
