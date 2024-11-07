@@ -12,7 +12,7 @@ using UnityEngine;
 using FMODUnity;
 using FMOD.Studio;
 using System;
-using NaughtyAttributes;
+using SaintsField;
 using System.Diagnostics;
 
 [Serializable]
@@ -21,7 +21,7 @@ public struct DialogueEntry
     public EventReference _sound;
     [TextArea] public string _text;
     [InfoBox("This adjusts the speed of the text. " +
-        "A value of -5 slows it down while a value of 5 speeds it up", EInfoBoxType.Normal)]
+        "A value of -5 slows it down while a value of 5 speeds it up", EMessageType.Info)]
     [Range(-5f, 5f)] public float _adjustTypingSpeed;
 }
 
@@ -30,7 +30,7 @@ public class NPCScript : MonoBehaviour, IInteractable
 {
     [SerializeField] private TMP_Text _dialogueBox;
     private bool _isTalking;
-    [InfoBox("This adjusts the base typing speed. 2 is the slowest, 10 is the fastest", EInfoBoxType.Normal)]
+    [InfoBox("This adjusts the base typing speed. 2 is the slowest, 10 is the fastest", EMessageType.Info)]
     [Range(2f, 10f)][SerializeField] private float _typingSpeed = 5f;
     [SerializeField] private List<DialogueEntry> _dialogueEntries;
 

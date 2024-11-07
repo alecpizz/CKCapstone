@@ -20,6 +20,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 {
     public Vector3 FacingDirection { get; private set; }
     public bool IsTransparent { get => true; }
+    public bool BlocksHarmonyBeam { get => false; }
     public Vector3 Position { get => transform.position; }
     public GameObject GetGameObject { get => gameObject; }
 
@@ -42,6 +43,13 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     // Event references for the player movement sounds
     [SerializeField] private EventReference _playerMove = default;
     [SerializeField] private EventReference _playerCantMove = default;
+
+    public static PlayerMovement Instance;
+    
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     // Start is called before the first frame update
     void Start()

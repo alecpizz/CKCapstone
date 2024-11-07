@@ -9,7 +9,8 @@
 
 using System;
 using System.Collections.Generic;
-using NaughtyAttributes;
+using SaintsField;
+using SaintsField.Playa;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -26,19 +27,19 @@ public class GridBase : MonoBehaviour
     [InfoBox("Assign this to draw the grid gizmos.")] [SerializeField]
     private Grid _grid;
 
-    [BoxGroup("Grid Parameters")] [SerializeField] [MinValue(2)]
+    [LayoutStart("Grid Parameters", ELayout.Background | ELayout.TitleBox)] [SerializeField] [MinValue(2)]
     private int _gridSize = 8;
 
-    [BoxGroup("Grid Visuals")] [SerializeField]
+    [SerializeField]
     private Material _primaryGridMat;
 
-    [BoxGroup("Grid Visuals")] [SerializeField]
+    [SerializeField]
     private Material _secondaryGridMat;
 
-    [BoxGroup("Grid Viuals")] [SerializeField]
+    [LayoutStart("Grid Viuals", ELayout.Background | ELayout.TitleBox)] [SerializeField]
     private GameObject _gridPrefab;
 
-    [BoxGroup("Grid Visuals")] [SerializeField] [OnValueChanged(nameof(OnDrawMeshChanged))]
+   [SerializeField] [OnValueChanged(nameof(OnDrawMeshChanged))]
     private bool _drawGridMesh = true;
 
     private Dictionary<Vector3Int, HashSet<IGridEntry>> _gridEntries = new();

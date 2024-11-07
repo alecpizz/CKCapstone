@@ -17,6 +17,8 @@ public class MenuManager : MonoBehaviour
 
     private DebugInputActions _inputActions;
 
+
+
     private void Awake()
     {
         _inputActions = new DebugInputActions();
@@ -35,6 +37,7 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void Unpause()
     {
+        DebugMenuManager.Instance.PauseMenu = false;
         _pauseScreen.SetActive(false);
         Time.timeScale = 1f;
     }
@@ -44,7 +47,10 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void Options()
     {
-        _optionsScreen.SetActive(true);
+        PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
+        {
+            _optionsScreen.SetActive(true);
+        });
     }
 
     /// <summary>
@@ -60,6 +66,7 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void Pause()
     {
+        DebugMenuManager.Instance.PauseMenu = true;
         _pauseScreen.SetActive(true);
         Time.timeScale = 0f;
     }
@@ -78,7 +85,10 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void ActivateTutorialCanvas()
     {
-        _tutorialCanvas.SetActive(true);
+        PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
+        {
+            _tutorialCanvas.SetActive(true);
+        });
     }
 
     /// <summary>
@@ -102,6 +112,9 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void Quit()
     {
-        Application.Quit();
+        PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
+        {
+            Application.Quit();
+        });    
     }
 }
