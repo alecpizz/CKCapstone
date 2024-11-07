@@ -147,16 +147,16 @@ public class AudioManager : MonoBehaviour
     }
     
     /// <summary>
-    /// Lerps the volume over lerpSpeed amount of seconds.
+    /// Lerps the volume over amount of seconds.
     /// </summary>
     /// <param name="audioEvent">the desired sound instance</param>
     /// <param name="goalVolume">the target volume (range 0-10)</param>
-    /// <param name="lerpSpeed">the speed volume fades (in seconds)</param>
-    public void AdjustVolume(EventInstance audioEvent, float goalVolume, float lerpSpeed)
+    /// <param name="duration">the speed volume fades (in seconds)</param>
+    public void AdjustVolume(EventInstance audioEvent, float goalVolume, float duration)
     {
         if (audioEvent.isValid())
         {
-            StartCoroutine(Fade(audioEvent, goalVolume, lerpSpeed));
+            StartCoroutine(Fade(audioEvent, goalVolume, duration));
         }
         else
         {
