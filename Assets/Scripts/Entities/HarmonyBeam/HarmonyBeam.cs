@@ -21,7 +21,7 @@ using UnityEditor;
 /// </summary>
 public class HarmonyBeam : MonoBehaviour, ITurnListener
 {
-    public TurnState TurnState => TurnState.World;
+    public TurnState TurnState => TurnState.All;
     [SerializeField] private EventReference _harmonySound = default;
     [SerializeField] private EventReference _enemyHarmonization = default;
     [Space] [SerializeField] private bool _beamActive = true;
@@ -52,7 +52,8 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
             _activeWallEffect = Instantiate(_wallCollisionEffectPrefab);
             _activeWallEffect.SetActive(false);
         }
-        ScanForObjects();
+        
+        Invoke(nameof(ScanForObjects), 0.1f);
     }
 
     /// <summary>
@@ -69,6 +70,11 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     private void OnDisable()
     {
         RoundManager.Instance.RegisterListener(this);
+    }
+
+    private void FixedUpdate()
+    {
+        ScanForObjects();
     }
 
     /// <summary>

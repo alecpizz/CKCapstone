@@ -179,7 +179,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                         }
                     }
 
-                    if (breakLoop == true)
+                    if (breakLoop == true || EnemyFrozen)
                     {
                         break;
                     }
