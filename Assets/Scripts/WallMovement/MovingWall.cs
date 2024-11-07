@@ -32,6 +32,8 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     //classes required from Alec's IGridEntry Interface
     public bool IsTransparent => false;
 
+    public bool BlocksHarmonyBeam { get => true; }
+
     public GameObject GetGameObject => gameObject;
 
     public Vector3 Position => transform.position;

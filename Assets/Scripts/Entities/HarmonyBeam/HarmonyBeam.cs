@@ -176,7 +176,8 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
                             enemyHit = true;
                         }
                     }
-                    else if (!gridEntry.IsTransparent) //no entry, but a non-transparent cell. pass through.
+                    //no entry, but a cell that blocks harmony beams. pass through.
+                    else if (gridEntry.BlocksHarmonyBeam)
                     {
                         stop = true;
                         hitPoint = gridEntry.Position;
