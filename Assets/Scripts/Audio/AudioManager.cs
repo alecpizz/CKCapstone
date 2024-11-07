@@ -11,12 +11,15 @@ using FMODUnity;
 using FMOD.Studio;
 using STOP_MODE = FMOD.Studio.STOP_MODE;
 using System;
+using System.Collections;
+using Unity.VisualScripting;
+using UnityEngine.Serialization;
 
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance;
 
-    [SerializeField] private EventReference _enemy = default;
+    [SerializeField] private EventReference _music = default;
     [SerializeField] [Range(0, 4)] private int _musicLayering = 0;
 
     Dictionary<EventReference, EventInstance> AudioInstances;
@@ -34,7 +37,7 @@ public class AudioManager : MonoBehaviour
 
     void Start()
     {
-        _key = PlaySound(_enemy);
+        _key = PlaySound(_music);
     }
 
     void Update()
@@ -71,13 +74,13 @@ public class AudioManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Plays an FMOD sound using a reference. Just add an eventreference and setup the sound
+    /// Plays an FMOD sound using a reference. Just add an EventReference and setup the sound
     /// in the inspector. See the FMOD Guide in resources for more info.
     /// </summary>
     /// <param name="reference">the desired sound reference</param>
-    /// <param name="gameObject">gameobject the sound plays from</param>
+    /// <param name="target">gameObject the sound plays from</param>
     /// <returns>an EventInstance, save it if the sound needs to be stopped or has a parameter</returns>
-    public EventInstance PlaySound(EventReference reference, GameObject gameObject)
+    public EventInstance PlaySound(EventReference reference, GameObject target)
     {
         if (reference.IsNull)
         {
@@ -86,7 +89,7 @@ public class AudioManager : MonoBehaviour
         }
             EventInstance audioEvent = RuntimeManager.CreateInstance(reference);
 
-            RuntimeManager.AttachInstanceToGameObject(audioEvent, gameObject.transform);
+            RuntimeManager.AttachInstanceToGameObject(audioEvent, target.transform);
 
             audioEvent.start();
             return audioEvent;
@@ -124,6 +127,68 @@ public class AudioManager : MonoBehaviour
         {
             Debug.LogWarning("Null audioEvent. Please use a real event instance.");
         }
+    }
+
+    /// <summary>
+    /// Changes the current volume instantly
+    /// </summary>
+    /// <param name="audioEvent">the desired sound instance</param>
+    /// <param name="goalVolume">the target volume</param>
+    public void AdjustVolume(EventInstance audioEvent, float goalVolume)
+    {
+        if (audioEvent.isValid())
+        {
+            audioEvent.setVolume(goalVolume);
+        }
+        else
+        {
+            Debug.LogWarning("Null audioEvent. Please use a real event instance.");
+        }
+    }
+    
+    /// <summary>
+    /// Lerps the volume over lerpSpeed amount of seconds.
+    /// </summary>
+    /// <param name="audioEvent">the desired sound instance</param>
+    /// <param name="goalVolume">the target volume (range 0-10)</param>
+    /// <param name="lerpSpeed">the speed volume fades (in seconds)</param>
+    public void AdjustVolume(EventInstance audioEvent, float goalVolume, float lerpSpeed)
+    {
+        if (audioEvent.isValid())
+        {
+            StartCoroutine(Fade(audioEvent, goalVolume, lerpSpeed));
+        }
+        else
+        {
+            Debug.LogWarning("Null audioEvent. Please use a real event instance.");
+        }
+    }
+    
+    /// <summary>
+    /// Lerps the volume over amount of seconds.
+    /// </summary>
+    /// <param name="audioEvent">the desired sound instance</param>
+    /// <param name="goalVolume">the target volume (range 0-10)</param>
+    /// <param name="duration">the speed volume fades (in seconds)</param>
+    private IEnumerator Fade(EventInstance audioEvent, float goalVolume, float duration) 
+    {
+        if (goalVolume < 0)
+            goalVolume = 0; 
+        else if (goalVolume > 10)
+            goalVolume = 10;
+        
+        float timeElapsed = 0;
+
+        audioEvent.getVolume(out var currentVolume);
+        float startValue = currentVolume;
+        while (timeElapsed < duration)
+        {
+            var newVolume = Mathf.Lerp(startValue, goalVolume, timeElapsed / duration);
+            audioEvent.setVolume(newVolume);
+            timeElapsed += Time.deltaTime;
+            yield return null;
+        }
+        audioEvent.setVolume(goalVolume);
     }
 
     /// <summary>

@@ -1,3 +1,10 @@
+/******************************************************************
+*    Author: Claire Noto
+*    Contributors: Claire Noto
+*    Date Created: 10/31/2024
+*    Description: System that handles the AudioSettings in the
+*                 settings menu.
+*******************************************************************/
 using UnityEngine;
 using FMOD.Studio;
 using FMODUnity;
@@ -56,25 +63,37 @@ public class AudioSettings : MonoBehaviour
         SetSFXVolume();
     }
 
+    /// <summary>
+    /// Sets the master volume to the master slider value
+    /// </summary>
     public void SetMasterVolume()
     {
         _master.setVolume(_masterSlider.value / _masterSlider.maxValue);
         PlayerPrefs.SetFloat("masterVolume", _masterSlider.value);
     }
 
+    /// <summary>
+    /// Sets the music volume to the music slider value
+    /// </summary>
     public void SetMusicVolume()
     {
         _bgMusic.setVolume(_bgMusicSlider.value / _bgMusicSlider.maxValue);
         PlayerPrefs.SetFloat("musicVolume", _bgMusicSlider.value);
     }
 
+    /// <summary>
+    /// Sets the SFX volume to the SFX slider value
+    /// </summary>
     public void SetSFXVolume()
     {
         _SFX.setVolume(_SFXSlider.value / _SFXSlider.maxValue);
         PlayerPrefs.SetFloat("SFXVolume", _SFXSlider.value);
     }
 
-    public void Load()
+    /// <summary>
+    /// Loads the values from PlayerPrefs and adjusts the sliders accordingly
+    /// </summary>
+    private void Load()
     {
         _bgMusicSlider.value = PlayerPrefs.GetFloat("musicVolume");
         _SFXSlider.value = PlayerPrefs.GetFloat("SFXVolume");
