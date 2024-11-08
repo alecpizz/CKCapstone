@@ -108,6 +108,9 @@ public class MenuManager : MonoBehaviour
         SceneManager.LoadScene(1);
     }
 
+    /// <summary>
+    /// Prompts the user with a quit confirm selection after pressing the quit button
+    /// </summary>
     public void QuitConfirm()
     {
         PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
@@ -116,6 +119,9 @@ public class MenuManager : MonoBehaviour
         });
     }
 
+    /// <summary>
+    /// Closes quit confirm
+    /// </summary>
     public void QuitDecline()
     {
         _confirmQuit.SetActive(false);
