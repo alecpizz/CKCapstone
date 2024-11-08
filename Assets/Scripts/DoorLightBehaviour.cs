@@ -15,9 +15,6 @@ public class DoorLightBehaviour : MonoBehaviour
         "the script is integrated into proper code.")]
     public bool testLightSwitch = false;
 
-    [Tooltip("Should the light be on or off?")]
-    [SerializeField] private bool lightOn = false;
-
     [Tooltip("Set the emission value (lamp brightness) for when the light is on.")]
     [SerializeField] private float onEmission = 1f;
 
@@ -26,6 +23,9 @@ public class DoorLightBehaviour : MonoBehaviour
 
     [Tooltip("Set how long the lamp should take to turn on/off.")]
     [SerializeField] private float animationDuration = .5f;
+
+    // Sets the light to be on or off
+    private bool lightOn = false;
 
     // Access the lamp's point light object
     private GameObject pointLight;
