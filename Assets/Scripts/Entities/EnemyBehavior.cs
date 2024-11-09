@@ -32,6 +32,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
     [SerializeField] private bool _atStart;
     [SerializeField] private int _currentPoint = 0;
+    private int _currentPointIndex = 0;
 
     private PlayerMovement _playerMoveRef;
 
@@ -162,7 +163,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                 /// either it sees another object in that direction
                 /// that isn't the player (will move into players but not walls/enemies).
                 /// </summary>
-                for (int j = 0; j < pointTiles; j++)
+                for (; _currentPointIndex < pointTiles; ++_currentPointIndex)
                 {
                     var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position,
                         moveInDirection);
@@ -199,8 +200,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                 /// If the current point is equal to the length of the list then the if/else statement 
                 /// will check the atStart bool and concurrently reverse through the list
                 /// </summary>
-                if (_atStart == true)
+                if (!EnemyFrozen && _atStart == true)
                 {
+                    _currentPointIndex = 0;
+
                     if (_currentPoint >= _movePoints.Count - 1)
                     {
                         if (!_circularMovement)
@@ -217,8 +220,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                         _currentPoint++;
                     }
                 }
-                else
+                else if (!EnemyFrozen)
                 {
+                    _currentPointIndex = 0;
+
                     if (_currentPoint <= 0)
                     {
                         _atStart = true;
@@ -234,6 +239,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         RoundManager.Instance.CompleteTurn(this);
     }
 
+    /// <summary>
+    /// Implemented from ITimeListener to receive the new time signature
+    /// when it's updated
+    /// </summary>
+    /// <param name="newTimeSignature">The new time signature</param>
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
     {
         _enemyMovementTime = newTimeSignature.y;
@@ -243,6 +253,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     }
 
     public TurnState TurnState => TurnState.Enemy;
+    /// <summary>
+    /// Called by RoundManager to start this entity's turn
+    /// </summary>
+    /// <param name="direction">Direction of movement</param>
     public void BeginTurn(Vector3 direction)
     {
         StartCoroutine(DelayedInput());

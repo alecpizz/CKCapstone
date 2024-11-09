@@ -21,7 +21,7 @@ using UnityEditor;
 /// </summary>
 public class HarmonyBeam : MonoBehaviour, ITurnListener
 {
-    public TurnState TurnState => TurnState.All;
+    public TurnState TurnState => TurnState.World;
     [SerializeField] private EventReference _harmonySound = default;
     [SerializeField] private EventReference _enemyHarmonization = default;
     [Space] [SerializeField] private bool _beamActive = true;

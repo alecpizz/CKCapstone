@@ -18,8 +18,7 @@ public enum TurnState
     Player = 0,
     World = 1,
     Enemy = 2,
-    All = 3,
-    None = 4
+    None = 3
 }
 
 /// <summary>
@@ -140,11 +139,6 @@ public sealed class RoundManager : MonoBehaviour
         {
             turnListener.BeginTurn(_lastMovementInput);
         }
-
-        foreach (var turnListener in _turnListeners[TurnState.All])
-        {
-            turnListener.BeginTurn(_lastMovementInput);
-        }
     }
 
     /// <summary>
@@ -154,7 +148,7 @@ public sealed class RoundManager : MonoBehaviour
     public void CompleteTurn(ITurnListener listener)
     {
         //don't complete if it's not our turn. this shouldn't happen
-        if (listener.TurnState != _turnState && listener.TurnState != TurnState.All) 
+        if (listener.TurnState != _turnState) 
         {
             Debug.LogError("Tried to complete turn while it wasn't our turn state." +
                            $" Listener {listener.TurnState}, state {_turnState}");
@@ -164,9 +158,7 @@ public sealed class RoundManager : MonoBehaviour
         //check if all entities in this turn state have completed their turn.
         _completedTurnCounts[listener.TurnState]++;
         if (_completedTurnCounts[_turnState] < _turnListeners[_turnState].Count) return;
-        if (_completedTurnCounts[TurnState.All] < _turnListeners[TurnState.All].Count) return;
         _completedTurnCounts[_turnState] = 0;
-        _completedTurnCounts[TurnState.All] = 0;
 
         //find out who's turn is next, if it's nobody's, stop.
         var next = GetNextTurn(_turnState);
@@ -193,11 +185,6 @@ public sealed class RoundManager : MonoBehaviour
         if (_turnState != TurnState.None)
         {
             foreach (var turnListener in _turnListeners[_turnState])
-            {
-                turnListener.BeginTurn(_lastMovementInput);
-            }
-
-            foreach (var turnListener in _turnListeners[TurnState.All])
             {
                 turnListener.BeginTurn(_lastMovementInput);
             }
