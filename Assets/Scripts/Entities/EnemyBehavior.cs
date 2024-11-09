@@ -27,6 +27,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     public GameObject GetGameObject { get => gameObject; }
 
     [SerializeField] private GameObject _player;
+    [SerializeField] private GameObject _destinationMarker;
 
     [SerializeField] private bool _atStart;
     [SerializeField] private int _currentPoint = 0;
@@ -73,6 +74,25 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.RegisterTimeListener(this);
+
+        var point = _movePoints[_currentPoint];
+        var pointDirection = point.direction;
+        var pointTiles = point.tilesToMove;
+        FindDirection(pointDirection);
+
+        _destinationMarker.transform.position = transform.position;
+
+        for (int i = 0; i < pointTiles; i++)
+        {
+            var move = GridBase.Instance.GetCellPositionInDirection(_destinationMarker.transform.position,
+                moveInDirection);
+
+            _destinationMarker.transform.position = move;
+        }
+
+        Vector3 destPos = _destinationMarker.transform.position;
+        destPos.y += 1;
+        _destinationMarker.transform.position = destPos;
     }
 
     private void OnEnable()
@@ -226,6 +246,30 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                         _currentPoint--;
                     }
                 }
+
+                var destPoint = _movePoints[_currentPoint];
+                var destPointDirection = point.direction;
+                var destPointTiles = point.tilesToMove;
+                FindDirection(destPointDirection);
+
+                if (!_atStart)
+                {
+                    moveInDirection = -moveInDirection;
+                }
+
+                _destinationMarker.transform.position = transform.position;
+
+                for (int k = 0; k < pointTiles; k++)
+                {
+                    var move = GridBase.Instance.GetCellPositionInDirection(_destinationMarker.transform.position,
+                        moveInDirection);
+
+                    _destinationMarker.transform.position = move;
+                }
+
+                Vector3 destPos = _destinationMarker.transform.position;
+                destPos.y += 1;
+                _destinationMarker.transform.position = destPos;
             }
         }
         GridBase.Instance.UpdateEntry(this);
