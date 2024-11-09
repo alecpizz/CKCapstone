@@ -1,6 +1,7 @@
 /******************************************************************
  *    Author: Claire Noto
- *    Contributors: Claire Noto, Trinity Hutson, Alec Pizziferro
+ *    Contributors: Claire Noto, Trinity Hutson, Alec Pizziferro,
+ *    Nick Grinstead
  *    Date Created: 10/10/24
  *    Description: Script that handles the harmony beam
  *******************************************************************/
@@ -72,6 +73,9 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
         RoundManager.Instance.RegisterListener(this);
     }
 
+    /// <summary>
+    /// Periodically scans for objects in order to detect moving enemies
+    /// </summary>
     private void FixedUpdate()
     {
         ScanForObjects();
@@ -192,7 +196,6 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
         _prevHitEntities.Clear();
         _hitEntities.ForEach(entity => _prevHitEntities.Add(entity));
     }
-
 
     /// <summary>
     /// Forces the turn to end. Will detect objects an additional time.
