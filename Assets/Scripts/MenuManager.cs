@@ -14,6 +14,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject _pauseScreen;
     [SerializeField] private GameObject _tutorialCanvas;
     [SerializeField] private GameObject _optionsScreen;
+    [SerializeField] private GameObject _confirmQuit;
 
     private DebugInputActions _inputActions;
 
@@ -108,13 +109,30 @@ public class MenuManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Prompts the user with a quit confirm selection after pressing the quit button
+    /// </summary>
+    public void QuitConfirm()
+    {
+        PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
+        {
+           _confirmQuit.SetActive(true);
+        });
+    }
+
+    /// <summary>
+    /// Closes quit confirm
+    /// </summary>
+    public void QuitDecline()
+    {
+        _confirmQuit.SetActive(false);
+
+    }
+
+    /// <summary>
     /// Invoked to close project
     /// </summary>
     public void Quit()
     {
-        PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
-        {
-            Application.Quit();
-        });    
+        Application.Quit();
     }
 }
