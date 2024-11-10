@@ -27,9 +27,13 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     public GameObject GetGameObject { get => gameObject; }
 
     [SerializeField] private GameObject _player;
+    [SerializeField] private GameObject _destinationMarker;
 
     [SerializeField] private bool _atStart;
     [SerializeField] private int _currentPoint = 0;
+
+    [SerializeField] private bool _destAtStart;
+    [SerializeField] private int _destCurrentPoint = 0;
 
     private PlayerMovement _playerMoveRef;
 
@@ -68,11 +72,13 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
         _playerMoveRef = _player.GetComponent<PlayerMovement>();
 
-        // Make sure enemiess are always seen at the start
+        // Make sure enemies are always seen at the start
         _atStart = true;
 
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.RegisterTimeListener(this);
+
+        UpdateDestinationMarker();
     }
 
     private void OnEnable()
@@ -124,18 +130,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     /// <returns></returns>
     private IEnumerator DelayedInput()
     {
-
-        if (_currentPoint > _movePoints.Count - 1)
-        {
-            Debug.Log(_movePoints.Count - 1);
-            _currentPoint = _movePoints.Count - 1;
-        }
-
         /// <summary>
         /// Checks to see if all enemies have finished moving via a bool in the player script 
         /// and if the enemy is currently frozen by the harmony beam
         /// </summary>
-       
+
         if (!EnemyFrozen)
         {
             for (int i = 0; i < _enemyMovementTime; ++i)
@@ -193,6 +192,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                     GridBase.Instance.UpdateEntry(this);
                 }
 
+
                 /// <summary>
                 /// If the current point is equal to the length of the list then the if/else statement 
                 /// will check the atStart bool and concurrently reverse through the list
@@ -227,9 +227,81 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                     }
                 }
             }
+            UpdateDestinationMarker();
         }
         GridBase.Instance.UpdateEntry(this);
         RoundManager.Instance.CompleteTurn(this);
+    }
+
+    /// <summary>
+    /// This function updates the position of the _destinationMarker object using the
+    /// _movePoints list.
+    /// </summary>
+    public void UpdateDestinationMarker()
+    {
+        //Sets the _destinationMarker object to the enemy's current position
+        _destinationMarker.transform.position = transform.position;
+
+        //Looks at the time signature for the enemy so it can place multiple moves in advance
+        for (int i = 0; i < _enemyMovementTime; ++i)
+        {
+            //Updates the current point index before moving
+            if (_destAtStart == true)
+            {
+                if (_destCurrentPoint >= _movePoints.Count - 1)
+                {
+                    if (!_circularMovement)
+                    {
+                        _destAtStart = false;
+                    }
+                    else
+                    {
+                        _destCurrentPoint = 0;
+                    }
+                }
+                else
+                {
+                    _destCurrentPoint++;
+                }
+            }
+            else
+            {
+                if (_destCurrentPoint <= 0)
+                {
+                    _destAtStart = true;
+                }
+                else
+                {
+                    _destCurrentPoint--;
+                }
+            }
+
+            //Finds the direction and tiles to move based on its own current point index value
+            var destPoint = _movePoints[_destCurrentPoint];
+            var destPointDirection = destPoint.direction;
+            var destPointTiles = destPoint.tilesToMove;
+            FindDirection(destPointDirection);
+
+            //Reverses if going backward through the list
+            if (!_destAtStart)
+            {
+                moveInDirection = -moveInDirection;
+            }
+
+            //Moves the object instantly to the destination tile (instead of overtime)
+            for (int k = 0; k < destPointTiles; k++)
+            {
+                var move = GridBase.Instance.GetCellPositionInDirection(_destinationMarker.transform.position,
+                    moveInDirection);
+
+                _destinationMarker.transform.position = move;
+            }
+
+            //Makes sure the marker is always at a y position of 1 so it is visible on the grid
+            Vector3 destPos = _destinationMarker.transform.position;
+            destPos.y += 1;
+            _destinationMarker.transform.position = destPos;
+        }
     }
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
