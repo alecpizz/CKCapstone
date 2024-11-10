@@ -196,6 +196,11 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -6324800941870656571, guid: 23b400607e9e8144ca5893cc5a3d3837,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -1549985683529287006, guid: 23b400607e9e8144ca5893cc5a3d3837,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -285,10 +290,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   testLightSwitch: 0
-  lightOn: 0
-  onEmission: 1
-  onIntensity: 0.07
-  animationDuration: 0.5
+  _onEmission: 1
+  _onIntensity: 0.07
+  _animationDuration: 0.5
 --- !u!4 &4326453113173938672 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 23b400607e9e8144ca5893cc5a3d3837,
