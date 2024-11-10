@@ -11,11 +11,13 @@ using System.Collections.Generic;
 using PrimeTween;
 using UnityEngine;
 
-public class MirrorBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
+public class MirrorBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener, IHarmonyBeamEntity
 {
     public bool IsTransparent { get => true; }
     public Vector3 Position { get => transform.position; }
     public GameObject GetGameObject { get => gameObject; }
+
+    public bool EnemyFrozen { get; private set; } = false;
 
     [SerializeField]
     private Vector3 _positionOffset;
@@ -131,4 +133,23 @@ public class MirrorBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         GridBase.Instance.UpdateEntry(this);
         RoundManager.Instance.CompleteTurn(this);
     }
+
+    public bool AllowLaserPassThrough { get => true; }
+    /// <summary>
+    /// Freezes the enemy.
+    /// </summary>
+    public void OnLaserHit()
+    {
+        EnemyFrozen = true;
+    }
+
+    /// <summary>
+    /// Unfreezes the enemy.
+    /// </summary>
+    public void OnLaserExit()
+    {
+        EnemyFrozen = false;
+    }
+
+    public bool HitWrapAround { get => true; }
 }

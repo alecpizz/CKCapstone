@@ -13,11 +13,13 @@ using UnityEngine.InputSystem;
 using PrimeTween;
 using Unity.VisualScripting;
 
-public class SonEnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
+public class SonEnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener, IHarmonyBeamEntity
 {
     public bool IsTransparent { get => true; }
     public Vector3 moveInDirection { get; private set; }
     public Vector3 Position { get => transform.position; }
+
+    public bool EnemyFrozen { get; private set; } = false;
 
     [SerializeField]
     private Vector3 _positionOffset;
@@ -241,4 +243,24 @@ public class SonEnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnL
         GridBase.Instance.UpdateEntry(this);
         RoundManager.Instance.CompleteTurn(this);
     }
+
+    public bool AllowLaserPassThrough { get => true; }
+    /// <summary>
+    /// Freezes the enemy.
+    /// </summary>
+    public void OnLaserHit()
+    {
+        enemyFrozen = true;
+        Debug.Log("Can't move");
+    }
+
+    /// <summary>
+    /// Unfreezes the enemy.
+    /// </summary>
+    public void OnLaserExit()
+    {
+        enemyFrozen = false;
+    }
+
+    public bool HitWrapAround { get => true; }
 }
