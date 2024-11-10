@@ -4,6 +4,7 @@
 *    Date Created: 9/26/24
 *    Description: This is just meant to make menu buttons, when pressed, work.
 *******************************************************************/
+using FMODUnity;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +15,9 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject _pauseScreen;
     [SerializeField] private GameObject _tutorialCanvas;
     [SerializeField] private GameObject _optionsScreen;
+    [SerializeField] private GameObject _confirmQuit;
+
+    [SerializeField] private EventReference _buttonPress;
 
     private DebugInputActions _inputActions;
 
@@ -47,6 +51,7 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void Options()
     {
+        AudioManager.Instance.PlaySound(_buttonPress);
         PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
         {
             _optionsScreen.SetActive(true);
@@ -85,6 +90,7 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void ActivateTutorialCanvas()
     {
+        AudioManager.Instance.PlaySound(_buttonPress);
         PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
         {
             _tutorialCanvas.SetActive(true);
@@ -108,13 +114,31 @@ public class MenuManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Prompts the user with a quit confirm selection after pressing the quit button
+    /// </summary>
+    public void QuitConfirm()
+    {
+        AudioManager.Instance.PlaySound(_buttonPress);
+        PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
+        {
+           _confirmQuit.SetActive(true);
+        });
+    }
+
+    /// <summary>
+    /// Closes quit confirm
+    /// </summary>
+    public void QuitDecline()
+    {
+        _confirmQuit.SetActive(false);
+
+    }
+
+    /// <summary>
     /// Invoked to close project
     /// </summary>
     public void Quit()
     {
-        PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
-        {
-            Application.Quit();
-        });    
+        Application.Quit();
     }
 }
