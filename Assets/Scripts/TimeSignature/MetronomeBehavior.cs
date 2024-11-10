@@ -12,8 +12,6 @@ using UnityEngine;
 public class MetronomeBehavior : MonoBehaviour
 {
     [SerializeField] private GameObject model;
-    [SerializeField] private bool tickingSlow = false;
-    [SerializeField] private float durationTime = 2f;
 
     Animator getAnimator;
 
@@ -42,18 +40,7 @@ public class MetronomeBehavior : MonoBehaviour
         {
             ActivateMetronome();
 
-            if (!tickingSlow)
-            {
-                getAnimator.SetBool("TickingFast", true);
-                StartCoroutine(waitForDuration());
-                tickingSlow = false;
-            }
-            else
-            {
-                getAnimator.SetBool("TickingSlow", true);
-                StartCoroutine(waitForDuration());
-                tickingSlow = true;
-            }
+            getAnimator.SetTrigger("TickingFast");
 
             PlayerMovement playerMovement;
             if (other.gameObject.TryGetComponent<PlayerMovement>(out playerMovement))
@@ -62,17 +49,4 @@ public class MetronomeBehavior : MonoBehaviour
             }
         }
     }
-
-    /// <summary>
-    /// Waits for the duration float time amount before setting the animator variables to false. 
-    /// This returns the model to its default animation.
-    /// </summary>
-    /// <returns></returns>
-    IEnumerator waitForDuration()
-    {
-        yield return new WaitForSeconds(durationTime);
-        getAnimator.SetBool("TickingFast", false);
-        getAnimator.SetBool("TickingSlow", false);
-    }
-
 }
