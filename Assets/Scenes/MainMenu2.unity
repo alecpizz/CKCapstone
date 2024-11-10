@@ -2206,6 +2206,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1306577879}
   - component: {fileID: 1306577878}
+  - component: {fileID: 1306577880}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -2229,6 +2230,13 @@ MonoBehaviour:
   _tutorialCanvas: {fileID: 885715517}
   _optionsScreen: {fileID: 204079897}
   _confirmQuit: {fileID: 665595967}
+  _buttonPress:
+    Guid:
+      Data1: 207925213
+      Data2: 1125044607
+      Data3: -890037886
+      Data4: -448360349
+    Path: event:/Button Press
 --- !u!4 &1306577879
 Transform:
   m_ObjectHideFlags: 0
@@ -2244,6 +2252,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1306577880
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1306577877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2bbe8088a9dc6d4f97c948f623e59c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _enemy:
+    Guid:
+      Data1: 1087454660
+      Data2: 1125730479
+      Data3: 2075035788
+      Data4: 1825618196
+    Path: event:/Music Controller
+  _musicLayering: 4
 --- !u!1 &1522559554
 GameObject:
   m_ObjectHideFlags: 0
