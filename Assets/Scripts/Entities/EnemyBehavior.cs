@@ -30,7 +30,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     [SerializeField] private GameObject _destinationMarker;
 
     [SerializeField] private bool _atStart;
+    [SerializeField] private bool _destAtStart;
     [SerializeField] private int _currentPoint = 0;
+    [SerializeField] private int _destCurrentPoint = 0;
 
     private PlayerMovement _playerMoveRef;
 
@@ -75,24 +77,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.RegisterTimeListener(this);
 
-        var point = _movePoints[_currentPoint];
-        var pointDirection = point.direction;
-        var pointTiles = point.tilesToMove;
-        FindDirection(pointDirection);
-
-        _destinationMarker.transform.position = transform.position;
-
-        for (int i = 0; i < pointTiles; i++)
-        {
-            var move = GridBase.Instance.GetCellPositionInDirection(_destinationMarker.transform.position,
-                moveInDirection);
-
-            _destinationMarker.transform.position = move;
-        }
-
-        Vector3 destPos = _destinationMarker.transform.position;
-        destPos.y += 1;
-        _destinationMarker.transform.position = destPos;
+        UpdateDestinationMarker();
     }
 
     private void OnEnable()
@@ -144,18 +129,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     /// <returns></returns>
     private IEnumerator DelayedInput()
     {
-
-        if (_currentPoint > _movePoints.Count - 1)
-        {
-            Debug.Log(_movePoints.Count - 1);
-            _currentPoint = _movePoints.Count - 1;
-        }
-
         /// <summary>
         /// Checks to see if all enemies have finished moving via a bool in the player script 
         /// and if the enemy is currently frozen by the harmony beam
         /// </summary>
-       
+
         if (!EnemyFrozen)
         {
             for (int i = 0; i < _enemyMovementTime; ++i)
@@ -213,6 +191,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                     GridBase.Instance.UpdateEntry(this);
                 }
 
+
                 /// <summary>
                 /// If the current point is equal to the length of the list then the if/else statement 
                 /// will check the atStart bool and concurrently reverse through the list
@@ -246,34 +225,71 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                         _currentPoint--;
                     }
                 }
-
-                var destPoint = _movePoints[_currentPoint];
-                var destPointDirection = point.direction;
-                var destPointTiles = point.tilesToMove;
-                FindDirection(destPointDirection);
-
-                if (!_atStart)
-                {
-                    moveInDirection = -moveInDirection;
-                }
-
-                _destinationMarker.transform.position = transform.position;
-
-                for (int k = 0; k < pointTiles; k++)
-                {
-                    var move = GridBase.Instance.GetCellPositionInDirection(_destinationMarker.transform.position,
-                        moveInDirection);
-
-                    _destinationMarker.transform.position = move;
-                }
-
-                Vector3 destPos = _destinationMarker.transform.position;
-                destPos.y += 1;
-                _destinationMarker.transform.position = destPos;
             }
+            UpdateDestinationMarker();
         }
         GridBase.Instance.UpdateEntry(this);
         RoundManager.Instance.CompleteTurn(this);
+    }
+
+    public void UpdateDestinationMarker()
+    {
+        _destinationMarker.transform.position = transform.position;
+
+        for (int i = 0; i < _enemyMovementTime; ++i)
+        {
+            if (_destAtStart == true)
+            {
+                if (_destCurrentPoint >= _movePoints.Count - 1)
+                {
+                    if (!_circularMovement)
+                    {
+                        _destAtStart = false;
+                    }
+                    else
+                    {
+                        _destCurrentPoint = 0;
+                    }
+                }
+                else
+                {
+                    _destCurrentPoint++;
+                }
+            }
+            else
+            {
+                if (_destCurrentPoint <= 0)
+                {
+                    _destAtStart = true;
+                }
+                else
+                {
+                    _destCurrentPoint--;
+                }
+            }
+
+            var destPoint = _movePoints[_destCurrentPoint];
+            var destPointDirection = destPoint.direction;
+            var destPointTiles = destPoint.tilesToMove;
+            FindDirection(destPointDirection);
+
+            if (!_destAtStart)
+            {
+                moveInDirection = -moveInDirection;
+            }
+
+            for (int k = 0; k < destPointTiles; k++)
+            {
+                var move = GridBase.Instance.GetCellPositionInDirection(_destinationMarker.transform.position,
+                    moveInDirection);
+
+                _destinationMarker.transform.position = move;
+            }
+
+            Vector3 destPos = _destinationMarker.transform.position;
+            destPos.y += 1;
+            _destinationMarker.transform.position = destPos;
+        }
     }
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
