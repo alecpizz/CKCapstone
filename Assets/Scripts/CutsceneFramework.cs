@@ -27,8 +27,9 @@ public class CutsceneFramework : MonoBehaviour
     {
         foreach (GameObject image in _cutsceneImages)
         {
-            Instantiate(image);
+            image.SetActive(true); 
         }
+
+        // SceneController.Instance.LoadNewScene(_loadingSceneIndex);
     }
-    // SceneController.Instance.LoadNewScene(_loadingSceneIndex);
 }
