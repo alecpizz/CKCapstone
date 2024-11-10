@@ -233,12 +233,19 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         RoundManager.Instance.CompleteTurn(this);
     }
 
+    /// <summary>
+    /// This function updates the position of the _destinationMarker object using the
+    /// _movePoints list.
+    /// </summary>
     public void UpdateDestinationMarker()
     {
+        //Sets the _destinationMarker object to the enemy's current position
         _destinationMarker.transform.position = transform.position;
 
+        //Looks at the time signature for the enemy so it can place multiple moves in advance
         for (int i = 0; i < _enemyMovementTime; ++i)
         {
+            //Updates the current point index before moving
             if (_destAtStart == true)
             {
                 if (_destCurrentPoint >= _movePoints.Count - 1)
@@ -269,16 +276,19 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                 }
             }
 
+            //Finds the direction and tiles to move based on its own current point index value
             var destPoint = _movePoints[_destCurrentPoint];
             var destPointDirection = destPoint.direction;
             var destPointTiles = destPoint.tilesToMove;
             FindDirection(destPointDirection);
 
+            //Reverses if going backward through the list
             if (!_destAtStart)
             {
                 moveInDirection = -moveInDirection;
             }
 
+            //Moves the object instantly to the destination tile (instead of overtime)
             for (int k = 0; k < destPointTiles; k++)
             {
                 var move = GridBase.Instance.GetCellPositionInDirection(_destinationMarker.transform.position,
@@ -287,6 +297,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                 _destinationMarker.transform.position = move;
             }
 
+            //Makes sure the marker is always at a y position of 1 so it is visible on the grid
             Vector3 destPos = _destinationMarker.transform.position;
             destPos.y += 1;
             _destinationMarker.transform.position = destPos;
