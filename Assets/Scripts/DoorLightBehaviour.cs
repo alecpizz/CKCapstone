@@ -16,25 +16,25 @@ public class DoorLightBehaviour : MonoBehaviour
     public bool testLightSwitch = false;
 
     [Tooltip("Set the emission value (lamp brightness) for when the light is on.")]
-    [SerializeField] private float onEmission = 1f;
+    [SerializeField] private float _onEmission = 1f;
 
     [Tooltip("Set the light intensity value (actual brightness) for when the light is on.")]
-    [SerializeField] private float onIntensity = .07f;
+    [SerializeField] private float _onIntensity = .07f;
 
     [Tooltip("Set how long the lamp should take to turn on/off.")]
-    [SerializeField] private float animationDuration = .5f;
+    [SerializeField] private float _animationDuration = .5f;
 
     // Sets the light to be on or off
-    private bool lightOn = false;
+    private bool _lightOn = false;
 
     // Access the lamp's point light object
-    private GameObject pointLight;
+    private GameObject _pointLight;
 
     // Access the material the door is using
-    private Material doorMaterial;
+    private Material _doorMaterial;
 
     // Access the name of the shader property that handles emissive intensity
-    private string emissionPropertyName;
+    private string _emissionPropertyName;
 
     /// <summary>
     /// Assign initial references
@@ -42,12 +42,12 @@ public class DoorLightBehaviour : MonoBehaviour
     void Start()
     {
         // Get the light object from the gameobject hierarchy
-        pointLight = transform.GetChild(8).gameObject;
+        _pointLight = transform.GetChild(8).gameObject;
 
         // Get the material of the lamp mesh
-        doorMaterial = transform.GetChild(4).GetComponent<MeshRenderer>().material;
+        _doorMaterial = transform.GetChild(4).GetComponent<MeshRenderer>().material;
         // Get the property name of the door material's emissive intensity
-        emissionPropertyName = doorMaterial.shader.GetPropertyName(0);
+        _emissionPropertyName = _doorMaterial.shader.GetPropertyName(0);
     }
 
     /// <summary>
@@ -56,13 +56,13 @@ public class DoorLightBehaviour : MonoBehaviour
     void Update()
     {
         // If the test light switch is on, turn on the lamp
-        if (testLightSwitch && !lightOn)
+        if (testLightSwitch && !_lightOn)
         {          
             TurnLightOn();
         }
 
         // If the test light switch is off, turn off the lamp
-        else if (!testLightSwitch && lightOn)
+        else if (!testLightSwitch && _lightOn)
         {
             TurnLightOff();
         }
@@ -75,11 +75,11 @@ public class DoorLightBehaviour : MonoBehaviour
     public void TurnLightOn()
     {
         // Remember that the light is on
-        lightOn = true;
+        _lightOn = true;
         // Lerp emission
-        StartCoroutine(LerpEmission(0f, onEmission, animationDuration));
+        StartCoroutine(LerpEmission(0f, _onEmission, _animationDuration));
         // Lerp light intensity
-        StartCoroutine(LerpLight(0f, onIntensity, animationDuration));
+        StartCoroutine(LerpLight(0f, _onIntensity, _animationDuration));
     }
 
     /// <summary>
@@ -89,11 +89,11 @@ public class DoorLightBehaviour : MonoBehaviour
     public void TurnLightOff()
     {
         // Remember that the light is off
-        lightOn = false;
+        _lightOn = false;
         // Lerp emission
-        StartCoroutine(LerpEmission(onEmission, 0f, animationDuration));
+        StartCoroutine(LerpEmission(_onEmission, 0f, _animationDuration));
         // Lerp light intensity
-        StartCoroutine(LerpLight(onIntensity, 0f, animationDuration));
+        StartCoroutine(LerpLight(_onIntensity, 0f, _animationDuration));
     }
 
     /// <summary>
@@ -114,7 +114,7 @@ public class DoorLightBehaviour : MonoBehaviour
         {
             // Set the material emission to a percentage between the start and end values
             // that is correct according to the specified duration
-            doorMaterial.SetFloat(emissionPropertyName, Mathf.Lerp(startValue, endValue, time / duration));
+            _doorMaterial.SetFloat(_emissionPropertyName, Mathf.Lerp(startValue, endValue, time / duration));
 
             // Add the seconds passed to time
             time += Time.deltaTime;
@@ -124,7 +124,7 @@ public class DoorLightBehaviour : MonoBehaviour
         }
 
         // Just in case, set the emissive property to end value at the end
-        doorMaterial.SetFloat(emissionPropertyName, endValue);
+        _doorMaterial.SetFloat(_emissionPropertyName, endValue);
     }
 
     /// <summary>
@@ -145,7 +145,7 @@ public class DoorLightBehaviour : MonoBehaviour
         {
             // Set the light intensity to a percentage between the start and end values
             // that is correct according to the specified duration
-            pointLight.GetComponent<Light>().intensity = Mathf.Lerp(startValue, endValue, time / duration);
+            _pointLight.GetComponent<Light>().intensity = Mathf.Lerp(startValue, endValue, time / duration);
 
             // Add the seconds passed to time
             time += Time.deltaTime;
@@ -155,6 +155,6 @@ public class DoorLightBehaviour : MonoBehaviour
         }
 
         // Just in case, set the intensity value to end value at the end
-        pointLight.GetComponent<Light>().intensity = endValue;
+        _pointLight.GetComponent<Light>().intensity = endValue;
     }
 }
