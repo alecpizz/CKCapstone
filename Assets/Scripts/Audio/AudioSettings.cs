@@ -21,6 +21,9 @@ public class AudioSettings : MonoBehaviour
     private Bus _SFX;
 
     public static AudioSettings Instance;
+    private const string MasterVolume = "MasterVolume";
+    private const string MusicVolume = "MusicVolume";
+    private const string SFXVolume = "SFXVolume";
 
     void Awake()
     {
@@ -39,15 +42,7 @@ public class AudioSettings : MonoBehaviour
 
     private void Start()
     {
-        Load();   
-
-        _master.getVolume(out float masterVolume);
-        _masterSlider.value = masterVolume * _masterSlider.maxValue;
-        _bgMusic.getVolume(out float musicVolume);
-        _bgMusicSlider.value = musicVolume * _bgMusicSlider.maxValue;
-        _SFX.getVolume(out float SFXVolume);
-        _SFXSlider.value = SFXVolume * _SFXSlider.maxValue;
-
+        Load();
         SetMasterVolume();
         SetMusicVolume();
         SetSFXVolume();
@@ -59,7 +54,7 @@ public class AudioSettings : MonoBehaviour
     public void SetMasterVolume()
     {
         _master.setVolume(_masterSlider.value / _masterSlider.maxValue);
-        PlayerPrefs.SetFloat("masterVolume", _masterSlider.value);
+        PlayerPrefs.SetFloat(MasterVolume, _masterSlider.value);
     }
 
     /// <summary>
@@ -68,7 +63,7 @@ public class AudioSettings : MonoBehaviour
     public void SetMusicVolume()
     {
         _bgMusic.setVolume(_bgMusicSlider.value / _bgMusicSlider.maxValue);
-        PlayerPrefs.SetFloat("musicVolume", _bgMusicSlider.value);
+        PlayerPrefs.SetFloat(MusicVolume, _bgMusicSlider.value);
     }
 
     /// <summary>
@@ -77,7 +72,7 @@ public class AudioSettings : MonoBehaviour
     public void SetSFXVolume()
     {
         _SFX.setVolume(_SFXSlider.value / _SFXSlider.maxValue);
-        PlayerPrefs.SetFloat("SFXVolume", _SFXSlider.value);
+        PlayerPrefs.SetFloat(SFXVolume, _SFXSlider.value);
     }
 
     /// <summary>
@@ -85,8 +80,8 @@ public class AudioSettings : MonoBehaviour
     /// </summary>
     private void Load()
     {
-        _bgMusicSlider.value = PlayerPrefs.GetFloat("musicVolume");
-        _SFXSlider.value = PlayerPrefs.GetFloat("SFXVolume");
-        _masterSlider.value = PlayerPrefs.GetFloat("masterVolume");
+        _bgMusicSlider.value = PlayerPrefs.GetFloat(MusicVolume);
+        _SFXSlider.value = PlayerPrefs.GetFloat(SFXVolume);
+        _masterSlider.value = PlayerPrefs.GetFloat(MasterVolume);
     }
 }
