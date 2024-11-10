@@ -30,8 +30,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     [SerializeField] private GameObject _destinationMarker;
 
     [SerializeField] private bool _atStart;
-    [SerializeField] private bool _destAtStart;
     [SerializeField] private int _currentPoint = 0;
+
+    [SerializeField] private bool _destAtStart;
     [SerializeField] private int _destCurrentPoint = 0;
 
     private PlayerMovement _playerMoveRef;
@@ -71,7 +72,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
         _playerMoveRef = _player.GetComponent<PlayerMovement>();
 
-        // Make sure enemiess are always seen at the start
+        // Make sure enemies are always seen at the start
         _atStart = true;
 
         if (TimeSignatureManager.Instance != null)

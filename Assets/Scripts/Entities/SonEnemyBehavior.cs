@@ -27,9 +27,13 @@ public class SonEnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnL
     public GameObject GetGameObject { get => gameObject; }
 
     [SerializeField] private GameObject _player;
+    [SerializeField] private GameObject _destinationMarker;
 
     [SerializeField] private bool _atStart;
     [SerializeField] private int _currentPoint = 0;
+
+    [SerializeField] private bool _destAtStart;
+    [SerializeField] private int _destCurrentPoint = 0;
 
     //Wait time between enemy moving each individual tile while on path to next destination
     [SerializeField] private float _waitTime = 0.5f;
@@ -61,11 +65,13 @@ public class SonEnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnL
 
         GridBase.Instance.AddEntry(this);
 
-        // Make sure enemiess are always seen at the start
+        // Make sure enemies are always seen at the start
         _atStart = true;
 
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.RegisterTimeListener(this);
+
+        UpdateDestinationMarker();
     }
 
     private void OnEnable()
@@ -219,9 +225,70 @@ public class SonEnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnL
                     }
                 }
             }
+            UpdateDestinationMarker();
         }
-
+        GridBase.Instance.UpdateEntry(this);
         RoundManager.Instance.CompleteTurn(this);
+    }
+
+    public void UpdateDestinationMarker()
+    {
+        _destinationMarker.transform.position = transform.position;
+
+        for (int i = 0; i < _enemyMovementTime; ++i)
+        {
+            if (_destAtStart == true)
+            {
+                if (_destCurrentPoint >= _movePoints.Count - 1)
+                {
+                    if (!_circularMovement)
+                    {
+                        _destAtStart = false;
+                    }
+                    else
+                    {
+                        _destCurrentPoint = 0;
+                    }
+                }
+                else
+                {
+                    _destCurrentPoint++;
+                }
+            }
+            else
+            {
+                if (_destCurrentPoint <= 0)
+                {
+                    _destAtStart = true;
+                }
+                else
+                {
+                    _destCurrentPoint--;
+                }
+            }
+
+            var destPoint = _movePoints[_destCurrentPoint];
+            var destPointDirection = destPoint.direction;
+            var destPointTiles = destPoint.tilesToMove;
+            FindDirection(destPointDirection);
+
+            if (!_destAtStart)
+            {
+                moveInDirection = -moveInDirection;
+            }
+
+            for (int k = 0; k < destPointTiles; k++)
+            {
+                var move = GridBase.Instance.GetCellPositionInDirection(_destinationMarker.transform.position,
+                    moveInDirection);
+
+                _destinationMarker.transform.position = move;
+            }
+
+            Vector3 destPos = _destinationMarker.transform.position;
+            destPos.y += 1;
+            _destinationMarker.transform.position = destPos;
+        }
     }
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
