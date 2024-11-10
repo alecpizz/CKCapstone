@@ -146,7 +146,13 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
                         //we haven't seen this one before, hit it!
                         if (!_prevHitEntities.Contains(entity))
                         {
-                            entity.OnLaserHit();
+                            foreach (var entry in entries)
+                            {
+                                if (entry.GetGameObject.tag == "SonEnemy")
+                                {
+                                    entity.OnLaserHit();
+                                }
+                            }
                         }
 
                         _hitEntities.Add(entity);
@@ -160,11 +166,16 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
                         {
                             if (!_wrappedEnemyFX.ContainsKey(entity))
                             {
-                                GameObject enemyFX = Instantiate(_enemyHitEffectPrefab, entity.Position,
-                                    Quaternion.identity);
-                                _wrappedEnemyFX.TryAdd(entity, enemyFX);
-                                _wrappedEnemyFX[entity] = enemyFX;
-                                _enemyGrabbedInstance = AudioManager.Instance.PlaySound(_enemyHarmonization);
+                                foreach (var entry in entries)
+                                {
+                                    if (entry.GetGameObject.tag == "SonEnemy")
+                                    {
+                                        GameObject enemyFX = Instantiate(_enemyHitEffectPrefab, entity.Position, Quaternion.identity);
+                                        _wrappedEnemyFX.TryAdd(entity, enemyFX);
+                                        _wrappedEnemyFX[entity] = enemyFX;
+                                        _enemyGrabbedInstance = AudioManager.Instance.PlaySound(_enemyHarmonization);
+                                    }
+                                }
                             }
 
                             enemyHit = true;
