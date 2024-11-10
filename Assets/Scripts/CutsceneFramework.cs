@@ -14,13 +14,21 @@ using UnityEngine.SceneManagement;
 
 public class CutsceneFramework : MonoBehaviour
 {
-    [SerializeField] private int _loadingSceneIndex = 0;
-    [SerializeField] private GameObject _backgroundImage;
+    // [SerializeField] private int _loadingSceneIndex = 0;
+
+    [SerializeField] private List<GameObject> _cutsceneImages;
 
     private void Start()
     {
-
+        PlayCutscene();
     }
     
+    private void PlayCutscene()
+    {
+        foreach (GameObject image in _cutsceneImages)
+        {
+            Instantiate(image);
+        }
+    }
     // SceneController.Instance.LoadNewScene(_loadingSceneIndex);
 }
