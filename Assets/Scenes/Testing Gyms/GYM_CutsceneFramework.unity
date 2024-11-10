@@ -140,6 +140,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Base_LevelPrefab
       objectReference: {fileID: 0}
+    - target: {fileID: 5598251421030866082, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: _shouldFadeInOnLoad
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7757164700761813088, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -889,6 +894,52 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &1312136889
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1312136891}
+  - component: {fileID: 1312136890}
+  m_Layer: 0
+  m_Name: CutsceneManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1312136890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1312136889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 104df417cc52e654ba0e5d7b9070697e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _loadingSceneIndex: 0
+  _backgroundImage: {fileID: 0}
+--- !u!4 &1312136891
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1312136889}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 13.50135, y: 4.923876, z: 1.887146}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1534550047
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1130,3 +1181,4 @@ SceneRoots:
   - {fileID: 381800723}
   - {fileID: 1534550047}
   - {fileID: 1922030914}
+  - {fileID: 1312136891}
