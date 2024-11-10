@@ -39,17 +39,7 @@ public class AudioSettings : MonoBehaviour
 
     private void Start()
     {
-        if (!PlayerPrefs.HasKey("masterVolume"))
-        {
-            PlayerPrefs.SetFloat("masterVolume", 1);
-            PlayerPrefs.SetFloat("SFXVolume", 1);
-            PlayerPrefs.SetFloat("musicVolume", 1);
-            Load();
-        }
-        else
-        {
-            Load();
-        }
+        Load();   
 
         _master.getVolume(out float masterVolume);
         _masterSlider.value = masterVolume * _masterSlider.maxValue;
