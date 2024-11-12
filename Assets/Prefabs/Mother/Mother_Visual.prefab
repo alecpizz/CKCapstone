@@ -85,11 +85,11 @@ MonoBehaviour:
       x: 0
       y: -1
       z: 0
-    gravityFalloff: 0
+    gravityFalloff: 1
     stablizationTimeAfterReset: 0.1
     blendWeight: 1
     damping:
-      value: 0.5
+      value: 0.2
       useCurve: 0
       curve:
         serializedVersion: 2
@@ -148,10 +148,10 @@ MonoBehaviour:
       worldInertia: 1
       movementInertiaSmoothing: 0.4
       movementSpeedLimit:
-        value: 1
+        value: 5
         use: 1
       rotationSpeedLimit:
-        value: 360
+        value: 720
         use: 1
       localInertia: 1
       localMovementSpeedLimit:
@@ -160,7 +160,7 @@ MonoBehaviour:
       localRotationSpeedLimit:
         value: 360
         use: 1
-      depthInertia: 0
+      depthInertia: 1
       centrifualAcceleration: 0
       particleSpeedLimit:
         value: 4
@@ -169,10 +169,10 @@ MonoBehaviour:
       teleportDistance: 0.5
       teleportRotation: 90
     tetherConstraint:
-      distanceCompression: 0.099
+      distanceCompression: 0.2
     distanceConstraint:
       stiffness:
-        value: 0.242
+        value: 1
         useCurve: 0
         curve:
           serializedVersion: 2
@@ -199,11 +199,11 @@ MonoBehaviour:
           m_PostInfinity: 2
           m_RotationOrder: 4
     triangleBendingConstraint:
-      stiffness: 0.241
+      stiffness: 1
     angleRestorationConstraint:
       useAngleRestoration: 1
       stiffness:
-        value: 0.2
+        value: 0.15
         useCurve: 1
         curve:
           serializedVersion: 2
@@ -212,16 +212,16 @@ MonoBehaviour:
             time: 0
             value: 1
             inSlope: 0
-            outSlope: 0
+            outSlope: -0.7
             tangentMode: 0
             weightedMode: 0
             inWeight: 0
             outWeight: 0
           - serializedVersion: 3
             time: 1
-            value: 0.5023224
-            inSlope: -0.8
-            outSlope: -0.8
+            value: 0.3
+            inSlope: -0.7
+            outSlope: 0
             tangentMode: 0
             weightedMode: 0
             inWeight: 0
@@ -229,33 +229,33 @@ MonoBehaviour:
           m_PreInfinity: 2
           m_PostInfinity: 2
           m_RotationOrder: 4
-      velocityAttenuation: 0.8
+      velocityAttenuation: 0.6
       gravityFalloff: 0
     angleLimitConstraint:
-      useAngleLimit: 0
+      useAngleLimit: 1
       limitAngle:
-        value: 15
-        useCurve: 0
+        value: 45
+        useCurve: 1
         curve:
           serializedVersion: 2
           m_Curve:
           - serializedVersion: 3
             time: 0
-            value: 0
-            inSlope: 0
-            outSlope: 1
-            tangentMode: 0
+            value: 0.199749
+            inSlope: 0.800251
+            outSlope: 0.800251
+            tangentMode: 34
             weightedMode: 0
             inWeight: 0
-            outWeight: 0
+            outWeight: 0.33333334
           - serializedVersion: 3
             time: 1
             value: 1
-            inSlope: 1
-            outSlope: 0
-            tangentMode: 0
+            inSlope: 0.800251
+            outSlope: 0.800251
+            tangentMode: 34
             weightedMode: 0
-            inWeight: 0
+            inWeight: 0.33333334
             outWeight: 0
           m_PreInfinity: 2
           m_PostInfinity: 2
@@ -322,7 +322,7 @@ MonoBehaviour:
       stiffness: 1
     colliderCollisionConstraint:
       mode: 1
-      friction: 0.2
+      friction: 0.05
       colliderList: []
       collisionBones: []
       limitDistance:
@@ -394,7 +394,7 @@ MonoBehaviour:
       movingWind: 0
     springConstraint:
       useSpring: 1
-      springPower: 0.01
+      springPower: 0.03
       limitDistance: 0.05
       normalLimitRatio: 1
       springNoise: 0
@@ -3541,7 +3541,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -6376889932645798252, guid: 7ffe6168b2bdc0043970bfcbc1621cef,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7215150034043315450}
+      addedObject: {fileID: 2296722867975311748}
     - targetCorrespondingSourceObject: {fileID: 408568667609979469, guid: 7ffe6168b2bdc0043970bfcbc1621cef,
         type: 3}
       insertIndex: -1
@@ -3827,7 +3827,7 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1069409210982841926}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7215150034043315450
+--- !u!114 &2296722867975311748
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3836,11 +3836,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 2979116200925614290}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2b68b2c7953ebb479b78627f19a6ccb, type: 3}
+  m_Script: {fileID: 11500000, guid: e6f5338a96461264fb9a1132c8509672, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  center: {x: 0, y: 0.09, z: 0}
-  size: {x: 0.117, y: 0, z: 0}
+  center: {x: 0.02, y: 0.11, z: 0}
+  size: {x: 0.083, y: 0.001, z: 0.32}
+  direction: 2
+  reverseDirection: 0
+  radiusSeparation: 0
+  alignedOnCenter: 1
 --- !u!4 &3029438379885708511 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -6566824241714660711, guid: 7ffe6168b2bdc0043970bfcbc1621cef,
