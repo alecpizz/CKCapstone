@@ -66,6 +66,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     {
         moveInDirection = new Vector3(0, 0, 0);
 
+        SnapToGridSpace();
         GridBase.Instance.AddEntry(this);
 
         _playerMoveRef = _player.GetComponent<PlayerMovement>();
@@ -276,4 +277,13 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     }
 
     public bool HitWrapAround { get => true; }
+
+    /// <summary>
+    /// Places this object in the center of its grid cell
+    /// </summary>
+    public void SnapToGridSpace()
+    {
+        Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
+        transform.position = GridBase.Instance.CellToWorld(cellPos);
+    }
 }

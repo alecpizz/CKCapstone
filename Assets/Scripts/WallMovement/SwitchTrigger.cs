@@ -35,6 +35,14 @@ public class SwitchTrigger : MonoBehaviour
     //reference for sound of switch
     [SerializeField] private EventReference _switchSound = default;
 
+    /// <summary>
+    /// Positions the switch to be at a height where it doesn't clip into the ground
+    /// </summary>
+    private void Awake()
+    {
+        transform.localPosition = 
+            new Vector3(transform.localPosition.x, -0.31f, transform.localPosition.z);
+    }
 
     /// <summary>
     /// Turns the switch on/off everytime the Player steps on it
