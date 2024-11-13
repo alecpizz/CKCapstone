@@ -60,8 +60,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
     private int _enemyMovementTime = 1;
 
-    [SerializeField] private float _tempMoveTime = 0.5f;
-
     // Event reference for the enemy movement sound
     [SerializeField] private EventReference _enemyMove = default;
 
@@ -185,7 +183,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                     }
 
                     yield return Tween.Position(transform,
-                        move + _positionOffset, _tempMoveTime, ease: Ease.OutBack).OnUpdate<EnemyBehavior>(target: this, (target, tween) =>
+                        move + _positionOffset, _waitTime, ease: Ease.OutBack).OnUpdate<EnemyBehavior>(target: this, (target, tween) =>
                         {
                             GridBase.Instance.UpdateEntry(this);
                         }).ToYieldInstruction();

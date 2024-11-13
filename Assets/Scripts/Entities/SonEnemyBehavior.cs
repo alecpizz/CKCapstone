@@ -57,8 +57,6 @@ public class SonEnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnL
 
     private int _enemyMovementTime = 1;
 
-    private float _tempMoveTime = 0.55f;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -184,7 +182,7 @@ public class SonEnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnL
                     }
 
                     yield return Tween.Position(transform,
-                        move + _positionOffset, _tempMoveTime, ease: Ease.OutBack).OnUpdate<SonEnemyBehavior>(target: this, (target, tween) =>
+                        move + _positionOffset, _waitTime, ease: Ease.OutBack).OnUpdate<SonEnemyBehavior>(target: this, (target, tween) =>
                         {
                             GridBase.Instance.UpdateEntry(this);
                         }).ToYieldInstruction();
