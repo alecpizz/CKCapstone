@@ -16,6 +16,7 @@ using Unity.VisualScripting;
 public class SonEnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener, IHarmonyBeamEntity
 {
     public bool IsTransparent { get => true; }
+    public bool BlocksHarmonyBeam { get => false; }
     public Vector3 moveInDirection { get; private set; }
     public Vector3 Position { get => transform.position; }
 
