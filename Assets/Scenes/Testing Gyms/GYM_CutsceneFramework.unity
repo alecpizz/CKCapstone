@@ -389,7 +389,7 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 4176986204430351289, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
-      insertIndex: 7
+      insertIndex: -1
       addedObject: {fileID: 209203111}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dbb0dd27c6fab3344aab4441094b0849, type: 3}
@@ -1175,9 +1175,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 104df417cc52e654ba0e5d7b9070697e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cutsceneImages:
+  _isChallengeCutscene: 1
+  _isEndChapterCutscene: 0
+  _challengeCutsceneImages:
   - {fileID: 808327109}
   - {fileID: 352151418}
+  _loadingSceneIndex: 1
 --- !u!4 &1312136891
 Transform:
   m_ObjectHideFlags: 0

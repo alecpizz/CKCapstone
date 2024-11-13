@@ -14,9 +14,12 @@ using UnityEngine.SceneManagement;
 
 public class CutsceneFramework : MonoBehaviour
 {
-    // [SerializeField] private int _loadingSceneIndex = 0;
+    [SerializeField] private bool _isChallengeCutscene;
+    [SerializeField] private bool _isEndChapterCutscene;
 
-    [SerializeField] private List<GameObject> _cutsceneImages;
+    [SerializeField] private List<GameObject> _challengeCutsceneImages;
+
+    //[SerializeField] private int _loadingSceneIndex = 0;
 
     private void Start()
     {
@@ -25,11 +28,19 @@ public class CutsceneFramework : MonoBehaviour
     
     private void PlayCutscene()
     {
-        foreach (GameObject image in _cutsceneImages)
+        if(_isChallengeCutscene == true && _isEndChapterCutscene == false)
         {
-            image.SetActive(true); 
+            foreach (GameObject image in _challengeCutsceneImages)
+            {
+                image.SetActive(true); 
+            }
         }
 
-        // SceneController.Instance.LoadNewScene(_loadingSceneIndex);
+        if (_isEndChapterCutscene == true && _isChallengeCutscene == false)
+        {
+            
+        }
+
+        //SceneController.Instance.LoadNewScene(_loadingSceneIndex);
     }
 }
