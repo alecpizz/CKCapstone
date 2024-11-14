@@ -13,24 +13,29 @@ using UnityEngine.Rendering.Universal;
 
 public class ColorSettings : MonoBehaviour
 {
-    [SerializeField] private Volume _volume;
+    [SerializeField] TMP_Dropdown _dropdown;
 
-    public enum ColorBlindMode { Normal, Protanopia, Protanomaly, Deuteranopia, Deuteranomaly, Tritanopia, Tritanomaly, Achromatopsia, Achromatomaly }
+    public enum ColorBlindMode { Normal, Protanopia, Protanomaly, Deuteranopia, Deuteranomaly, 
+        Tritanopia, Tritanomaly, Achromatopsia, Achromatomaly }
 
     private ColorBlindMode selection;
-    private TMP_Dropdown _dropdown;
     private ChannelMixer _channelMixer;
+    private Volume _volume;
 
     private const string ColorMode = "colorMode";
 
     private void Start()
     {
-        _dropdown = GetComponent<TMP_Dropdown>();
         _dropdown.onValueChanged.AddListener(DropdownValueChanged);
-
+        _volume = FindObjectOfType<Volume>();
         if (_volume.profile.TryGet(out ChannelMixer tmp))
         {
             _channelMixer = tmp;
+        }
+        else
+        {
+            Debug.LogWarning("ADD A CHANNEL MIXER OVERRIDE TO THE GLOBAL VOLUME");
+            return;
         }
         _channelMixer.active = true;
 
