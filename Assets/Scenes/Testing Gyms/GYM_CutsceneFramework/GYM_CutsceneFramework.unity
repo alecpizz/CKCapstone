@@ -141,6 +141,16 @@ PrefabInstance:
       propertyPath: _gridMeshHolder
       value: 
       objectReference: {fileID: 381800724}
+    - target: {fileID: 436011373386010899, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 797336007052760929, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 925676350848293028, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: m_Name
@@ -150,6 +160,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1010026615193059013, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1128631583206578260, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
@@ -166,7 +181,17 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1767253185457889571, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2149765265198579261, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2295975639014996387, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -1220,19 +1245,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 104df417cc52e654ba0e5d7b9070697e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isChallengeCutscene: 1
-  _isEndChapterCutscene: 0
+  _isChallengeCutscene: 0
+  _isEndChapterCutscene: 1
   _challengeCutsceneImages:
   - {fileID: 987237890}
   _endChapterCutsceneVideo: {fileID: 1696087322}
-  _cutsceneDuration: 10
+  _cutsceneDuration: 45
   _cutsceneAudio:
     Guid:
-      Data1: -557640581
-      Data2: 1121712866
-      Data3: -558134096
-      Data4: -99031386
-    Path: event:/Sample Sentence
+      Data1: -242112030
+      Data2: 1119417755
+      Data3: 289853105
+      Data4: 1167816820
+    Path: event:/Cassette Acquired
   _loadingLevelIndex: 1
 --- !u!4 &1312136891
 Transform:
@@ -1268,11 +1293,11 @@ MonoBehaviour:
       Data3: -558134096
       Data4: -99031386
     Path: event:/Sample Sentence
-  _subtitleText: Peer review reminder for 10/16. Peer reviews are due next Wedensday
-    at 11:59 pm.  Please Have them filled out for all members of your functional
-    team. The links are  in the announcement from David that is pinned. Remember
-    that you can review someone that is not one your functional team if you worked
-    with them and want to give them props or raise up some concerns. Thank you.
+  _subtitleText: Peer review reminder for 10/16. Peer reviews are due Wednesday by
+    11:59 pm.  Please have these filled out for all members of your functional teams.
+    The links are  in the announcement from David that is pinned. Remember that you
+    can review someone who is not on your functional team if you worked with them
+    and want to give them props or bring up concerns. Thank you.
   _sentences: 6
   _subtitleObject: {fileID: 1310912738}
 --- !u!1001 &1534550047
@@ -1439,13 +1464,13 @@ VideoPlayer:
   m_DataSource: 0
   m_TimeUpdateMode: 1
   m_PlaybackSpeed: 1
-  m_AudioOutputMode: 1
+  m_AudioOutputMode: 0
   m_TargetAudioSources:
   - {fileID: 0}
   m_DirectAudioVolumes:
   - 1
   m_Url: 
-  m_EnabledAudioTracks: 01
+  m_EnabledAudioTracks: 00
   m_DirectAudioMutes: 00
   m_ControlledAudioTrackCount: 1
   m_PlayOnAwake: 0
