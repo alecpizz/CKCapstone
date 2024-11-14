@@ -1,6 +1,7 @@
 /******************************************************************
  *    Author: Claire Noto
- *    Contributors: Claire Noto, Trinity Hutson, Alec Pizziferro
+ *    Contributors: Claire Noto, Trinity Hutson, Alec Pizziferro,
+ *    Nick Grinstead
  *    Date Created: 10/10/24
  *    Description: Script that handles the harmony beam
  *******************************************************************/
@@ -52,7 +53,8 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
             _activeWallEffect = Instantiate(_wallCollisionEffectPrefab);
             _activeWallEffect.SetActive(false);
         }
-        ScanForObjects();
+        
+        Invoke(nameof(ScanForObjects), 0.1f);
     }
 
     /// <summary>
@@ -69,6 +71,14 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     private void OnDisable()
     {
         RoundManager.Instance.RegisterListener(this);
+    }
+
+    /// <summary>
+    /// Periodically scans for objects in order to detect moving enemies
+    /// </summary>
+    private void FixedUpdate()
+    {
+        ScanForObjects();
     }
 
     /// <summary>
@@ -181,7 +191,8 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
                             enemyHit = true;
                         }
                     }
-                    else if (!gridEntry.IsTransparent) //no entry, but a non-transparent cell. pass through.
+                    //no entry, but a cell that blocks harmony beams. pass through.
+                    else if (gridEntry.BlocksHarmonyBeam)
                     {
                         stop = true;
                         hitPoint = gridEntry.Position;
@@ -196,7 +207,6 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
         _prevHitEntities.Clear();
         _hitEntities.ForEach(entity => _prevHitEntities.Add(entity));
     }
-
 
     /// <summary>
     /// Forces the turn to end. Will detect objects an additional time.

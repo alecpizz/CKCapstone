@@ -20,6 +20,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 {
     public Vector3 FacingDirection { get; private set; }
     public bool IsTransparent { get => true; }
+    public bool BlocksHarmonyBeam { get => false; }
     public Vector3 Position { get => transform.position; }
     public GameObject GetGameObject { get => gameObject; }
 
