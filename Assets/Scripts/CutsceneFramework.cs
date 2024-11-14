@@ -16,66 +16,108 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 // Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement
 // the functionality for playing a video, particularly for the End Chapter Cutscene)
-using UnityEngine.Video; 
+using UnityEngine.Video;
+using FMODUnity;
 
 public class CutsceneFramework : MonoBehaviour
 {
+    // Checks whether to play the Challenge or End Chapter Cutscene
     [SerializeField] private bool _isChallengeCutscene;
     [SerializeField] private bool _isEndChapterCutscene;
 
+    // Defines a list identifying the image(s) to play during the Challenge Cutscene
     [SerializeField] private List<GameObject> _challengeCutsceneImages;
 
     // Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement
     // the functionality for playing a video, particularly for the End Chapter Cutscene)
+    // Identifies the video to be played during the End Chapter Cutscene
     [SerializeField] private VideoPlayer _endChapterCutsceneVideo;
+
+    // Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement
+    // the functionality for playing a video, particularly for the End Chapter Cutscene)
+    // Identifies the duration of the cutscene, used to determine the time
+    // before loading the next level
     [SerializeField] private float _cutsceneDuration;
 
+    // Identifies the audio to be played during the cutscene
+    [SerializeField] private EventReference _cutsceneAudio; 
+
+    // Identifies the index of the level to be loaded after the cutscene plays
     [SerializeField] private int _loadingLevelIndex = 0;
 
+    /// <summary>
+    /// Determines whether to play the Challenge or End Chapter Cutscene
+    /// </summary>
     private void Start()
     {
-        PlayCutscene();
-    }
-    
-    private void PlayCutscene()
-    {
+        // Plays the Challenge Cutscene, provided that only the corresponding boolean
+        // (_isChallengeCutscene) is true
         if (_isChallengeCutscene == true && _isEndChapterCutscene == false)
         {
-            foreach (GameObject image in _challengeCutsceneImages)
-            {
-                image.SetActive(true); 
-            }
+            PlayChallengeCutscene();
         }
 
+        // Plays the End Chapter Cutscene, provided that only the corresponding boolean 
+        // (_isEndChapterCutscene) is true
         if (_isEndChapterCutscene == true && _isChallengeCutscene == false)
         {
-            // Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement the
-            // functionality for playing a video, particularly for the End Chapter Cutscene)
-            _endChapterCutsceneVideo.Play();
+            PlayEndChapterCutscene();
         }
+    }
+    
+    /// <summary>
+    /// Plays the Challenge Cutscene
+    /// </summary>
+    private void PlayChallengeCutscene()
+    {
+        // Displays the image(s) to be played during the Challenge Cutscene
+        foreach (GameObject image in _challengeCutsceneImages)
+        {
+            image.SetActive(true);
+        }
+
+        // Plays the audio accompanying the Challenge Cutscene
+        AudioManager.Instance.PlaySound(_cutsceneAudio);
 
         // Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement the
         // functionality for playing a video, particularly for the End Chapter Cutscene)
+        // Plays the Challenge Cutscene for a specified amount of time before loading the next level
         StartCoroutine(CutsceneDuration());
     }
 
-    // Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement the
-    // functionality for playing a video, particularly for the End Chapter Cutscene)
+    /// <summary>
+    /// Plays the End Chapter Cutscene
+    /// </summary>
+    private void PlayEndChapterCutscene()
+    {
+        // Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement the
+        // functionality for playing a video, particularly for the End Chapter Cutscene)
+        // Displays the video to be played during the End Chapter Cutscene
+        _endChapterCutsceneVideo.Play();
+
+        // Plays the audio accompanying the End Chapter Cutscene
+        AudioManager.Instance.PlaySound(_cutsceneAudio);
+
+        // Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement the
+        // functionality for playing a video, particularly for the End Chapter Cutscene)
+        // Plays the End Chapter Cutscene for a specified amount of time before loading the next level
+        StartCoroutine(CutsceneDuration());
+    }
+
+    /// <summary>
+    /// Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement the
+    /// functionality for playing a video, particularly for the End Chapter Cutscene)
+    /// The cutscene plays for a specified amount of time, before loading the next scene
+    /// </summary>
+    /// <returns></returns> Amount of time the cutscene should play
     private IEnumerator CutsceneDuration()
     {
         // Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement the
         // functionality for playing a video, particularly for the End Chapter Cutscene)
+        // Permits the cutscene to play for a specified amount of time
         yield return new WaitForSeconds(_cutsceneDuration);
 
-        // Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement the
-        // functionality for playing a video, particularly for the End Chapter Cutscene)
-        _endChapterCutsceneVideo.Stop();
-
-        foreach(GameObject image in _challengeCutsceneImages)
-        {
-            image.SetActive(false);
-        }
-
+        // Loads the next level, marked by a specified index
         SceneController.Instance.LoadNewScene(_loadingLevelIndex);
     }
 }
