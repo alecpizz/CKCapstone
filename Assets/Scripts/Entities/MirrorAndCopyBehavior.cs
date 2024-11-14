@@ -34,6 +34,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     private int _movementTiming = 1;
     private WaitForSeconds _waitForSeconds;
 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -132,6 +133,12 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
             _movementTiming = 1;
     }
     public TurnState TurnState => TurnState.World;
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        
+    }
+
     public void BeginTurn(Vector3 direction)
     {
         _playerInteraction.SetDirection(direction);
