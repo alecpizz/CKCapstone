@@ -35,13 +35,15 @@ public class SwitchTrigger : MonoBehaviour
     //reference for sound of switch
     [SerializeField] private EventReference _switchSound = default;
 
+    private const float yOffset = -0.31f;
+
     /// <summary>
     /// Positions the switch to be at a height where it doesn't clip into the ground
     /// </summary>
     private void Awake()
     {
         transform.localPosition = 
-            new Vector3(transform.localPosition.x, -0.31f, transform.localPosition.z);
+            new Vector3(transform.localPosition.x, yOffset, transform.localPosition.z);
     }
 
     /// <summary>

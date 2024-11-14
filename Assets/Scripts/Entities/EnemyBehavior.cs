@@ -284,6 +284,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     public void SnapToGridSpace()
     {
         Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
-        transform.position = GridBase.Instance.CellToWorld(cellPos);
+        Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos);
+        transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z);
     }
 }
