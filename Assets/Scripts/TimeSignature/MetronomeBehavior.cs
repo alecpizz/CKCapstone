@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Nick Grinstead
-*    Contributors: 
+*    Contributors: David Galmines
 *    Date Created: 10/28/24
 *    Description: Checks for collisions with the player and then 
 *       calls the TimeSignatureManager to update the time signature.
@@ -11,17 +11,18 @@ using UnityEngine;
 
 public class MetronomeBehavior : MonoBehaviour
 {
-    [SerializeField] private ParticleSystem _contactIndicator2;
-    [SerializeField] private ParticleSystem _contactIndicator1;
+    [SerializeField] private ParticleSystem _contactIndicator;
     [SerializeField] private GameObject _HUDEffect;
+    [SerializeField] private bool _isThisTheTutorial;
+    private Animator _anim;
 
     /// <summary>
     /// Keeps the particle effects rfom playing right away.
     /// </summary>
     private void Awake()
     {
-        _contactIndicator2.Pause();
-        _contactIndicator1.Pause();
+        _contactIndicator.Pause();
+        _anim = GetComponentInParent<Animator>();
     }
 
     /// <summary>
@@ -65,11 +66,15 @@ public class MetronomeBehavior : MonoBehaviour
         {
             ActivateMetronome();
 
-            StopAllCoroutines();
-            StartCoroutine("HUDIndicator");
+            if (_isThisTheTutorial)
+            {
+                StopAllCoroutines();
+                StartCoroutine("HUDIndicator");
+            }
+
+            _contactIndicator.Play();
             _HUDEffect.SetActive(false);
-            _contactIndicator1.Play();
-            _contactIndicator2.Play();
+            _anim.speed *= 0.5f;
 
             PlayerMovement playerMovement;
             if (other.gameObject.TryGetComponent<PlayerMovement>(out playerMovement))
