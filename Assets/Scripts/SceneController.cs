@@ -11,7 +11,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using NaughtyAttributes;
+using SaintsField;
+using SaintsField.Playa;
 using FMODUnity;
 
 public class SceneController : MonoBehaviour
@@ -25,7 +26,7 @@ public class SceneController : MonoBehaviour
     [SerializeField] private Image _circleWipeImage;
     [Required]
     [SerializeField] private Camera _camera;
-    [InfoBox("Needed for screen wipe to center on the player", EInfoBoxType.Warning)]
+    [InfoBox("Needed for screen wipe to center on the player", EMessageType.Warning)]
     [SerializeField] private float _timeForScreenWipe;
     [SerializeField] private bool _shouldFadeInOnLoad;
     [SerializeField] private EventReference _endSound;
