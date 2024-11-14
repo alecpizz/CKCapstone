@@ -10,11 +10,13 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
+using FMODUnity;
 
 public class CursorManager : MonoBehaviour
 {
     [SerializeField] private Texture2D _cursor;
     [SerializeField] private Texture2D _cursorHover;
+    [SerializeField] private EventReference _clickSound = default;
 
     private void Start()
     {
@@ -85,6 +87,13 @@ public class CursorManager : MonoBehaviour
         };
         entryExit.callback.AddListener((eventData) => { OnPointerExit(); });
         trigger.triggers.Add(entryExit);
+
+        EventTrigger.Entry entrySelect = new EventTrigger.Entry
+        {
+            eventID = EventTriggerType.Select
+        };
+        entrySelect.callback.AddListener((eventData) => { Select(); });
+        trigger.triggers.Add(entrySelect);
     }
 
     /// <summary>
@@ -101,5 +110,10 @@ public class CursorManager : MonoBehaviour
     private void OnPointerExit()
     {
         Cursor.SetCursor(_cursor, Vector2.zero, CursorMode.Auto);
+    }
+
+    private void Select()
+    {
+        AudioManager.Instance.PlaySound(_clickSound);
     }
 }

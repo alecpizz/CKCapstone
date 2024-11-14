@@ -14,30 +14,26 @@ using UnityEngine.Rendering.Universal;
 public class ColorSettings : MonoBehaviour
 {
     [SerializeField] TMP_Dropdown _dropdown;
-
     public enum ColorBlindMode { Normal, Protanopia, Protanomaly, Deuteranopia, Deuteranomaly, 
         Tritanopia, Tritanomaly, Achromatopsia, Achromatomaly }
 
     private ColorBlindMode selection;
     private ChannelMixer _channelMixer;
-    private Volume _volume;
 
     private const string ColorMode = "colorMode";
 
     private void Start()
     {
         _dropdown.onValueChanged.AddListener(DropdownValueChanged);
-        _volume = FindObjectOfType<Volume>();
-        if (_volume.profile.TryGet(out ChannelMixer tmp))
-        {
-            _channelMixer = tmp;
-        }
-        else
-        {
-            Debug.LogWarning("ADD A CHANNEL MIXER OVERRIDE TO THE GLOBAL VOLUME");
-            return;
-        }
+        GameObject temp = new();
+        temp.AddComponent<Volume>();
+        _channelMixer = temp.GetComponent<Volume>().profile.Add<ChannelMixer>();
         _channelMixer.active = true;
+        _channelMixer.redOutRedIn.overrideState = _channelMixer.redOutGreenIn.overrideState = 
+            _channelMixer.redOutBlueIn.overrideState = _channelMixer.greenOutRedIn.overrideState = 
+            _channelMixer.greenOutGreenIn.overrideState = _channelMixer.greenOutBlueIn.overrideState = 
+            _channelMixer.blueOutRedIn.overrideState = _channelMixer.blueOutGreenIn.overrideState = 
+            _channelMixer.blueOutBlueIn.overrideState = true;
 
         // Load saved color mode or set to Normal (0) by default
         int savedMode = PlayerPrefs.GetInt(ColorMode, 0);
