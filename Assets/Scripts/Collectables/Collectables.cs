@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Taylor Sims
-*    Contributors: None
+*    Contributors: Alex Laubenstein
 *    Date Created: 09-24-24
 *    Description: This script is the collection system for Notes.
 *******************************************************************/
@@ -13,11 +13,30 @@ using FMODUnity;
 
 public class Collectables : MonoBehaviour
 {
+    public static Collectables Instance { get; private set; }
+
     // variables
     public DestroyGlowEffect destroyGlowEffect;
     [MinValue(0), MaxValue(10)]
     [SerializeField] private int _collectableNumber;
     [SerializeField] private EventReference _sound;
+   
+    public GameObject NoteGlow;
+
+    /// <summary>
+    /// Sets up checking what note needs to be collected next for the note's glow effect
+    /// </summary>
+    private void Update()
+    {
+        if (WinChecker.Instance.RefCollectableNumber == _collectableNumber)
+        {
+            NoteGlow.SetActive(true);
+        }
+        else
+        {
+            NoteGlow.SetActive(false);
+        }
+    }
 
     /// <summary>
     /// This method triggers the Collect method when the

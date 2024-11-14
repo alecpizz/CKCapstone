@@ -23,6 +23,7 @@ public class HUDscript : MonoBehaviour, ITimeListener
     [SerializeField] private GameObject _incorrectMessage;
     [SerializeField] private TextMeshProUGUI _sequenceUI;
     [SerializeField] private GameObject[] _noteImages;
+    [SerializeField] private GameObject[] _ghostNoteImages;
     [SerializeField] private TextMeshProUGUI _timeSignatureUIy;
     [SerializeField] private TextMeshProUGUI _timeSignatureUIx;
     private TimeSignatureManager _timeSigManager;
@@ -60,6 +61,7 @@ public class HUDscript : MonoBehaviour, ITimeListener
 
         // WinChecker.CollectedNote += UpdateCollectedNotesText;
         WinChecker.CollectedNote += UpdateColectedNotesIcons;
+        WinChecker.CollectedNote += UpdateGhostNotesIcons;
         WinChecker.GotCorrectSequence += DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence += DisplayIncorrectMessage;
     }
@@ -82,6 +84,7 @@ public class HUDscript : MonoBehaviour, ITimeListener
     {
         // WinChecker.CollectedNote -= UpdateCollectedNotesText;
         WinChecker.CollectedNote -= UpdateColectedNotesIcons;
+        WinChecker.CollectedNote -= UpdateGhostNotesIcons;
         WinChecker.GotCorrectSequence -= DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence -= DisplayIncorrectMessage;
 
@@ -99,6 +102,23 @@ public class HUDscript : MonoBehaviour, ITimeListener
         if (collectedNote >= 0 && collectedNote < _noteImages.Length)
         {
             _noteImages[collectedNote].SetActive(true);
+        }
+    }
+
+    /// <summary>
+    /// Display ghost notes that need to be collected in UI once a note is collected
+    /// </summary>
+    private void UpdateGhostNotesIcons(int collectedNote)
+    {
+        if (collectedNote >= 0 && collectedNote < _noteImages.Length)
+        {
+            _ghostNoteImages[collectedNote+1].SetActive(true);
+            _ghostNoteImages[collectedNote].SetActive(false);
+        }
+        //if the level is complete don't display another ghost note
+        if (WinChecker.Instance.SequenceComplete)
+        {
+            _ghostNoteImages[collectedNote+1].SetActive(false);
         }
     }
 

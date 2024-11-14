@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Nick Grinstead
-*    Contributors:
+*    Contributors: Alex Laubenstein
 *    Date Created: 9/24/24
 *    Description: Tracks what notes the player has collected and
 *       handles checking if the player has the correct sequence.
@@ -17,6 +17,9 @@ public class WinChecker : MonoBehaviour
     public static Action<int> CollectedNote;
     public static Action GotCorrectSequence;
     public static Action GotWrongSequence;
+
+    public int RefCollectableNumber { get; private set; } = 0;
+    public bool SequenceComplete = false;
 
     [SerializeField] private ParticleSystem _unlockedParticles;
 
@@ -63,6 +66,7 @@ public class WinChecker : MonoBehaviour
     private void Start()
     {
         CollectedNote += CollectNote;
+        Debug.Log(CollectedNote);
     }
 
     /// <summary>
@@ -81,6 +85,7 @@ public class WinChecker : MonoBehaviour
     private void CollectNote(int note)
     {
         _collectedSequence.Add(note);
+        RefCollectableNumber++;
 
         if (_collectedSequence.Count == TargetNoteSequence.Count)
         {
@@ -97,8 +102,9 @@ public class WinChecker : MonoBehaviour
 
             if (doesSequenceMatch)
             {
+                SequenceComplete = true;
                 Debug.Log("Correct Sequence");
-                GotCorrectSequence?.Invoke();
+                GotCorrectSequence?.Invoke();  
             }
             else
             {
