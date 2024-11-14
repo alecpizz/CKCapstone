@@ -16,6 +16,7 @@ using Unity.VisualScripting;
 public class SonEnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener, IHarmonyBeamEntity
 {
     public bool IsTransparent { get => true; }
+    public bool BlocksHarmonyBeam { get => false; }
     public Vector3 moveInDirection { get; private set; }
     public Vector3 Position { get => transform.position; }
 
@@ -33,6 +34,9 @@ public class SonEnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnL
 
     //Wait time between enemy moving each individual tile while on path to next destination
     [SerializeField] private float _waitTime = 0.5f;
+
+    [SerializeField] private float _rotationTime = 0.05f;
+    [SerializeField] private Ease rotationEase = Ease.InOutSine;
 
     //List of movePoint structs that contain a direction enum and a tiles to move integer.
     public enum Direction { Up, Down, Left, Right }
@@ -53,6 +57,11 @@ public class SonEnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnL
     private int _enemyMovementTime = 1;
 
     private float _tempMoveTime = 0.55f;
+
+    private void Awake()
+    {
+        PrimeTweenConfig.warnEndValueEqualsCurrent = false;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -142,6 +151,7 @@ public class SonEnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnL
                 var pointTiles = point.tilesToMove;
                 FindDirection(pointDirection);
 
+
                 //Reverses move direction if going back through the list
                 if (!_atStart)
                 {
@@ -175,6 +185,9 @@ public class SonEnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnL
                     {
                         break;
                     }
+
+                    Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveInDirection), duration: _rotationTime,
+                    ease: rotationEase);
 
                     yield return Tween.Position(transform,
                         move + _positionOffset, _tempMoveTime, ease: Ease.OutBack).OnUpdate<SonEnemyBehavior>(target: this, (target, tween) =>

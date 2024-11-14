@@ -10,10 +10,12 @@ using System.Collections;
 using System.Collections.Generic;
 using PrimeTween;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class MirrorBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener, IHarmonyBeamEntity
 {
     public bool IsTransparent { get => true; }
+    public bool BlocksHarmonyBeam { get => false; }
     public Vector3 Position { get => transform.position; }
     public GameObject GetGameObject { get => gameObject; }
 
@@ -27,8 +29,16 @@ public class MirrorBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
     private float _movementTime = 0.55f;
 
+    [SerializeField] private float _rotationTime = 0.05f;
+    [SerializeField] private Ease rotationEase = Ease.InOutSine;
+
     private int _mirrorMovementTiming = 1;
     private WaitForSeconds _waitForSeconds;
+
+    private void Awake()
+    {
+        PrimeTweenConfig.warnEndValueEqualsCurrent = false;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -81,14 +91,18 @@ public class MirrorBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                 }
                 if (canMove == true)
                 {
+                    Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
+                    ease: rotationEase);
+
                     yield return Tween.Position(transform,
                         move + _positionOffset, _movementTime, ease: Ease.OutBack).OnUpdate<MirrorBehavior>(target: this, (target, tween) =>
                         {
                             GridBase.Instance.UpdateEntry(this);
                         }).ToYieldInstruction();
+
                 }
 
-                GridBase.Instance.UpdateEntry(this);
+        GridBase.Instance.UpdateEntry(this);
             }
             else
             {
@@ -106,6 +120,7 @@ public class MirrorBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                 yield return _waitForSeconds;
             }
         }
+
 
         RoundManager.Instance.CompleteTurn(this);
     }

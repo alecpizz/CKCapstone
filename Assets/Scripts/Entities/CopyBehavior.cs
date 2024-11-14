@@ -14,6 +14,7 @@ using UnityEngine;
 public class CopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
 {
     public bool IsTransparent { get => true; }
+    public bool BlocksHarmonyBeam { get => false; }
     public Vector3 Position { get => transform.position; }
     public GameObject GetGameObject { get => gameObject; }
 
@@ -25,8 +26,16 @@ public class CopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListe
 
     private float _movementTime = 0.55f;
 
+    [SerializeField] private float _rotationTime = 0.05f;
+    [SerializeField] private Ease rotationEase = Ease.InOutSine;
+
     private int _copyMovementTiming = 1;
     private WaitForSeconds _waitForSeconds;
+
+    private void Awake()
+    {
+        PrimeTweenConfig.warnEndValueEqualsCurrent = false;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -79,6 +88,9 @@ public class CopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListe
                 }
                 if (canMove == true)
                 {
+                    Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
+                    ease: rotationEase);
+
                     yield return Tween.Position(transform,
                         move + _positionOffset, _movementTime, ease: Ease.OutBack).OnUpdate<CopyBehavior>(target: this, (target, tween) =>
                         {

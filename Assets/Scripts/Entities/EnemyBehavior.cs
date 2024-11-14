@@ -33,10 +33,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     [SerializeField] private int _currentPoint = 0;
     private int _currentPointIndex = 0;
 
-    private PlayerMovement _playerMoveRef;
-
     //Wait time between enemy moving each individual tile while on path to next destination
     [SerializeField] private float _waitTime = 0.5f;
+
+    [SerializeField] private float _rotationTime = 0.05f;
+    [SerializeField] private Ease rotationEase = Ease.InOutSine;
 
     //List of movePoint structs that contain a direction enum and a tiles to move integer.
     public enum Direction { Up, Down, Left, Right }
@@ -61,14 +62,17 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     // Event reference for the enemy movement sound
     [SerializeField] private EventReference _enemyMove = default;
 
+    private void Awake()
+    {
+        PrimeTweenConfig.warnEndValueEqualsCurrent = false;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         moveInDirection = new Vector3(0, 0, 0);
 
         GridBase.Instance.AddEntry(this);
-
-        _playerMoveRef = _player.GetComponent<PlayerMovement>();
 
         // Make sure enemiess are always seen at the start
         _atStart = true;
@@ -149,6 +153,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                 var point = _movePoints[_currentPoint];
                 var pointDirection = point.direction;
                 var pointTiles = point.tilesToMove;
+
                 FindDirection(pointDirection);
 
                 //Reverses move direction if going back through the list
@@ -185,6 +190,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                         break;
                     }
 
+                    Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveInDirection), duration: _rotationTime,
+                    ease: rotationEase);
+
                     yield return Tween.Position(transform,
                         move + _positionOffset, _tempMoveTime, ease: Ease.OutBack).OnUpdate<EnemyBehavior>(target: this, (target, tween) =>
                         {
@@ -193,7 +201,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
                     AudioManager.Instance.PlaySound(_enemyMove);
                     GridBase.Instance.UpdateEntry(this);
-                }
+                } 
 
                 /// <summary>
                 /// If the current point is equal to the length of the list then the if/else statement 
