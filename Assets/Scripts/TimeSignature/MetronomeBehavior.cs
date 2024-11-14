@@ -11,6 +11,19 @@ using UnityEngine;
 
 public class MetronomeBehavior : MonoBehaviour
 {
+    [SerializeField] private ParticleSystem _contactIndicator2;
+    [SerializeField] private ParticleSystem _contactIndicator1;
+    [SerializeField] private GameObject _HUDEffect;
+
+    /// <summary>
+    /// Keeps the particle effects rfom playing right away.
+    /// </summary>
+    private void Awake()
+    {
+        _contactIndicator2.Pause();
+        _contactIndicator1.Pause();
+    }
+
     /// <summary>
     /// Toggles the time signature on the manager if there is one
     /// </summary>
@@ -18,6 +31,27 @@ public class MetronomeBehavior : MonoBehaviour
     {
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.ToggleTimeSignature();
+    }
+
+    /// <summary>
+    /// Play's the HUD indicator effect on a delay after the player 
+    /// touches the metronome.
+    /// </summary>
+    private IEnumerator HUDIndicator()
+    {
+        yield return new WaitForSeconds(0.5f);
+        _HUDEffect.SetActive(true);
+        yield return new WaitForSeconds(0.5f);
+        _HUDEffect.SetActive(false);
+        yield return new WaitForSeconds(0.5f);
+        _HUDEffect.SetActive(true);
+        yield return new WaitForSeconds(0.5f);
+        _HUDEffect.SetActive(false);
+        yield return new WaitForSeconds(0.5f);
+        _HUDEffect.SetActive(true);
+        yield return new WaitForSeconds(0.5f);
+        _HUDEffect.SetActive(false);
+        yield return null;
     }
 
     /// <summary>
@@ -30,6 +64,12 @@ public class MetronomeBehavior : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             ActivateMetronome();
+
+            StopAllCoroutines();
+            StartCoroutine("HUDIndicator");
+            _HUDEffect.SetActive(false);
+            _contactIndicator1.Play();
+            _contactIndicator2.Play();
 
             PlayerMovement playerMovement;
             if (other.gameObject.TryGetComponent<PlayerMovement>(out playerMovement))
