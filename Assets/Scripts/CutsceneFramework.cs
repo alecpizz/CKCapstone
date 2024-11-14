@@ -2,9 +2,12 @@
 *    Author: Madison Gorman
 *    Contributors: 
 *    Date Created: 11/07/24
-*    Description: Permits a cutscene (comprised of a static image, 
-*    subtitles, and audio) to play after the completion
-*    of a challenge room.
+*    Description: Permits two types of cutscenes to play, after the 
+*    completion of a challenge room (comprised of a static image, 
+*    subtitles, and audio) and chapter (a video)
+*    Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM to 
+*    implement the functionality surrounding playing a video for 
+*    the End Chapter Cutscene
 *******************************************************************/
 
 using System.Collections;
