@@ -60,9 +60,14 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     /// </summary>
     public void SwitchActivation()
     {
-        transform.position = _originGhost;
-        _wallGhost.transform.position = _originWall;
-        _wallGrid.UpdatePosition();
+        if (GridBase.Instance.CellIsTransparent(_originGhost))
+        {
+            print("I'm on");
+            transform.position = _originGhost;
+            _wallGhost.transform.position = _originWall;
+            _wallGrid.UpdatePosition();
+        }
+        
     }
 
     /// <summary>
@@ -72,8 +77,11 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     /// </summary>
     public void SwitchDeactivation()
     {
-        transform.position = _originWall;
-        _wallGhost.transform.position = _originGhost;
-        _wallGrid.UpdatePosition();
+        if (GridBase.Instance.CellIsTransparent(_originWall)) 
+        {
+            transform.position = _originWall;
+            _wallGhost.transform.position = _originGhost;
+            _wallGrid.UpdatePosition();
+        }
     }
 }
