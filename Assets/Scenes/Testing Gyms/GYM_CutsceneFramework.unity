@@ -138,7 +138,7 @@ GameObject:
   m_Component:
   - component: {fileID: 209203111}
   m_Layer: 5
-  m_Name: Cutscene Images
+  m_Name: Challenge Cutscene Images
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -266,7 +266,12 @@ PrefabInstance:
     - target: {fileID: 1128631583206578260, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1161156619709682809, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1528842653513555916, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
@@ -276,7 +281,7 @@ PrefabInstance:
     - target: {fileID: 2149765265198579261, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2891856093418539150, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
@@ -286,17 +291,22 @@ PrefabInstance:
     - target: {fileID: 3647131833297354109, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4081005620573692550, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4754326492039255153, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -27.003906
+      objectReference: {fileID: 0}
     - target: {fileID: 4796963988199037535, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5092856495259832975, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
@@ -307,6 +317,11 @@ PrefabInstance:
         type: 3}
       propertyPath: _shouldFadeInOnLoad
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6311636952621972159, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -42.899902
       objectReference: {fileID: 0}
     - target: {fileID: 6669229177200718676, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
@@ -816,6 +831,12 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!20 &1113196498 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 7663816770030828482, guid: dbb0dd27c6fab3344aab4441094b0849,
+    type: 3}
+  m_PrefabInstance: {fileID: 381800723}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &1173485381
 Mesh:
   m_ObjectHideFlags: 0
@@ -1175,12 +1196,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 104df417cc52e654ba0e5d7b9070697e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isChallengeCutscene: 1
-  _isEndChapterCutscene: 0
+  _isChallengeCutscene: 0
+  _isEndChapterCutscene: 1
   _challengeCutsceneImages:
   - {fileID: 808327109}
   - {fileID: 352151418}
-  _loadingSceneIndex: 1
+  _endChapterCutsceneVideo: {fileID: 1696087322}
+  _cutsceneDuration: 50
+  _loadingLevelIndex: 1
 --- !u!4 &1312136891
 Transform:
   m_ObjectHideFlags: 0
@@ -1282,7 +1305,7 @@ PrefabInstance:
     - target: {fileID: 7410545637726630488, guid: dda7842c0387e794a8c66ddc56220932,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1322,6 +1345,74 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
+--- !u!1 &1696087321
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1696087323}
+  - component: {fileID: 1696087322}
+  m_Layer: 0
+  m_Name: EndChapterCutsceneVideo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!328 &1696087322
+VideoPlayer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1696087321}
+  m_Enabled: 1
+  m_VideoClip: {fileID: 32900000, guid: e5a2cc40bdc44074d8acf62eb99b0445, type: 3}
+  m_TargetCameraAlpha: 1
+  m_TargetCamera3DLayout: 0
+  m_TargetCamera: {fileID: 1113196498}
+  m_TargetTexture: {fileID: 8400000, guid: a84c2a3d2a0303842b9f668ad137f163, type: 2}
+  m_TimeReference: 0
+  m_TargetMaterialRenderer: {fileID: 0}
+  m_TargetMaterialProperty: <noninit>
+  m_RenderMode: 1
+  m_AspectRatio: 3
+  m_DataSource: 0
+  m_TimeUpdateMode: 1
+  m_PlaybackSpeed: 1
+  m_AudioOutputMode: 1
+  m_TargetAudioSources:
+  - {fileID: 0}
+  m_DirectAudioVolumes:
+  - 1
+  m_Url: 
+  m_EnabledAudioTracks: 01
+  m_DirectAudioMutes: 00
+  m_ControlledAudioTrackCount: 1
+  m_PlayOnAwake: 0
+  m_SkipOnDrop: 0
+  m_Looping: 0
+  m_WaitForFirstFrame: 1
+  m_FrameReadyEventEnabled: 0
+  m_VideoShaders: []
+--- !u!4 &1696087323
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1696087321}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 187.5, y: 105.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1922030914
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1398,7 +1489,7 @@ PrefabInstance:
     - target: {fileID: 2735164925453966809, guid: 4b4ed906bab175f468c3e8cc2650a794,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3412293428597429987, guid: 4b4ed906bab175f468c3e8cc2650a794,
         type: 3}
@@ -1448,3 +1539,4 @@ SceneRoots:
   - {fileID: 1534550047}
   - {fileID: 1922030914}
   - {fileID: 1312136891}
+  - {fileID: 1696087323}
