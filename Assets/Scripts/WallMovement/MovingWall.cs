@@ -62,7 +62,6 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     {
         if (GridBase.Instance.CellIsTransparent(_originGhost))
         {
-            print("I'm on");
             transform.position = _originGhost;
             _wallGhost.transform.position = _originWall;
             _wallGrid.UpdatePosition();
