@@ -46,8 +46,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     [SerializeField] private float _delayTime = 0.1f;
 
     [SerializeField] private float _movementTime = 0.25f;
-    [SerializeField] private float rotationTime = 0.05f;
-    [SerializeField] private Ease rotationEase = Ease.InOutSine;
+    [SerializeField] private float _rotationTime = 0.05f;
+    [SerializeField] private Ease _rotationEase = Ease.InOutSine;
 
     private int _playerMovementTiming = 1;
     private WaitForSeconds _waitForSeconds;
@@ -171,8 +171,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     public void BeginTurn(Vector3 direction)
     {
         _playerInteraction.SetDirection(direction);
-        Tween.Rotation(transform, endValue: Quaternion.LookRotation(direction), duration: rotationTime,
-            ease: rotationEase).OnComplete(
+        Tween.Rotation(transform, endValue: Quaternion.LookRotation(direction), duration: _rotationTime,
+            ease: _rotationEase).OnComplete(
             () =>
             {
                 var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
