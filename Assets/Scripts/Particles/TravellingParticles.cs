@@ -22,6 +22,11 @@ public class TravellingParticles : MonoBehaviour
     Transform _emissionTransform;
     [SerializeField]
     Transform _targetTransform;
+    [Space]
+    [SerializeField]
+    RectTransform _targetRectTransform;
+    [SerializeField]
+    float _camDepth = 6;
 
     [Header("Emitter")]
     [SerializeField]
@@ -37,6 +42,8 @@ public class TravellingParticles : MonoBehaviour
     [SerializeField]
     float _forceDuration = 1;
 
+    WaitForSeconds _waitDelay;
+
     /// <summary>
     /// Initializes the particle position, and particleSystem settings
     /// </summary>
@@ -51,15 +58,24 @@ public class TravellingParticles : MonoBehaviour
         emission.rateOverTime = new ParticleSystem.MinMaxCurve(_emissionRate, _emissionRate);
         var main = _particles.main;
         main.duration = _emissionDuration;
+
+        _waitDelay = new WaitForSeconds(_forceDelay);
     }
 
     /// <summary>
     /// Plays the particles and sends them from the emission transform to the target transform
     /// </summary>
-    [Button]
+
+    [Button("Play Particles (Runtime Only)")]
     public void PlayParticles()
     {
         StartCoroutine(ParticleSequence());
+    }
+
+    [Button("Play UI Particles (Runtime Only)")]
+    public void PlayUIParticles()
+    {
+        StartCoroutine(ParticleUISequence());
     }
 
     /// <summary>
@@ -95,11 +111,37 @@ public class TravellingParticles : MonoBehaviour
                 // Have to reset velocity and position each time or else they wander off
                 particleArr[i].velocity = Vector3.zero;
                 particleArr[i].position = Vector3.MoveTowards(particleArr[i].position, _targetTransform.position, _forceSpeed);
-
-                _particles.SetParticles(particleArr);
             }
 
+            _particles.SetParticles(particleArr);
+
             yield return null;
+        }
+
+    }
+
+    private IEnumerator ParticleUISequence()
+    {
+        _particles.Play();
+
+        ParticleSystem.Particle[] particleArr = new ParticleSystem.Particle[_particles.main.maxParticles];
+
+        Vector3 uiPosition = _targetRectTransform.position;
+        uiPosition.y = _camDepth;
+
+        Vector3 uiTarget = _uiCamera.ScreenToWorldPoint(uiPosition, Camera.MonoOrStereoscopicEye.Mono);
+        print("UI Target: " + uiTarget);
+
+        Vector3 particleVelocity = uiTarget - _emissionTransform.position;
+        particleVelocity = _forceSpeed * particleVelocity.normalized;
+
+        yield return _waitDelay;
+
+        _particles.GetParticles(particleArr);
+
+        for (int i = 0; i < particleArr.Length; i++)
+        {
+            particleArr[i].velocity = particleVelocity;
         }
 
     }
