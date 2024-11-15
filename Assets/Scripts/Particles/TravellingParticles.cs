@@ -27,6 +27,8 @@ public class TravellingParticles : MonoBehaviour
     RectTransform _targetRectTransform;
     [SerializeField]
     float _camDepth = 6;
+    [SerializeField]
+    Transform testTransform;
 
     [Header("Emitter")]
     [SerializeField]
@@ -38,11 +40,11 @@ public class TravellingParticles : MonoBehaviour
     [SerializeField]
     float _forceSpeed = 10;
     [SerializeField]
+    float _uiForceSpeed = 10;
+    [SerializeField]
     float _forceDelay = 1;
     [SerializeField]
     float _forceDuration = 1;
-
-    WaitForSeconds _waitDelay;
 
     /// <summary>
     /// Initializes the particle position, and particleSystem settings
@@ -58,8 +60,6 @@ public class TravellingParticles : MonoBehaviour
         emission.rateOverTime = new ParticleSystem.MinMaxCurve(_emissionRate, _emissionRate);
         var main = _particles.main;
         main.duration = _emissionDuration;
-
-        _waitDelay = new WaitForSeconds(_forceDelay);
     }
 
     /// <summary>
@@ -127,22 +127,52 @@ public class TravellingParticles : MonoBehaviour
         ParticleSystem.Particle[] particleArr = new ParticleSystem.Particle[_particles.main.maxParticles];
 
         Vector3 uiPosition = _targetRectTransform.position;
-        uiPosition.y = _camDepth;
+        uiPosition.z = _camDepth;
 
         Vector3 uiTarget = _uiCamera.ScreenToWorldPoint(uiPosition, Camera.MonoOrStereoscopicEye.Mono);
         print("UI Target: " + uiTarget);
 
-        Vector3 particleVelocity = uiTarget - _emissionTransform.position;
-        particleVelocity = _forceSpeed * particleVelocity.normalized;
-
-        yield return _waitDelay;
-
         _particles.GetParticles(particleArr);
 
-        for (int i = 0; i < particleArr.Length; i++)
+        for (float step = 0; step < _forceDuration; step += Time.deltaTime)
         {
-            particleArr[i].velocity = particleVelocity;
-        }
+            _particles.GetParticles(particleArr);
 
+            for (int i = 0; i < particleArr.Length; i++)
+            {
+                // Ignore if particle is dead or if the particle hasn't lived longer than the force delay
+                if (particleArr[i].remainingLifetime <= 0 ||
+                    particleArr[i].remainingLifetime > particleArr[i].startLifetime - _forceDelay)
+                    continue;
+                // Delete self upon colliding with target
+                else if (particleArr[i].position == _targetRectTransform.position)
+                {
+                    particleArr[i].remainingLifetime = 0;
+                    continue;
+                }
+
+                // Particles don't have a transform so can't tween :(
+                // Have to reset velocity and position each time or else they wander off
+                particleArr[i].velocity = Vector3.zero;
+                particleArr[i].position = Vector3.MoveTowards(particleArr[i].position, uiTarget, _forceSpeed);
+            }
+
+            _particles.SetParticles(particleArr);
+
+            yield return null;
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Vector3 uiPosition = _targetRectTransform.position;
+        uiPosition.z = _camDepth;
+
+        Vector3 uiTarget = _uiCamera.ScreenToWorldPoint(uiPosition, Camera.MonoOrStereoscopicEye.Mono);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(_uiCamera.transform.position, uiTarget);
+        Gizmos.color = Color.green;
+        Gizmos.DrawSphere(uiTarget, 0.5f);
     }
 }
