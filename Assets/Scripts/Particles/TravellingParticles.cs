@@ -26,9 +26,9 @@ public class TravellingParticles : MonoBehaviour
     [SerializeField]
     RectTransform _targetRectTransform;
     [SerializeField]
-    float _camDepth = 6;
+    Vector2 _uiPosition;
     [SerializeField]
-    Transform testTransform;
+    float _camDepth = 6;
 
     [Header("Emitter")]
     [SerializeField]
@@ -46,6 +46,8 @@ public class TravellingParticles : MonoBehaviour
     [SerializeField]
     float _forceDuration = 1;
 
+    private Vector3 _uiTarget;
+
     /// <summary>
     /// Initializes the particle position, and particleSystem settings
     /// </summary>
@@ -53,6 +55,8 @@ public class TravellingParticles : MonoBehaviour
     {
         Transform mainCameraTrans = Camera.main.transform;
         _uiCamera.transform.SetPositionAndRotation(mainCameraTrans.position, mainCameraTrans.rotation);
+        _uiTarget = _uiPosition;
+        _uiTarget.z = _camDepth;
 
         _particles.transform.position = _emissionTransform.position;
 
@@ -129,7 +133,7 @@ public class TravellingParticles : MonoBehaviour
         Vector3 uiPosition = _targetRectTransform.position;
         uiPosition.z = _camDepth;
 
-        Vector3 uiTarget = _uiCamera.ScreenToWorldPoint(uiPosition, Camera.MonoOrStereoscopicEye.Mono);
+        Vector3 uiTarget = _uiCamera.ScreenToWorldPoint(_uiTarget, Camera.MonoOrStereoscopicEye.Mono);
         print("UI Target: " + uiTarget);
 
         _particles.GetParticles(particleArr);
@@ -165,10 +169,11 @@ public class TravellingParticles : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Vector3 uiPosition = _targetRectTransform.position;
-        uiPosition.z = _camDepth;
+        //_targetRectTransform.anchoredPosition;
+        Vector3 uiPosition = new(0, 1080, _camDepth);
+        //uiPosition.z = _camDepth;
 
-        Vector3 uiTarget = _uiCamera.ScreenToWorldPoint(uiPosition, Camera.MonoOrStereoscopicEye.Mono);
+        Vector3 uiTarget = Camera.main.ScreenToWorldPoint(uiPosition, Camera.MonoOrStereoscopicEye.Mono);
 
         Gizmos.color = Color.blue;
         Gizmos.DrawLine(_uiCamera.transform.position, uiTarget);
