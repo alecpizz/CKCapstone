@@ -15,8 +15,16 @@ public class MetronomeBehavior : MonoBehaviour
     [SerializeField] private GameObject _HUDEffect;
     [SerializeField] private bool _isThisTheTutorial;
     [SerializeField] private bool _initiallySlow;
+    [SerializeField]
     private Animator _anim;
     [SerializeField] private AnimationClip _change;
+    [Header("Speed Settings")]
+    [SerializeField]
+    float fastSpeed = 2;
+    [SerializeField]
+    float slowSpeed = 1;
+
+    bool isSlow = true;
 
     /// <summary>
     /// Keeps the particle effects rfom playing right away.
@@ -24,7 +32,9 @@ public class MetronomeBehavior : MonoBehaviour
     private void Awake()
     {
         _contactIndicator.Pause();
-        _anim = GetComponentInParent<Animator>();
+        //_anim = GetComponentInParent<Animator>();
+
+        isSlow = _initiallySlow;
     }
 
     /// <summary>
@@ -34,6 +44,16 @@ public class MetronomeBehavior : MonoBehaviour
     {
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.ToggleTimeSignature();
+
+        SetAnimSpeed();
+    }
+
+    public void SetAnimSpeed()
+    {
+        isSlow = !isSlow;
+        
+        _anim.speed = isSlow ? slowSpeed : fastSpeed;
+        print("Updated Speed: " + _anim.speed);
     }
 
     /// <summary>
@@ -42,6 +62,8 @@ public class MetronomeBehavior : MonoBehaviour
     /// </summary>
     private IEnumerator HUDIndicator()
     {
+        WaitForSeconds wait = new(0.5f);
+
         if (_initiallySlow)
         {
             _anim.SetBool("GoFaster", true);
@@ -51,17 +73,17 @@ public class MetronomeBehavior : MonoBehaviour
             _anim.SetBool("GoFaster", false);
         }
 
-        yield return new WaitForSeconds(0.5f);
+        yield return wait;
         _HUDEffect.SetActive(true);
-        yield return new WaitForSeconds(0.5f);
+        yield return wait;
         _HUDEffect.SetActive(false);
-        yield return new WaitForSeconds(0.5f);
+        yield return wait;
         _HUDEffect.SetActive(true);
-        yield return new WaitForSeconds(0.5f);
+        yield return wait;
         _HUDEffect.SetActive(false);
-        yield return new WaitForSeconds(0.5f);
+        yield return wait;
         _HUDEffect.SetActive(true);
-        yield return new WaitForSeconds(0.5f);
+        yield return wait;
         _HUDEffect.SetActive(false);
         yield return null;
     }
@@ -80,7 +102,7 @@ public class MetronomeBehavior : MonoBehaviour
             if (_isThisTheTutorial)
             {
                 StopAllCoroutines();
-                StartCoroutine("HUDIndicator");
+                //StartCoroutine("HUDIndicator");
             }
 
             _contactIndicator.Play();
