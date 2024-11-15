@@ -33,6 +33,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     private float _delayTime = 0.1f;
 
     [SerializeField] private float _movementTime = 0.25f;
+    [SerializeField] private float _movementTimeNoEnemies = 0.25f;
+    private bool _levelHasEnemies = false;
 
     private int _playerMovementTiming = 1;
     private WaitForSeconds _waitForSeconds;
@@ -97,7 +99,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                 (DebugMenuManager.Instance.GhostMode))
             {
                 yield return Tween.Position(transform,
-                    move + _positionOffset, duration: _movementTime, Ease.OutBack).ToYieldInstruction();
+                    move + _positionOffset, duration: _movementTime / _playerMovementTiming, 
+                    Ease.OutBack).ToYieldInstruction();
                 GridBase.Instance.UpdateEntry(this);
             }
             else
