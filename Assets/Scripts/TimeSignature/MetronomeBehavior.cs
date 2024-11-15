@@ -14,7 +14,9 @@ public class MetronomeBehavior : MonoBehaviour
     [SerializeField] private ParticleSystem _contactIndicator;
     [SerializeField] private GameObject _HUDEffect;
     [SerializeField] private bool _isThisTheTutorial;
+    [SerializeField] private bool _initiallySlow;
     private Animator _anim;
+    [SerializeField] private AnimationClip _change;
 
     /// <summary>
     /// Keeps the particle effects rfom playing right away.
@@ -40,6 +42,15 @@ public class MetronomeBehavior : MonoBehaviour
     /// </summary>
     private IEnumerator HUDIndicator()
     {
+        if (_initiallySlow)
+        {
+            _anim.SetBool("GoFaster", true);
+        }
+        else
+        {
+            _anim.SetBool("GoFaster", false);
+        }
+
         yield return new WaitForSeconds(0.5f);
         _HUDEffect.SetActive(true);
         yield return new WaitForSeconds(0.5f);
@@ -74,7 +85,6 @@ public class MetronomeBehavior : MonoBehaviour
 
             _contactIndicator.Play();
             _HUDEffect.SetActive(false);
-            _anim.speed *= 0.5f;
 
             PlayerMovement playerMovement;
             if (other.gameObject.TryGetComponent<PlayerMovement>(out playerMovement))
