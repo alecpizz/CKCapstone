@@ -7,16 +7,27 @@
 *******************************************************************/
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using UnityEngine;
 
 public class MetronomeBehavior : MonoBehaviour
 {
+    private const string _WEIGHT_ANIM_UP = "Armature|WeightSlide_Up";
+    private const string _WEIGHT_ANIM_DOWN = "Armature|WeightSlide_Down";
+
+    //the ripple effect when touching the metronome
     [SerializeField] private ParticleSystem _contactIndicator;
+    //the circle that flashes around the HUD time signature
     [SerializeField] private GameObject _HUDEffect;
+    //is this the tutorial tmetronome puzzle?
     [SerializeField] private bool _isThisTheTutorial;
+    //is the metronome initially on the slow setting?
     [SerializeField] private bool _initiallySlow;
+    
+    //the animator for the metronome
     [SerializeField]
     private Animator _anim;
+
     [SerializeField] private AnimationClip _change;
     [Header("Speed Settings")]
     [SerializeField]
@@ -54,13 +65,15 @@ public class MetronomeBehavior : MonoBehaviour
         
         _anim.speed = isSlow ? slowSpeed : fastSpeed;
         print("Updated Speed: " + _anim.speed);
+
+        //_anim.SetBool("WeightUp", isSlow);
     }
 
     /// <summary>
     /// Play's the HUD indicator effect on a delay after the player 
     /// touches the metronome.
     /// </summary>
-    private IEnumerator HUDIndicator()
+   /* private IEnumerator HUDIndicator()
     {
         WaitForSeconds wait = new(0.5f);
 
@@ -86,7 +99,7 @@ public class MetronomeBehavior : MonoBehaviour
         yield return wait;
         _HUDEffect.SetActive(false);
         yield return null;
-    }
+    }*/
 
     /// <summary>
     /// Activates the metronome and stops player movement in response 
@@ -101,7 +114,7 @@ public class MetronomeBehavior : MonoBehaviour
 
             if (_isThisTheTutorial)
             {
-                StopAllCoroutines();
+                //StopAllCoroutines();
                 //StartCoroutine("HUDIndicator");
             }
 
