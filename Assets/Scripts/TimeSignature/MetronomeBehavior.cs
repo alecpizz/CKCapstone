@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Nick Grinstead
-*    Contributors: David Galmines
+*    Contributors: David Galmines, Trinity Hutson
 *    Date Created: 10/28/24
 *    Description: Checks for collisions with the player and then 
 *       calls the TimeSignatureManager to update the time signature.
@@ -12,6 +12,7 @@ using UnityEngine;
 
 public class MetronomeBehavior : MonoBehaviour
 {
+    //animations for the weight on the metronome moving up and down
     private const string _WEIGHT_ANIM_UP = "Armature|WeightSlide_Up";
     private const string _WEIGHT_ANIM_DOWN = "Armature|WeightSlide_Down";
 
@@ -23,12 +24,12 @@ public class MetronomeBehavior : MonoBehaviour
     [SerializeField] private bool _isThisTheTutorial;
     //is the metronome initially on the slow setting?
     [SerializeField] private bool _initiallySlow;
-    
     //the animator for the metronome
     [SerializeField]
     private Animator _anim;
-
+    //the animation clip for the weight moving up and down (currently not assigned)
     [SerializeField] private AnimationClip _change;
+
     [Header("Speed Settings")]
     [SerializeField]
     float fastSpeed = 2;
@@ -38,7 +39,7 @@ public class MetronomeBehavior : MonoBehaviour
     bool isSlow = true;
 
     /// <summary>
-    /// Keeps the particle effects rfom playing right away.
+    /// Keeps the particle effects from playing right away.
     /// </summary>
     private void Awake()
     {
@@ -59,21 +60,24 @@ public class MetronomeBehavior : MonoBehaviour
         SetAnimSpeed();
     }
 
+    /// <summary>
+    /// Changes the speed of the metronome when toggled.
+    /// </summary>
     public void SetAnimSpeed()
     {
         isSlow = !isSlow;
         
         _anim.speed = isSlow ? slowSpeed : fastSpeed;
-        print("Updated Speed: " + _anim.speed);
+       // print("Updated Speed: " + _anim.speed);
 
         //_anim.SetBool("WeightUp", isSlow);
     }
 
     /// <summary>
     /// Play's the HUD indicator effect on a delay after the player 
-    /// touches the metronome.
+    /// touches the metronome (for tutorial level only).
     /// </summary>
-   /* private IEnumerator HUDIndicator()
+    private IEnumerator HUDIndicator()
     {
         WaitForSeconds wait = new(0.5f);
 
@@ -99,7 +103,7 @@ public class MetronomeBehavior : MonoBehaviour
         yield return wait;
         _HUDEffect.SetActive(false);
         yield return null;
-    }*/
+    }
 
     /// <summary>
     /// Activates the metronome and stops player movement in response 
@@ -114,8 +118,8 @@ public class MetronomeBehavior : MonoBehaviour
 
             if (_isThisTheTutorial)
             {
-                //StopAllCoroutines();
-                //StartCoroutine("HUDIndicator");
+                StopAllCoroutines();
+                StartCoroutine("HUDIndicator");
             }
 
             _contactIndicator.Play();
