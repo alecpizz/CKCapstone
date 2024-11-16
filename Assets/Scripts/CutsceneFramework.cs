@@ -52,14 +52,14 @@ public class CutsceneFramework : MonoBehaviour
     {
         // Plays the Challenge Cutscene, provided that only the corresponding boolean
         // (_isChallengeCutscene) is true
-        if (_isChallengeCutscene == true && _isEndChapterCutscene == false)
+        if (_isChallengeCutscene && !_isEndChapterCutscene)
         {
             PlayChallengeCutscene();
         }
 
         // Plays the End Chapter Cutscene, provided that only the corresponding boolean 
         // (_isEndChapterCutscene) is true
-        if (_isEndChapterCutscene == true && _isChallengeCutscene == false)
+        if (_isEndChapterCutscene && !_isChallengeCutscene)
         {
             PlayEndChapterCutscene();
         }
