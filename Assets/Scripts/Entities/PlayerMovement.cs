@@ -1,6 +1,7 @@
 /******************************************************************
 *    Author: Cole Stranczek
-*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson, Alec Pizziferro, Josephine Qualls
+*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson,
+*       Alec Pizziferro, Josephine Qualls
 *    Date Created: 9/22/24
 *    Description: Script that handles the player's movement along
 *    the grid

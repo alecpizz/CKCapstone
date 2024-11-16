@@ -1,6 +1,6 @@
 /******************************************************************
  *    Author: Alec Pizziferro
- *    Contributors: N/A
+ *    Contributors: Nick Grinstead
  *    Date Created: 10/22/24
  *    Description: Manager for turn based movement mechanics.
  *******************************************************************/
