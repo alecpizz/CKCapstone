@@ -62,6 +62,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     // Event reference for the enemy movement sound
     [SerializeField] private EventReference _enemyMove = default;
 
+    private const float MinMoveTime = 0.2f;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -169,6 +171,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                         moveInDirection);
                     var entries = GridBase.Instance.GetCellEntries(move);
                     bool breakLoop = false;
+                    float movementTime = Mathf.Clamp((_tempMoveTime / pointTiles) / _enemyMovementTime, 
+                        MinMoveTime, float.MaxValue);
 
                     //If the next cell contains an object that is not the player then the loop breaks
                     //enemy can't move into other enemies, walls, etc.
@@ -187,7 +191,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                     }
 
                     yield return Tween.Position(transform,
-                        move + _positionOffset, _tempMoveTime / pointTiles, ease: Ease.OutBack).OnUpdate<EnemyBehavior>(target: this, (target, tween) =>
+                        move + _positionOffset, duration: movementTime, 
+                        ease: Ease.OutBack).OnUpdate<EnemyBehavior>(target: this, (target, tween) =>
                         {
                             GridBase.Instance.UpdateEntry(this);
                         }).ToYieldInstruction();
