@@ -59,6 +59,7 @@ public sealed class RoundManager : MonoBehaviour
     private readonly Dictionary<TurnState, int> _completedTurnCounts = new();
     private PlayerControls _playerControls;
     private Vector3 _lastMovementInput;
+    private bool _movementRegistered = false;
 
     /// <summary>
     /// Whether someone is having their turn.
@@ -106,7 +107,7 @@ public sealed class RoundManager : MonoBehaviour
     private void OnEnable()
     {
         _playerControls.Enable();
-        _playerControls.InGame.Movement.performed += MovementPerformed;
+        _playerControls.InGame.Movement.performed += RegisterMovementInput;
     }
 
     /// <summary>
@@ -114,7 +115,7 @@ public sealed class RoundManager : MonoBehaviour
     /// </summary>
     private void OnDisable()
     {
-        _playerControls.InGame.Movement.performed -= MovementPerformed;
+        _playerControls.InGame.Movement.performed -= RegisterMovementInput;
         _playerControls.Disable();
     }
 
@@ -124,14 +125,26 @@ public sealed class RoundManager : MonoBehaviour
     /// the movement will be rejected.
     /// </summary>
     /// <param name="obj"></param>
-    private void MovementPerformed(InputAction.CallbackContext obj)
+    private void RegisterMovementInput(InputAction.CallbackContext obj)
     {
-        if (_turnState != TurnState.None) return;
-
         Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>();
         Vector3 dir = new Vector3(input.x, 0f, input.y);
         _lastMovementInput = dir;
+        _movementRegistered = true;
 
+        if (_turnState != TurnState.None) return;
+
+        PerformMovement();
+    }
+
+    /// <summary>
+    /// Helper method for performing movement. Aids in performing buffered inputs.
+    /// </summary>
+    private void PerformMovement()
+    {
+        if (!_movementRegistered) return;
+
+        _movementRegistered = false;
         _turnState = TurnState.Player;
         //we now wait on the update method to catch the end of the players turn
         //perform the turn now so that it's frame perfect.
@@ -164,6 +177,8 @@ public sealed class RoundManager : MonoBehaviour
         if (next is null or TurnState.None)
         {
             _turnState = TurnState.None;
+            // Attempts to move player if they buffered an input
+            PerformMovement();
             return;
         }
 
