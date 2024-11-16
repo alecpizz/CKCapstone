@@ -20,22 +20,22 @@ public class Collectables : MonoBehaviour
     [MinValue(0), MaxValue(10)]
     [SerializeField] private int _collectableNumber;
     [SerializeField] private EventReference _sound;
-   
-    public GameObject NoteGlow;
+    [SerializeField] private GameObject NoteGlow;
 
-    /// <summary>
-    /// Sets up checking what note needs to be collected next for the note's glow effect
-    /// </summary>
-    private void Update()
+    private void Awake()
     {
-        if (WinChecker.Instance.RefCollectableNumber == _collectableNumber)
-        {
-            NoteGlow.SetActive(true);
-        }
-        else
-        {
-            NoteGlow.SetActive(false);
-        }
+        Instance = this;
+    }
+
+    private void Start()
+    {
+        WinChecker.CollectedNote += GlowCheck;
+        GlowCheck(-1);
+    }
+
+    private void OnDisable()
+    {
+        WinChecker.CollectedNote -= GlowCheck;
     }
 
     /// <summary>
@@ -65,8 +65,22 @@ public class Collectables : MonoBehaviour
         {
             AudioManager.Instance.PlaySound(_sound);
         }
-
         WinChecker.CollectedNote?.Invoke(_collectableNumber);
         destroyGlowEffect.DestroyCollectible();
+    }
+
+    /// <summary>
+    /// Sets up checking what note needs to be collected next for the note's glow effect
+    /// </summary>
+    public void GlowCheck(int noteCollected)
+    {
+        if (noteCollected +1 == _collectableNumber)
+        {
+            NoteGlow.SetActive(true);
+        }
+        else
+        {
+            NoteGlow.SetActive(false);
+        }
     }
 }

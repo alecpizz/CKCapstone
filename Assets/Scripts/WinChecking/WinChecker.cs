@@ -18,7 +18,6 @@ public class WinChecker : MonoBehaviour
     public static Action GotCorrectSequence;
     public static Action GotWrongSequence;
 
-    public int RefCollectableNumber { get; private set; } = 0;
     public bool SequenceComplete = false;
 
     [SerializeField] private ParticleSystem _unlockedParticles;
@@ -85,7 +84,7 @@ public class WinChecker : MonoBehaviour
     private void CollectNote(int note)
     {
         _collectedSequence.Add(note);
-        RefCollectableNumber++;
+        
 
         if (_collectedSequence.Count == TargetNoteSequence.Count)
         {
