@@ -46,7 +46,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
     public static PlayerMovement Instance;
 
-    private const float MinMovementTime = 0.15f;
+    private const float MinMovementTime = 0.175f;
     
     private void Awake()
     {

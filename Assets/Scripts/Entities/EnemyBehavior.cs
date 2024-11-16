@@ -62,7 +62,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     // Event reference for the enemy movement sound
     [SerializeField] private EventReference _enemyMove = default;
 
-    private const float MinMoveTime = 0.2f;
+    private const float MinMoveTime = 0.175f;
 
     // Start is called before the first frame update
     void Start()
