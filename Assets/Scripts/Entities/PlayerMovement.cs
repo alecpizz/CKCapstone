@@ -61,6 +61,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
     public static PlayerMovement Instance;
 
+    private const float MinMovementTime = 0.175f;
+    
     private void Awake()
     {
         Instance = this;
@@ -106,15 +108,20 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// <returns>Waits for short delay while moving</returns>
     private IEnumerator MovementDelay(Vector3 moveDirection)
     {
+        float modifiedMovementTime = Mathf.Clamp(_movementTime / _playerMovementTiming,
+            MinMovementTime, float.MaxValue);
+
         for (int i = 0; i < _playerMovementTiming; i++)
         {
             // Move if there is no wall below the player or if ghost mode is enabled
-            var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
+            var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position,
+                moveDirection);
             if ((GridBase.Instance.CellIsTransparent(move)) ||
                 (DebugMenuManager.Instance.GhostMode))
             {
                 yield return Tween.Position(transform,
-                    move + _positionOffset, duration: _movementTime, Ease.OutBack).ToYieldInstruction();
+                    move + _positionOffset, duration: modifiedMovementTime, 
+                    Ease.OutBack).ToYieldInstruction();
                 GridBase.Instance.UpdateEntry(this);
             }
             else
