@@ -36,10 +36,10 @@ public class SupplementalUI : MonoBehaviour
     private Image _panelBackground;
 
     //does the text blurb need to appear on a delay?
-    [SerializeField] private bool hasDelay;
+    [SerializeField] private bool _hasDelay;
 
     //countdown for delayed text blurbs
-    private float delayTimer;
+    private float _delayTimer;
 
     /// <summary>
     /// Assigns the color value based on the text UI, and makes it 
@@ -53,9 +53,9 @@ public class SupplementalUI : MonoBehaviour
         _panelColor = _panelBackground.color;
         _panelColor.a = 0;
 
-        if (hasDelay)
+        if (_hasDelay)
         {
-            delayTimer = 3.5f;
+            _delayTimer = 3.5f;
         }
     }
 
@@ -66,7 +66,7 @@ public class SupplementalUI : MonoBehaviour
     /// <param name="other">the player</param>
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Player") && delayTimer == 0)
+        if (other.gameObject.CompareTag("Player") && _delayTimer == 0)
         {
             StopAllCoroutines();
             StartCoroutine("FadingIn");
@@ -83,7 +83,7 @@ public class SupplementalUI : MonoBehaviour
     /// <param name="other">the player</param>
     private void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.CompareTag("Player") && hasDelay && delayTimer == 0)
+        if (other.gameObject.CompareTag("Player") && _hasDelay && _delayTimer == 0)
         {
             StopAllCoroutines();
             StartCoroutine("FadingIn");
@@ -172,13 +172,13 @@ public class SupplementalUI : MonoBehaviour
         _panelBackground.color = _panelColor;
 
         //the function that delays the text blurb from showing up instantly
-        if (hasDelay && delayTimer != 0)
+        if (_hasDelay && _delayTimer != 0)
         {
-            delayTimer -= (1 * Time.deltaTime);
+            _delayTimer -= (1 * Time.deltaTime);
 
-            if (delayTimer <= 0)
+            if (_delayTimer <= 0)
             {
-                delayTimer = 0;
+                _delayTimer = 0;
             }
         }
     }

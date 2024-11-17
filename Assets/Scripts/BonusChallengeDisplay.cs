@@ -36,7 +36,7 @@ public class BonusChallengeDisplay : MonoBehaviour
     private Image _panelBackground;
 
     //are we ready to delete this object?
-    private bool readyToDestroy;
+    private bool _readyToDestroy;
 
     /// <summary>
     /// Assigns the color value based on the text UI, and makes it 
@@ -87,7 +87,7 @@ public class BonusChallengeDisplay : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        if (_textColor.a == 0 && readyToDestroy)
+        if (_textColor.a == 0 && _readyToDestroy)
         {
             Destroy(gameObject);
         }
@@ -105,7 +105,7 @@ public class BonusChallengeDisplay : MonoBehaviour
     /// <returns></returns>
     private IEnumerator FadingOut()
     {
-        readyToDestroy = true;
+        _readyToDestroy = true;
 
         while (_textColor.a > 0)
         {
