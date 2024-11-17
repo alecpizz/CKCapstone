@@ -126,7 +126,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// <param name="collision">Data from collision</param>
     private void OnCollisionEnter(Collision collision)
     {
-        if (!DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("Enemy"))
+        if (!DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("Enemy") ||
+            !DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("SonEnemy"))
         {
             // Checks if the enemy is frozen; if they are, doesn't reload the scene
             EnemyBehavior enemy = collision.collider.GetComponent<EnemyBehavior>();
@@ -177,7 +178,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             {
                 foreach (var entry in entries)
                 {
-                    if (entry.GetGameObject.tag == "Enemy")
+                    EnemyBehavior enemy = entry.GetGameObject.GetComponent<EnemyBehavior>();
+                    if (entry.GetGameObject.tag == "Enemy" && !enemy.EnemyFrozen)
                     {
                         _enemyFound = true;
                         StartCoroutine(MovementDelay(direction));
