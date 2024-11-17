@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: David Henvick
-*    Contributors: Claire Noto
+*    Contributors: Claire Noto, Alec Pizziferro
 *    Date Created: 09/30/2024
 *    Description: this is the script that is used control an npc 
 *    and their dialogue
@@ -14,6 +14,7 @@ using FMOD.Studio;
 using System;
 using SaintsField;
 using System.Diagnostics;
+using UnityEngine.UI;
 
 [Serializable]
 public struct DialogueEntry
@@ -29,6 +30,7 @@ public struct DialogueEntry
 public class NPCScript : MonoBehaviour, IInteractable
 {
     [SerializeField] private TMP_Text _dialogueBox;
+    [SerializeField] private Image _background;
     private bool _isTalking;
     [InfoBox("This adjusts the base typing speed. 2 is the slowest, 10 is the fastest", EMessageType.Info)]
     [Range(2f, 10f)][SerializeField] private float _typingSpeed = 5f;
@@ -79,8 +81,18 @@ public class NPCScript : MonoBehaviour, IInteractable
     void Start()
     {
         if (CheckForEntries())
+        {
             _dialogueBox.SetText(_dialogueEntries[_currentDialogue]._text);
-        _dialogueBox.gameObject.SetActive(false);
+        }
+
+        var canvas = _dialogueBox.transform.parent;
+        var cam = Camera.main;
+        if (cam != null)
+        {
+            canvas.transform.rotation = cam.transform.rotation;
+        }
+        _dialogueBox.CrossFadeAlpha(0f, 0f, true);
+        _background.CrossFadeAlpha(0f, 0f, true);
         _occupied = false;
         _isTalking = false;
         _currentTypingSpeed = Mathf.Clamp(
@@ -104,7 +116,8 @@ public class NPCScript : MonoBehaviour, IInteractable
                 _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue]._text));
             }
 
-            _dialogueBox.gameObject.SetActive(true);
+            _dialogueBox.CrossFadeAlpha(1f, 0.25f, false);
+            _background.CrossFadeAlpha(1f, 0.25f, false);
             _occupied = true;
             _isTalking = true;
         }
@@ -152,7 +165,8 @@ public class NPCScript : MonoBehaviour, IInteractable
     /// </summary>
     public void HideDialogue()
     {
-        _dialogueBox.gameObject.SetActive(false);
+        _dialogueBox.CrossFadeAlpha(0f, 0.25f, false);
+        _background.CrossFadeAlpha(0f, 0.25f, false);
         _occupied = false;
 
         if (_typingCoroutine != null)
