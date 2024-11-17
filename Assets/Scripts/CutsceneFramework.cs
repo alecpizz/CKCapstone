@@ -18,6 +18,7 @@ using UnityEngine.SceneManagement;
 // the functionality for playing a video, particularly for the End Chapter Cutscene)
 using UnityEngine.Video;
 using FMODUnity;
+using SaintsField;
 
 public class CutsceneFramework : MonoBehaviour
 {
@@ -43,6 +44,7 @@ public class CutsceneFramework : MonoBehaviour
     [SerializeField] private EventReference _cutsceneAudio; 
 
     // Identifies the index of the level to be loaded after the cutscene plays
+    [Scene]
     [SerializeField] private int _loadingLevelIndex = 0;
 
     /// <summary>
