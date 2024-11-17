@@ -178,7 +178,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
                             {
                                 foreach (var entry in entries)
                                 {
-                                    if (entry.GetGameObject.tag == "SonEnemy")
+                                    if (entry.GetGameObject.CompareTag("SonEnemy"))
                                     {
                                         GameObject enemyFX = Instantiate(_enemyHitEffectPrefab, entity.Position, Quaternion.identity);
                                         _wrappedEnemyFX.TryAdd(entity, enemyFX);

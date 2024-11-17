@@ -24,7 +24,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     private Vector3 _positionOffset;
     [SerializeField]
     private PlayerInteraction _playerInteraction;
-    [SerializeField] private GameObject _player;
+    private GameObject _player;
 
     //Determines whether or not the enemy's movement is reversed
     [SerializeField] private bool _mirrored;
@@ -38,6 +38,8 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     void Start()
     {
         GridBase.Instance.AddEntry(this);
+
+        _player = PlayerMovement.Instance.gameObject;
 
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.RegisterTimeListener(this);
@@ -56,6 +58,8 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     {
         if (RoundManager.Instance != null)
             RoundManager.Instance.UnRegisterListener(this);
+
+        //Unregisters time
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.UnregisterTimeListener(this);
     }
@@ -134,7 +138,6 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     public TurnState TurnState => TurnState.World;
     public void BeginTurn(Vector3 direction)
     {
-        _playerInteraction.SetDirection(direction);
         StartCoroutine(DelayedInput(direction));
     }
     public void ForceTurnEnd()
