@@ -44,6 +44,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     //Wait time between enemy moving each individual tile while on path to next destination
     [SerializeField] private float _waitTime = 0.5f;
 
+    [SerializeField] private float _rotationTime = 0.10f;
+    [SerializeField] private Ease _rotationEase = Ease.InOutSine;
+
     //List of movePoint structs that contain a direction enum and a tiles to move integer.
     public enum Direction { Up, Down, Left, Right }
 
@@ -64,6 +67,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
     // Event reference for the enemy movement sound
     [SerializeField] private EventReference _enemyMove = default;
+
+    private void Awake()
+    {
+        PrimeTweenConfig.warnEndValueEqualsCurrent = false;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -188,6 +196,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                         break;
                     }
 
+                    Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveInDirection), duration: _rotationTime,
+                        ease: _rotationEase);
+
                     yield return Tween.Position(transform,
                         move + _positionOffset, _waitTime, ease: Ease.OutBack).OnUpdate<EnemyBehavior>(target: this, (target, tween) =>
                         {
@@ -239,6 +250,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
             }
             UpdateDestinationMarker();
         }
+
+        Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveInDirection), duration: _rotationTime,
+        ease: _rotationEase);
+
         GridBase.Instance.UpdateEntry(this);
         RoundManager.Instance.CompleteTurn(this);
     }
