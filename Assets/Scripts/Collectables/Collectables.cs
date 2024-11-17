@@ -13,7 +13,6 @@ using FMODUnity;
 
 public class Collectables : MonoBehaviour
 {
-    public static Collectables Instance { get; private set; }
 
     // variables
     public DestroyGlowEffect destroyGlowEffect;
@@ -21,11 +20,6 @@ public class Collectables : MonoBehaviour
     [SerializeField] private int _collectableNumber;
     [SerializeField] private EventReference _sound;
     [SerializeField] private GameObject NoteGlow;
-
-    private void Awake()
-    {
-        Instance = this;
-    }
 
     private void Start()
     {
