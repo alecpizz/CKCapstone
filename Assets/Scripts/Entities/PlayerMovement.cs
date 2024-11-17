@@ -101,6 +101,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                 yield return Tween.Position(transform,
                    move + _positionOffset, duration: _movementTime, Ease.OutBack).ToYieldInstruction();
                 GridBase.Instance.UpdateEntry(this);
+                break;
             }
 
             if ((GridBase.Instance.CellIsEmpty(move)) ||

@@ -27,15 +27,17 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
     public GameObject GetGameObject { get => gameObject; }
 
-    [SerializeField] private GameObject _player;
+    private GameObject _player;
     [SerializeField] private GameObject _destinationMarker;
 
     [SerializeField] private bool _atStart;
     [SerializeField] private int _currentPoint = 0;
     private int _currentPointIndex = 0;
 
+    //Destination object values
     [SerializeField] private bool _destAtStart;
     [SerializeField] private int _destCurrentPoint = 0;
+    [SerializeField] private float _destYPos = 1f;
 
     private PlayerMovement _playerMoveRef;
 
@@ -70,6 +72,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
         GridBase.Instance.AddEntry(this);
 
+        _player = PlayerMovement.Instance.gameObject;
         _playerMoveRef = _player.GetComponent<PlayerMovement>();
 
         // Make sure enemies are always seen at the start
@@ -303,7 +306,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
             //Makes sure the marker is always at a y position of 1 so it is visible on the grid
             Vector3 destPos = _destinationMarker.transform.position;
-            destPos.y += 1;
+            destPos.y += _destYPos;
             _destinationMarker.transform.position = destPos;
         }
     }
