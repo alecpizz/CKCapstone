@@ -59,10 +59,20 @@ public class SwitchTrigger : MonoBehaviour
                 if (_isTriggered)
                 {
                     _affectedWalls[i].SwitchActivation();
+
+                    if (!_affectedWalls[i].GetWorked())
+                    {
+                        _isTriggered = false;
+                    }
                 }
                 else
                 {
                     _affectedWalls[i].SwitchDeactivation();
+
+                    if (!_affectedWalls[i].GetWorked())
+                    {
+                        _isTriggered = true;
+                    }
                 }
 
                 AudioManager.Instance.PlaySound(_switchSound);
@@ -105,7 +115,10 @@ public class SwitchTrigger : MonoBehaviour
         }
     }
 
-    // Visually raises the pressure plate when the player steps off
+    /// <summary>
+    /// Visually raises the pressure plate when the player steps off
+    /// </summary>
+    /// <param name="other"></param>
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
