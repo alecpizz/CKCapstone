@@ -36,6 +36,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
     [SerializeField] private bool _destAtStart;
     [SerializeField] private int _destCurrentPoint = 0;
+    [SerializeField] private float _destColorChangeRate = 0.01f; 
 
     private PlayerMovement _playerMoveRef;
 
@@ -105,22 +106,20 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
             changeAlpha = 0;
         }
 
-        //replace the direct equals with something that makes more sense once we figure out how to get worldpoint accurate
-        if (Physics.Raycast(ray, out hit))
+        //If the raycast hits this game object the destination mark's material will change alphas
+        if (Physics.Raycast(ray, out hit) && hit.collider.gameObject.GetComponent<EnemyBehavior>() != null)
         {
-            Debug.Log("Colliding!");
-           
-           if (changeAlpha <= 255)
-           {
-                changeAlpha += 0.1f;
+            if (changeAlpha <= 255)
+            {
+                changeAlpha += _destColorChangeRate;
                 markMaterial.material.color = new Color(markMaterial.material.color.r, markMaterial.material.color.g, markMaterial.material.color.b, changeAlpha);
-           }
+            }
         }
         else
         {
             if (changeAlpha >= 0)
             {
-                changeAlpha -= 0.1f;
+                changeAlpha -= _destColorChangeRate;
                 markMaterial.material.color = new Color(markMaterial.material.color.r, markMaterial.material.color.g, markMaterial.material.color.b, changeAlpha);
             }
         }
