@@ -1,11 +1,10 @@
 /******************************************************************
-*    Author: Cole Stranczek
-*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson,
-*       Alec Pizziferro, Josephine Qualls
-*    Date Created: 9/22/24
-*    Description: Script that handles the player's movement along
-*    the grid
-*******************************************************************/
+ *    Author: Cole Stranczek
+ *    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson, Alec Pizziferro, Josephine Qualls
+ *    Date Created: 9/22/24
+ *    Description: Script that handles the player's movement along
+ *    the grid
+ *******************************************************************/
 
 using PrimeTween;
 using System;
@@ -20,20 +19,35 @@ using FMOD.Studio;
 public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
 {
     public Vector3 FacingDirection { get; private set; }
-    public bool IsTransparent { get => true; }
-    public bool BlocksHarmonyBeam { get => false; }
-    public Vector3 Position { get => transform.position; }
-    public GameObject GetGameObject { get => gameObject; }
 
-    [SerializeField]
-    private Vector3 _positionOffset;
-    [SerializeField]
-    private PlayerInteraction _playerInteraction;
+    public bool IsTransparent
+    {
+        get => true;
+    }
 
-    [SerializeField]
-    private float _delayTime = 0.1f;
+    public bool BlocksHarmonyBeam
+    {
+        get => false;
+    }
+
+    public Vector3 Position
+    {
+        get => transform.position;
+    }
+
+    public GameObject GetGameObject
+    {
+        get => gameObject;
+    }
+
+    [SerializeField] private Vector3 _positionOffset;
+    [SerializeField] private PlayerInteraction _playerInteraction;
+
+    [SerializeField] private float _delayTime = 0.1f;
 
     [SerializeField] private float _movementTime = 0.25f;
+    [SerializeField] private float _rotationTime = 0.05f;
+    [SerializeField] private Ease _rotationEase = Ease.InOutSine;
 
     private int _playerMovementTiming = 1;
     private WaitForSeconds _waitForSeconds;
@@ -52,6 +66,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     private void Awake()
     {
         Instance = this;
+        PrimeTweenConfig.warnEndValueEqualsCurrent = false;
     }
 
     // Start is called before the first frame update
@@ -59,6 +74,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     {
         FacingDirection = new Vector3(0, 0, 0);
 
+        SnapToGridSpace();
         GridBase.Instance.AddEntry(this);
 
         if (TimeSignatureManager.Instance != null)
@@ -140,7 +156,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             SceneController.Instance.ReloadCurrentScene();
         }
     }
-    
+
 
     /// <summary>
     /// Receives the new player movement speed when time signature updates
@@ -163,19 +179,24 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     public void BeginTurn(Vector3 direction)
     {
         _playerInteraction.SetDirection(direction);
-
-        var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
-        if ((GridBase.Instance.CellIsTransparent(move) || DebugMenuManager.Instance.GhostMode))
-        {
-            AudioManager.Instance.PlaySound(_playerMove);
-            StartCoroutine(MovementDelay(direction));
-            OnPlayerMoveComplete?.Invoke(); //keeps track of movement completion
-        }
-        else
-        {
-            AudioManager.Instance.PlaySound(_playerCantMove);
-            RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
-        }
+        Tween.Rotation(transform, endValue: Quaternion.LookRotation(direction), duration: _rotationTime,
+            ease: _rotationEase).OnComplete(
+            () =>
+            {
+                var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
+                if ((GridBase.Instance.CellIsTransparent(move) || DebugMenuManager.Instance.GhostMode))
+                {
+                    AudioManager.Instance.PlaySound(_playerMove);
+                    StartCoroutine(MovementDelay(direction));
+                    OnPlayerMoveComplete?.Invoke(); //keeps track of movement completion
+                }
+                else
+                {
+                    AudioManager.Instance.PlaySound(_playerCantMove);
+                    RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
+                }
+            });
+        
     }
 
     /// <summary>
@@ -186,5 +207,15 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         StopAllCoroutines();
         GridBase.Instance.UpdateEntry(this);
         RoundManager.Instance.CompleteTurn(this);
+    }
+
+    /// <summary>
+    /// Places this object in the center of its grid cell
+    /// </summary>
+    public void SnapToGridSpace()
+    {
+        Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
+        Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos);
+        transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z);
     }
 }
