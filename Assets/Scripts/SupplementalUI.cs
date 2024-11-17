@@ -63,6 +63,9 @@ public class SupplementalUI : MonoBehaviour
     /// <param name="other">the player</param>
     private void OnTriggerEnter(Collider other)
     {
+        if (PlayerPrefs.GetInt("Tooltips") == 0)
+            return;
+
         if (other.gameObject.CompareTag("Player"))
         {
             StopAllCoroutines();
