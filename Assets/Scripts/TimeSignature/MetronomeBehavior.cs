@@ -32,11 +32,13 @@ public class MetronomeBehavior : MonoBehaviour
 
     [Header("Speed Settings")]
     [SerializeField]
-    float fastSpeed = 2;
+    private float _fastSpeed = 2;
     [SerializeField]
-    float slowSpeed = 1;
+    private float _slowSpeed = 1;
+    [SerializeField]
+    private float _flashSpeed = 0.5f;
 
-    bool isSlow = true;
+    private bool _isSlow = true;
 
     /// <summary>
     /// Keeps the particle effects from playing right away.
@@ -46,7 +48,7 @@ public class MetronomeBehavior : MonoBehaviour
         _contactIndicator.Pause();
         //_anim = GetComponentInParent<Animator>();
 
-        isSlow = _initiallySlow;
+        _isSlow = _initiallySlow;
     }
 
     /// <summary>
@@ -65,9 +67,9 @@ public class MetronomeBehavior : MonoBehaviour
     /// </summary>
     public void SetAnimSpeed()
     {
-        isSlow = !isSlow;
+        _isSlow = !_isSlow;
         
-        _anim.speed = isSlow ? slowSpeed : fastSpeed;
+        _anim.speed = _isSlow ? _slowSpeed : _fastSpeed;
        // print("Updated Speed: " + _anim.speed);
 
         //_anim.SetBool("WeightUp", isSlow);
@@ -79,7 +81,7 @@ public class MetronomeBehavior : MonoBehaviour
     /// </summary>
     private IEnumerator HUDIndicator()
     {
-        WaitForSeconds wait = new(0.5f);
+        WaitForSeconds wait = new(_flashSpeed);
 
         if (_initiallySlow)
         {
@@ -90,6 +92,21 @@ public class MetronomeBehavior : MonoBehaviour
             _anim.SetBool("GoFaster", false);
         }
 
+        for (int i = 0; i < 6; i++)
+        {
+            if (i == 0 || i == 2 || i == 4)
+            {
+                _HUDEffect.SetActive(true);
+                yield return wait;
+            }
+            else if (i == 1 || i == 3 || i == 5)
+            {
+                _HUDEffect.SetActive(false);
+                yield return wait;
+            }
+        }
+
+        /*
         yield return wait;
         _HUDEffect.SetActive(true);
         yield return wait;
@@ -103,6 +120,7 @@ public class MetronomeBehavior : MonoBehaviour
         yield return wait;
         _HUDEffect.SetActive(false);
         yield return null;
+        */
     }
 
     /// <summary>
