@@ -158,10 +158,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
                         {
                             foreach (var entry in entries)
                             {
-                                if (entry.GetGameObject.tag == "SonEnemy")
-                                {
-                                    entity.OnLaserHit();
-                                }
+                                entity.OnLaserHit();          
                             }
                         }
 

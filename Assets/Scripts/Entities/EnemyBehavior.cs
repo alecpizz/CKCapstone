@@ -130,10 +130,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     }
 
     /// <summary>
-    /// Coroutine that handles the enemy's movement along the provided points in the struct object list
+    /// Coroutine that handles the enemy's movement along the provided points in the struct object list.
+    /// Also contains the destination marker movement behavior for the enemy.
     /// </summary>
     /// <returns></returns>
-    private IEnumerator DelayedInput()
+    private IEnumerator MoveEnemy()
     {
         /// <summary>
         /// Checks to see if all enemies have finished moving via a bool in the player script 
@@ -328,7 +329,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     /// <param name="direction">Direction of movement</param>
     public void BeginTurn(Vector3 direction)
     {
-        StartCoroutine(DelayedInput());
+        StartCoroutine(MoveEnemy());
     }
 
     /// <summary>
@@ -347,7 +348,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     /// </summary>
     public void OnLaserHit()
     {
-        EnemyFrozen = true;
+        if (CompareTag("SonEnemy"))
+        {
+            EnemyFrozen = true;
+        }
     }
 
     /// <summary>

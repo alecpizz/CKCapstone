@@ -64,7 +64,12 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
             TimeSignatureManager.Instance.UnregisterTimeListener(this);
     }
 
-    private IEnumerator DelayedInput(Vector3 moveDirection)
+    /// <summary>
+    /// Moves the enemy in either the same direction or the opposite direction of the player.
+    /// </summary>
+    /// <param name="moveDirection"></param>
+    /// <returns></returns>
+    private IEnumerator MoveEnemy(Vector3 moveDirection)
     {
         if (!EnemyFrozen)
         {
@@ -136,10 +141,12 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
             _movementTiming = 1;
     }
     public TurnState TurnState => TurnState.World;
+
     public void BeginTurn(Vector3 direction)
     {
-        StartCoroutine(DelayedInput(direction));
+        StartCoroutine(MoveEnemy(direction));
     }
+
     public void ForceTurnEnd()
     {
         StopAllCoroutines();
@@ -148,12 +155,16 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     }
 
     public bool AllowLaserPassThrough { get => true; }
+
     /// <summary>
     /// Freezes the enemy.
     /// </summary>
     public void OnLaserHit()
     {
-        EnemyFrozen = true;
+        if (CompareTag("SonEnemy"))
+        {
+            EnemyFrozen = true;
+        }
     }
 
     /// <summary>
