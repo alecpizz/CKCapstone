@@ -14871,6 +14871,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1199099416459816296, guid: 400981d784905b147b9af222ec243268,
+        type: 3}
+      propertyPath: m_text
+      value: Level 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2180498454267110288, guid: 400981d784905b147b9af222ec243268,
+        type: 3}
+      propertyPath: _musicLayering
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 125233841770136038, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _gridSize
@@ -14965,16 +14975,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1199099416459816296, guid: 400981d784905b147b9af222ec243268,
-        type: 3}
-      propertyPath: m_text
-      value: Level 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 2180498454267110288, guid: 400981d784905b147b9af222ec243268,
-        type: 3}
-      propertyPath: _musicLayering
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
@@ -35166,6 +35166,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1095058376}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &920270005 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2891856093418539150, guid: dbb0dd27c6fab3344aab4441094b0849,
+    type: 3}
+  m_PrefabInstance: {fileID: 381800723}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &920426400
 GameObject:
   m_ObjectHideFlags: 0
@@ -38847,6 +38853,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Text Blurb
       objectReference: {fileID: 0}
+    - target: {fileID: 8505611777935228962, guid: a87e8da63bf110645986eea9bf9d904e,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 2.9592257
+      objectReference: {fileID: 0}
+    - target: {fileID: 8505611777935228962, guid: a87e8da63bf110645986eea9bf9d904e,
+        type: 3}
+      propertyPath: m_Size.z
+      value: 4.9159613
+      objectReference: {fileID: 0}
+    - target: {fileID: 8505611777935228962, guid: a87e8da63bf110645986eea9bf9d904e,
+        type: 3}
+      propertyPath: m_Center.x
+      value: -0.9796128
+      objectReference: {fileID: 0}
+    - target: {fileID: 8505611777935228962, guid: a87e8da63bf110645986eea9bf9d904e,
+        type: 3}
+      propertyPath: m_Center.z
+      value: 1.9579806
+      objectReference: {fileID: 0}
     - target: {fileID: 8934360845945904663, guid: a87e8da63bf110645986eea9bf9d904e,
         type: 3}
       propertyPath: m_LocalPosition.z
@@ -38861,7 +38887,7 @@ PrefabInstance:
         type: 3}
       propertyPath: _camera
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 920270005}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
