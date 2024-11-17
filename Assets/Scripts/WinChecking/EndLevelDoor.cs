@@ -81,6 +81,7 @@ public class EndLevelDoor : MonoBehaviour
             if (other.gameObject.TryGetComponent<PlayerMovement>(out playerMovement))
             {
                 playerMovement.ForceTurnEnd();
+                playerMovement.enabled = false;
             }
 
             SceneController.Instance.LoadNewScene(_levelIndexToLoad);

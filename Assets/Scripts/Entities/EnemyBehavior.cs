@@ -62,11 +62,14 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     // Event reference for the enemy movement sound
     [SerializeField] private EventReference _enemyMove = default;
 
+    private const float MinMoveTime = 0.175f;
+
     // Start is called before the first frame update
     void Start()
     {
         moveInDirection = new Vector3(0, 0, 0);
 
+        SnapToGridSpace();
         GridBase.Instance.AddEntry(this);
 
         _playerMoveRef = _player.GetComponent<PlayerMovement>();
@@ -169,6 +172,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                         moveInDirection);
                     var entries = GridBase.Instance.GetCellEntries(move);
                     bool breakLoop = false;
+                    float movementTime = Mathf.Clamp((_tempMoveTime / pointTiles) / _enemyMovementTime, 
+                        MinMoveTime, float.MaxValue);
 
                     //If the next cell contains an object that is not the player then the loop breaks
                     //enemy can't move into other enemies, walls, etc.
@@ -187,7 +192,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                     }
 
                     yield return Tween.Position(transform,
-                        move + _positionOffset, _tempMoveTime, ease: Ease.OutBack).OnUpdate<EnemyBehavior>(target: this, (target, tween) =>
+                        move + _positionOffset, duration: movementTime, 
+                        ease: Ease.OutBack).OnUpdate<EnemyBehavior>(target: this, (target, tween) =>
                         {
                             GridBase.Instance.UpdateEntry(this);
                         }).ToYieldInstruction();
@@ -290,4 +296,14 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     }
 
     public bool HitWrapAround { get => true; }
+
+    /// <summary>
+    /// Places this object in the center of its grid cell
+    /// </summary>
+    public void SnapToGridSpace()
+    {
+        Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
+        Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos);
+        transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z);
+    }
 }
