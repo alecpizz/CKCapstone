@@ -47,9 +47,9 @@ public class MenuManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Invoked to open the options menu
+    /// Invoked to open the options menu in the main menu
     /// </summary>
-    public void Options()
+    public void OptionsMainMenu()
     {
         AudioManager.Instance.PlaySound(_buttonPress);
         PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
@@ -57,6 +57,15 @@ public class MenuManager : MonoBehaviour
             _optionsScreen.SetActive(true);
         });
     }
+
+    /// <summary>
+    /// Invoked to open the options menu in the pause menu
+    /// </summary>
+    public void Options()
+    {
+        _optionsScreen.SetActive(true);
+    }
+
 
     /// <summary>
     /// Invoked to close the options menu
