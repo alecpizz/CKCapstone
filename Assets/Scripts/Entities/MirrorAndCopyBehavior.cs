@@ -139,9 +139,6 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
             }
         }
 
-        Tween.Rotation(transform, endValue: Quaternion.LookRotation(-moveDirection), duration: _rotationTime,
-        ease: _rotationEase);
-
         RoundManager.Instance.CompleteTurn(this);
     }
 
