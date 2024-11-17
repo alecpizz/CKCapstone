@@ -10,6 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using PrimeTween;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener, IHarmonyBeamEntity
 {
@@ -33,6 +34,14 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
 
     private int _movementTiming = 1;
     private WaitForSeconds _waitForSeconds;
+
+    [SerializeField] private float _rotationTime = 0.10f;
+    [SerializeField] private Ease _rotationEase = Ease.InOutSine;
+
+    private void Awake()
+    {
+        PrimeTweenConfig.warnEndValueEqualsCurrent = false;
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -78,6 +87,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                 moveDirection = -moveDirection;
             }
 
+
             for (int i = 0; i < _movementTiming; ++i)
             {
                 // Moves if there is no objects in the next grid space
@@ -99,6 +109,9 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                     }
                     if (canMove == true)
                     {
+                        Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
+                        ease: _rotationEase);
+
                         yield return Tween.Position(transform,
                             move + _positionOffset, _movementTime, ease: Ease.OutBack).OnUpdate<MirrorAndCopyBehavior>(target: this, (target, tween) =>
                             {
@@ -125,6 +138,9 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                 }
             }
         }
+
+        Tween.Rotation(transform, endValue: Quaternion.LookRotation(-moveDirection), duration: _rotationTime,
+        ease: _rotationEase);
 
         RoundManager.Instance.CompleteTurn(this);
     }
