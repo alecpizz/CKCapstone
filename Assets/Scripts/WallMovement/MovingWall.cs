@@ -5,7 +5,6 @@
 *    Description: Controls where walls move after switch is triggered.
 *******************************************************************/
 
-
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -44,6 +43,8 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     /// </summary>
     void Start()
     {
+        SnapToGridSpace();
+
         _originWall = transform.position;
         // Maintains same height to ensure consistency when swapping
         _originWall.y = _wallGhost.transform.position.y;
@@ -75,5 +76,15 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
         transform.position = _originWall;
         _wallGhost.transform.position = _originGhost;
         _wallGrid.UpdatePosition();
+    }
+
+    /// <summary>
+    /// Places this object in the center of its grid cell
+    /// </summary>
+    public void SnapToGridSpace()
+    {
+        Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
+        Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos);
+        transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z);
     }
 }
