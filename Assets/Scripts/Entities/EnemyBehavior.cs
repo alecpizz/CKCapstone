@@ -36,7 +36,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
     [SerializeField] private bool _destAtStart;
     [SerializeField] private int _destCurrentPoint = 0;
-    [SerializeField] private float _destColorChangeRate = 0.01f; 
+    [SerializeField] private float _destColorChangeRate = 0.01f;
+    public bool collidingWithRay = false;
 
     private PlayerMovement _playerMoveRef;
 
@@ -57,17 +58,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     //Check true in the inspector if the enemy is moving in a circular pattern (doesn't want to move back and forth)
     [SerializeField] private bool _circularMovement = false;
 
-    //Changable float that should match the camera distance. Used in looking for mouse world position.
-    [SerializeField] private float _camZ = 0.5f;
     [SerializeField] private float changeAlpha = 0f;
+    public Renderer markMaterial;
 
     public bool EnemyFrozen { get; private set; } = false;
 
     private int _enemyMovementTime = 1;
-
-    public Renderer markMaterial;
-    private Ray ray;
-    private RaycastHit hit;
 
     // Event reference for the enemy movement sound
     [SerializeField] private EventReference _enemyMove = default;
@@ -90,39 +86,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         markMaterial = _destinationMarker.GetComponent<Renderer>();
 
         UpdateDestinationMarker();
-    }
-
-    void Update()
-    {
-        ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-
-        if (changeAlpha > 255)
-        {
-            changeAlpha = 255;
-        }
-
-        if (changeAlpha < 0)
-        {
-            changeAlpha = 0;
-        }
-
-        //If the raycast hits this game object the destination mark's material will change alphas
-        if (Physics.Raycast(ray, out hit) && hit.collider.gameObject.GetComponent<EnemyBehavior>() != null)
-        {
-            if (changeAlpha <= 255)
-            {
-                changeAlpha += _destColorChangeRate;
-                markMaterial.material.color = new Color(markMaterial.material.color.r, markMaterial.material.color.g, markMaterial.material.color.b, changeAlpha);
-            }
-        }
-        else
-        {
-            if (changeAlpha >= 0)
-            {
-                changeAlpha -= _destColorChangeRate;
-                markMaterial.material.color = new Color(markMaterial.material.color.r, markMaterial.material.color.g, markMaterial.material.color.b, changeAlpha);
-            }
-        }
+        ChangeMarkerColor();
     }
 
     private void OnEnable()
@@ -141,6 +105,57 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
             RoundManager.Instance.UnRegisterListener(this);
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.UnregisterTimeListener(this);
+    }
+
+
+    public void ChangeMarkerColor()
+    {
+        if (collidingWithRay)
+        {
+            for (int i = 0; i < 255; i++)
+            {
+                if (changeAlpha > 255)
+                {
+                    changeAlpha = 255;
+                }
+
+                if (changeAlpha < 0)
+                {
+                    changeAlpha = 0;
+                }
+
+                changeAlpha += _destColorChangeRate;
+                markMaterial.material.color = new Color(markMaterial.material.color.r, markMaterial.material.color.g, markMaterial.material.color.b, changeAlpha);
+
+                if (!collidingWithRay)
+                {
+                    break;
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < 255; i++)
+            {
+                if (changeAlpha > 255)
+                {
+                    changeAlpha = 255;
+                }
+
+                if (changeAlpha < 0)
+                {
+                    changeAlpha = 0;
+                }
+
+                changeAlpha -= _destColorChangeRate;
+                markMaterial.material.color = new Color(markMaterial.material.color.r, markMaterial.material.color.g, markMaterial.material.color.b, changeAlpha);
+
+                if (collidingWithRay)
+                {
+                    break;
+                }
+            }
+        }
     }
 
     /// <summary>
