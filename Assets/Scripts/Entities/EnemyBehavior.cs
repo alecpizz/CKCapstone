@@ -75,6 +75,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         _player = PlayerMovement.Instance.gameObject;
         _playerMoveRef = _player.GetComponent<PlayerMovement>();
 
+        _destinationMarker.transform.SetParent(null);
+
         // Make sure enemies are always seen at the start
         _atStart = true;
 
