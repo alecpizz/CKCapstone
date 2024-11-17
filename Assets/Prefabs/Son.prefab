@@ -92,6 +92,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4880084322818155521}
+  - {fileID: 1454072021496559423}
   m_Father: {fileID: 3849562481167228698}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &633789763011377717
@@ -247,7 +248,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 7, y: 7, z: 7}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8969531226697486907}
@@ -1073,6 +1074,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8239383176436930887}
+  - component: {fileID: 8619240302060084629}
   m_Layer: 0
   m_Name: Hip
   m_TagString: Untagged
@@ -1096,6 +1098,24 @@ Transform:
   - {fileID: 253647626270950010}
   m_Father: {fileID: 7557226395050386191}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8619240302060084629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2321277567419532199}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6f5338a96461264fb9a1132c8509672, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  center: {x: 0, y: 0.006, z: 0}
+  size: {x: 0.0033, y: 0.0042, z: 0.025}
+  direction: 1
+  reverseDirection: 0
+  radiusSeparation: 1
+  alignedOnCenter: 1
 --- !u!1 &2490610441732617630
 GameObject:
   m_ObjectHideFlags: 0
@@ -1822,11 +1842,12 @@ Transform:
   m_GameObject: {fileID: 4458869733908368566}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.00149314, y: -0.0046473998, z: -3.3087224e-26}
+  m_LocalPosition: {x: -0.00149314, y: -0.0046473998, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4796191303174838986}
+  - {fileID: 288466254478944915}
   m_Father: {fileID: 3875512619550079908}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4654917364902729878
@@ -2259,12 +2280,12 @@ MonoBehaviour:
       distanceCullingFadeRatio: 0.2
       distanceCullingReferenceObject: {fileID: 0}
     normalAxis: 1
-    gravity: 5
+    gravity: 4
     gravityDirection:
       x: 0
       y: -1
       z: 0
-    gravityFalloff: 0
+    gravityFalloff: 0.8
     stablizationTimeAfterReset: 0.1
     blendWeight: 1
     damping:
@@ -2327,32 +2348,32 @@ MonoBehaviour:
       worldInertia: 1
       movementInertiaSmoothing: 0.4
       movementSpeedLimit:
-        value: 5
+        value: 3
         use: 1
       rotationSpeedLimit:
-        value: 720
+        value: 360
         use: 1
       localInertia: 1
       localMovementSpeedLimit:
-        value: 3
-        use: 1
+        value: 5
+        use: 0
       localRotationSpeedLimit:
-        value: 360
-        use: 1
-      depthInertia: 0.7
-      centrifualAcceleration: 0.1
+        value: 720
+        use: 0
+      depthInertia: 0
+      centrifualAcceleration: 0
       particleSpeedLimit:
-        value: 4
+        value: 2
         use: 1
       teleportMode: 0
       teleportDistance: 0.5
       teleportRotation: 90
     tetherConstraint:
-      distanceCompression: 0.3
+      distanceCompression: 0.1
     distanceConstraint:
       stiffness:
         value: 1
-        useCurve: 1
+        useCurve: 0
         curve:
           serializedVersion: 2
           m_Curve:
@@ -2382,7 +2403,7 @@ MonoBehaviour:
     angleRestorationConstraint:
       useAngleRestoration: 1
       stiffness:
-        value: 0.2
+        value: 0.15
         useCurve: 1
         curve:
           serializedVersion: 2
@@ -2390,56 +2411,56 @@ MonoBehaviour:
           - serializedVersion: 3
             time: 0
             value: 1
-            inSlope: -0.7955246
-            outSlope: -0.7955246
-            tangentMode: 34
+            inSlope: 0
+            outSlope: -0.7
+            tangentMode: 0
             weightedMode: 0
             inWeight: 0
-            outWeight: 0.33333334
+            outWeight: 0
           - serializedVersion: 3
             time: 1
-            value: 0.2044754
-            inSlope: -0.7955246
-            outSlope: -0.7955246
-            tangentMode: 34
+            value: 0.3
+            inSlope: -0.7
+            outSlope: 0
+            tangentMode: 0
             weightedMode: 0
-            inWeight: 0.33333334
+            inWeight: 0
             outWeight: 0
           m_PreInfinity: 2
           m_PostInfinity: 2
           m_RotationOrder: 4
       velocityAttenuation: 0.7
-      gravityFalloff: 0
+      gravityFalloff: 0.5
     angleLimitConstraint:
       useAngleLimit: 1
       limitAngle:
-        value: 60
+        value: 15
         useCurve: 1
         curve:
           serializedVersion: 2
           m_Curve:
           - serializedVersion: 3
             time: 0
-            value: 0.199749
-            inSlope: 0.800251
-            outSlope: 0.800251
-            tangentMode: 34
+            value: 0
+            inSlope: 0
+            outSlope: 1
+            tangentMode: 0
             weightedMode: 0
             inWeight: 0
-            outWeight: 0.33333334
+            outWeight: 0
           - serializedVersion: 3
             time: 1
             value: 1
-            inSlope: 0.800251
-            outSlope: 0.800251
-            tangentMode: 34
+            inSlope: 1
+            outSlope: 0
+            tangentMode: 0
             weightedMode: 0
-            inWeight: 0.33333334
+            inWeight: 0
             outWeight: 0
           m_PreInfinity: 2
           m_PostInfinity: 2
           m_RotationOrder: 4
-      stiffness: 1
+      stiffness: 0.5
     motionConstraint:
       useMaxDistance: 0
       maxDistance:
@@ -2502,7 +2523,10 @@ MonoBehaviour:
     colliderCollisionConstraint:
       mode: 1
       friction: 0.05
-      colliderList: []
+      colliderList:
+      - {fileID: 8870296966733758454}
+      - {fileID: 1583872938872657663}
+      - {fileID: 8619240302060084629}
       collisionBones: []
       limitDistance:
         value: 0.05
@@ -2564,7 +2588,7 @@ MonoBehaviour:
       syncPartner: {fileID: 0}
       clothMass: 0
     wind:
-      influence: 0.2
+      influence: 1
       frequency: 1
       turbulence: 1
       blend: 0.7
@@ -2573,15 +2597,15 @@ MonoBehaviour:
       movingWind: 0
     springConstraint:
       useSpring: 1
-      springPower: 0.03
-      limitDistance: 0.05
+      springPower: 0.04
+      limitDistance: 0.1
       normalLimitRatio: 1
       springNoise: 0
   serializeData2:
     initData:
       initVersion: 1
-      localHash: 60919
-      globalHash: 1320194555
+      localHash: 62497
+      globalHash: -737961395
       clothType: 0
       clothTransformRecord:
         transform: {fileID: 3073613697073716357}
@@ -2589,36 +2613,36 @@ MonoBehaviour:
         localRotation: {x: -0, y: -0, z: -0, w: 1}
         position: {x: 0, y: 0, z: 0}
         rotation: {x: -0, y: -0, z: -0, w: 1}
-        scale: {x: 1, y: 1, z: 1}
+        scale: {x: 7, y: 7, z: 7}
         localToWorldMatrix:
-          e00: 1
+          e00: 7
           e01: 0
           e02: 0
           e03: 0
           e10: 0
-          e11: 1
+          e11: 7
           e12: 0
           e13: 0
           e20: 0
           e21: 0
-          e22: 1
+          e22: 7
           e23: 0
           e30: 0
           e31: 0
           e32: 0
           e33: 1
         worldToLocalMatrix:
-          e00: 1
+          e00: 0.14285713
           e01: 0
           e02: 0
           e03: -0
           e10: 0
-          e11: 1
+          e11: 0.14285713
           e12: 0
           e13: -0
           e20: 0
           e21: 0
-          e22: 1
+          e22: 0.14285713
           e23: -0
           e30: 0
           e31: 0
@@ -2630,36 +2654,36 @@ MonoBehaviour:
         localRotation: {x: -0, y: -0, z: -0, w: 1}
         position: {x: 0, y: 0, z: 0}
         rotation: {x: -0, y: -0, z: -0, w: 1}
-        scale: {x: 1, y: 1, z: 1}
+        scale: {x: 7, y: 7, z: 7}
         localToWorldMatrix:
-          e00: 1
+          e00: 7
           e01: 0
           e02: 0
           e03: 0
           e10: 0
-          e11: 1
+          e11: 7
           e12: 0
           e13: 0
           e20: 0
           e21: 0
-          e22: 1
+          e22: 7
           e23: 0
           e30: 0
           e31: 0
           e32: 0
           e33: 1
         worldToLocalMatrix:
-          e00: 1
+          e00: 0.14285713
           e01: 0
           e02: 0
           e03: -0
           e10: 0
-          e11: 1
+          e11: 0.14285713
           e12: 0
           e13: -0
           e20: 0
           e21: 0
-          e22: 1
+          e22: 0.14285713
           e23: -0
           e30: 0
           e31: 0
@@ -2717,117 +2741,117 @@ MonoBehaviour:
         - {fileID: 3194803082405864985}
         - {fileID: 6759332665913396038}
         transformPositions:
-        - x: 0.00015007422
-          y: 0.021326063
-          z: -0.0043847803
-        - x: 0.00015007422
-          y: 0.0338132
-          z: -0.0043847803
-        - x: 0.00015007422
-          y: 0.047933392
-          z: -0.0043847803
-        - x: -0.000006044589
-          y: 0.060646717
-          z: -0.0043847803
-        - x: 0.006987318
-          y: 0.059113085
-          z: -0.0043847803
-        - x: 0.013673956
-          y: 0.056475233
-          z: -0.0043847803
-        - x: 0.018581579
-          y: 0.04120026
-          z: -0.0043847803
-        - x: 0.027138304
-          y: 0.029774616
-          z: -0.0043847803
-        - x: -0.006999392
-          y: 0.059113186
-          z: -0.0043847803
-        - x: -0.0136860395
-          y: 0.056475203
-          z: -0.0043847803
-        - x: -0.01859368
-          y: 0.04120017
-          z: -0.0043847803
-        - x: -0.027150381
-          y: 0.02977454
-          z: -0.0043847803
-        - x: 0.000029613286
-          y: 0.06676351
-          z: -0.0043847803
-        - x: -0.00017696415
-          y: 0.07142101
-          z: -0.0043847803
-        - x: -0.00007367544
-          y: 0.08140801
-          z: -0.0043847803
-        - x: 0.0060263607
-          y: 0.058430053
-          z: -0.020673003
-        - x: 0.0086518135
-          y: 0.047500808
-          z: -0.019914709
-        - x: 0.011227344
-          y: 0.038218502
-          z: -0.020490862
-        - x: -0.0059283683
-          y: 0.058430113
-          z: -0.020673
-        - x: -0.008421472
-          y: 0.047500707
-          z: -0.019914705
-        - x: -0.010996999
-          y: 0.037319098
-          z: -0.020490859
-        - x: -0.017852379
-          y: 0.061978143
-          z: -0.0038226005
-        - x: -0.02109318
-          y: 0.0545576
-          z: -0.0037815226
-        - x: -0.02522719
-          y: 0.0466942
-          z: -0.0037360368
-        - x: 0.017950395
-          y: 0.061978303
-          z: -0.0038226014
-        - x: 0.021950362
-          y: 0.05274253
-          z: -0.0038226014
-        - x: 0.02719229
-          y: 0.04340067
-          z: -0.0038226014
-        - x: -0.007866131
-          y: 0.05627106
-          z: 0.010882307
-        - x: -0.011106933
-          y: 0.048850518
-          z: 0.010923386
-        - x: -0.015939416
-          y: 0.04107822
-          z: 0.010968871
-        - x: 0.009116631
-          y: 0.05954221
-          z: 0.010098476
-        - x: 0.012824509
-          y: 0.048183646
-          z: 0.009856011
-        - x: 0.017982608
-          y: 0.038049668
-          z: 0.009340461
-        - x: -0.0015426464
-          y: 0.053773623
-          z: 0.012684475
-        - x: 0.0027008168
-          y: 0.044537853
-          z: 0.012684475
-        - x: 0.0069507267
-          y: 0.033587087
-          z: 0.013673096
-        - x: -0.000073072
-          y: 0.00018912
-          z: 0.0043187
+        - x: 0.0010505195
+          y: 0.14928244
+          z: -0.030693462
+        - x: 0.0010505195
+          y: 0.2366924
+          z: -0.030693462
+        - x: 0.0010505195
+          y: 0.33553374
+          z: -0.030693462
+        - x: -0.000042312124
+          y: 0.42452702
+          z: -0.030693462
+        - x: 0.048911225
+          y: 0.4137916
+          z: -0.030693462
+        - x: 0.09571769
+          y: 0.39532664
+          z: -0.030693462
+        - x: 0.13007104
+          y: 0.28840184
+          z: -0.030693462
+        - x: 0.18996812
+          y: 0.2084223
+          z: -0.030693462
+        - x: -0.048995744
+          y: 0.4137923
+          z: -0.030693462
+        - x: -0.09580228
+          y: 0.39532644
+          z: -0.030693462
+        - x: -0.13015576
+          y: 0.2884012
+          z: -0.030693462
+        - x: -0.19005267
+          y: 0.20842177
+          z: -0.030693462
+        - x: 0.000207293
+          y: 0.46734458
+          z: -0.030693462
+        - x: -0.0012387491
+          y: 0.49994707
+          z: -0.030693462
+        - x: -0.0005157281
+          y: 0.56985605
+          z: -0.030693462
+        - x: 0.042184524
+          y: 0.40901038
+          z: -0.14471102
+        - x: 0.060562693
+          y: 0.33250564
+          z: -0.13940296
+        - x: 0.07859141
+          y: 0.26752952
+          z: -0.14343604
+        - x: -0.04149858
+          y: 0.4090108
+          z: -0.14471099
+        - x: -0.058950305
+          y: 0.33250496
+          z: -0.13940294
+        - x: -0.076979
+          y: 0.2612337
+          z: -0.14343601
+        - x: -0.12496665
+          y: 0.433847
+          z: -0.026758203
+        - x: -0.14765227
+          y: 0.3819032
+          z: -0.026470657
+        - x: -0.17659034
+          y: 0.3268594
+          z: -0.026152257
+        - x: 0.12565276
+          y: 0.4338481
+          z: -0.026758209
+        - x: 0.15365253
+          y: 0.3691977
+          z: -0.026758209
+        - x: 0.19034603
+          y: 0.3038047
+          z: -0.026758209
+        - x: -0.05506292
+          y: 0.3938974
+          z: 0.07617615
+        - x: -0.07774853
+          y: 0.34195364
+          z: 0.0764637
+        - x: -0.11157592
+          y: 0.28754756
+          z: 0.0767821
+        - x: 0.06381641
+          y: 0.41679546
+          z: 0.070689335
+        - x: 0.08977157
+          y: 0.33728552
+          z: 0.06899208
+        - x: 0.12587826
+          y: 0.26634768
+          z: 0.065383226
+        - x: -0.010798525
+          y: 0.37641537
+          z: 0.088791326
+        - x: 0.018905718
+          y: 0.311765
+          z: 0.088791326
+        - x: 0.048655085
+          y: 0.23510961
+          z: 0.09571167
+        - x: -0.000511504
+          y: 0.00132384
+          z: 0.030230902
         - x: 0
           y: 0
           z: 0
@@ -3055,7 +3079,7 @@ MonoBehaviour:
           z: 3.6988363e-26
         - x: -0.00149314
           y: -0.0046473998
-          z: -3.3087224e-26
+          z: 0
         - x: -0.00260336
           y: -0.0034762258
           z: -6.617445e-26
@@ -3329,135 +3353,135 @@ MonoBehaviour:
             z: -0
             w: 1
         transformScales:
-        - x: 3.2867918
-          y: 3.2867918
-          z: 3.2867918
-        - x: 3.2867918
-          y: 3.2867918
-          z: 3.2867918
-        - x: 3.2867918
-          y: 3.2867918
-          z: 3.2867918
-        - x: 3.2867918
-          y: 3.2867918
-          z: 3.2867918
-        - x: 3.2867918
-          y: 3.2867918
-          z: 3.2867918
-        - x: 3.2867918
-          y: 3.2867918
-          z: 3.2867918
-        - x: 3.2867918
-          y: 3.2867918
-          z: 3.2867918
-        - x: 3.2867918
-          y: 3.2867918
-          z: 3.2867918
-        - x: 3.2867918
-          y: 3.2867918
-          z: 3.2867918
-        - x: 3.2867918
-          y: 3.2867918
-          z: 3.2867918
-        - x: 3.2867918
-          y: 3.2867918
-          z: 3.2867918
-        - x: 3.2867918
-          y: 3.2867918
-          z: 3.2867918
-        - x: 3.2867918
-          y: 3.2867918
-          z: 3.2867918
-        - x: 3.2867918
-          y: 3.2867918
-          z: 3.2867918
-        - x: 3.2867918
-          y: 3.2867918
-          z: 3.2867918
-        - x: 3.2867913
-          y: 3.2867918
-          z: 3.2867908
-        - x: 3.2867923
-          y: 3.2867923
-          z: 3.2867928
-        - x: 3.2867923
-          y: 3.2867923
-          z: 3.2867928
-        - x: 3.286792
-          y: 3.2867918
-          z: 3.2867916
-        - x: 3.2867913
-          y: 3.286791
-          z: 3.2867918
-        - x: 3.2867913
-          y: 3.286791
-          z: 3.2867918
-        - x: 3.286792
-          y: 3.2867923
-          z: 3.2867913
-        - x: 3.2867913
-          y: 3.2867916
-          z: 3.286792
-        - x: 3.2867913
-          y: 3.2867916
-          z: 3.286792
-        - x: 3.2867925
-          y: 3.286792
-          z: 3.2867918
-        - x: 3.2867923
-          y: 3.286792
-          z: 3.2867918
-        - x: 3.2867923
-          y: 3.286792
-          z: 3.2867918
-        - x: 3.286792
-          y: 3.2867923
-          z: 3.2867913
-        - x: 3.286792
-          y: 3.2867916
-          z: 3.2867918
-        - x: 3.286792
-          y: 3.2867916
-          z: 3.2867918
-        - x: 3.2867925
-          y: 3.286792
-          z: 3.2867918
-        - x: 3.2867923
-          y: 3.286792
-          z: 3.2867918
-        - x: 3.2867923
-          y: 3.286792
-          z: 3.2867918
-        - x: 3.2867925
-          y: 3.286792
-          z: 3.2867918
-        - x: 3.2867923
-          y: 3.286792
-          z: 3.2867918
-        - x: 3.2867923
-          y: 3.286792
-          z: 3.2867918
-        - x: 3.2867918
-          y: 3.2867918
-          z: 3.2867918
-        - x: 1
-          y: 1
-          z: 1
+        - x: 23.007542
+          y: 23.007542
+          z: 23.007542
+        - x: 23.007542
+          y: 23.007542
+          z: 23.007542
+        - x: 23.007542
+          y: 23.007542
+          z: 23.007542
+        - x: 23.007542
+          y: 23.007542
+          z: 23.007542
+        - x: 23.007542
+          y: 23.007542
+          z: 23.007542
+        - x: 23.007542
+          y: 23.007542
+          z: 23.007542
+        - x: 23.007542
+          y: 23.007542
+          z: 23.007542
+        - x: 23.007542
+          y: 23.007542
+          z: 23.007542
+        - x: 23.007542
+          y: 23.007542
+          z: 23.007542
+        - x: 23.007542
+          y: 23.007542
+          z: 23.007542
+        - x: 23.007542
+          y: 23.007542
+          z: 23.007542
+        - x: 23.007542
+          y: 23.007542
+          z: 23.007542
+        - x: 23.007542
+          y: 23.007542
+          z: 23.007542
+        - x: 23.007542
+          y: 23.007542
+          z: 23.007542
+        - x: 23.007542
+          y: 23.007542
+          z: 23.007542
+        - x: 23.007538
+          y: 23.007542
+          z: 23.007536
+        - x: 23.007545
+          y: 23.007545
+          z: 23.00755
+        - x: 23.007545
+          y: 23.007545
+          z: 23.00755
+        - x: 23.007545
+          y: 23.007542
+          z: 23.007542
+        - x: 23.00754
+          y: 23.007538
+          z: 23.007545
+        - x: 23.00754
+          y: 23.007538
+          z: 23.007545
+        - x: 23.007544
+          y: 23.007544
+          z: 23.007542
+        - x: 23.007538
+          y: 23.007542
+          z: 23.007544
+        - x: 23.007538
+          y: 23.007542
+          z: 23.007544
+        - x: 23.007547
+          y: 23.007545
+          z: 23.007542
+        - x: 23.007547
+          y: 23.007545
+          z: 23.007542
+        - x: 23.007547
+          y: 23.007545
+          z: 23.007542
+        - x: 23.007544
+          y: 23.007544
+          z: 23.007542
+        - x: 23.007544
+          y: 23.007542
+          z: 23.007544
+        - x: 23.007544
+          y: 23.007542
+          z: 23.007544
+        - x: 23.007547
+          y: 23.007545
+          z: 23.007542
+        - x: 23.007547
+          y: 23.007545
+          z: 23.007542
+        - x: 23.007547
+          y: 23.007545
+          z: 23.007542
+        - x: 23.007547
+          y: 23.007545
+          z: 23.007542
+        - x: 23.007547
+          y: 23.007545
+          z: 23.007542
+        - x: 23.007547
+          y: 23.007545
+          z: 23.007542
+        - x: 23.007542
+          y: 23.007542
+          z: 23.007542
+        - x: 7
+          y: 7
+          z: 7
         initRenderLocalToWorld:
           c0:
-            x: 1
+            x: 7
             y: 0
             z: 0
             w: 0
           c1:
             x: 0
-            y: 1
+            y: 7
             z: 0
             w: 0
           c2:
             x: 0
             y: 0
-            z: 1
+            z: 7
             w: 0
           c3:
             x: 0
@@ -3466,19 +3490,19 @@ MonoBehaviour:
             w: 1
         initRenderWorldtoLocal:
           c0:
-            x: 1
+            x: 0.14285715
             y: 0
             z: -0
             w: -0
           c1:
             x: 0
-            y: 1
+            y: 0.14285715
             z: -0
             w: -0
           c2:
             x: 0
             y: 0
-            z: 1
+            z: 0.14285715
             w: -0
           c3:
             x: 0
@@ -3492,9 +3516,9 @@ MonoBehaviour:
             z: -0
             w: 1
         initRenderScale:
-          x: 1
-          y: 1
-          z: 1
+          x: 7
+          y: 7
+          z: 7
     selectionData:
       positions:
       - x: -0.015508648
@@ -4150,6 +4174,56 @@ Transform:
   - {fileID: 7134963535310437336}
   m_Father: {fileID: 3551425681741934839}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5629713792808307702
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 288466254478944915}
+  - component: {fileID: 8870296966733758454}
+  m_Layer: 0
+  m_Name: Rarm Capsule
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &288466254478944915
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5629713792808307702}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.041825194, y: -0.019414932, z: 0.51109755, w: 0.85828495}
+  m_LocalPosition: {x: -0.00057, y: -0.00044, z: -0.00003}
+  m_LocalScale: {x: 0.043464, y: 0.04346401, z: 0.043464005}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7805063825588645959}
+  m_LocalEulerAnglesHint: {x: 5.258, y: 0.542, z: 61.571}
+--- !u!114 &8870296966733758454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5629713792808307702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6f5338a96461264fb9a1132c8509672, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  center: {x: 0, y: 0, z: 0}
+  size: {x: 0.046, y: 0.029, z: 0.249}
+  direction: 0
+  reverseDirection: 0
+  radiusSeparation: 1
+  alignedOnCenter: 1
 --- !u!1 &5632794452356789064
 GameObject:
   m_ObjectHideFlags: 0
@@ -4391,7 +4465,7 @@ Transform:
   m_GameObject: {fileID: 5784088837895082689}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.000015041284, y: 0, z: 0.009135116}
+  m_LocalPosition: {x: 0.0007, y: 0.0039, z: 0.009135116}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5325,36 +5399,36 @@ MonoBehaviour:
           z: 1
     selectionData:
       positions:
-      - x: -0.023711422
-        y: 0.09330555
+      - x: -0.023711424
+        y: 0.09330556
         z: -0.005438526
-      - x: -0.025501845
+      - x: -0.025501847
         y: 0.10260647
         z: -0.005962725
       - x: -0.02834799
-        y: 0.10774886
+        y: 0.107748866
         z: -0.0058052456
-      - x: 0.010501952
+      - x: 0.010501953
         y: 0.08212482
         z: -0.016412258
-      - x: 0.011523432
+      - x: 0.011523433
         y: 0.09051321
         z: -0.020146497
-      - x: 0.011523433
-        y: 0.09964025
-        z: -0.022630863
       - x: 0.011523434
+        y: 0.09964026
+        z: -0.022630863
+      - x: 0.011523435
         y: 0.10502242
         z: -0.025260773
-      - x: -0.0001282665
-        y: 0.110438496
-        z: 0.0047503356
-      - x: -0.0001282665
-        y: 0.12404192
-        z: 0.004425373
+      - x: -0.00012826652
+        y: 0.1104385
+        z: 0.0047503365
+      - x: -0.00012826652
+        y: 0.12404193
+        z: 0.004425374
       - x: -0.000104559425
-        y: 0.1365744
-        z: 0.003654888
+        y: 0.13657442
+        z: 0.0036548888
       attributes:
       - Value: 1
       - Value: 2
@@ -5366,7 +5440,7 @@ MonoBehaviour:
       - Value: 1
       - Value: 2
       - Value: 2
-      maxConnectionDistance: 0.013607307
+      maxConnectionDistance: 0.04800263
       userEdit: 0
     preBuildData:
       enabled: 0
@@ -5470,6 +5544,56 @@ Transform:
   - {fileID: 7557226395050386191}
   m_Father: {fileID: 5437145629218027556}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6182850602999517156
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1454072021496559423}
+  - component: {fileID: 1583872938872657663}
+  m_Layer: 0
+  m_Name: Larm Capsule
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1454072021496559423
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6182850602999517156}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.019436764, y: 0.026564272, z: 0.8833581, w: 0.46754143}
+  m_LocalPosition: {x: -4.656613e-10, y: -0.0004400271, z: -1.1641532e-10}
+  m_LocalScale: {x: 0.04346401, y: 0.043464, z: 0.043464}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3751587931558253775}
+  m_LocalEulerAnglesHint: {x: -1.648, y: 3.394, z: 124.169}
+--- !u!114 &1583872938872657663
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6182850602999517156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6f5338a96461264fb9a1132c8509672, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  center: {x: 0, y: 0, z: 0}
+  size: {x: 0.046, y: 0.029, z: 0.249}
+  direction: 0
+  reverseDirection: 0
+  radiusSeparation: 1
+  alignedOnCenter: 1
 --- !u!1 &6278439290459758390
 GameObject:
   m_ObjectHideFlags: 0
