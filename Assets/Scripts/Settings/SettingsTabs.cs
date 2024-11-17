@@ -16,7 +16,9 @@ public class SettingsTabs : MonoBehaviour
         Display,
         Audio,
         Accessibility,
-        Gameplay
+        Gameplay,
+        HowToPlay,
+        LevelSelect
     }
 
     [Header("Tab Panels")]
@@ -24,12 +26,16 @@ public class SettingsTabs : MonoBehaviour
     [SerializeField] private GameObject _audioPanel;
     [SerializeField] private GameObject _accessibilityPanel;
     [SerializeField] private GameObject _gameplayPanel;
+    [SerializeField] private GameObject _howToPlayPanel;
+    [SerializeField] private GameObject _levelSelectPanel;
 
     [Header("Tab Buttons")]
     [SerializeField] private Button _displayButton;
     [SerializeField] private Button _audioButton;
     [SerializeField] private Button _accessibilityButton;
     [SerializeField] private Button _gameplayButton;
+    [SerializeField] private Button _howToPlayButton;
+    [SerializeField] private Button _levelSelectButton;
 
     private Dictionary<Tab, GameObject> _panels;
     private Dictionary<Tab, Button> _buttons;
@@ -42,7 +48,9 @@ public class SettingsTabs : MonoBehaviour
             { Tab.Display, _displayPanel },
             { Tab.Audio, _audioPanel },
             { Tab.Accessibility, _accessibilityPanel },
-            { Tab.Gameplay, _gameplayPanel }
+            { Tab.Gameplay, _gameplayPanel },
+            { Tab.HowToPlay, _howToPlayPanel },
+            { Tab.LevelSelect, _levelSelectPanel }
         };
 
         // Initialize the button dictionary
@@ -51,7 +59,9 @@ public class SettingsTabs : MonoBehaviour
             { Tab.Display, _displayButton },
             { Tab.Audio, _audioButton },
             { Tab.Accessibility, _accessibilityButton },
-            { Tab.Gameplay, _gameplayButton }
+            { Tab.Gameplay, _gameplayButton },
+            { Tab.HowToPlay, _howToPlayButton },
+            { Tab.LevelSelect, _levelSelectButton }
         };
 
         // Assign button click events
@@ -59,6 +69,8 @@ public class SettingsTabs : MonoBehaviour
         _audioButton.onClick.AddListener(() => OpenTab(Tab.Audio));
         _accessibilityButton.onClick.AddListener(() => OpenTab(Tab.Accessibility));
         _gameplayButton.onClick.AddListener(() => OpenTab(Tab.Gameplay));
+        _howToPlayButton.onClick.AddListener(() => OpenTab(Tab.HowToPlay));
+        _levelSelectButton.onClick.AddListener(() => OpenTab(Tab.LevelSelect));
 
         // Open the default tab at start
         OpenTab(Tab.Display);
