@@ -44,7 +44,9 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     [SerializeField] private EventReference _playerMove = default;
     [SerializeField] private EventReference _playerCantMove = default;
 
+    // Bools for player moving into enemies
     [SerializeField] private bool _enemyFound = false;
+    [SerializeField] private bool _allowPlayerToMoveIntoEnemies = false;
 
     public static PlayerMovement Instance;
     
@@ -101,6 +103,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                 yield return Tween.Position(transform,
                    move + _positionOffset, duration: _movementTime, Ease.OutBack).ToYieldInstruction();
                 GridBase.Instance.UpdateEntry(this);
+                break;
             }
 
             if ((GridBase.Instance.CellIsEmpty(move)) ||
@@ -179,7 +182,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                 foreach (var entry in entries)
                 {
                     EnemyBehavior enemy = entry.GetGameObject.GetComponent<EnemyBehavior>();
-                    if (entry.GetGameObject.tag == "Enemy" && !enemy.EnemyFrozen)
+                    if (entry.GetGameObject.tag == "Enemy" && !enemy.EnemyFrozen && _allowPlayerToMoveIntoEnemies)
                     {
                         _enemyFound = true;
                         StartCoroutine(MovementDelay(direction));

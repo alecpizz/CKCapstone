@@ -10,6 +10,7 @@ using System.Collections;
 using System.Collections.Generic;
 using PrimeTween;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener, IHarmonyBeamEntity
 {
@@ -24,7 +25,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     private Vector3 _positionOffset;
     [SerializeField]
     private PlayerInteraction _playerInteraction;
-    [SerializeField] private GameObject _player;
+    private GameObject _player;
 
     //Determines whether or not the enemy's movement is reversed
     [SerializeField] private bool _mirrored;
@@ -34,11 +35,20 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     private int _movementTiming = 1;
     private WaitForSeconds _waitForSeconds;
 
+    [SerializeField] private float _rotationTime = 0.10f;
+    [SerializeField] private Ease _rotationEase = Ease.InOutSine;
+
+    private void Awake()
+    {
+        PrimeTweenConfig.warnEndValueEqualsCurrent = false;
+    }
 
     // Start is called before the first frame update
     void Start()
     {
         GridBase.Instance.AddEntry(this);
+
+        _player = PlayerMovement.Instance.gameObject;
 
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.RegisterTimeListener(this);
@@ -57,11 +67,18 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     {
         if (RoundManager.Instance != null)
             RoundManager.Instance.UnRegisterListener(this);
+
+        //Unregisters time
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.UnregisterTimeListener(this);
     }
 
-    private IEnumerator DelayedInput(Vector3 moveDirection)
+    /// <summary>
+    /// Moves the enemy in either the same direction or the opposite direction of the player.
+    /// </summary>
+    /// <param name="moveDirection"></param>
+    /// <returns></returns>
+    private IEnumerator MoveEnemy(Vector3 moveDirection)
     {
         if (!EnemyFrozen)
         {
@@ -69,6 +86,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
             {
                 moveDirection = -moveDirection;
             }
+
 
             for (int i = 0; i < _movementTiming; ++i)
             {
@@ -91,6 +109,9 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                     }
                     if (canMove == true)
                     {
+                        Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
+                        ease: _rotationEase);
+
                         yield return Tween.Position(transform,
                             move + _positionOffset, _movementTime, ease: Ease.OutBack).OnUpdate<MirrorAndCopyBehavior>(target: this, (target, tween) =>
                             {
@@ -118,6 +139,9 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
             }
         }
 
+        Tween.Rotation(transform, endValue: Quaternion.LookRotation(-moveDirection), duration: _rotationTime,
+        ease: _rotationEase);
+
         RoundManager.Instance.CompleteTurn(this);
     }
 
@@ -134,16 +158,11 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     }
     public TurnState TurnState => TurnState.World;
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        
-    }
-
     public void BeginTurn(Vector3 direction)
     {
-        _playerInteraction.SetDirection(direction);
-        StartCoroutine(DelayedInput(direction));
+        StartCoroutine(MoveEnemy(direction));
     }
+
     public void ForceTurnEnd()
     {
         StopAllCoroutines();
@@ -152,12 +171,16 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     }
 
     public bool AllowLaserPassThrough { get => true; }
+
     /// <summary>
     /// Freezes the enemy.
     /// </summary>
     public void OnLaserHit()
     {
-        EnemyFrozen = true;
+        if (CompareTag("SonEnemy"))
+        {
+            EnemyFrozen = true;
+        }
     }
 
     /// <summary>

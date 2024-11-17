@@ -27,22 +27,28 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
     public GameObject GetGameObject { get => gameObject; }
 
-    [SerializeField] private GameObject _player;
+    private GameObject _player;
     [SerializeField] private GameObject _destinationMarker;
 
     [SerializeField] private bool _atStart;
     [SerializeField] private int _currentPoint = 0;
     private int _currentPointIndex = 0;
 
+    //Destination object values
     [SerializeField] private bool _destAtStart;
     [SerializeField] private int _destCurrentPoint = 0;
     [SerializeField] private float _destColorChangeRate = 0.01f;
     public bool collidingWithRay = false;
+    [SerializeField] private float _destYPos = 1f;
+
 
     private PlayerMovement _playerMoveRef;
 
     //Wait time between enemy moving each individual tile while on path to next destination
     [SerializeField] private float _waitTime = 0.5f;
+
+    [SerializeField] private float _rotationTime = 0.10f;
+    [SerializeField] private Ease _rotationEase = Ease.InOutSine;
 
     //List of movePoint structs that contain a direction enum and a tiles to move integer.
     public enum Direction { Up, Down, Left, Right }
@@ -68,6 +74,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     // Event reference for the enemy movement sound
     [SerializeField] private EventReference _enemyMove = default;
 
+    private void Awake()
+    {
+        PrimeTweenConfig.warnEndValueEqualsCurrent = false;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -75,7 +86,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
         GridBase.Instance.AddEntry(this);
 
+        _player = PlayerMovement.Instance.gameObject;
         _playerMoveRef = _player.GetComponent<PlayerMovement>();
+
+        _destinationMarker.transform.SetParent(null);
 
         // Make sure enemies are always seen at the start
         _atStart = true;
@@ -184,10 +198,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     }
 
     /// <summary>
-    /// Coroutine that handles the enemy's movement along the provided points in the struct object list
+    /// Coroutine that handles the enemy's movement along the provided points in the struct object list.
+    /// Also contains the destination marker movement behavior for the enemy.
     /// </summary>
     /// <returns></returns>
-    private IEnumerator DelayedInput()
+    private IEnumerator MoveEnemy()
     {
         /// <summary>
         /// Checks to see if all enemies have finished moving via a bool in the player script 
@@ -241,6 +256,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                         break;
                     }
 
+                    Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveInDirection), duration: _rotationTime,
+                        ease: _rotationEase);
+
                     yield return Tween.Position(transform,
                         move + _positionOffset, _waitTime, ease: Ease.OutBack).OnUpdate<EnemyBehavior>(target: this, (target, tween) =>
                         {
@@ -292,6 +310,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
             }
             UpdateDestinationMarker();
         }
+
+        Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveInDirection), duration: _rotationTime,
+        ease: _rotationEase);
+
         GridBase.Instance.UpdateEntry(this);
         RoundManager.Instance.CompleteTurn(this);
     }
@@ -362,7 +384,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
             //Makes sure the marker is always at a y position of 1 so it is visible on the grid
             Vector3 destPos = _destinationMarker.transform.position;
-            destPos.y += 1;
+            destPos.y += _destYPos;
             _destinationMarker.transform.position = destPos;
         }
     }
@@ -382,7 +404,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     /// <param name="direction">Direction of movement</param>
     public void BeginTurn(Vector3 direction)
     {
-        StartCoroutine(DelayedInput());
+        StartCoroutine(MoveEnemy());
     }
 
     /// <summary>
@@ -401,7 +423,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     /// </summary>
     public void OnLaserHit()
     {
-        EnemyFrozen = true;
+        if (CompareTag("SonEnemy"))
+        {
+            EnemyFrozen = true;
+        }
     }
 
     /// <summary>
