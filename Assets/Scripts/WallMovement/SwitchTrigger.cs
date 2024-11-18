@@ -35,7 +35,7 @@ public class SwitchTrigger : MonoBehaviour
     //reference for sound of switch
     [SerializeField] private EventReference _switchSound = default;
 
-    private const float yOffset = -0.31f;
+    private const float yOffset = 0.86f;
 
     /// <summary>
     /// Positions the switch to be at a height where it doesn't clip into the ground
