@@ -29,6 +29,8 @@ public class MetronomeBehavior : MonoBehaviour
     private Animator _anim;
     //the animation clip for the weight moving up and down (currently not assigned)
     [SerializeField] private AnimationClip _change;
+    //the number of times you want the circle to flash on the HUD
+    [SerializeField] private int _howManyFlashes;
 
     [Header("Speed Settings")]
     [SerializeField]
@@ -93,7 +95,7 @@ public class MetronomeBehavior : MonoBehaviour
         }
 
         //loops 6 times
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < _howManyFlashes; i++)
         {
             if (i % 2 == 0)
             {
