@@ -50,6 +50,11 @@ public class HUDscript : MonoBehaviour, ITimeListener
             {
                 _sequenceUI.text += " " + note;
             }
+
+            for (int i = 0; i < winChecker.TargetNoteSequence.Count; i++)
+            {
+                _ghostNoteImages[i].SetActive(true);
+            }
         }
 
         _timeSigManager = TimeSignatureManager.Instance;
@@ -99,10 +104,7 @@ public class HUDscript : MonoBehaviour, ITimeListener
     /// </summary>
     private void UpdateColectedNotesIcons(int collectedNote)
     {
-        if (collectedNote >= 0 && collectedNote < _noteImages.Length)
-        {
-            _noteImages[collectedNote].SetActive(true);
-        }
+        _noteImages[collectedNote].SetActive(true);
     }
 
     /// <summary>
@@ -110,16 +112,7 @@ public class HUDscript : MonoBehaviour, ITimeListener
     /// </summary>
     private void UpdateGhostNotesIcons(int collectedNote)
     {
-        if (collectedNote >= 0 && collectedNote < _noteImages.Length - 1)
-        {
-            _ghostNoteImages[collectedNote+1].SetActive(true);
-            _ghostNoteImages[collectedNote].SetActive(false);
-        }
-        //if the level is complete don't display another ghost note
-        if (WinChecker.Instance.SequenceComplete)
-        {
-            _ghostNoteImages[collectedNote+1].SetActive(false);
-        }
+        _ghostNoteImages[collectedNote].SetActive(false);
     }
 
     /// <summary>
