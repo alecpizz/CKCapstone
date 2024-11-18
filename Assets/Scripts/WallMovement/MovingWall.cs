@@ -22,11 +22,17 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     private Vector3 _originWall;
     private Vector3 _originGhost;
 
+    //the offset for the tween animation
+    [SerializeField] private Vector3 _positionOffset;
+
     //used to determine the GridPlacer of specific wall
     [SerializeField] private GridPlacer _wallGrid;
 
     //indicator for where wall will be moved
     [SerializeField] private GameObject _wallGhost;
+
+    //to decide if switch should be true or not
+    private bool _worked = true;
 
     //classes required from Alec's IGridEntry Interface
     public bool IsTransparent => false;
@@ -61,9 +67,19 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     /// </summary>
     public void SwitchActivation()
     {
-        transform.position = _originGhost;
-        _wallGhost.transform.position = _originWall;
-        _wallGrid.UpdatePosition();
+        if (GridBase.Instance.CellIsTransparent(_originGhost))
+        {
+            transform.position = _originGhost;
+            _wallGhost.transform.position = _originWall;
+            //yield return Tween.PositionY(transform, _originWall.y + _positionOffset.y, duration: 0.5f, Ease.OutBack).ToYieldInstruction();
+            _wallGrid.UpdatePosition();
+            
+            _worked = true;
+        }
+        else
+        {
+            _worked = false;
+        }
     }
 
     /// <summary>
@@ -73,9 +89,29 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     /// </summary>
     public void SwitchDeactivation()
     {
-        transform.position = _originWall;
-        _wallGhost.transform.position = _originGhost;
-        _wallGrid.UpdatePosition();
+        if (GridBase.Instance.CellIsTransparent(_originWall)) 
+        {
+            transform.position = _originWall;
+            _wallGhost.transform.position = _originGhost;
+            //yield return Tween.Position(transform, _originGhost + _positionOffset, duration: 0.5f, Ease.OutBack).ToYieldInstruction();
+            _wallGrid.UpdatePosition();
+
+            _worked = true;
+
+        }
+        else
+        {
+            _worked = false;
+        }
+    }
+
+    /// <summary>
+    /// Getter for _worked variable
+    /// </summary>
+    /// <returns></returns>
+    public bool GetWorked()
+    {
+        return _worked;
     }
 
     /// <summary>
