@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Nick Grinstead
-*    Contributors: 
+*    Contributors: Alec Pizziferro
 *    Date Created: 10/10/24
 *    Description: This script should be attached to the player character,
 *    and handles checking an adjacent square for interactables when
@@ -47,27 +47,32 @@ public class PlayerInteraction : MonoBehaviour
     /// </summary>
     private void Interact()
     {
-        // Finding coordinates of the adjacent square
+        _currentInteractable?.OnInteract();
+    }
+
+    /// <summary>
+    /// Attempts to find an interactable in a nearby cell.
+    /// </summary>
+    /// <returns>The found interactable, can be null.</returns>
+    private IInteractable TryGetInteractable()
+    {
         Vector3 cellPositionToCheck = 
             _gridBase.GetCellPositionInDirection(transform.position, 
-            _facingDirection);
-
+                _facingDirection);
         Vector3Int cellCoordinatesToCheck = _gridBase.WorldToCell(cellPositionToCheck);
-
-        // Checking if there are objects in the adjacent square
-        if (_gridBase.CellIsEmpty(cellCoordinatesToCheck)) { return; }
-
-        // Checking the square's entries for any interactables
+        if (_gridBase.CellIsEmpty(cellCoordinatesToCheck))
+        {
+            return null;
+        }
         _gridEntries = _gridBase.GetCellEntries(cellCoordinatesToCheck);
         foreach (var entry in _gridEntries)
         {
-            IInteractable interactable;
-            if (entry.GetGameObject.TryGetComponent<IInteractable>(out interactable))
+            if (entry.GetGameObject.TryGetComponent<IInteractable>(out var interactable))
             {
-                _currentInteractable = interactable;
-                interactable.OnInteract();
+                return interactable;
             }
         }
+        return null;
     }
 
     /// <summary>
@@ -84,5 +89,8 @@ public class PlayerInteraction : MonoBehaviour
             _currentInteractable = null;
         }
         _facingDirection = direction;
+        var interactable = TryGetInteractable();
+        _currentInteractable = interactable;
+        interactable?.OnEnter();
     }
 }

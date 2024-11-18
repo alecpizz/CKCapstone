@@ -35,7 +35,7 @@ public class NPCScript : MonoBehaviour, IInteractable
     [InfoBox("This adjusts the base typing speed. 2 is the slowest, 10 is the fastest", EMessageType.Info)]
     [Range(2f, 10f)][SerializeField] private float _typingSpeed = 5f;
     [SerializeField] private List<DialogueEntry> _dialogueEntries;
-
+    [SerializeField] [TextArea] private string _tutorialHint = "Press E to Talk";
     //dialogue options
     private int _currentDialogue = 0;
     private float _currentTypingSpeed;
@@ -72,6 +72,13 @@ public class NPCScript : MonoBehaviour, IInteractable
     public void OnLeave()
     {
         HideDialogue();
+    }
+
+    public void OnEnter()
+    {
+        _dialogueBox.SetText(_tutorialHint);
+        _dialogueBox.CrossFadeAlpha(1f, 0.25f, false);
+        _background.CrossFadeAlpha(1f, 0.25f, false);
     }
 
     /// <summary>

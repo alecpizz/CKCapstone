@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Nick Grinstead
-*    Contributors: David Henvick
+*    Contributors: David Henvick, Alec Pizziferro
 *    Date Created: 10/10/24
 *    Description: Interface for objects that the player can interact
 *    with.
@@ -25,4 +25,9 @@ public interface IInteractable
     /// This function will be implemented for when the player is no longer interacting with the interactable
     /// </summary>
     public void OnLeave();
+
+    /// <summary>
+    /// This function will be implemented for when the player approaches an interactable.
+    /// </summary>
+    public void OnEnter();
 }
