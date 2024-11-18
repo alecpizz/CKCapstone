@@ -92,14 +92,15 @@ public class MetronomeBehavior : MonoBehaviour
             _anim.SetBool("GoFaster", false);
         }
 
+        //loops 6 times
         for (int i = 0; i < 6; i++)
         {
-            if (i == 0 || i == 2 || i == 4)
+            if (i % 2 == 0)
             {
                 _HUDEffect.SetActive(true);
                 yield return wait;
             }
-            else if (i == 1 || i == 3 || i == 5)
+            else /*if (i == 1 || i == 3 || i == 5)*/
             {
                 _HUDEffect.SetActive(false);
                 yield return wait;
