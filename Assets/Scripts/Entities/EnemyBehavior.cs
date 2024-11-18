@@ -68,6 +68,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     // Event reference for the enemy movement sound
     [SerializeField] private EventReference _enemyMove = default;
 
+    // Bool checked if this enemy is a Son Enemy
+    [SerializeField] public bool sonEnemy;
+
     private void Awake()
     {
         PrimeTweenConfig.warnEndValueEqualsCurrent = false;
@@ -363,7 +366,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     /// </summary>
     public void OnLaserHit()
     {
-        if (CompareTag("SonEnemy"))
+        if (sonEnemy)
         {
             EnemyFrozen = true;
         }
@@ -377,5 +380,5 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         EnemyFrozen = false;
     }
 
-    public bool HitWrapAround { get => true; }
+    public bool HitWrapAround { get => sonEnemy; }
 }
