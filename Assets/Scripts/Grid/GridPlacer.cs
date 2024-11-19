@@ -94,4 +94,13 @@ public class GridPlacer : MonoBehaviour, IGridEntry
         if (GridBase.Instance == null) return; 
         GridBase.Instance.RemoveEntry(this);
     }
+
+    /// <summary>
+    /// Places this object in the center of its grid cell
+    /// </summary>
+    public void SnapToGridSpace()
+    {
+        Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
+        transform.position = GridBase.Instance.CellToWorld(cellPos);
+    }
 }
