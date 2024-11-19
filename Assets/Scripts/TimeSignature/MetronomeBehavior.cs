@@ -102,28 +102,12 @@ public class MetronomeBehavior : MonoBehaviour
                 _HUDEffect.SetActive(true);
                 yield return wait;
             }
-            else /*if (i == 1 || i == 3 || i == 5)*/
+            else
             {
                 _HUDEffect.SetActive(false);
                 yield return wait;
             }
         }
-
-        /*
-        yield return wait;
-        _HUDEffect.SetActive(true);
-        yield return wait;
-        _HUDEffect.SetActive(false);
-        yield return wait;
-        _HUDEffect.SetActive(true);
-        yield return wait;
-        _HUDEffect.SetActive(false);
-        yield return wait;
-        _HUDEffect.SetActive(true);
-        yield return wait;
-        _HUDEffect.SetActive(false);
-        yield return null;
-        */
     }
 
     /// <summary>
