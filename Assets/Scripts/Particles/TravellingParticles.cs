@@ -54,7 +54,8 @@ public class TravellingParticles : MonoBehaviour
     private void Awake()
     {
         Transform mainCameraTrans = Camera.main.transform;
-        _uiCamera.transform.SetPositionAndRotation(mainCameraTrans.position, mainCameraTrans.rotation);
+        _uiCamera.transform.SetPositionAndRotation(mainCameraTrans.position, 
+            mainCameraTrans.rotation);
         _uiTarget = _uiPosition;
         _uiTarget.z = _camDepth;
 
@@ -130,11 +131,12 @@ public class TravellingParticles : MonoBehaviour
 
         ParticleSystem.Particle[] particleArr = new ParticleSystem.Particle[_particles.main.maxParticles];
 
-        Vector3 uiPosition = _targetRectTransform.position;
+        Vector3 uiPosition = _uiPosition;
         uiPosition.z = _camDepth;
-
-        Vector3 uiTarget = _uiCamera.ScreenToWorldPoint(_uiTarget, Camera.MonoOrStereoscopicEye.Mono);
-        print("UI Target: " + uiTarget);
+        print("UI Position: " + uiPosition);
+        //Vector3 uiTarget = _uiCamera.ScreenToWorldPoint(_uiTarget, Camera.MonoOrStereoscopicEye.Mono);
+        Vector3 uiTarget = _uiCamera.ScreenToWorldPoint(uiPosition, Camera.MonoOrStereoscopicEye.Mono);
+        //print("UI Target: " + uiTarget);
 
         _particles.GetParticles(particleArr);
 
@@ -149,7 +151,7 @@ public class TravellingParticles : MonoBehaviour
                     particleArr[i].remainingLifetime > particleArr[i].startLifetime - _forceDelay)
                     continue;
                 // Delete self upon colliding with target
-                else if (particleArr[i].position == _targetRectTransform.position)
+                else if (particleArr[i].position == uiTarget)
                 {
                     particleArr[i].remainingLifetime = 0;
                     continue;
@@ -170,7 +172,7 @@ public class TravellingParticles : MonoBehaviour
     private void OnDrawGizmos()
     {
         //_targetRectTransform.anchoredPosition;
-        Vector3 uiPosition = new(0, 1080, _camDepth);
+        Vector3 uiPosition = new(_uiPosition.x, _uiPosition.y, _camDepth);
         //uiPosition.z = _camDepth;
 
         Vector3 uiTarget = Camera.main.ScreenToWorldPoint(uiPosition, Camera.MonoOrStereoscopicEye.Mono);
