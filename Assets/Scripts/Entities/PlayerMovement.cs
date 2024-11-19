@@ -1,6 +1,6 @@
 /******************************************************************
  *    Author: Cole Stranczek
- *    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson, Alec Pizziferro, Josephine Qualls
+ *    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson, Alec Pizziferro, Josephine Qualls, Jamison Parks
  *    Date Created: 9/22/24
  *    Description: Script that handles the player's movement along
  *    the grid
@@ -62,6 +62,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     public static PlayerMovement Instance;
 
     private const float MinMovementTime = 0.175f;
+
+    [SerializeField] private Animator _animator;
     
     private void Awake()
     {
@@ -110,6 +112,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     {
         float modifiedMovementTime = Mathf.Clamp(_movementTime / _playerMovementTiming,
             MinMovementTime, float.MaxValue);
+        _animator.SetTrigger("Forward");
 
         for (int i = 0; i < _playerMovementTiming; i++)
         {
@@ -178,7 +181,13 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// <param name="direction">The direction the player should move</param>
     public void BeginTurn(Vector3 direction)
     {
+
+    //if (FacingDirection = 0,0,0)
+
         _playerInteraction.SetDirection(direction);
+        if (direction.x == 180) _animator.SetTrigger("Backwards");
+        else if (direction.x < 0) _animator.SetTrigger("Left");
+        else  _animator.SetTrigger("Right");
         Tween.Rotation(transform, endValue: Quaternion.LookRotation(direction), duration: _rotationTime,
             ease: _rotationEase).OnComplete(
             () =>
