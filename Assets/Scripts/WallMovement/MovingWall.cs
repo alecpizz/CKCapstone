@@ -32,7 +32,7 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     //to decide if switch should be true or not
     private bool _worked = true;
 
-    private bool _active = false;
+    private bool _active = true;
 
     private bool _deactive = false;
 
@@ -62,6 +62,15 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
         _originGhost.y = transform.position.y;
     }
 
+    public void StartAnimation()
+    {
+        if (GridBase.Instance.CellIsTransparent(_originGhost))
+        {
+            UpWallAnimation();
+        }
+
+    }
+
     /// <summary>
     /// Swaps the positions of the wall and the ghost
     /// When switch is turned on
@@ -69,14 +78,12 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     /// </summary>
     public void SwitchActivation()
     {
-
         if (GridBase.Instance.CellIsTransparent(_originGhost))
         {
-            _active = true;
 
             transform.position = _originGhost;
             _wallGhost.transform.position = _originWall;
-            
+
             _wallGrid.UpdatePosition();
 
             _worked = true;
@@ -88,11 +95,7 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
 
         _active = false;
         _deactive = true;
-    }
-
-    public void StartAnimation()
-    {
-        UpWallAnimation();
+        
     }
 
     /// <summary>
@@ -102,18 +105,15 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     /// </summary>
     public void SwitchDeactivation()
     {
-
-        if (GridBase.Instance.CellIsTransparent(_originWall)) 
+        if (GridBase.Instance.CellIsTransparent(_originGhost))
         {
-            _deactive = true;
 
             transform.position = _originWall;
             _wallGhost.transform.position = _originGhost;
-            
+
             _wallGrid.UpdatePosition();
 
             _worked = true;
-
         }
         else
         {
@@ -145,12 +145,12 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
 
     private void UpWallAnimation()
     {
-        if(_worked && _active)
+        if(_active)
         {
             Tween.PositionY(transform, endValue: 10, duration: 1, ease: Ease.InOutSine).OnComplete(() => SwitchActivation());//.
                 //Chain(Tween.PositionY(transform, endValue: 1.5f, duration: 1, ease: Ease.InOutSine));
         }
-        else if(_worked && _deactive)
+        else if(_deactive)
         {
             Tween.PositionY(transform, endValue: 10, duration: 1, ease: Ease.InOutSine).OnComplete(() => SwitchDeactivation());//.
                 //Chain(Tween.PositionY(transform, endValue: 1.5f, duration: 1, ease: Ease.InOutSine));
