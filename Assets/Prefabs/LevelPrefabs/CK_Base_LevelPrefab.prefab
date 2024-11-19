@@ -6630,6 +6630,7 @@ MonoBehaviour:
   _tutorialCanvas: {fileID: 1926007019816770718}
   _optionsScreen: {fileID: 1731195786548286141}
   _confirmQuit: {fileID: 0}
+  _mainMenu: {fileID: 0}
   _buttonPress:
     Guid:
       Data1: 207925213
@@ -25352,7 +25353,6 @@ RectTransform:
   m_Children:
   - {fileID: 9169128936417867329}
   - {fileID: 4969755175486981702}
-  - {fileID: 6886038696458060784}
   - {fileID: 1161156619709682809}
   - {fileID: 7015187769215273752}
   - {fileID: 4754326492039255153}
@@ -26615,11 +26615,11 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1532250353942642933}
+  m_Father: {fileID: 327724428950967910}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 9.999977, y: 11.6}
+  m_AnchoredPosition: {x: 9.999977, y: -161.40002}
   m_SizeDelta: {x: 838.706, y: 139.785}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7133074514582611775
@@ -26678,7 +26678,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 86
+  m_fontSize: 60
   m_fontSizeBase: 86
   m_fontWeight: 400
   m_enableAutoSizing: 0
@@ -63594,8 +63594,18 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 8742016217455121417}
+    - targetCorrespondingSourceObject: {fileID: 4318129057925662556, guid: 3ef03f05c0a6e304ab2ae36015c9cae9,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6886038696458060784}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3ef03f05c0a6e304ab2ae36015c9cae9, type: 3}
+--- !u!224 &327724428950967910 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 4318129057925662556, guid: 3ef03f05c0a6e304ab2ae36015c9cae9,
+    type: 3}
+  m_PrefabInstance: {fileID: 4567033607094571322}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1731195786548286141 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2839288371564086151, guid: 3ef03f05c0a6e304ab2ae36015c9cae9,
