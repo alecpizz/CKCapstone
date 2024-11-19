@@ -26,7 +26,6 @@ public struct DialogueEntry
     [Range(-5f, 5f)] public float _adjustTypingSpeed;
 }
 
-// TODO: Update this class to implement from IInteractable
 public class NPCScript : MonoBehaviour, IInteractable
 {
     [SerializeField] private TMP_Text _dialogueBox;
@@ -44,6 +43,7 @@ public class NPCScript : MonoBehaviour, IInteractable
     private Coroutine _typingCoroutine;
     private bool _isTyping = false;
     private string _currentFullText;
+    private bool _playerWithinBounds = false;
 
     // FIXME: waiting until new AudioManager update gets pushed
     //private EventInstance _currentInstance;
@@ -71,11 +71,22 @@ public class NPCScript : MonoBehaviour, IInteractable
     /// </summary>
     public void OnLeave()
     {
-        HideDialogue();
+        if (!_playerWithinBounds)
+        {
+            HideDialogue();
+        }
+        else
+        {
+            _dialogueBox.SetText(_tutorialHint);
+        }
     }
 
     public void OnEnter()
     {
+        if (_typingCoroutine != null)
+        {
+            StopCoroutine(_typingCoroutine);
+        }
         _dialogueBox.SetText(_tutorialHint);
         _dialogueBox.CrossFadeAlpha(1f, 0.25f, false);
         _background.CrossFadeAlpha(1f, 0.25f, false);
@@ -181,6 +192,32 @@ public class NPCScript : MonoBehaviour, IInteractable
             StopCoroutine(_typingCoroutine);
         }
         _isTalking = false;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            _playerWithinBounds = true;
+            if (_typingCoroutine != null)
+            {
+                StopCoroutine(_typingCoroutine);
+            }
+            OnEnter();
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            _playerWithinBounds = false;
+            if (_typingCoroutine != null)
+            {
+                StopCoroutine(_typingCoroutine);
+            }
+            OnLeave();
+        }
     }
 
     /// <summary>

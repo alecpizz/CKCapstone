@@ -56,9 +56,15 @@ public class PlayerInteraction : MonoBehaviour
     /// <returns>The found interactable, can be null.</returns>
     private IInteractable TryGetInteractable()
     {
+        return GetInteractableInDirection(Vector3.forward) ?? GetInteractableInDirection(Vector3.back) ??
+            GetInteractableInDirection(Vector3.left) ?? GetInteractableInDirection(Vector3.right);
+    }
+
+    private IInteractable GetInteractableInDirection(Vector3 direction)
+    {
         Vector3 cellPositionToCheck = 
             _gridBase.GetCellPositionInDirection(transform.position, 
-                _facingDirection);
+                direction);
         Vector3Int cellCoordinatesToCheck = _gridBase.WorldToCell(cellPositionToCheck);
         if (_gridBase.CellIsEmpty(cellCoordinatesToCheck))
         {
@@ -72,6 +78,7 @@ public class PlayerInteraction : MonoBehaviour
                 return interactable;
             }
         }
+
         return null;
     }
 
