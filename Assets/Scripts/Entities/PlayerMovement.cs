@@ -116,7 +116,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             // Move if there is no wall below the player or if ghost mode is enabled
             var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
 
-            if ((GridBase.Instance.CellIsEmpty(move)) ||
+            if ((GridBase.Instance.CellIsTransparent(move)) ||
                 (DebugMenuManager.Instance.GhostMode))
             {
                 yield return Tween.Position(transform,
@@ -176,9 +176,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     public void BeginTurn(Vector3 direction)
     {
         _playerInteraction.SetDirection(direction);
-
-        var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
-        var entries = GridBase.Instance.GetCellEntries(move);
 
         Tween.Rotation(transform, endValue: Quaternion.LookRotation(direction), duration: _rotationTime,
             ease: _rotationEase).OnComplete(
