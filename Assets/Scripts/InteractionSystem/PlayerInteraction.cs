@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Nick Grinstead
-*    Contributors: Alec Pizziferro
+*    Contributors: 
 *    Date Created: 10/10/24
 *    Description: This script should be attached to the player character,
 *    and handles checking an adjacent square for interactables when
@@ -47,39 +47,27 @@ public class PlayerInteraction : MonoBehaviour
     /// </summary>
     private void Interact()
     {
-        _currentInteractable?.OnInteract();
-    }
-
-    /// <summary>
-    /// Attempts to find an interactable in a nearby cell.
-    /// </summary>
-    /// <returns>The found interactable, can be null.</returns>
-    private IInteractable TryGetInteractable()
-    {
-        return GetInteractableInDirection(Vector3.forward) ?? GetInteractableInDirection(Vector3.back) ??
-            GetInteractableInDirection(Vector3.left) ?? GetInteractableInDirection(Vector3.right);
-    }
-
-    private IInteractable GetInteractableInDirection(Vector3 direction)
-    {
+        // Finding coordinates of the adjacent square
         Vector3 cellPositionToCheck = 
             _gridBase.GetCellPositionInDirection(transform.position, 
-                direction);
+            _facingDirection);
+
         Vector3Int cellCoordinatesToCheck = _gridBase.WorldToCell(cellPositionToCheck);
-        if (_gridBase.CellIsEmpty(cellCoordinatesToCheck))
-        {
-            return null;
-        }
+
+        // Checking if there are objects in the adjacent square
+        if (_gridBase.CellIsEmpty(cellCoordinatesToCheck)) { return; }
+
+        // Checking the square's entries for any interactables
         _gridEntries = _gridBase.GetCellEntries(cellCoordinatesToCheck);
         foreach (var entry in _gridEntries)
         {
-            if (entry.GetGameObject.TryGetComponent<IInteractable>(out var interactable))
+            IInteractable interactable;
+            if (entry.GetGameObject.TryGetComponent<IInteractable>(out interactable))
             {
-                return interactable;
+                _currentInteractable = interactable;
+                interactable.OnInteract();
             }
         }
-
-        return null;
     }
 
     /// <summary>
@@ -96,8 +84,5 @@ public class PlayerInteraction : MonoBehaviour
             _currentInteractable = null;
         }
         _facingDirection = direction;
-        var interactable = TryGetInteractable();
-        _currentInteractable = interactable;
-        interactable?.OnEnter();
     }
 }
