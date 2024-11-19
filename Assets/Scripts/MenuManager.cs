@@ -7,6 +7,7 @@
 using FMODUnity;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -16,6 +17,8 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject _tutorialCanvas;
     [SerializeField] private GameObject _optionsScreen;
     [SerializeField] private GameObject _confirmQuit;
+    [SerializeField] private GameObject _mainMenu;
+
 
     [SerializeField] private EventReference _buttonPress;
 
@@ -55,6 +58,7 @@ public class MenuManager : MonoBehaviour
         PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
         {
             _optionsScreen.SetActive(true);
+            _mainMenu.SetActive(false);
         });
     }
 
@@ -73,6 +77,16 @@ public class MenuManager : MonoBehaviour
     public void OptionsClose()
     {
         _optionsScreen.SetActive(false);
+    }
+
+    /// <summary>
+    /// Invoked to close the options menu in the main menu
+    /// </summary>
+    public void OptionsCloseMainMenu()
+    {
+        _optionsScreen.SetActive(false);
+        _mainMenu.SetActive(true);
+
     }
 
     /// <summary>
