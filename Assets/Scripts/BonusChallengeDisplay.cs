@@ -26,6 +26,9 @@ public class BonusChallengeDisplay : MonoBehaviour
     //background panel
     [SerializeField] private GameObject _panel;
 
+    //how quickly do you want the splash text to fade in and out?
+    [SerializeField] private float _fadeTime;
+
     //color variable for making the text fade in and out
     private Color _textColor;
 
@@ -50,8 +53,8 @@ public class BonusChallengeDisplay : MonoBehaviour
         _panelColor = _panelBackground.color;
         _panelColor.a = 0;
         StartCoroutine(FadingIn());
-
-        Invoke("InitiateFadeOut", 2);
+        StartCoroutine(FadingOut());
+        //Invoke("InitiateFadeOut", 2);
     }
 
     /// <summary>
@@ -60,44 +63,48 @@ public class BonusChallengeDisplay : MonoBehaviour
     /// <returns></returns>
     private IEnumerator FadingIn()
     {
-        while (_panelColor.a < 0.9f)
-        {
-            _panelColor.a += (Time.deltaTime * _textFadeSpeed);
-            yield return null;
-        }
+        //while (_panelColor.a < 0.9f)
+        //{
+            //_panelColor.a += (Time.deltaTime * _textFadeSpeed);
+            _panelBackground.canvasRenderer.SetAlpha(0);
+            _panelBackground.CrossFadeAlpha(1, _fadeTime, false);
+          //  yield return null;
+        //}
 
-        while (_textColor.a < 1)
-        {
-            _textColor.a += (Time.deltaTime * _textFadeSpeed);
+        //while (_textColor.a < 1)
+        //{
+            /*_textColor.a*/
+            _text.canvasRenderer.SetAlpha(0);
+            _text.CrossFadeAlpha(1, _fadeTime, false);
             yield return null;
-        }
+        //}
     }
 
     /// <summary>
     /// Function gets invoked to start coroutine because invoking a coroutine 
     /// didn't work for me.
     /// </summary>
-    private void InitiateFadeOut()
+   /* private void InitiateFadeOut()
     {
         StartCoroutine(FadingOut());
-    }
+    } */
 
     /// <summary>
     /// Tells the UI element to self-destruct after fading onto screen.
     /// </summary>
-    private void Update()
+    /*private void Update()
     {
         if (_textColor.a == 0 && _readyToDestroy)
         {
             Destroy(gameObject);
-        }
+        } 
 
-        //updates the UI text color
+        updates the UI text color
         _text.color = _textColor;
 
-        //updates background panel color
+        updates background panel color
         _panelBackground.color = _panelColor;
-    }
+    }*/
 
     /// <summary>
     /// Fades the text out.
@@ -105,18 +112,23 @@ public class BonusChallengeDisplay : MonoBehaviour
     /// <returns></returns>
     private IEnumerator FadingOut()
     {
+        yield return new WaitForSeconds(2);
         _readyToDestroy = true;
 
-        while (_textColor.a > 0)
-        {
-            _textColor.a -= (Time.deltaTime * _textFadeSpeed);
-            yield return null;
-        }
+        //while (_textColor.a > 0)
+       // {
+            //_textColor.a -= (Time.deltaTime * _textFadeSpeed);
+            _text.canvasRenderer.SetAlpha(1);
+            _text.CrossFadeAlpha(0, _fadeTime, false);
+          //  yield return null;
+       // }
 
-        while (_panelColor.a > 0)
-        {
-            _panelColor.a -= (Time.deltaTime * _textFadeSpeed);
+       // while (_panelColor.a > 0)
+       // {
+            //_panelColor.a -= (Time.deltaTime * _textFadeSpeed);
+            _panelBackground.canvasRenderer.SetAlpha(1);
+            _panelBackground.CrossFadeAlpha(0, _fadeTime, false);
             yield return null;
-        }
+      //  }
     }
 }
