@@ -68,7 +68,7 @@ public class SwitchTrigger : MonoBehaviour
             {
                 if (_isTriggered)
                 {
-                    _affectedWalls[i].SwitchActivation();
+                    _affectedWalls[i].StartAnimation();
 
                     if (!_affectedWalls[i].GetWorked())
                     {
@@ -77,7 +77,7 @@ public class SwitchTrigger : MonoBehaviour
                 }
                 else
                 {
-                    _affectedWalls[i].SwitchDeactivation();
+                    _affectedWalls[i].StartAnimation();
 
                     if (!_affectedWalls[i].GetWorked())
                     {
