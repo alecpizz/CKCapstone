@@ -35,6 +35,16 @@ public class SwitchTrigger : MonoBehaviour
     //reference for sound of switch
     [SerializeField] private EventReference _switchSound = default;
 
+    private const float yOffset = 0.86f;
+
+    /// <summary>
+    /// Positions the switch to be at a height where it doesn't clip into the ground
+    /// </summary>
+    private void Awake()
+    {
+        transform.localPosition = 
+            new Vector3(transform.localPosition.x, yOffset, transform.localPosition.z);
+    }
 
     /// <summary>
     /// Turns the switch on/off everytime the Player steps on it
@@ -59,10 +69,20 @@ public class SwitchTrigger : MonoBehaviour
                 if (_isTriggered)
                 {
                     _affectedWalls[i].SwitchActivation();
+
+                    if (!_affectedWalls[i].GetWorked())
+                    {
+                        _isTriggered = false;
+                    }
                 }
                 else
                 {
                     _affectedWalls[i].SwitchDeactivation();
+
+                    if (!_affectedWalls[i].GetWorked())
+                    {
+                        _isTriggered = true;
+                    }
                 }
 
                 AudioManager.Instance.PlaySound(_switchSound);
@@ -105,7 +125,10 @@ public class SwitchTrigger : MonoBehaviour
         }
     }
 
-    // Visually raises the pressure plate when the player steps off
+    /// <summary>
+    /// Visually raises the pressure plate when the player steps off
+    /// </summary>
+    /// <param name="other"></param>
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
