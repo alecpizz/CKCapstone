@@ -70,13 +70,6 @@ public class TravellingParticles : MonoBehaviour
     /// <summary>
     /// Plays the particles and sends them from the emission transform to the target transform
     /// </summary>
-
-    [Button("Play Particles (Runtime Only)")]
-    public void PlayParticles()
-    {
-        StartCoroutine(ParticleSequence());
-    }
-
     [Button("Play UI Particles (Runtime Only)")]
     public void PlayUIParticles()
     {
@@ -89,42 +82,6 @@ public class TravellingParticles : MonoBehaviour
     /// When they reach the target, they die.
     /// </summary>
     /// <returns></returns>
-    private IEnumerator ParticleSequence()
-    {
-        _particles.Play();
-
-        ParticleSystem.Particle[] particleArr = new ParticleSystem.Particle[_particles.main.maxParticles];
-
-        for (float step = 0; step < _forceDuration; step += Time.deltaTime)
-        {
-            _particles.GetParticles(particleArr);
-
-            for (int i = 0; i < particleArr.Length; i++)
-            {
-                // Ignore if particle is dead or if the particle hasn't lived longer than the force delay
-                if (particleArr[i].remainingLifetime <= 0 || 
-                    particleArr[i].remainingLifetime > particleArr[i].startLifetime - _forceDelay)
-                    continue;
-                // Delete self upon colliding with target
-                else if (particleArr[i].position == _targetTransform.position)
-                {
-                    particleArr[i].remainingLifetime = 0;
-                    continue;
-                }
-
-                // Particles don't have a transform so can't tween :(
-                // Have to reset velocity and position each time or else they wander off
-                particleArr[i].velocity = Vector3.zero;
-                particleArr[i].position = Vector3.MoveTowards(particleArr[i].position, _targetTransform.position, _forceSpeed);
-            }
-
-            _particles.SetParticles(particleArr);
-
-            yield return null;
-        }
-
-    }
-
     private IEnumerator ParticleUISequence()
     {
         _particles.Play();
@@ -133,10 +90,8 @@ public class TravellingParticles : MonoBehaviour
 
         Vector3 uiPosition = _uiPosition;
         uiPosition.z = _camDepth;
-        print("UI Position: " + uiPosition);
-        //Vector3 uiTarget = _uiCamera.ScreenToWorldPoint(_uiTarget, Camera.MonoOrStereoscopicEye.Mono);
+        //print("UI Position: " + uiPosition);
         Vector3 uiTarget = _uiCamera.ScreenToWorldPoint(uiPosition, Camera.MonoOrStereoscopicEye.Mono);
-        //print("UI Target: " + uiTarget);
 
         _particles.GetParticles(particleArr);
 
@@ -167,19 +122,5 @@ public class TravellingParticles : MonoBehaviour
 
             yield return null;
         }
-    }
-
-    private void OnDrawGizmos()
-    {
-        //_targetRectTransform.anchoredPosition;
-        Vector3 uiPosition = new(_uiPosition.x, _uiPosition.y, _camDepth);
-        //uiPosition.z = _camDepth;
-
-        Vector3 uiTarget = Camera.main.ScreenToWorldPoint(uiPosition, Camera.MonoOrStereoscopicEye.Mono);
-
-        Gizmos.color = Color.blue;
-        Gizmos.DrawLine(_uiCamera.transform.position, uiTarget);
-        Gizmos.color = Color.green;
-        Gizmos.DrawSphere(uiTarget, 0.5f);
     }
 }
