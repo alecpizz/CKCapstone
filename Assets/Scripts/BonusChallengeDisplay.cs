@@ -54,7 +54,6 @@ public class BonusChallengeDisplay : MonoBehaviour
         _panelColor.a = 0;
         StartCoroutine(FadingIn());
         StartCoroutine(FadingOut());
-        //Invoke("InitiateFadeOut", 2);
     }
 
     /// <summary>
@@ -63,48 +62,13 @@ public class BonusChallengeDisplay : MonoBehaviour
     /// <returns></returns>
     private IEnumerator FadingIn()
     {
-        //while (_panelColor.a < 0.9f)
-        //{
-            //_panelColor.a += (Time.deltaTime * _textFadeSpeed);
-            _panelBackground.canvasRenderer.SetAlpha(0);
-            _panelBackground.CrossFadeAlpha(1, _fadeTime, false);
-          //  yield return null;
-        //}
+        _panelBackground.canvasRenderer.SetAlpha(0);
+        _panelBackground.CrossFadeAlpha(1, _fadeTime, false);
 
-        //while (_textColor.a < 1)
-        //{
-            /*_textColor.a*/
-            _text.canvasRenderer.SetAlpha(0);
-            _text.CrossFadeAlpha(1, _fadeTime, false);
-            yield return null;
-        //}
+        _text.canvasRenderer.SetAlpha(0);
+        _text.CrossFadeAlpha(1, _fadeTime, false);
+        yield return null;
     }
-
-    /// <summary>
-    /// Function gets invoked to start coroutine because invoking a coroutine 
-    /// didn't work for me.
-    /// </summary>
-   /* private void InitiateFadeOut()
-    {
-        StartCoroutine(FadingOut());
-    } */
-
-    /// <summary>
-    /// Tells the UI element to self-destruct after fading onto screen.
-    /// </summary>
-    /*private void Update()
-    {
-        if (_textColor.a == 0 && _readyToDestroy)
-        {
-            Destroy(gameObject);
-        } 
-
-        updates the UI text color
-        _text.color = _textColor;
-
-        updates background panel color
-        _panelBackground.color = _panelColor;
-    }*/
 
     /// <summary>
     /// Fades the text out.
@@ -115,20 +79,11 @@ public class BonusChallengeDisplay : MonoBehaviour
         yield return new WaitForSeconds(2);
         _readyToDestroy = true;
 
-        //while (_textColor.a > 0)
-       // {
-            //_textColor.a -= (Time.deltaTime * _textFadeSpeed);
-            _text.canvasRenderer.SetAlpha(1);
-            _text.CrossFadeAlpha(0, _fadeTime, false);
-          //  yield return null;
-       // }
+        _text.canvasRenderer.SetAlpha(1);
+        _text.CrossFadeAlpha(0, _fadeTime, false);
 
-       // while (_panelColor.a > 0)
-       // {
-            //_panelColor.a -= (Time.deltaTime * _textFadeSpeed);
-            _panelBackground.canvasRenderer.SetAlpha(1);
-            _panelBackground.CrossFadeAlpha(0, _fadeTime, false);
-            yield return null;
-      //  }
+        _panelBackground.canvasRenderer.SetAlpha(1);
+        _panelBackground.CrossFadeAlpha(0, _fadeTime, false);
+        yield return null;
     }
 }
