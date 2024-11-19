@@ -41,6 +41,7 @@ public class MetronomeBehavior : MonoBehaviour
     private float _flashSpeed = 0.5f;
 
     private bool _isSlow = true;
+    private static readonly int GoFaster = Animator.StringToHash("GoFaster");
 
     /// <summary>
     /// Keeps the particle effects from playing right away.
@@ -87,11 +88,11 @@ public class MetronomeBehavior : MonoBehaviour
 
         if (_initiallySlow)
         {
-            _anim.SetBool("GoFaster", true);
+            _anim.SetBool(GoFaster, true);
         }
         else
         {
-            _anim.SetBool("GoFaster", false);
+            _anim.SetBool(GoFaster, false);
         }
 
         //loops 6 times
