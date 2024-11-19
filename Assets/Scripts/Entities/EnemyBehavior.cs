@@ -73,17 +73,21 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
     // Event reference for the enemy movement sound
     [SerializeField] private EventReference _enemyMove = default;
+    [SerializeField] public bool sonEnemy;
 
     private void Awake()
     {
         PrimeTweenConfig.warnEndValueEqualsCurrent = false;
     }
 
+    private const float MinMoveTime = 0.175f;
+
     // Start is called before the first frame update
     void Start()
     {
         moveInDirection = new Vector3(0, 0, 0);
 
+        SnapToGridSpace();
         GridBase.Instance.AddEntry(this);
 
         _player = PlayerMovement.Instance.gameObject;
@@ -239,6 +243,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                         moveInDirection);
                     var entries = GridBase.Instance.GetCellEntries(move);
                     bool breakLoop = false;
+                    float movementTime = Mathf.Clamp((_waitTime / pointTiles) / _enemyMovementTime, 
+                        MinMoveTime, float.MaxValue);
 
                     //If the next cell contains an object that is not the player then the loop breaks
                     //enemy can't move into other enemies, walls, etc.
@@ -260,7 +266,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                         ease: _rotationEase);
 
                     yield return Tween.Position(transform,
-                        move + _positionOffset, _waitTime, ease: Ease.OutBack).OnUpdate<EnemyBehavior>(target: this, (target, tween) =>
+                        move + _positionOffset, duration: movementTime, 
+                        ease: Ease.OutBack).OnUpdate<EnemyBehavior>(target: this, (target, tween) =>
                         {
                             GridBase.Instance.UpdateEntry(this);
                         }).ToYieldInstruction();
@@ -423,7 +430,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     /// </summary>
     public void OnLaserHit()
     {
-        if (CompareTag("SonEnemy"))
+        if (sonEnemy)
         {
             EnemyFrozen = true;
         }
@@ -437,5 +444,15 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         EnemyFrozen = false;
     }
 
-    public bool HitWrapAround { get => true; }
+    public bool HitWrapAround { get => sonEnemy; }
+
+    /// <summary>
+    /// Places this object in the center of its grid cell
+    /// </summary>
+    public void SnapToGridSpace()
+    {
+        Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
+        Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos);
+        transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z);
+    }
 }

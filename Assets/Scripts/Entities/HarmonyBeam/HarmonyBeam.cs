@@ -156,10 +156,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
                         //we haven't seen this one before, hit it!
                         if (!_prevHitEntities.Contains(entity))
                         {
-                            foreach (var entry in entries)
-                            {
-                                entity.OnLaserHit();          
-                            }
+                           entity.OnLaserHit();                                     
                         }
 
                         _hitEntities.Add(entity);
@@ -173,16 +170,10 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
                         {
                             if (!_wrappedEnemyFX.ContainsKey(entity))
                             {
-                                foreach (var entry in entries)
-                                {
-                                    if (entry.GetGameObject.CompareTag("SonEnemy"))
-                                    {
-                                        GameObject enemyFX = Instantiate(_enemyHitEffectPrefab, entity.Position, Quaternion.identity);
-                                        _wrappedEnemyFX.TryAdd(entity, enemyFX);
-                                        _wrappedEnemyFX[entity] = enemyFX;
-                                        _enemyGrabbedInstance = AudioManager.Instance.PlaySound(_enemyHarmonization);
-                                    }
-                                }
+                                GameObject enemyFX = Instantiate(_enemyHitEffectPrefab, entity.Position, Quaternion.identity);
+                                _wrappedEnemyFX.TryAdd(entity, enemyFX);
+                                _wrappedEnemyFX[entity] = enemyFX;
+                                _enemyGrabbedInstance = AudioManager.Instance.PlaySound(_enemyHarmonization);
                             }
 
                             enemyHit = true;

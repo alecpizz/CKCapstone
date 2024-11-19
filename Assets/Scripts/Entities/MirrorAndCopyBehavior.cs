@@ -38,6 +38,9 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     [SerializeField] private float _rotationTime = 0.10f;
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
 
+    // Bool checked if this enemy is a Son Enemy
+    [SerializeField] private bool sonEnemy;
+
     private void Awake()
     {
         PrimeTweenConfig.warnEndValueEqualsCurrent = false;
@@ -142,11 +145,11 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
         RoundManager.Instance.CompleteTurn(this);
     }
 
-        /// <summary>
-        /// Receives the new player movement speed when time signature updates
-        /// </summary>
-        /// <param name="newTimeSignature">The new time signature</param>
-        public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
+    /// <summary>
+    /// Receives the new player movement speed when time signature updates
+    /// </summary>
+    /// <param name="newTimeSignature">The new time signature</param>
+    public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
     {
         _movementTiming = newTimeSignature.x;
 
@@ -174,7 +177,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     /// </summary>
     public void OnLaserHit()
     {
-        if (CompareTag("SonEnemy"))
+        if (sonEnemy)
         {
             EnemyFrozen = true;
         }
@@ -188,5 +191,13 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
         EnemyFrozen = false;
     }
 
-    public bool HitWrapAround { get => true; }
+
+    public bool HitWrapAround { get => sonEnemy; }
+
+    public void SnapToGridSpace()
+    {
+        Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
+        Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos);
+        transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z);
+    }
 }
