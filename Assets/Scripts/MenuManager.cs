@@ -55,7 +55,7 @@ public class MenuManager : MonoBehaviour
     public void OptionsMainMenu()
     {
         AudioManager.Instance.PlaySound(_buttonPress);
-        PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
+        PrimeTween.Tween.Delay(0.2f).OnComplete(() =>
         {
             _optionsScreen.SetActive(true);
         });
@@ -103,7 +103,7 @@ public class MenuManager : MonoBehaviour
     public void ActivateTutorialCanvas()
     {
         AudioManager.Instance.PlaySound(_buttonPress);
-        PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
+        PrimeTween.Tween.Delay(0.2f).OnComplete(() =>
         {
             _tutorialCanvas.SetActive(true);
         });
@@ -131,7 +131,7 @@ public class MenuManager : MonoBehaviour
     public void QuitConfirm()
     {
         AudioManager.Instance.PlaySound(_buttonPress);
-        PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
+        PrimeTween.Tween.Delay(0.2f).OnComplete(() =>
         {
            _confirmQuit.SetActive(true);
         });
