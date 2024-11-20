@@ -35,6 +35,7 @@ public class NPCScript : MonoBehaviour, IInteractable
     [Range(2f, 10f)][SerializeField] private float _typingSpeed = 5f;
     [SerializeField] private List<DialogueEntry> _dialogueEntries;
     [SerializeField] [TextArea] private string _tutorialHint = "Press E to Talk";
+    [SerializeField] private float _dialogueFadeDuration = 0.25f;
     //dialogue options
     private int _currentDialogue = 0;
     private float _currentTypingSpeed;
@@ -123,8 +124,8 @@ public class NPCScript : MonoBehaviour, IInteractable
                 _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue]._text));
             }
 
-            _dialogueBox.CrossFadeAlpha(1f, 0.25f, false);
-            _background.CrossFadeAlpha(1f, 0.25f, false);
+            _dialogueBox.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
+            _background.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
             _occupied = true;
             _isTalking = true;
         }
@@ -172,8 +173,8 @@ public class NPCScript : MonoBehaviour, IInteractable
     /// </summary>
     public void HideDialogue()
     {
-        _dialogueBox.CrossFadeAlpha(0f, 0.25f, false);
-        _background.CrossFadeAlpha(0f, 0.25f, false);
+        _dialogueBox.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
+        _background.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
         _occupied = false;
 
         if (_typingCoroutine != null)
@@ -183,7 +184,11 @@ public class NPCScript : MonoBehaviour, IInteractable
         _isTalking = false;
     }
 
-    
+    /// <summary>
+    /// Invoked when the player enters, displays the dialogue box
+    /// for tutorial text.
+    /// </summary>
+    /// <param name="other">The collider of the player.</param>
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
@@ -193,12 +198,18 @@ public class NPCScript : MonoBehaviour, IInteractable
             {
                 StopCoroutine(_typingCoroutine);
             }
+            //set to tutorial text and fade in over time.
             _dialogueBox.SetText(_tutorialHint);
-            _dialogueBox.CrossFadeAlpha(1f, 0.25f, false);
-            _background.CrossFadeAlpha(1f, 0.25f, false);
+            _dialogueBox.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
+            _background.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
         }
     }
 
+    /// <summary>
+    /// Invoked when the player exits,
+    /// hides the dialogue box.
+    /// </summary>
+    /// <param name="other">The collider of the player.</param>
     private void OnTriggerExit(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
