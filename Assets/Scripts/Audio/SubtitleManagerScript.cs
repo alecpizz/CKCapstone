@@ -78,6 +78,10 @@ public class SubtitleManager : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        // Disable subtitles
+        if (PlayerPrefs.GetInt("Subtitles") == 0)
+            return;
+
         if (!IsPlaying(_currentDialogue))
         {
             AudioManager.Instance.StopSound(_currentDialogue);
