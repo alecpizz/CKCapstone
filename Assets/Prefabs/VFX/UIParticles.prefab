@@ -361,7 +361,7 @@ ParticleSystem:
   lengthInSec: 0.6
   simulationSpeed: 1
   stopAction: 0
-  cullingMode: 2
+  cullingMode: 0
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
   emitterVelocityMode: 1
@@ -433,7 +433,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1.2
+      scalar: 3
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -5194,7 +5194,7 @@ ParticleSystem:
   lengthInSec: 0.6
   simulationSpeed: 1
   stopAction: 0
-  cullingMode: 2
+  cullingMode: 0
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
   emitterVelocityMode: 1
@@ -6130,7 +6130,7 @@ ParticleSystem:
       countCurve:
         serializedVersion: 2
         minMaxState: 0
-        scalar: 10
+        scalar: 2
         minScalar: 30
         maxCurve:
           serializedVersion: 2
@@ -10092,8 +10092,9 @@ MonoBehaviour:
   _collisionParticles: {fileID: 4594255523737226235}
   _uiCamera: {fileID: 8885793565157256594}
   _emissionTransform: {fileID: 9034648589415639605}
-  _screenSpaceCoordinates: {x: -1800, y: 1950}
+  _screenSpaceCoords: {x: -1200, y: 1500}
+  _collisionOffsetCoords: {x: 100, y: 1000}
   _camDepth: 10.31
-  _forceSpeed: 1
+  _forceSpeed: 0.3
   _forceDelay: 1
-  _forceDuration: 2
+  _forceDuration: 3

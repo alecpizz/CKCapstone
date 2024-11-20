@@ -25,7 +25,9 @@ public class TravellingParticles : MonoBehaviour
 
     [Header("Screen Space Rendering")]
     [SerializeField]
-    private Vector2 _screenSpaceCoordinates;
+    private Vector2 _screenSpaceCoords;
+    [SerializeField]
+    private Vector2 _collisionOffsetCoords;
     [SerializeField]
     private float _camDepth = 6;
 
@@ -54,7 +56,7 @@ public class TravellingParticles : MonoBehaviour
         _uiCamera.transform.SetPositionAndRotation(mainCameraTrans.position, 
             mainCameraTrans.rotation);
 
-        _uiTarget = _screenSpaceCoordinates;
+        _uiTarget = _screenSpaceCoords;
         _uiTarget.z = _camDepth;
 
         _uiTarget = _uiCamera.ScreenToWorldPoint(_uiTarget, Camera.MonoOrStereoscopicEye.Mono);
@@ -91,12 +93,16 @@ public class TravellingParticles : MonoBehaviour
     private IEnumerator ParticleUISequence()
     {
         // Remove Me
-        _uiTarget = _screenSpaceCoordinates;
+        _uiTarget = _screenSpaceCoords;
         _uiTarget.z = _camDepth;
+
+        Vector3 collisionScreenPos = _collisionOffsetCoords;
+        collisionScreenPos.z = _camDepth;
 
         _uiTarget = _uiCamera.ScreenToWorldPoint(_uiTarget, Camera.MonoOrStereoscopicEye.Mono);
 
-        _collisionParticles.transform.position = _uiTarget;
+        _collisionParticles.transform.position = _uiCamera.ScreenToWorldPoint(collisionScreenPos, Camera.MonoOrStereoscopicEye.Mono); ;
+        print("Collision Position: " + _collisionParticles.transform.position);
 
         // Remove Me
 
@@ -128,6 +134,7 @@ public class TravellingParticles : MonoBehaviour
             // Delete self and play collision particles upon colliding with target
             else if (particleArr[i].position == target)
             {
+                print("Particle Position: " + particleArr[i].position);
                 particleArr[i].remainingLifetime = 0;
                 if(_hasCollisionParticles)
                     _collisionParticles.Play();
