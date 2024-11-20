@@ -58,6 +58,11 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
         _originGhost.y = transform.position.y;
     }
 
+    /// <summary>
+    /// Performs the switch of the wall and ghost wall
+    /// When the switch is activated
+    /// Allows Player to move where wall once was
+    /// </summary>
     public void ActivationAction()
     {
         transform.position = _originGhost;
@@ -67,6 +72,11 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
 
     }
 
+    /// <summary>
+    /// Performs the switch of the wall and ghost wall
+    /// When the switch is deactivated
+    /// Allows Player to move where wall once was
+    /// </summary>
     public void DeactivationAction()
     {
         transform.position = _originWall;
@@ -76,9 +86,9 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     }
 
     /// <summary>
-    /// Swaps the positions of the wall and the ghost
-    /// When switch is turned on
-    /// Allows Player to move where wall once was
+    /// Performs an animation that lifts the wall and drops it where the ghost wall was
+    /// Calls ActivationAction() to swap the wall and ghost wall positions
+    /// Only works if there is nothing obstucting the ghost wall's tile
     /// </summary>
     public void SwitchActivation()
     {
@@ -97,9 +107,9 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     }
 
     /// <summary>
-    /// Swaps wall and ghost back to original positions
-    /// Now that switch is off
-    /// Allows Player to move where wall once was
+    /// Performs an animation that lifts the wall and drops it where the ghost wall was
+    /// Calls DeactivationAction() to swap the wall and ghost wall positions
+    /// Only works if there is nothing obstucting the ghost wall's tile
     /// </summary>
     public void SwitchDeactivation()
     {
@@ -134,25 +144,5 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
         Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
         Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos);
         transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z);
-    }
-
-    private void UpWallAnimation()
-    {
-
-            Tween.PositionY(transform, endValue: 10, duration: 1, ease: Ease.InOutSine);//.OnComplete(() => SwitchActivation());//.
-                //Chain(Tween.PositionY(transform, endValue: 1.5f, duration: 1, ease: Ease.InOutSine));
-
-            Tween.PositionY(transform, endValue: 10, duration: 1, ease: Ease.InOutSine);//.OnComplete(() => SwitchDeactivation());//.
-                //Chain(Tween.PositionY(transform, endValue: 1.5f, duration: 1, ease: Ease.InOutSine));
-        
-        
-        GridBase.Instance.UpdateEntry(this);
-        
-    }
-
-    private void DownWallAnimation()
-    {
-        Tween.PositionY(transform, endValue: 1.5f, duration: 1, ease: Ease.InOutSine);
-        GridBase.Instance.UpdateEntry(this);
     }
 }
