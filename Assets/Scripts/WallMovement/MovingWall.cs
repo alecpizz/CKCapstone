@@ -32,10 +32,6 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     //to decide if switch should be true or not
     private bool _worked = true;
 
-    private bool _active = true;
-
-    private bool _deactive = false;
-
     //classes required from Alec's IGridEntry Interface
     public bool IsTransparent => false;
 
@@ -62,13 +58,21 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
         _originGhost.y = transform.position.y;
     }
 
-    public void StartAnimation()
+    public void ActivationAction()
     {
-        if (GridBase.Instance.CellIsTransparent(_originGhost))
-        {
-            UpWallAnimation();
-        }
+        transform.position = _originGhost;
+        _wallGhost.transform.position = _originWall;
 
+        _wallGrid.UpdatePosition();
+
+    }
+
+    public void DeactivationAction()
+    {
+        transform.position = _originWall;
+        _wallGhost.transform.position = _originGhost;
+
+        _wallGrid.UpdatePosition();
     }
 
     /// <summary>
@@ -80,22 +84,16 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     {
         if (GridBase.Instance.CellIsTransparent(_originGhost))
         {
-
-            transform.position = _originGhost;
-            _wallGhost.transform.position = _originWall;
-
-            _wallGrid.UpdatePosition();
-
             _worked = true;
+
+            Tween.PositionY(transform, endValue: 10, duration: 1, ease: Ease.InOutSine).OnComplete(() => ActivationAction()).
+                Chain(Tween.PositionY(transform, endValue: 1.5f, duration: 1, ease: Ease.InOutSine));
+
         }
         else
         {
             _worked = false;
-        }
-
-        _active = false;
-        _deactive = true;
-        
+        }        
     }
 
     /// <summary>
@@ -105,23 +103,18 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     /// </summary>
     public void SwitchDeactivation()
     {
-        if (GridBase.Instance.CellIsTransparent(_originGhost))
+        if (GridBase.Instance.CellIsTransparent(_originWall))
         {
-
-            transform.position = _originWall;
-            _wallGhost.transform.position = _originGhost;
-
-            _wallGrid.UpdatePosition();
-
             _worked = true;
+
+            Tween.PositionY(transform, endValue: 10, duration: 1, ease: Ease.InOutSine).OnComplete(() => DeactivationAction()).
+                Chain(Tween.PositionY(transform, endValue: 1.5f, duration: 1, ease: Ease.InOutSine));
+
         }
         else
         {
             _worked = false;
         }
-
-        _deactive = false;
-        _active = true;
     }
 
     /// <summary>
@@ -145,16 +138,13 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
 
     private void UpWallAnimation()
     {
-        if(_active)
-        {
-            Tween.PositionY(transform, endValue: 10, duration: 1, ease: Ease.InOutSine).OnComplete(() => SwitchActivation());//.
+
+            Tween.PositionY(transform, endValue: 10, duration: 1, ease: Ease.InOutSine);//.OnComplete(() => SwitchActivation());//.
                 //Chain(Tween.PositionY(transform, endValue: 1.5f, duration: 1, ease: Ease.InOutSine));
-        }
-        else if(_deactive)
-        {
-            Tween.PositionY(transform, endValue: 10, duration: 1, ease: Ease.InOutSine).OnComplete(() => SwitchDeactivation());//.
+
+            Tween.PositionY(transform, endValue: 10, duration: 1, ease: Ease.InOutSine);//.OnComplete(() => SwitchDeactivation());//.
                 //Chain(Tween.PositionY(transform, endValue: 1.5f, duration: 1, ease: Ease.InOutSine));
-        }
+        
         
         GridBase.Instance.UpdateEntry(this);
         
