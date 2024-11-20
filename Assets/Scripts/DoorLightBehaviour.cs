@@ -36,8 +36,8 @@ public class DoorLightBehaviour : MonoBehaviour
     // Access the name of the shader property that handles emissive intensity
     private string _emissionPropertyName;
 
-    [SerializeField] private int _pointLightChildNumber;
-    [SerializeField] private int _doorMaterialChildNumber;
+    [SerializeField] private GameObject _pointLightChild;
+    [SerializeField] private GameObject _doorMaterialChild;
 
     /// <summary>
     /// Assign initial references
@@ -45,10 +45,10 @@ public class DoorLightBehaviour : MonoBehaviour
     void Start()
     {
         // Get the light object from the gameobject hierarchy
-        _pointLight = transform.GetChild(_pointLightChildNumber).gameObject;
+        _pointLight = _pointLightChild.gameObject;
 
         // Get the material of the lamp mesh
-        _doorMaterial = transform.GetChild(_doorMaterialChildNumber).GetComponent<MeshRenderer>().material;
+        _doorMaterial = _doorMaterialChild.GetComponent<MeshRenderer>().material;
         // Get the property name of the door material's emissive intensity
         _emissionPropertyName = _doorMaterial.shader.GetPropertyName(0);
     }
