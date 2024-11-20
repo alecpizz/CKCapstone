@@ -42,10 +42,10 @@ public class DoorLightBehaviour : MonoBehaviour
     void Start()
     {
         // Get the light object from the gameobject hierarchy
-        _pointLight = transform.GetChild(8).gameObject;
+        _pointLight = transform.GetChild(4).gameObject;
 
         // Get the material of the lamp mesh
-        _doorMaterial = transform.GetChild(4).GetComponent<MeshRenderer>().material;
+        _doorMaterial = transform.GetChild(1).GetComponent<MeshRenderer>().material;
         // Get the property name of the door material's emissive intensity
         _emissionPropertyName = _doorMaterial.shader.GetPropertyName(0);
     }

@@ -19,9 +19,14 @@ public class EndLevelDoor : MonoBehaviour
 
     [SerializeField] private ParticleSystem _unlockedParticles;
 
+    [SerializeField] private Animator _anim;
+
+    [SerializeField] private DoorLightBehaviour _dLB; 
+
     private void Awake()
     {
         doorGlow = GetComponent<DoorGlow>();
+        //_anim = GetComponent<Animator>();
     }
 
     /// <summary>
@@ -63,7 +68,13 @@ public class EndLevelDoor : MonoBehaviour
             doorGlow.GlowAndUnlockDoor();
 
             //play "door unlocked" VFX
-            _unlockedParticles.Play();
+            //_unlockedParticles.Play();
+
+            //make the door open
+            _anim.Play("ANIM_DoorOpen");
+
+            //light the lantern
+            _dLB.TurnLightOn();
         }
     }
 
