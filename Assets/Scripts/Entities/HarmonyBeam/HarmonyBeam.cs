@@ -156,7 +156,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
                         //we haven't seen this one before, hit it!
                         if (!_prevHitEntities.Contains(entity))
                         {
-                            entity.OnLaserHit();
+                           entity.OnLaserHit();                                     
                         }
 
                         _hitEntities.Add(entity);
@@ -170,8 +170,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
                         {
                             if (!_wrappedEnemyFX.ContainsKey(entity))
                             {
-                                GameObject enemyFX = Instantiate(_enemyHitEffectPrefab, entity.Position,
-                                    Quaternion.identity);
+                                GameObject enemyFX = Instantiate(_enemyHitEffectPrefab, entity.Position, Quaternion.identity);
                                 _wrappedEnemyFX.TryAdd(entity, enemyFX);
                                 _wrappedEnemyFX[entity] = enemyFX;
                                 _enemyGrabbedInstance = AudioManager.Instance.PlaySound(_enemyHarmonization);
