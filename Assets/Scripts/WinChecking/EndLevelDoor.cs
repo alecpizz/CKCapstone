@@ -69,7 +69,7 @@ public class EndLevelDoor : MonoBehaviour
             doorGlow.GlowAndUnlockDoor();
 
             //play "door unlocked" VFX
-            //_unlockedParticles.Play();
+            _unlockedParticles.Play();
 
             //make the door open
             _anim.Play("ANIM_DoorOpen");
