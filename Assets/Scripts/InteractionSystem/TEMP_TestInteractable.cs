@@ -27,9 +27,4 @@ public class TEMP_TestInteractable : MonoBehaviour, IInteractable
     {
         UnityEngine.Debug.Log("You successfully left an interaction with an object");
     }
-
-    public void OnEnter()
-    {
-        Debug.Log("You entered an interaction");
-    }
 }

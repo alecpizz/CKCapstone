@@ -80,18 +80,7 @@ public class NPCScript : MonoBehaviour, IInteractable
             _dialogueBox.SetText(_tutorialHint);
         }
     }
-
-    public void OnEnter()
-    {
-        if (_typingCoroutine != null)
-        {
-            StopCoroutine(_typingCoroutine);
-        }
-        _dialogueBox.SetText(_tutorialHint);
-        _dialogueBox.CrossFadeAlpha(1f, 0.25f, false);
-        _background.CrossFadeAlpha(1f, 0.25f, false);
-    }
-
+    
     /// <summary>
     /// Start is called before the first frame update
     /// used here to grabe the dialogue ui item and to set the occupied variable
@@ -194,6 +183,7 @@ public class NPCScript : MonoBehaviour, IInteractable
         _isTalking = false;
     }
 
+    
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Player"))
@@ -203,7 +193,9 @@ public class NPCScript : MonoBehaviour, IInteractable
             {
                 StopCoroutine(_typingCoroutine);
             }
-            OnEnter();
+            _dialogueBox.SetText(_tutorialHint);
+            _dialogueBox.CrossFadeAlpha(1f, 0.25f, false);
+            _background.CrossFadeAlpha(1f, 0.25f, false);
         }
     }
 

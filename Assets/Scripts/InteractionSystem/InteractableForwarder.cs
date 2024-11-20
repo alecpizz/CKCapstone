@@ -3,7 +3,7 @@
 *    Contributors: Nullptr
 *    Date Created: 11/18/2024
 *    Description: A forwarder for interactables. Designed to
- *   simply re-locate an interaction.
+ *   simply re-locate an interaction. Currently unused.
 *******************************************************************/
 using SaintsField.Playa;
 using UnityEngine;
@@ -48,18 +48,5 @@ public class InteractableForwarder : MonoBehaviour, IInteractable
             return;
         }
         _targetInteractable.Interface?.OnLeave();
-    }
-
-    /// <summary>
-    /// Whenever the player enters the interactable,
-    /// forward the OnEnter call if possible.
-    /// </summary>
-    public void OnEnter()
-    {
-        if (!_forwardEnter)
-        {
-            return;
-        }
-        _targetInteractable.Interface?.OnEnter();
     }
 }

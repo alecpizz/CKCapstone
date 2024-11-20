@@ -25,9 +25,4 @@ public interface IInteractable
     /// This function will be implemented for when the player is no longer interacting with the interactable
     /// </summary>
     public void OnLeave();
-
-    /// <summary>
-    /// This function will be implemented for when the player approaches an interactable.
-    /// </summary>
-    public void OnEnter();
 }
