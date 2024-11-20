@@ -59,9 +59,8 @@ public class TravellingParticles : MonoBehaviour
 
         _waitDelay = new WaitForSeconds(_forceDelay);
 
-        
-        _emissionAmount = Mathf.RoundToInt(_particles.emission.rateOverTime.constant * _particles.main.duration);
-        print(_emissionAmount);
+        _emissionAmount = Mathf.CeilToInt(
+            _particles.emission.rateOverTime.constant * _particles.main.duration);
     }
 
     /// <summary>
@@ -83,7 +82,7 @@ public class TravellingParticles : MonoBehaviour
     {
         _particles.Play();
 
-        ParticleSystem.Particle[] particleArr = new ParticleSystem.Particle[1];
+        ParticleSystem.Particle[] particleArr = new ParticleSystem.Particle[_emissionAmount];
         
         Vector3 target = _uiCamera.ScreenToWorldPoint(_uiTarget, Camera.MonoOrStereoscopicEye.Mono);
 
