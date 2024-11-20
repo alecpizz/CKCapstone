@@ -20,8 +20,6 @@ public class TravellingParticles : MonoBehaviour
     [Space]
     [SerializeField]
     private Transform _emissionTransform;
-    [SerializeField]
-    private RectTransform _targetRectTransform;
 
     [Header("Screen Space Rendering")]
     [SerializeField]
