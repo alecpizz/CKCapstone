@@ -13,7 +13,6 @@ using FMODUnity;
 using FMOD.Studio;
 using System;
 using SaintsField;
-using System.Diagnostics;
 using UnityEngine.SceneManagement;
 
 [Serializable]
@@ -52,6 +51,9 @@ public class NPCScript : MonoBehaviour, IInteractable
 
     private EventInstance _currentInstance;
 
+    private int _totalNPCs = 1;
+    private bool _loopedOnce;
+
     /// <summary>
     /// Field to retrieve attached GameObject: from IInteractable
     /// </summary>
@@ -84,6 +86,7 @@ public class NPCScript : MonoBehaviour, IInteractable
     /// </summary>
     void Start()
     {
+        _totalNPCs = FindObjectsOfType<NPCScript>().Length;
         if (CheckForEntries())
             _dialogueBox.SetText(_dialogueEntries[_currentDialogue]._text);
         _dialogueBox.gameObject.SetActive(false);
@@ -97,10 +100,11 @@ public class NPCScript : MonoBehaviour, IInteractable
             PlayerPrefs.SetInt(SceneManager.GetActiveScene().name, 0);
             PlayerPrefs.Save();
         }
-        if (PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) == 1)
+        if (PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) >= _totalNPCs)
         {
             UnlockDoors();
         }
+        Debug.Log("Door Progress: (" + PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) + "/" + _totalNPCs + ")");
     }
 
     /// <summary>
@@ -146,13 +150,22 @@ public class NPCScript : MonoBehaviour, IInteractable
             if (_currentDialogue < _dialogueEntries.Count - 1)
             {
                 _currentDialogue++;
+
+                if (!_loopedOnce && _currentDialogue == (_dialogueEntries.Count - 1))
+                {
+                    PlayerPrefs.SetInt(SceneManager.GetActiveScene().name, PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) + 1);
+                    PlayerPrefs.Save();
+                    Debug.Log("Door Progress: (" + PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) + "/" + _totalNPCs + ")");
+                    if (PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) == _totalNPCs)
+                    {
+                        UnlockDoors();
+                    }
+                    _loopedOnce = true;
+                }
             }
             else
             {
                 _currentDialogue = 0;
-                PlayerPrefs.SetInt(SceneManager.GetActiveScene().name, 1);
-                PlayerPrefs.Save();
-                UnlockDoors();
             }
 
             if (_typingCoroutine != null)
@@ -166,6 +179,9 @@ public class NPCScript : MonoBehaviour, IInteractable
         }
     }
 
+    /// <summary>
+    /// Unlocks the door after NPC dialogue is completed.
+    /// </summary>
     private void UnlockDoors()
     {
         if (_door)
