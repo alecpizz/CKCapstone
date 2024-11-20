@@ -56,11 +56,6 @@ public class TravellingParticles : MonoBehaviour
         _uiCamera.transform.SetPositionAndRotation(mainCameraTrans.position, 
             mainCameraTrans.rotation);
 
-        _uiTarget = _screenSpaceCoords;
-        _uiTarget.z = _camDepth;
-
-        _uiTarget = _uiCamera.ScreenToWorldPoint(_uiTarget, Camera.MonoOrStereoscopicEye.Mono);
-
         _initialParticles.transform.position = _emissionTransform.position;
 
         _waitDelay = new WaitForSeconds(_forceDelay);
@@ -72,7 +67,9 @@ public class TravellingParticles : MonoBehaviour
             _hasCollisionParticles = true;
 
             _collisionParticles.transform.position = _uiTarget;
-        }    
+        }
+
+        InitializeTargetPosition();
     }
 
     /// <summary>
@@ -85,6 +82,25 @@ public class TravellingParticles : MonoBehaviour
     }
 
     /// <summary>
+    /// Sets the target position and collision position
+    /// </summary>
+    private void InitializeTargetPosition()
+    {
+        _uiTarget = _screenSpaceCoords;
+        _uiTarget.z = _camDepth;
+
+        _uiTarget = _uiCamera.ScreenToWorldPoint(_uiTarget, Camera.MonoOrStereoscopicEye.Mono);
+
+        if (_hasCollisionParticles)
+        {
+            Vector3 collisionScreenPos = _collisionOffsetCoords;
+            collisionScreenPos.z = _camDepth;
+
+            _collisionParticles.transform.position = _uiCamera.ScreenToWorldPoint(collisionScreenPos, Camera.MonoOrStereoscopicEye.Mono);
+        }
+    }
+
+    /// <summary>
     /// Plays the particles, then iterates over them waiting for them to have lived longer than the delay. 
     /// Once they have reached that point in their lifetime, they are moved towards their target.
     /// When they reach the target, they die.
@@ -92,20 +108,6 @@ public class TravellingParticles : MonoBehaviour
     /// <returns></returns>
     private IEnumerator ParticleUISequence()
     {
-        // Remove Me
-        _uiTarget = _screenSpaceCoords;
-        _uiTarget.z = _camDepth;
-
-        Vector3 collisionScreenPos = _collisionOffsetCoords;
-        collisionScreenPos.z = _camDepth;
-
-        _uiTarget = _uiCamera.ScreenToWorldPoint(_uiTarget, Camera.MonoOrStereoscopicEye.Mono);
-
-        _collisionParticles.transform.position = _uiCamera.ScreenToWorldPoint(collisionScreenPos, Camera.MonoOrStereoscopicEye.Mono); ;
-        print("Collision Position: " + _collisionParticles.transform.position);
-
-        // Remove Me
-
         _initialParticles.Play();
 
         ParticleSystem.Particle[] particleArr = new ParticleSystem.Particle[_emissionAmount];
@@ -121,6 +123,11 @@ public class TravellingParticles : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Moves the particles towards the target destination
+    /// </summary>
+    /// <param name="particleArr">Array of particles from the particle system</param>
+    /// <param name="target">Target position that the particles move to</param>
     private void TranslateParticles(ParticleSystem.Particle[] particleArr, Vector3 target)
     {
         _initialParticles.GetParticles(particleArr);
@@ -134,7 +141,6 @@ public class TravellingParticles : MonoBehaviour
             // Delete self and play collision particles upon colliding with target
             else if (particleArr[i].position == target)
             {
-                print("Particle Position: " + particleArr[i].position);
                 particleArr[i].remainingLifetime = 0;
                 if(_hasCollisionParticles)
                     _collisionParticles.Play();
