@@ -65,11 +65,12 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     /// </summary>
     public void ActivationAction()
     {
-        transform.position = _originGhost;
+
+
+        transform.position = new Vector3(_originGhost.x, transform.position.y, _originGhost.z);
         _wallGhost.transform.position = _originWall;
 
-        _wallGrid.UpdatePosition();
-
+        Tween.PositionY(transform, endValue: 1.5f, duration: 1, ease: Ease.InOutSine).OnComplete(() => _wallGrid.UpdatePosition());
     }
 
     /// <summary>
@@ -79,10 +80,10 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     /// </summary>
     public void DeactivationAction()
     {
-        transform.position = _originWall;
+        transform.position = new Vector3(_originWall.x, transform.position.y, _originWall.z);
         _wallGhost.transform.position = _originGhost;
 
-        _wallGrid.UpdatePosition();
+        Tween.PositionY(transform, endValue: 1.5f, duration: 1, ease: Ease.InOutSine).OnComplete(() => _wallGrid.UpdatePosition());
     }
 
     /// <summary>
@@ -96,8 +97,7 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
         {
             _worked = true;
 
-            Tween.PositionY(transform, endValue: 10, duration: 1, ease: Ease.InOutSine).OnComplete(() => ActivationAction()).
-                Chain(Tween.PositionY(transform, endValue: 1.5f, duration: 1, ease: Ease.InOutSine));
+            Tween.PositionY(transform, endValue: 10, duration: 1, ease: Ease.InOutSine).OnComplete(() => ActivationAction());
 
         }
         else
@@ -117,8 +117,7 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
         {
             _worked = true;
 
-            Tween.PositionY(transform, endValue: 10, duration: 1, ease: Ease.InOutSine).OnComplete(() => DeactivationAction()).
-                Chain(Tween.PositionY(transform, endValue: 1.5f, duration: 1, ease: Ease.InOutSine));
+            Tween.PositionY(transform, endValue: 10, duration: 1, ease: Ease.InOutSine).OnComplete(() => DeactivationAction());
 
         }
         else
