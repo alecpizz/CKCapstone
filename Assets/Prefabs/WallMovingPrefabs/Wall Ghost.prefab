@@ -544,6 +544,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _isTransparent: 1
+  _blocksHarmonyBeam: 0
   _snapToGrid: 1
   offset: {x: 0, y: 0.5, z: 0}
   _disableGridCell: 0
@@ -598,6 +599,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3280519133390621004, guid: 1d6aa1f151fe9a442bbcf17ef2985138,
         type: 3}
+      propertyPath: lengthInSec
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 3280519133390621004, guid: 1d6aa1f151fe9a442bbcf17ef2985138,
+        type: 3}
       propertyPath: ShapeModule.type
       value: 16
       objectReference: {fileID: 0}
@@ -623,8 +629,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3280519133390621004, guid: 1d6aa1f151fe9a442bbcf17ef2985138,
         type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3280519133390621004, guid: 1d6aa1f151fe9a442bbcf17ef2985138,
+        type: 3}
       propertyPath: InitialModule.startSpeed.scalar
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3280519133390621004, guid: 1d6aa1f151fe9a442bbcf17ef2985138,
+        type: 3}
+      propertyPath: InitialModule.startSize.minScalar
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 3280519133390621004, guid: 1d6aa1f151fe9a442bbcf17ef2985138,
         type: 3}
@@ -694,7 +710,7 @@ PrefabInstance:
     - target: {fileID: 3280519133430969737, guid: 1d6aa1f151fe9a442bbcf17ef2985138,
         type: 3}
       propertyPath: m_Intensity
-      value: 0.43599147
+      value: 0.43930086
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
