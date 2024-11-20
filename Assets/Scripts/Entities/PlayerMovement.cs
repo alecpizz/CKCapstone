@@ -74,7 +74,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     // Start is called before the first frame update
     void Start()
     {
-        FacingDirection = new Vector3(0, 0, 0);
+        FacingDirection = new Vector3(0, 0, -1);
 
         SnapToGridSpace();
         GridBase.Instance.AddEntry(this);
@@ -181,13 +181,34 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// <param name="direction">The direction the player should move</param>
     public void BeginTurn(Vector3 direction)
     {
-
-    //if (FacingDirection = 0,0,0)
+        print(direction); //Section to determine which animation is used for turning.
+        if (FacingDirection.z == 1)
+        {
+            if (direction.x == -1) _animator.SetTrigger("Right");
+            else if (direction.x == 1) _animator.SetTrigger("Left");
+            else if (direction.z == -1) _animator.SetTrigger("Backward");
+        }
+        else if (FacingDirection.x == 1)
+        {
+            if (direction.z == 1) _animator.SetTrigger("Right");
+            else if (direction.z == -1) _animator.SetTrigger("Left");
+            else if (direction.x == -1) _animator.SetTrigger("Backward");
+        }
+        else if (FacingDirection.z == -1)
+        {
+            if (direction.x == 1) _animator.SetTrigger("Right");
+            else if (direction.x == -1) _animator.SetTrigger("Left");
+            else if (direction.z == 1) _animator.SetTrigger("Backward");
+        }
+        else if (FacingDirection.x == -1)
+        {
+            if (direction.z == -1) _animator.SetTrigger("Right");
+            else if (direction.z == 1) _animator.SetTrigger("Left");
+            else if (direction.x == 1) _animator.SetTrigger("Backward");
+        }
+        FacingDirection = direction; //End of animation section
 
         _playerInteraction.SetDirection(direction);
-        if (direction.x == 180) _animator.SetTrigger("Backwards");
-        else if (direction.x < 0) _animator.SetTrigger("Left");
-        else  _animator.SetTrigger("Right");
         Tween.Rotation(transform, endValue: Quaternion.LookRotation(direction), duration: _rotationTime,
             ease: _rotationEase).OnComplete(
             () =>
