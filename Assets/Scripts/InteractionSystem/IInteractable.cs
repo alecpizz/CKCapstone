@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Nick Grinstead
-*    Contributors: David Henvick, Alec Pizziferro
+*    Contributors: David Henvick
 *    Date Created: 10/10/24
 *    Description: Interface for objects that the player can interact
 *    with.
