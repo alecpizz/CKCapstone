@@ -27,4 +27,9 @@ public interface IGridEntry
     Vector3 Position { get; }
 
     GameObject GetGameObject { get; }
+
+    /// <summary>
+    /// Used to position this object in the center of its grid cell
+    /// </summary>
+    void SnapToGridSpace();
 }
