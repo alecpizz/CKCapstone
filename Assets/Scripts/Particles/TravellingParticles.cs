@@ -14,10 +14,12 @@ public class TravellingParticles : MonoBehaviour
 {
     [Header("Assignments")]
     [SerializeField]
-    private ParticleSystem _particles;
+    private ParticleSystem _initialParticles;
+    [SerializeField]
+    private ParticleSystem _collisionParticles;
+    [Space]
     [SerializeField]
     private Camera _uiCamera;
-    [Space]
     [SerializeField]
     private Transform _emissionTransform;
 
@@ -41,6 +43,8 @@ public class TravellingParticles : MonoBehaviour
 
     private WaitForSeconds _waitDelay;
 
+    private bool _hasCollisionParticles = false;
+
     /// <summary>
     /// Initializes particle position, target position, UI Camera, wait delay, and emission amount
     /// </summary>
@@ -53,12 +57,20 @@ public class TravellingParticles : MonoBehaviour
         _uiTarget = _screenSpaceCoordinates;
         _uiTarget.z = _camDepth;
 
-        _particles.transform.position = _emissionTransform.position;
+        _uiTarget = _uiCamera.ScreenToWorldPoint(_uiTarget, Camera.MonoOrStereoscopicEye.Mono);
+
+        _initialParticles.transform.position = _emissionTransform.position;
 
         _waitDelay = new WaitForSeconds(_forceDelay);
 
-        _emissionAmount = Mathf.CeilToInt(
-            _particles.emission.rateOverTime.constant * _particles.main.duration);
+        _emissionAmount = Mathf.CeilToInt(_initialParticles.emission.rateOverTime.constant * _initialParticles.main.duration);
+
+        if (_collisionParticles != null)
+        {
+            _hasCollisionParticles = true;
+
+            _collisionParticles.transform.position = _uiTarget;
+        }    
     }
 
     /// <summary>
@@ -78,18 +90,26 @@ public class TravellingParticles : MonoBehaviour
     /// <returns></returns>
     private IEnumerator ParticleUISequence()
     {
-        _particles.Play();
+        // Remove Me
+        _uiTarget = _screenSpaceCoordinates;
+        _uiTarget.z = _camDepth;
+
+        _uiTarget = _uiCamera.ScreenToWorldPoint(_uiTarget, Camera.MonoOrStereoscopicEye.Mono);
+
+        _collisionParticles.transform.position = _uiTarget;
+
+        // Remove Me
+
+        _initialParticles.Play();
 
         ParticleSystem.Particle[] particleArr = new ParticleSystem.Particle[_emissionAmount];
-        
-        Vector3 target = _uiCamera.ScreenToWorldPoint(_uiTarget, Camera.MonoOrStereoscopicEye.Mono);
 
         yield return _waitDelay;
 
         // Update particle position every frame
         for (float step = 0; step < _forceDuration; step += Time.deltaTime)
         {
-            TranslateParticles(particleArr, target);
+            TranslateParticles(particleArr, _uiTarget);
 
             yield return null;
         }
@@ -97,7 +117,7 @@ public class TravellingParticles : MonoBehaviour
 
     private void TranslateParticles(ParticleSystem.Particle[] particleArr, Vector3 target)
     {
-        _particles.GetParticles(particleArr);
+        _initialParticles.GetParticles(particleArr);
 
         for (int i = 0; i < particleArr.Length; i++)
         {
@@ -105,10 +125,13 @@ public class TravellingParticles : MonoBehaviour
             if (particleArr[i].remainingLifetime <= 0 ||
                 particleArr[i].remainingLifetime > particleArr[i].startLifetime - _forceDelay)
                 continue;
-            // Delete self upon colliding with target
+            // Delete self and play collision particles upon colliding with target
             else if (particleArr[i].position == target)
             {
                 particleArr[i].remainingLifetime = 0;
+                if(_hasCollisionParticles)
+                    _collisionParticles.Play();
+
                 continue;
             }
 
@@ -119,6 +142,6 @@ public class TravellingParticles : MonoBehaviour
         }
 
         // Updates the particle system to register the changes made
-        _particles.SetParticles(particleArr);
+        _initialParticles.SetParticles(particleArr);
     }
 }
