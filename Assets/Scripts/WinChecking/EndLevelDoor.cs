@@ -26,8 +26,6 @@ public class EndLevelDoor : MonoBehaviour
     private void Awake()
     {
         doorGlow = GetComponent<DoorGlow>();
-        //_anim = GetComponent<Animator>();
-        //_dLB.TurnLightOff();
     }
 
     /// <summary>

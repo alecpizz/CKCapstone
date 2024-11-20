@@ -58,13 +58,13 @@ public class DoorLightBehaviour : MonoBehaviour
         // If the test light switch is on, turn on the lamp
         if (testLightSwitch && !_lightOn)
         {          
-            //TurnLightOn();
+
         }
 
         // If the test light switch is off, turn off the lamp
         else if (!testLightSwitch && _lightOn)
         {
-            //TurnLightOff();
+
         }
     }
 
@@ -74,8 +74,6 @@ public class DoorLightBehaviour : MonoBehaviour
     /// </summary>
     public void TurnLightOn()
     {
-        // Remember that the light is on
-        //_lightOn = true;
         // Lerp emission
         StartCoroutine(LerpEmission(0f, _onEmission, _animationDuration));
         // Lerp light intensity
@@ -88,8 +86,6 @@ public class DoorLightBehaviour : MonoBehaviour
     /// </summary>
     public void TurnLightOff()
     {
-        // Remember that the light is off
-        //_lightOn = false;
         // Lerp emission
         StartCoroutine(LerpEmission(_onEmission, 0f, _animationDuration));
         // Lerp light intensity
