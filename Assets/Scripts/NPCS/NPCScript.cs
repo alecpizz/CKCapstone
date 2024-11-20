@@ -14,6 +14,7 @@ using FMOD.Studio;
 using System;
 using SaintsField;
 using System.Diagnostics;
+using UnityEngine.SceneManagement;
 
 [Serializable]
 public struct DialogueEntry
@@ -29,6 +30,12 @@ public struct DialogueEntry
 public class NPCScript : MonoBehaviour, IInteractable
 {
     [SerializeField] private TMP_Text _dialogueBox;
+    [InfoBox("Debug Value, used to lock doors again by reseting the save data " +
+        "for this level, set to false after testing", EMessageType.Info)]
+    [SerializeField] private bool _resetMemory = false;
+    [SerializeField] private EndLevelDoor _door;
+    [SerializeField] private EndLevelDoor _challengeDoor;
+
     private bool _isTalking;
     [InfoBox("This adjusts the base typing speed. 2 is the slowest, 10 is the fastest", EMessageType.Info)]
     [Range(2f, 10f)][SerializeField] private float _typingSpeed = 5f;
@@ -43,8 +50,7 @@ public class NPCScript : MonoBehaviour, IInteractable
     private bool _isTyping = false;
     private string _currentFullText;
 
-    // FIXME: waiting until new AudioManager update gets pushed
-    //private EventInstance _currentInstance;
+    private EventInstance _currentInstance;
 
     /// <summary>
     /// Field to retrieve attached GameObject: from IInteractable
@@ -85,6 +91,16 @@ public class NPCScript : MonoBehaviour, IInteractable
         _isTalking = false;
         _currentTypingSpeed = Mathf.Clamp(
             _typingSpeed - _dialogueEntries[_currentDialogue]._adjustTypingSpeed, 2f, 15f) / 100f;
+
+        if (_resetMemory)
+        {
+            PlayerPrefs.SetInt(SceneManager.GetActiveScene().name, 0);
+            PlayerPrefs.Save();
+        }
+        if (PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) == 1)
+        {
+            UnlockDoors();
+        }
     }
 
     /// <summary>
@@ -123,8 +139,8 @@ public class NPCScript : MonoBehaviour, IInteractable
             // skips the typing to show complete text
             if (_isTyping)
             {
-                //FinishTyping();
-                //return;
+                FinishTyping();
+                return;
             }
 
             if (_currentDialogue < _dialogueEntries.Count - 1)
@@ -134,6 +150,9 @@ public class NPCScript : MonoBehaviour, IInteractable
             else
             {
                 _currentDialogue = 0;
+                PlayerPrefs.SetInt(SceneManager.GetActiveScene().name, 1);
+                PlayerPrefs.Save();
+                UnlockDoors();
             }
 
             if (_typingCoroutine != null)
@@ -144,6 +163,18 @@ public class NPCScript : MonoBehaviour, IInteractable
             // adjusts typing speed on a per-entry basis
             _currentTypingSpeed = Mathf.Clamp(_typingSpeed - _dialogueEntries[_currentDialogue]._adjustTypingSpeed, 2f, 15f) / 100f;
             _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue]._text));
+        }
+    }
+
+    private void UnlockDoors()
+    {
+        if (_door)
+        {
+            _door.GetComponent<EndLevelDoor>().UnlockDoor();
+        }
+        if (_challengeDoor)
+        {
+            _challengeDoor.GetComponent<EndLevelDoor>().UnlockDoor();
         }
     }
 
