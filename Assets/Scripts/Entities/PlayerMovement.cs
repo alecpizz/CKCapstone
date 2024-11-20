@@ -117,8 +117,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         for (int i = 0; i < _playerMovementTiming; i++)
         {
             // Move if there is no wall below the player or if ghost mode is enabled
-            var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position,
-                moveDirection);
+            var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
+
             if ((GridBase.Instance.CellIsTransparent(move)) ||
                 (DebugMenuManager.Instance.GhostMode))
             {
@@ -126,10 +126,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                     move + _positionOffset, duration: modifiedMovementTime, 
                     Ease.OutBack).ToYieldInstruction();
                 GridBase.Instance.UpdateEntry(this);
-            }
-            else
-            {
-                break;
             }
 
             if (_playerMovementTiming > 1)
@@ -147,11 +143,12 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// <param name="collision">Data from collision</param>
     private void OnCollisionEnter(Collision collision)
     {
-        if (!DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("Enemy"))
+        if (!DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("Enemy") ||
+            !DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("SonEnemy"))
         {
             // Checks if the enemy is frozen; if they are, doesn't reload the scene
             EnemyBehavior enemy = collision.collider.GetComponent<EnemyBehavior>();
-            if (enemy == null || enemy.EnemyFrozen)
+            if (enemy == null)
                 return;
 
             Time.timeScale = 0f;
@@ -209,6 +206,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         FacingDirection = direction; //End of animation section
 
         _playerInteraction.SetDirection(direction);
+
         Tween.Rotation(transform, endValue: Quaternion.LookRotation(direction), duration: _rotationTime,
             ease: _rotationEase).OnComplete(
             () =>
