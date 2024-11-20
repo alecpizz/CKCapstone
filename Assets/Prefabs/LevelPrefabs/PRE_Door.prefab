@@ -142,7 +142,7 @@ MonoBehaviour:
   _isUnlocked: 0
   _unlockedParticles: {fileID: 6010740502612382596}
   _anim: {fileID: 267380211998728868}
-  _lanternScript: {fileID: 6712475581295284484}
+  _lanternScript: {fileID: 1111307240637887205}
 --- !u!114 &6217525673763658273
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -413,6 +413,16 @@ PrefabInstance:
       propertyPath: testLightSwitch
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7146143353714279041, guid: 0484f070a0c6fa34bb0c922995f13a18,
+        type: 3}
+      propertyPath: _pointLightChildNumber
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7146143353714279041, guid: 0484f070a0c6fa34bb0c922995f13a18,
+        type: 3}
+      propertyPath: _doorMaterialChildNumber
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -424,15 +434,21 @@ Animator:
     type: 3}
   m_PrefabInstance: {fileID: 7800264827995353188}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &6227440717193972670 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4191808770340584410, guid: 0484f070a0c6fa34bb0c922995f13a18,
+--- !u!114 &1111307240637887205 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7146143353714279041, guid: 0484f070a0c6fa34bb0c922995f13a18,
     type: 3}
   m_PrefabInstance: {fileID: 7800264827995353188}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &6712475581295284484 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3559984946673361248, guid: 0484f070a0c6fa34bb0c922995f13a18,
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 983544bdef3dc754fa76010cf8381d7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &6227440717193972670 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4191808770340584410, guid: 0484f070a0c6fa34bb0c922995f13a18,
     type: 3}
   m_PrefabInstance: {fileID: 7800264827995353188}
   m_PrefabAsset: {fileID: 0}

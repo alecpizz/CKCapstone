@@ -36,36 +36,21 @@ public class DoorLightBehaviour : MonoBehaviour
     // Access the name of the shader property that handles emissive intensity
     private string _emissionPropertyName;
 
+    [SerializeField] private int _pointLightChildNumber;
+    [SerializeField] private int _doorMaterialChildNumber;
+
     /// <summary>
     /// Assign initial references
     /// </summary>
     void Start()
     {
         // Get the light object from the gameobject hierarchy
-        _pointLight = transform.GetChild(4).gameObject;
+        _pointLight = transform.GetChild(_pointLightChildNumber).gameObject;
 
         // Get the material of the lamp mesh
-        _doorMaterial = transform.GetChild(2).GetComponent<MeshRenderer>().material;
+        _doorMaterial = transform.GetChild(_doorMaterialChildNumber).GetComponent<MeshRenderer>().material;
         // Get the property name of the door material's emissive intensity
         _emissionPropertyName = _doorMaterial.shader.GetPropertyName(0);
-    }
-
-    /// <summary>
-    /// FOR TESTING PURPOSES ONLY - check for the testLightSwitch boolean and turn the light on/off accordingly
-    /// </summary>
-    void Update()
-    {
-        // If the test light switch is on, turn on the lamp
-        if (testLightSwitch && !_lightOn)
-        {          
-
-        }
-
-        // If the test light switch is off, turn off the lamp
-        else if (!testLightSwitch && _lightOn)
-        {
-
-        }
     }
 
     /// <summary>
