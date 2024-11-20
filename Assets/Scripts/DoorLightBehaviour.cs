@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Zayden Joyner
-*    Contributors: 
+*    Contributors: David Galmines 
 *    Date Created: 11/7/24
 *    Description: Handles the funcionality of turning the door light on/off.
 *******************************************************************/
@@ -45,7 +45,7 @@ public class DoorLightBehaviour : MonoBehaviour
         _pointLight = transform.GetChild(4).gameObject;
 
         // Get the material of the lamp mesh
-        _doorMaterial = transform.GetChild(1).GetComponent<MeshRenderer>().material;
+        _doorMaterial = transform.GetChild(2).GetComponent<MeshRenderer>().material;
         // Get the property name of the door material's emissive intensity
         _emissionPropertyName = _doorMaterial.shader.GetPropertyName(0);
     }
@@ -58,13 +58,13 @@ public class DoorLightBehaviour : MonoBehaviour
         // If the test light switch is on, turn on the lamp
         if (testLightSwitch && !_lightOn)
         {          
-            TurnLightOn();
+            //TurnLightOn();
         }
 
         // If the test light switch is off, turn off the lamp
         else if (!testLightSwitch && _lightOn)
         {
-            TurnLightOff();
+            //TurnLightOff();
         }
     }
 
@@ -75,7 +75,7 @@ public class DoorLightBehaviour : MonoBehaviour
     public void TurnLightOn()
     {
         // Remember that the light is on
-        _lightOn = true;
+        //_lightOn = true;
         // Lerp emission
         StartCoroutine(LerpEmission(0f, _onEmission, _animationDuration));
         // Lerp light intensity
@@ -89,7 +89,7 @@ public class DoorLightBehaviour : MonoBehaviour
     public void TurnLightOff()
     {
         // Remember that the light is off
-        _lightOn = false;
+        //_lightOn = false;
         // Lerp emission
         StartCoroutine(LerpEmission(_onEmission, 0f, _animationDuration));
         // Lerp light intensity

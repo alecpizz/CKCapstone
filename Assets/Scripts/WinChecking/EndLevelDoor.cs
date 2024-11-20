@@ -21,12 +21,13 @@ public class EndLevelDoor : MonoBehaviour
 
     [SerializeField] private Animator _anim;
 
-    [SerializeField] private DoorLightBehaviour _dLB; 
+    [SerializeField] private GameObject _lanternScript; 
 
     private void Awake()
     {
         doorGlow = GetComponent<DoorGlow>();
         //_anim = GetComponent<Animator>();
+        //_dLB.TurnLightOff();
     }
 
     /// <summary>
@@ -74,7 +75,7 @@ public class EndLevelDoor : MonoBehaviour
             _anim.Play("ANIM_DoorOpen");
 
             //light the lantern
-            _dLB.TurnLightOn();
+            _lanternScript.GetComponent<DoorLightBehaviour>().TurnLightOn();
         }
     }
 
