@@ -14,57 +14,54 @@ public class TravellingParticles : MonoBehaviour
 {
     [Header("Assignments")]
     [SerializeField]
-    ParticleSystem _particles;
+    private ParticleSystem _particles;
     [SerializeField]
-    Camera _uiCamera;
+    private Camera _uiCamera;
     [Space]
     [SerializeField]
-    Transform _emissionTransform;
+    private Transform _emissionTransform;
     [SerializeField]
-    Transform _targetTransform;
-    [Space]
-    [SerializeField]
-    RectTransform _targetRectTransform;
-    [SerializeField]
-    Vector2 _uiPosition;
-    [SerializeField]
-    float _camDepth = 6;
+    private RectTransform _targetRectTransform;
 
-    [Header("Emitter")]
+    [Header("Screen Space Rendering")]
     [SerializeField]
-    float _emissionDuration = 0.6f;
+    private Vector2 _screenSpaceCoordinates;
     [SerializeField]
-    float _emissionRate = 20;
+    private float _camDepth = 6;
 
     [Header("Force")]
     [SerializeField]
-    float _forceSpeed = 10;
+    private float _forceSpeed = 10;
     [SerializeField]
-    float _uiForceSpeed = 10;
+    private float _forceDelay = 1;
     [SerializeField]
-    float _forceDelay = 1;
-    [SerializeField]
-    float _forceDuration = 1;
+    private float _forceDuration = 1;
+
+    private int _emissionAmount = -1;
 
     private Vector3 _uiTarget;
 
+    private WaitForSeconds _waitDelay;
+
     /// <summary>
-    /// Initializes the particle position, and particleSystem settings
+    /// Initializes particle position, target position, UI Camera, wait delay, and emission amount
     /// </summary>
     private void Awake()
     {
         Transform mainCameraTrans = Camera.main.transform;
         _uiCamera.transform.SetPositionAndRotation(mainCameraTrans.position, 
             mainCameraTrans.rotation);
-        _uiTarget = _uiPosition;
+
+        _uiTarget = _screenSpaceCoordinates;
         _uiTarget.z = _camDepth;
 
         _particles.transform.position = _emissionTransform.position;
 
-        var emission = _particles.emission;
-        emission.rateOverTime = new ParticleSystem.MinMaxCurve(_emissionRate, _emissionRate);
-        var main = _particles.main;
-        main.duration = _emissionDuration;
+        _waitDelay = new WaitForSeconds(_forceDelay);
+
+        
+        _emissionAmount = Mathf.RoundToInt(_particles.emission.rateOverTime.constant * _particles.main.duration);
+        print(_emissionAmount);
     }
 
     /// <summary>
@@ -86,41 +83,45 @@ public class TravellingParticles : MonoBehaviour
     {
         _particles.Play();
 
-        ParticleSystem.Particle[] particleArr = new ParticleSystem.Particle[_particles.main.maxParticles];
+        ParticleSystem.Particle[] particleArr = new ParticleSystem.Particle[1];
+        
+        Vector3 target = _uiCamera.ScreenToWorldPoint(_uiTarget, Camera.MonoOrStereoscopicEye.Mono);
 
-        Vector3 uiPosition = _uiPosition;
-        uiPosition.z = _camDepth;
-        //print("UI Position: " + uiPosition);
-        Vector3 uiTarget = _uiCamera.ScreenToWorldPoint(uiPosition, Camera.MonoOrStereoscopicEye.Mono);
+        yield return _waitDelay;
 
-        _particles.GetParticles(particleArr);
-
+        // Update particle position every frame
         for (float step = 0; step < _forceDuration; step += Time.deltaTime)
         {
-            _particles.GetParticles(particleArr);
-
-            for (int i = 0; i < particleArr.Length; i++)
-            {
-                // Ignore if particle is dead or if the particle hasn't lived longer than the force delay
-                if (particleArr[i].remainingLifetime <= 0 ||
-                    particleArr[i].remainingLifetime > particleArr[i].startLifetime - _forceDelay)
-                    continue;
-                // Delete self upon colliding with target
-                else if (particleArr[i].position == uiTarget)
-                {
-                    particleArr[i].remainingLifetime = 0;
-                    continue;
-                }
-
-                // Particles don't have a transform so can't tween :(
-                // Have to reset velocity and position each time or else they wander off
-                particleArr[i].velocity = Vector3.zero;
-                particleArr[i].position = Vector3.MoveTowards(particleArr[i].position, uiTarget, _forceSpeed);
-            }
-
-            _particles.SetParticles(particleArr);
+            TranslateParticles(particleArr, target);
 
             yield return null;
         }
+    }
+
+    private void TranslateParticles(ParticleSystem.Particle[] particleArr, Vector3 target)
+    {
+        _particles.GetParticles(particleArr);
+
+        for (int i = 0; i < particleArr.Length; i++)
+        {
+            // Ignore if particle is dead or if the particle hasn't lived longer than the force delay
+            if (particleArr[i].remainingLifetime <= 0 ||
+                particleArr[i].remainingLifetime > particleArr[i].startLifetime - _forceDelay)
+                continue;
+            // Delete self upon colliding with target
+            else if (particleArr[i].position == target)
+            {
+                particleArr[i].remainingLifetime = 0;
+                continue;
+            }
+
+            // Particles don't have a transform so can't tween :(
+            // Have to reset velocity and position each time or else they wander off
+            particleArr[i].velocity = Vector3.zero;
+            particleArr[i].position = Vector3.MoveTowards(particleArr[i].position, target, _forceSpeed);
+        }
+
+        // Updates the particle system to register the changes made
+        _particles.SetParticles(particleArr);
     }
 }

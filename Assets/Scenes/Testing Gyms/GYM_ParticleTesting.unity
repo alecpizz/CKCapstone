@@ -440,7 +440,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 765721653}
   serializedVersion: 8
-  lengthInSec: 1
+  lengthInSec: 0.6
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 2
@@ -1269,7 +1269,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 30
+      scalar: 20
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -5343,16 +5343,12 @@ MonoBehaviour:
   _particles: {fileID: 765721655}
   _uiCamera: {fileID: 1481441438}
   _emissionTransform: {fileID: 823354518}
-  _targetTransform: {fileID: 1196096722}
   _targetRectTransform: {fileID: 283367330}
-  _uiPosition: {x: -1800, y: 1950}
+  _screenSpaceCoordinates: {x: -1800, y: 1950}
   _camDepth: 10.31
-  _emissionDuration: 0.6
-  _emissionRate: 20
   _forceSpeed: 1
-  _uiForceSpeed: 10
   _forceDelay: 1
-  _forceDuration: 3
+  _forceDuration: 1.2
 --- !u!1 &1358849442
 GameObject:
   m_ObjectHideFlags: 0
