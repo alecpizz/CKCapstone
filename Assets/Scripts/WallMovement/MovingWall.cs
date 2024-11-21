@@ -68,7 +68,7 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
 
 
         transform.position = new Vector3(_originGhost.x, transform.position.y, _originGhost.z);
-        _wallGhost.transform.position = _originWall;
+        Tween.PositionY(_wallGhost.transform, endValue: 0, duration: 1, ease: Ease.InOutSine).OnComplete(() => _wallGhost.transform.position = _originWall);
 
         Tween.PositionY(transform, endValue: _originGhost.y, duration: 1, ease: Ease.InOutSine).OnComplete(() => _wallGrid.UpdatePosition());
     }
@@ -81,7 +81,7 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     public void DeactivationAction()
     {
         transform.position = new Vector3(_originWall.x, transform.position.y, _originWall.z);
-        _wallGhost.transform.position = _originGhost;
+        Tween.PositionY(_wallGhost.transform, endValue: 0, duration: 1, ease: Ease.InOutSine).OnComplete(() => _wallGhost.transform.position = _originGhost);
 
         Tween.PositionY(transform, endValue: _originWall.y, duration: 1, ease: Ease.InOutSine).OnComplete(() => _wallGrid.UpdatePosition());
     }
