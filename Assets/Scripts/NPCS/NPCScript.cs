@@ -30,10 +30,7 @@ public struct DialogueEntry
 public class NPCScript : MonoBehaviour, IInteractable
 {
     [SerializeField] private TMP_Text _dialogueBox;
-    [InfoBox("Debug Value, used to lock doors again by reseting the save data " +
-        "for this level, set to false after testing", EMessageType.Info)]
-    [SerializeField] private EndLevelDoor _door;
-    [SerializeField] private EndLevelDoor _challengeDoor;
+    [SerializeField] private EndLevelDoor[] _doors;
 
     private bool _isTalking;
     [InfoBox("This adjusts the base typing speed. 2 is the slowest, 10 is the fastest", EMessageType.Info)]
@@ -62,7 +59,6 @@ public class NPCScript : MonoBehaviour, IInteractable
         get; 
     }
 
-
     /// <summary>
     /// This function will be implemented to contain the specific functionality
     /// for an interactable object: from IInteractable
@@ -86,7 +82,8 @@ public class NPCScript : MonoBehaviour, IInteractable
     /// <summary>
     /// Resets the memory, causing the doors to be locked when the scene is loaded.
     /// </summary>
-    [Button] public void ResetMemory()
+    [Button] 
+    public void ResetMemory()
     {
         PlayerPrefs.SetInt(SceneManager.GetActiveScene().name, 0);
         PlayerPrefs.Save();
@@ -96,7 +93,7 @@ public class NPCScript : MonoBehaviour, IInteractable
     /// Start is called before the first frame update
     /// used here to grabe the dialogue ui item and to set the occupied variable
     /// </summary>
-    void Start()
+    private void Start()
     {
         _totalNPCs = FindObjectsOfType<NPCScript>().Length;
         if (CheckForEntries())
@@ -191,13 +188,14 @@ public class NPCScript : MonoBehaviour, IInteractable
     /// </summary>
     private void UnlockDoors()
     {
-        if (_door)
+        if (_doors.Length < 1)
         {
-            _door.GetComponent<EndLevelDoor>().UnlockDoor();
+            return;
         }
-        if (_challengeDoor)
+
+        foreach (EndLevelDoor door in _doors)
         {
-            _challengeDoor.GetComponent<EndLevelDoor>().UnlockDoor();
+            door.UnlockDoor();
         }
     }
 
