@@ -15,6 +15,8 @@ using System;
 using SaintsField;
 using System.Diagnostics;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using SaintsField.Playa;
 
 [Serializable]
 public struct DialogueEntry
@@ -30,6 +32,8 @@ public class NPCScript : MonoBehaviour, IInteractable
 {
     [SerializeField] private TMP_Text _dialogueBox;
     [SerializeField] private Image _background;
+    [SerializeField] private EndLevelDoor[] _doors;
+
     private bool _isTalking;
     [InfoBox("This adjusts the base typing speed. 2 is the slowest, 10 is the fastest", EMessageType.Info)]
     [Range(2f, 10f)][SerializeField] private float _typingSpeed = 5f;
@@ -46,14 +50,18 @@ public class NPCScript : MonoBehaviour, IInteractable
     private string _currentFullText;
     private bool _playerWithinBounds = false;
 
-    // FIXME: waiting until new AudioManager update gets pushed
-    //private EventInstance _currentInstance;
+    private EventInstance _currentInstance;
+
+    private int _totalNPCs = 1;
+    private bool _loopedOnce;
 
     /// <summary>
     /// Field to retrieve attached GameObject: from IInteractable
     /// </summary>
-    public GameObject GetGameObject { get; }
-
+    public GameObject GetGameObject 
+    { 
+        get; 
+    }
 
     /// <summary>
     /// This function will be implemented to contain the specific functionality
@@ -83,11 +91,22 @@ public class NPCScript : MonoBehaviour, IInteractable
     }
     
     /// <summary>
+    /// Resets the memory, causing the doors to be locked when the scene is loaded.
+    /// </summary>
+    [Button] 
+    public void ResetMemory()
+    {
+        PlayerPrefs.SetInt(SceneManager.GetActiveScene().name, 0);
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>
     /// Start is called before the first frame update
     /// used here to grabe the dialogue ui item and to set the occupied variable
     /// </summary>
-    void Start()
+    private void Start()
     {
+        _totalNPCs = FindObjectsOfType<NPCScript>().Length;
         if (CheckForEntries())
         {
             _dialogueBox.SetText(_dialogueEntries[_currentDialogue]._text);
@@ -105,6 +124,12 @@ public class NPCScript : MonoBehaviour, IInteractable
         _isTalking = false;
         _currentTypingSpeed = Mathf.Clamp(
             _typingSpeed - _dialogueEntries[_currentDialogue]._adjustTypingSpeed, 2f, 15f) / 100f;
+
+        if (PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) >= _totalNPCs)
+        {
+            UnlockDoors();
+        }
+        Debug.Log("Door Progress: (" + PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) + "/" + _totalNPCs + ")");
     }
 
     /// <summary>
@@ -144,13 +169,25 @@ public class NPCScript : MonoBehaviour, IInteractable
             // skips the typing to show complete text
             if (_isTyping)
             {
-                //FinishTyping();
-                //return;
+                FinishTyping();
+                return;
             }
 
             if (_currentDialogue < _dialogueEntries.Count - 1)
             {
                 _currentDialogue++;
+
+                if (!_loopedOnce && _currentDialogue == (_dialogueEntries.Count - 1))
+                {
+                    PlayerPrefs.SetInt(SceneManager.GetActiveScene().name, PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) + 1);
+                    PlayerPrefs.Save();
+                    Debug.Log("Door Progress: (" + PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) + "/" + _totalNPCs + ")");
+                    if (PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) == _totalNPCs)
+                    {
+                        UnlockDoors();
+                    }
+                    _loopedOnce = true;
+                }
             }
             else
             {
@@ -165,6 +202,22 @@ public class NPCScript : MonoBehaviour, IInteractable
             // adjusts typing speed on a per-entry basis
             _currentTypingSpeed = Mathf.Clamp(_typingSpeed - _dialogueEntries[_currentDialogue]._adjustTypingSpeed, 2f, 15f) / 100f;
             _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue]._text));
+        }
+    }
+
+    /// <summary>
+    /// Unlocks the door after NPC dialogue is completed.
+    /// </summary>
+    private void UnlockDoors()
+    {
+        if (_doors.Length < 1)
+        {
+            return;
+        }
+
+        foreach (EndLevelDoor door in _doors)
+        {
+            door.UnlockDoor();
         }
     }
 
