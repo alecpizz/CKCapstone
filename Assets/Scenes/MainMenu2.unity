@@ -1384,6 +1384,7 @@ RectTransform:
   m_Children:
   - {fileID: 997577394}
   - {fileID: 885715518}
+  - {fileID: 1159600282}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1535,7 +1536,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 1043149805}
     m_Modifications:
     - target: {fileID: 507778279924642163, guid: 3ef03f05c0a6e304ab2ae36015c9cae9,
         type: 3}
@@ -1570,32 +1571,32 @@ PrefabInstance:
     - target: {fileID: 1901128492046142884, guid: 3ef03f05c0a6e304ab2ae36015c9cae9,
         type: 3}
       propertyPath: m_Pivot.x
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1901128492046142884, guid: 3ef03f05c0a6e304ab2ae36015c9cae9,
         type: 3}
       propertyPath: m_Pivot.y
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1901128492046142884, guid: 3ef03f05c0a6e304ab2ae36015c9cae9,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1901128492046142884, guid: 3ef03f05c0a6e304ab2ae36015c9cae9,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1901128492046142884, guid: 3ef03f05c0a6e304ab2ae36015c9cae9,
         type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1901128492046142884, guid: 3ef03f05c0a6e304ab2ae36015c9cae9,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1901128492046142884, guid: 3ef03f05c0a6e304ab2ae36015c9cae9,
         type: 3}
@@ -1610,17 +1611,17 @@ PrefabInstance:
     - target: {fileID: 1901128492046142884, guid: 3ef03f05c0a6e304ab2ae36015c9cae9,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1901128492046142884, guid: 3ef03f05c0a6e304ab2ae36015c9cae9,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1901128492046142884, guid: 3ef03f05c0a6e304ab2ae36015c9cae9,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1901128492046142884, guid: 3ef03f05c0a6e304ab2ae36015c9cae9,
         type: 3}
@@ -1645,17 +1646,17 @@ PrefabInstance:
     - target: {fileID: 1901128492046142884, guid: 3ef03f05c0a6e304ab2ae36015c9cae9,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1901128492046142884, guid: 3ef03f05c0a6e304ab2ae36015c9cae9,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1901128492046142884, guid: 3ef03f05c0a6e304ab2ae36015c9cae9,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1901128492046142884, guid: 3ef03f05c0a6e304ab2ae36015c9cae9,
         type: 3}
@@ -1806,6 +1807,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 4853562478517310254, guid: 3ef03f05c0a6e304ab2ae36015c9cae9,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -958.03
       objectReference: {fileID: 0}
     - target: {fileID: 5516031676451953805, guid: 3ef03f05c0a6e304ab2ae36015c9cae9,
         type: 3}
@@ -2192,6 +2198,7 @@ MonoBehaviour:
       Data3: 2142963355
       Data4: -53796704
     Path: event:/Main Menu Clicks
+  _canvas: {fileID: 1043149808}
 --- !u!1 &1522559554
 GameObject:
   m_ObjectHideFlags: 0
@@ -3474,7 +3481,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 1570075921}
   - {fileID: 1043149805}
-  - {fileID: 1159600281}
   - {fileID: 1306577879}
   - {fileID: 1697348736}
   - {fileID: 1771985709}
