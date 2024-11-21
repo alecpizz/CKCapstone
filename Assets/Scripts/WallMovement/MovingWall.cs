@@ -29,8 +29,18 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     //indicator for where wall will be moved
     [SerializeField] private GameObject _wallGhost;
 
+    [SerializeField] private float _groundHeight;
+
+    [SerializeField] private float _activatedHeight;
+
+    [SerializeField] private float _duration;
+
+    [SerializeField] private Ease _easeType;
+
     //to decide if switch should be true or not
     private bool _worked = true;
+
+    private GridPlacer _ghostPlacer;
 
     //classes required from Alec's IGridEntry Interface
     public bool IsTransparent => false;
@@ -40,6 +50,11 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     public GameObject GetGameObject => gameObject;
 
     public Vector3 Position => transform.position;
+
+    void Awake()
+    {
+        _ghostPlacer = _wallGhost.GetComponent<GridPlacer>(); 
+    }
 
     /// <summary>
     /// Original position of the wall is given
@@ -56,6 +71,8 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
         _originGhost = _wallGhost.transform.position;
         // Maintains same height to ensure consistency when swapping
         _originGhost.y = transform.position.y;
+
+        //_activatedHeight = _originWall.y;
     }
 
     /// <summary>
@@ -65,12 +82,10 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     /// </summary>
     public void ActivationAction()
     {
+        //transform.position = new Vector3(_originGhost.x, transform.position.y, _originGhost.z);
+        Tween.PositionY(_wallGhost.transform, endValue: _activatedHeight, duration: _duration, ease: Ease.InOutSine);
 
-
-        transform.position = new Vector3(_originGhost.x, transform.position.y, _originGhost.z);
-        Tween.PositionY(_wallGhost.transform, endValue: 0, duration: 1, ease: Ease.InOutSine).OnComplete(() => _wallGhost.transform.position = _originWall);
-
-        Tween.PositionY(transform, endValue: _originGhost.y, duration: 1, ease: Ease.InOutSine).OnComplete(() => _wallGrid.UpdatePosition());
+        Tween.PositionY(transform, endValue: _groundHeight, duration: _duration, ease: Ease.InOutSine).OnComplete(() => _wallGrid.UpdatePosition());
     }
 
     /// <summary>
@@ -80,10 +95,10 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     /// </summary>
     public void DeactivationAction()
     {
-        transform.position = new Vector3(_originWall.x, transform.position.y, _originWall.z);
-        Tween.PositionY(_wallGhost.transform, endValue: 0, duration: 1, ease: Ease.InOutSine).OnComplete(() => _wallGhost.transform.position = _originGhost);
+        //transform.position = new Vector3(_originWall.x, transform.position.y, _originWall.z);
+        Tween.PositionY(_wallGhost.transform, endValue: _groundHeight, duration: _duration, ease: Ease.InOutSine);
 
-        Tween.PositionY(transform, endValue: _originWall.y, duration: 1, ease: Ease.InOutSine).OnComplete(() => _wallGrid.UpdatePosition());
+        Tween.PositionY(transform, endValue: _activatedHeight, duration: _duration, ease: Ease.InOutSine).OnComplete(() => _wallGrid.UpdatePosition());
     }
 
     /// <summary>
@@ -97,7 +112,11 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
         {
             _worked = true;
 
-            Tween.PositionY(transform, endValue: 10, duration: 1, ease: Ease.InOutSine).OnComplete(() => ActivationAction());
+            Tween.PositionY(transform, endValue: _groundHeight, duration: _duration, ease: _easeType);//.OnComplete(() => ActivationAction());
+            Tween.PositionY(_wallGhost.transform, endValue: _activatedHeight, duration: _duration, ease: _easeType);
+
+            _wallGrid.IsTransparent = true;
+            _ghostPlacer.IsTransparent = false;
 
         }
         else
@@ -117,7 +136,11 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
         {
             _worked = true;
 
-            Tween.PositionY(transform, endValue: 10, duration: 1, ease: Ease.InOutSine).OnComplete(() => DeactivationAction());
+            Tween.PositionY(transform, endValue: _activatedHeight, duration: _duration, ease: _easeType);//.OnComplete(() => DeactivationAction());
+            Tween.PositionY(_wallGhost.transform, endValue: _groundHeight, duration: _duration, ease: _easeType);
+
+            _wallGrid.IsTransparent = false;
+            _ghostPlacer.IsTransparent = true;
 
         }
         else
