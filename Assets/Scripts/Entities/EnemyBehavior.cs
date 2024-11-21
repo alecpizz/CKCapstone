@@ -29,6 +29,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
     private GameObject _player;
     [SerializeField] private GameObject _destinationMarker;
+    [SerializeField] private GameObject _destPathVFX;
 
     [SerializeField] private bool _atStart;
     [SerializeField] private int _currentPoint = 0;
@@ -40,9 +41,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     [SerializeField] private float _destColorChangeRate = 0.01f;
     public bool collidingWithRay = false;
     [SerializeField] private float _destYPos = 1f;
-
-
-    private PlayerMovement _playerMoveRef;
 
     //Wait time between enemy moving each individual tile while on path to next destination
     [SerializeField] private float _waitTime = 0.5f;
@@ -66,6 +64,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
     [SerializeField] private float changeAlpha = 0f;
     public Renderer markMaterial;
+    public LineRenderer vfxLine;
 
     public bool EnemyFrozen { get; private set; } = false;
 
@@ -91,7 +90,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         GridBase.Instance.AddEntry(this);
 
         _player = PlayerMovement.Instance.gameObject;
-        _playerMoveRef = _player.GetComponent<PlayerMovement>();
 
         _destinationMarker.transform.SetParent(null);
 
@@ -102,6 +100,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
             TimeSignatureManager.Instance.RegisterTimeListener(this);
 
         markMaterial = _destinationMarker.GetComponent<Renderer>();
+        vfxLine = _destPathVFX.GetComponent<LineRenderer>();
 
         UpdateDestinationMarker();
         ChangeMarkerColor();
