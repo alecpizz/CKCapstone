@@ -41,6 +41,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     [SerializeField] private float _destColorChangeRate = 0.01f;
     public bool collidingWithRay = false;
     [SerializeField] private float _destYPos = 1f;
+    [SerializeField] private float _lineYPosOffset = 1f;
+
 
     //Wait time between enemy moving each individual tile while on path to next destination
     [SerializeField] private float _waitTime = 0.5f;
@@ -63,7 +65,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     [SerializeField] private bool _circularMovement = false;
 
     [SerializeField] private float changeAlpha = 0f;
-    public Renderer markMaterial;
+    [SerializeField] private int linePosCount;
     public LineRenderer vfxLine;
 
     public bool EnemyFrozen { get; private set; } = false;
@@ -99,11 +101,14 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.RegisterTimeListener(this);
 
-        markMaterial = _destinationMarker.GetComponent<Renderer>();
         vfxLine = _destPathVFX.GetComponent<LineRenderer>();
+        linePosCount = _enemyMovementTime + 1;
+        vfxLine.positionCount = linePosCount;
 
+        _destPathVFX.SetActive(false);
+        _destinationMarker.SetActive(false);
         UpdateDestinationMarker();
-        ChangeMarkerColor();
+        DestinationPath();
     }
 
     private void OnEnable()
@@ -125,53 +130,17 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     }
 
 
-    public void ChangeMarkerColor()
+    public void DestinationPath()
     {
         if (collidingWithRay)
         {
-            for (int i = 0; i < 255; i++)
-            {
-                if (changeAlpha > 255)
-                {
-                    changeAlpha = 255;
-                }
-
-                if (changeAlpha < 0)
-                {
-                    changeAlpha = 0;
-                }
-
-                changeAlpha += _destColorChangeRate;
-                markMaterial.material.color = new Color(markMaterial.material.color.r, markMaterial.material.color.g, markMaterial.material.color.b, changeAlpha);
-
-                if (!collidingWithRay)
-                {
-                    break;
-                }
-            }
+            _destPathVFX.SetActive(true);
+            _destinationMarker.SetActive(true);
         }
         else
         {
-            for (int i = 0; i < 255; i++)
-            {
-                if (changeAlpha > 255)
-                {
-                    changeAlpha = 255;
-                }
-
-                if (changeAlpha < 0)
-                {
-                    changeAlpha = 0;
-                }
-
-                changeAlpha -= _destColorChangeRate;
-                markMaterial.material.color = new Color(markMaterial.material.color.r, markMaterial.material.color.g, markMaterial.material.color.b, changeAlpha);
-
-                if (collidingWithRay)
-                {
-                    break;
-                }
-            }
+            _destPathVFX.SetActive(false);
+            _destinationMarker.SetActive(false);
         }
     }
 
@@ -332,6 +301,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     {
         //Sets the _destinationMarker object to the enemy's current position
         _destinationMarker.transform.position = transform.position;
+        Vector3 linePos = transform.position;
+        linePos.y = _lineYPosOffset;
+
+        vfxLine.SetPosition(0, linePos);
 
         //Looks at the time signature for the enemy so it can place multiple moves in advance
         for (int i = 0; i < _enemyMovementTime; ++i)
@@ -386,6 +359,14 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                     moveInDirection);
 
                 _destinationMarker.transform.position = move;
+
+                if (k <= vfxLine.positionCount)
+                {
+                    linePos = move;
+                    linePos.y = _lineYPosOffset;
+                    
+                    vfxLine.SetPosition(k + 1, linePos);
+                }
             }
 
             //Makes sure the marker is always at a y position of 1 so it is visible on the grid

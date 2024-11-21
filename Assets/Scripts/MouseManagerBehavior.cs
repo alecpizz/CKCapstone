@@ -41,14 +41,14 @@ public class MouseManagerBehavior : MonoBehaviour
             lastEnemyHit = hit.collider.gameObject;
             lastEnemyBehavior = lastEnemyHit.GetComponent<EnemyBehavior>();
             lastEnemyBehavior.collidingWithRay = true;
-            lastEnemyBehavior.ChangeMarkerColor();
+            lastEnemyBehavior.DestinationPath();
         }
         else
         {
             if (lastEnemyHit != null)
             {
                 lastEnemyBehavior.collidingWithRay = false;
-                lastEnemyBehavior.ChangeMarkerColor();
+                lastEnemyBehavior.DestinationPath();
             }
         }
     }
