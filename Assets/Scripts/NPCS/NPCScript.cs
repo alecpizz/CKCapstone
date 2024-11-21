@@ -17,6 +17,7 @@ using System.Diagnostics;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using SaintsField.Playa;
+using Debug = UnityEngine.Debug;
 
 [Serializable]
 public struct DialogueEntry
@@ -86,6 +87,10 @@ public class NPCScript : MonoBehaviour, IInteractable
         }
         else
         {
+            if (_typingCoroutine != null)
+            {
+                StopCoroutine(_typingCoroutine);
+            }
             _dialogueBox.SetText(_tutorialHint);
         }
     }
