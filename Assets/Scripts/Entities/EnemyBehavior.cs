@@ -66,6 +66,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
     [SerializeField] private float changeAlpha = 0f;
     [SerializeField] private int linePosCount;
+    [SerializeField] private int tilesToDraw = 0;
+    [SerializeField] private int currentLinePoint = 0;
     public LineRenderer vfxLine;
 
     public bool EnemyFrozen { get; private set; } = false;
@@ -302,7 +304,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         Vector3 linePos = transform.position;
         linePos.y = _lineYPosOffset;
 
-        vfxLine.SetPosition(0, linePos);
+        vfxLine.SetPosition(currentLinePoint, linePos);
 
         //Looks at the time signature for the enemy so it can place multiple moves in advance
         for (int i = 0; i < _enemyMovementTime; ++i)
@@ -344,7 +346,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
             var destPointTiles = destPoint.tilesToMove;
             FindDirection(destPointDirection);
 
-            linePosCount = destPointTiles + 1;
+            tilesToDraw += destPointTiles;
+            linePosCount = tilesToDraw + 1;
             vfxLine.positionCount = linePosCount;
 
             //Reverses if going backward through the list
@@ -366,7 +369,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                     linePos = move;
                     linePos.y = _lineYPosOffset;
                     
-                    vfxLine.SetPosition(k + 1, linePos);
+                    vfxLine.SetPosition(currentLinePoint + 1, linePos);
+                    currentLinePoint++;
                 }
             }
 
@@ -375,6 +379,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
             destPos.y += _destYPos;
             _destinationMarker.transform.position = destPos;
         }
+
+        tilesToDraw = 0;
+        currentLinePoint = 0;
     }
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
