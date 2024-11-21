@@ -44,10 +44,13 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     [SerializeField] private PlayerInteraction _playerInteraction;
 
     [SerializeField] private float _delayTime = 0.1f;
+    [SerializeField] private float _rotationDelay = 0.1f;
 
     [SerializeField] private float _movementTime = 0.25f;
     [SerializeField] private float _rotationTime = 0.05f;
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
+    [SerializeField] private Ease _movementEase = Ease.OutBack;
+    [SerializeField] private bool _isThereAnEnemy = false; //This is determine what animation happens
 
     private int _playerMovementTiming = 1;
     private WaitForSeconds _waitForSeconds;
@@ -110,21 +113,21 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// <returns>Waits for short delay while moving</returns>
     private IEnumerator MovementDelay(Vector3 moveDirection)
     {
+        yield return new WaitForSeconds(_rotationDelay);
         float modifiedMovementTime = Mathf.Clamp(_movementTime / _playerMovementTiming,
             MinMovementTime, float.MaxValue);
-        _animator.SetTrigger("Forward");
 
         for (int i = 0; i < _playerMovementTiming; i++)
         {
             // Move if there is no wall below the player or if ghost mode is enabled
             var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
-
+            _animator.SetTrigger("Forward");
             if ((GridBase.Instance.CellIsTransparent(move)) ||
                 (DebugMenuManager.Instance.GhostMode))
             {
                 yield return Tween.Position(transform,
                     move + _positionOffset, duration: modifiedMovementTime, 
-                    Ease.OutBack).ToYieldInstruction();
+                    _movementEase).ToYieldInstruction();
                 GridBase.Instance.UpdateEntry(this);
             }
 
