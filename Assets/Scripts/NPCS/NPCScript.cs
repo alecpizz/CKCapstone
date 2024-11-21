@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: David Henvick
-*    Contributors: Claire Noto
+*    Contributors: Claire Noto, Alec Pizziferro
 *    Date Created: 09/30/2024
 *    Description: this is the script that is used control an npc 
 *    and their dialogue
@@ -13,8 +13,11 @@ using FMODUnity;
 using FMOD.Studio;
 using System;
 using SaintsField;
+using System.Diagnostics;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using SaintsField.Playa;
+using Debug = UnityEngine.Debug;
 
 [Serializable]
 public struct DialogueEntry
@@ -26,17 +29,18 @@ public struct DialogueEntry
     [Range(-5f, 5f)] public float _adjustTypingSpeed;
 }
 
-// TODO: Update this class to implement from IInteractable
 public class NPCScript : MonoBehaviour, IInteractable
 {
     [SerializeField] private TMP_Text _dialogueBox;
+    [SerializeField] private Image _background;
     [SerializeField] private EndLevelDoor[] _doors;
 
     private bool _isTalking;
     [InfoBox("This adjusts the base typing speed. 2 is the slowest, 10 is the fastest", EMessageType.Info)]
     [Range(2f, 10f)][SerializeField] private float _typingSpeed = 5f;
     [SerializeField] private List<DialogueEntry> _dialogueEntries;
-
+    [SerializeField] [TextArea] private string _tutorialHint = "Press E to Talk";
+    [SerializeField] private float _dialogueFadeDuration = 0.25f;
     //dialogue options
     private int _currentDialogue = 0;
     private float _currentTypingSpeed;
@@ -45,6 +49,7 @@ public class NPCScript : MonoBehaviour, IInteractable
     private Coroutine _typingCoroutine;
     private bool _isTyping = false;
     private string _currentFullText;
+    private bool _playerWithinBounds = false;
 
     private EventInstance _currentInstance;
 
@@ -76,9 +81,20 @@ public class NPCScript : MonoBehaviour, IInteractable
     /// </summary>
     public void OnLeave()
     {
-        HideDialogue();
+        if (!_playerWithinBounds)
+        {
+            HideDialogue();
+        }
+        else
+        {
+            if (_typingCoroutine != null)
+            {
+                StopCoroutine(_typingCoroutine);
+            }
+            _dialogueBox.SetText(_tutorialHint);
+        }
     }
-
+    
     /// <summary>
     /// Resets the memory, causing the doors to be locked when the scene is loaded.
     /// </summary>
@@ -97,8 +113,18 @@ public class NPCScript : MonoBehaviour, IInteractable
     {
         _totalNPCs = FindObjectsOfType<NPCScript>().Length;
         if (CheckForEntries())
+        {
             _dialogueBox.SetText(_dialogueEntries[_currentDialogue]._text);
-        _dialogueBox.gameObject.SetActive(false);
+        }
+
+        var canvas = _dialogueBox.transform.parent;
+        var cam = Camera.main;
+        if (cam != null)
+        {
+            canvas.transform.rotation = cam.transform.rotation;
+        }
+        _dialogueBox.CrossFadeAlpha(0f, 0f, true);
+        _background.CrossFadeAlpha(0f, 0f, true);
         _occupied = false;
         _isTalking = false;
         _currentTypingSpeed = Mathf.Clamp(
@@ -128,7 +154,8 @@ public class NPCScript : MonoBehaviour, IInteractable
                 _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue]._text));
             }
 
-            _dialogueBox.gameObject.SetActive(true);
+            _dialogueBox.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
+            _background.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
             _occupied = true;
             _isTalking = true;
         }
@@ -204,7 +231,8 @@ public class NPCScript : MonoBehaviour, IInteractable
     /// </summary>
     public void HideDialogue()
     {
-        _dialogueBox.gameObject.SetActive(false);
+        _dialogueBox.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
+        _background.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
         _occupied = false;
 
         if (_typingCoroutine != null)
@@ -212,6 +240,45 @@ public class NPCScript : MonoBehaviour, IInteractable
             StopCoroutine(_typingCoroutine);
         }
         _isTalking = false;
+    }
+
+    /// <summary>
+    /// Invoked when the player enters, displays the dialogue box
+    /// for tutorial text.
+    /// </summary>
+    /// <param name="other">The collider of the player.</param>
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            _playerWithinBounds = true;
+            if (_typingCoroutine != null)
+            {
+                StopCoroutine(_typingCoroutine);
+            }
+            //set to tutorial text and fade in over time.
+            _dialogueBox.SetText(_tutorialHint);
+            _dialogueBox.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
+            _background.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
+        }
+    }
+
+    /// <summary>
+    /// Invoked when the player exits,
+    /// hides the dialogue box.
+    /// </summary>
+    /// <param name="other">The collider of the player.</param>
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            _playerWithinBounds = false;
+            if (_typingCoroutine != null)
+            {
+                StopCoroutine(_typingCoroutine);
+            }
+            OnLeave();
+        }
     }
 
     /// <summary>
