@@ -12,8 +12,7 @@ using FMOD.Studio;
 using STOP_MODE = FMOD.Studio.STOP_MODE;
 using System;
 using System.Collections;
-using Unity.VisualScripting;
-using UnityEngine.Serialization;
+
 
 public class AudioManager : MonoBehaviour
 {
@@ -22,7 +21,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private EventReference _music = default;
     [SerializeField] [Range(0, 4)] private int _musicLayering = 0;
 
-    Dictionary<EventReference, EventInstance> AudioInstances;
+    private Dictionary<EventReference, EventInstance> AudioInstances;
 
     private EventInstance _key;
 
@@ -204,6 +203,10 @@ public class AudioManager : MonoBehaviour
         return audioEvent;
     }
 
+    /// <summary>
+    /// Stops sounds and clears the instances dictionary if the manager is
+    /// destroyed.
+    /// </summary>
     private void OnDestroy()
     {
         StopAllSounds();
