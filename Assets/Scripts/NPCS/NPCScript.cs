@@ -57,7 +57,10 @@ public class NPCScript : MonoBehaviour, IInteractable
     /// <summary>
     /// Field to retrieve attached GameObject: from IInteractable
     /// </summary>
-    public GameObject GetGameObject { get; }
+    public GameObject GetGameObject 
+    { 
+        get; 
+    }
 
 
     /// <summary>
