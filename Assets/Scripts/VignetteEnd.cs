@@ -12,6 +12,7 @@ using UnityEngine.Rendering.Universal;
 public class VignetteEnd : MonoBehaviour, ITurnListener
 {
     [SerializeField] float _vignetteFadeOutTime = 0.2f;
+    [SerializeField] Ease _vignetteEndEasing = Ease.OutQuad;
 
     public TurnState TurnState => TurnState.PostProcessing;
 

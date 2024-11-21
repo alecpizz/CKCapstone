@@ -13,6 +13,7 @@ using UnityEngine.Rendering.Universal;
 public class VignetteStart : MonoBehaviour, ITurnListener
 {
     [SerializeField] float _vignetteFadeInTime = 0.2f;
+    [SerializeField] Ease _vignetteStartEasing = Ease.InQuad;
 
     public TurnState TurnState => TurnState.Player;
 
@@ -56,7 +57,8 @@ public class VignetteStart : MonoBehaviour, ITurnListener
     /// <param name="direction"></param>
     public void BeginTurn(Vector3 direction)
     {
-        Tween.Custom(0f, _vignetteIntensity, _vignetteFadeInTime, newValue => _vignette.intensity.value = newValue)
+        Tween.Custom(0f, _vignetteIntensity, _vignetteFadeInTime, 
+            newValue => _vignette.intensity.value = newValue, _vignetteStartEasing)
             .OnComplete(() => RoundManager.Instance.CompleteTurn(this));
     }
 
