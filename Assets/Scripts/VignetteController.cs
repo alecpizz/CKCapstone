@@ -2,7 +2,7 @@
  *    Author: Nick Grinstead
  *    Contributors: 
  *    Date Created: 11/19/24
- *    Description: Script for playing the vignette fade in effect.
+ *    Description: Script for playing the vignette fade in and out effect.
  *      Assumes it's on the same object as a volume object.
  *******************************************************************/
 using PrimeTween;
@@ -10,12 +10,16 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-public class VignetteStart : MonoBehaviour, ITurnListener
+public class VignetteController : MonoBehaviour, ITurnListener
 {
     [SerializeField] float _vignetteFadeInTime = 0.2f;
     [SerializeField] Ease _vignetteStartEasing = Ease.InQuad;
 
-    public TurnState TurnState => TurnState.Player;
+    [SerializeField] float _vignetteFadeOutTime = 0.2f;
+    [SerializeField] Ease _vignetteEndEasing = Ease.OutQuad;
+
+    public TurnState TurnState => _internalState;
+    private TurnState _internalState = TurnState.Player;
 
     public Vignette Vignette  => _vignette;
     private Vignette _vignette;
@@ -52,14 +56,33 @@ public class VignetteStart : MonoBehaviour, ITurnListener
     }
 
     /// <summary>
-    /// Tweens vignette intensity from 0 to _vignetteIntensity
+    /// Tweens vignette intensity in or out based on turn state
     /// </summary>
     /// <param name="direction"></param>
     public void BeginTurn(Vector3 direction)
     {
-        Tween.Custom(0f, _vignetteIntensity, _vignetteFadeInTime, 
-            newValue => _vignette.intensity.value = newValue, _vignetteStartEasing)
-            .OnComplete(() => RoundManager.Instance.CompleteTurn(this));
+        if (_internalState == TurnState.Player)
+        {
+            Tween.Custom(0f, _vignetteIntensity, _vignetteFadeInTime,
+                newValue => _vignette.intensity.value = newValue, _vignetteStartEasing)
+                .OnComplete(() => ToggleTurnState());
+        }
+        else
+        {
+            Tween.Custom(_vignetteIntensity, 0f, _vignetteFadeOutTime, newValue => _vignette.intensity.value = newValue)
+            .OnComplete(() => ToggleTurnState());
+        }
+    }
+
+    /// <summary>
+    /// Ends the current turn before re-registering to RoundManager as a new turn state.
+    /// </summary>
+    private void ToggleTurnState()
+    {
+        RoundManager.Instance.CompleteTurn(this);
+        RoundManager.Instance.UnRegisterListener(this);
+        _internalState = _internalState == TurnState.Player ? TurnState.PostProcessing : TurnState.Player;
+        RoundManager.Instance.RegisterListener(this);
     }
 
     /// <summary>
