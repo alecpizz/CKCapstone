@@ -14,6 +14,7 @@ using FMOD.Studio;
 using System;
 using SaintsField;
 using UnityEngine.SceneManagement;
+using SaintsField.Playa;
 
 [Serializable]
 public struct DialogueEntry
@@ -31,7 +32,6 @@ public class NPCScript : MonoBehaviour, IInteractable
     [SerializeField] private TMP_Text _dialogueBox;
     [InfoBox("Debug Value, used to lock doors again by reseting the save data " +
         "for this level, set to false after testing", EMessageType.Info)]
-    [SerializeField] private bool _resetMemory = false;
     [SerializeField] private EndLevelDoor _door;
     [SerializeField] private EndLevelDoor _challengeDoor;
 
@@ -81,6 +81,15 @@ public class NPCScript : MonoBehaviour, IInteractable
     }
 
     /// <summary>
+    /// Resets the memory, causing the doors to be locked when the scene is loaded.
+    /// </summary>
+    [Button] public void ResetMemory()
+    {
+        PlayerPrefs.SetInt(SceneManager.GetActiveScene().name, 0);
+        PlayerPrefs.Save();
+    }
+
+    /// <summary>
     /// Start is called before the first frame update
     /// used here to grabe the dialogue ui item and to set the occupied variable
     /// </summary>
@@ -95,11 +104,6 @@ public class NPCScript : MonoBehaviour, IInteractable
         _currentTypingSpeed = Mathf.Clamp(
             _typingSpeed - _dialogueEntries[_currentDialogue]._adjustTypingSpeed, 2f, 15f) / 100f;
 
-        if (_resetMemory)
-        {
-            PlayerPrefs.SetInt(SceneManager.GetActiveScene().name, 0);
-            PlayerPrefs.Save();
-        }
         if (PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) >= _totalNPCs)
         {
             UnlockDoors();
