@@ -102,8 +102,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
             TimeSignatureManager.Instance.RegisterTimeListener(this);
 
         vfxLine = _destPathVFX.GetComponent<LineRenderer>();
-        linePosCount = _enemyMovementTime + 1;
-        vfxLine.positionCount = linePosCount;
 
         _destPathVFX.SetActive(false);
         _destinationMarker.SetActive(false);
@@ -346,6 +344,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
             var destPointTiles = destPoint.tilesToMove;
             FindDirection(destPointDirection);
 
+            linePosCount = destPointTiles + 1;
+            vfxLine.positionCount = linePosCount;
+
             //Reverses if going backward through the list
             if (!_destAtStart)
             {
@@ -360,7 +361,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
                 _destinationMarker.transform.position = move;
 
-                if (k <= vfxLine.positionCount)
+                if (k <= vfxLine.positionCount + 1)
                 {
                     linePos = move;
                     linePos.y = _lineYPosOffset;
