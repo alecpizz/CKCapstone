@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Zayden Joyner
-*    Contributors: 
+*    Contributors: David Galmines 
 *    Date Created: 11/7/24
 *    Description: Handles the funcionality of turning the door light on/off.
 *******************************************************************/
@@ -36,36 +36,21 @@ public class DoorLightBehaviour : MonoBehaviour
     // Access the name of the shader property that handles emissive intensity
     private string _emissionPropertyName;
 
+    [SerializeField] private GameObject _pointLightChild;
+    [SerializeField] private GameObject _doorMaterialChild;
+
     /// <summary>
     /// Assign initial references
     /// </summary>
     void Start()
     {
         // Get the light object from the gameobject hierarchy
-        _pointLight = transform.GetChild(8).gameObject;
+        _pointLight = _pointLightChild.gameObject;
 
         // Get the material of the lamp mesh
-        _doorMaterial = transform.GetChild(4).GetComponent<MeshRenderer>().material;
+        _doorMaterial = _doorMaterialChild.GetComponent<MeshRenderer>().material;
         // Get the property name of the door material's emissive intensity
         _emissionPropertyName = _doorMaterial.shader.GetPropertyName(0);
-    }
-
-    /// <summary>
-    /// FOR TESTING PURPOSES ONLY - check for the testLightSwitch boolean and turn the light on/off accordingly
-    /// </summary>
-    void Update()
-    {
-        // If the test light switch is on, turn on the lamp
-        if (testLightSwitch && !_lightOn)
-        {          
-            TurnLightOn();
-        }
-
-        // If the test light switch is off, turn off the lamp
-        else if (!testLightSwitch && _lightOn)
-        {
-            TurnLightOff();
-        }
     }
 
     /// <summary>
@@ -74,8 +59,6 @@ public class DoorLightBehaviour : MonoBehaviour
     /// </summary>
     public void TurnLightOn()
     {
-        // Remember that the light is on
-        _lightOn = true;
         // Lerp emission
         StartCoroutine(LerpEmission(0f, _onEmission, _animationDuration));
         // Lerp light intensity
@@ -88,8 +71,6 @@ public class DoorLightBehaviour : MonoBehaviour
     /// </summary>
     public void TurnLightOff()
     {
-        // Remember that the light is off
-        _lightOn = false;
         // Lerp emission
         StartCoroutine(LerpEmission(_onEmission, 0f, _animationDuration));
         // Lerp light intensity
