@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4922018640303246038}
   - component: {fileID: 3262031987149162471}
   m_Layer: 6
-  m_Name: Cube
+  m_Name: MovingWall
   m_TagString: Wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -140,6 +140,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _wallGrid: {fileID: 4922018640303246038}
   _wallGhost: {fileID: 0}
+  _groundHeight: 0.2
+  _activatedHeight: 1.5
+  _duration: 0.8
+  _easeType: 15
 --- !u!1001 &4639276192660265130
 PrefabInstance:
   m_ObjectHideFlags: 0
