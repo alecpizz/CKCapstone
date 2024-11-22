@@ -5,6 +5,7 @@
  *    Description: Manager for turn based movement mechanics.
  *******************************************************************/
 
+using System;
 using System.Collections.Generic;
 using FMODUnity;
 using UnityEngine;
@@ -143,10 +144,13 @@ public sealed class RoundManager : MonoBehaviour
 
         _movementRegistered = false;
         _turnState = TurnState.Player;
-        //we now wait on the update method to catch the end of the players turn
+    
+        //only play player turn sound if there's enemies in the scene.
+        if (_turnListeners[TurnState.Enemy].Count > 0)
+        {
+            AudioManager.Instance.PlaySound(_playerTurnEvent);
+        }
         //perform the turn now so that it's frame perfect.
-
-        AudioManager.Instance.PlaySound(_playerTurnEvent);
         foreach (var turnListener in _turnListeners[TurnState.Player])
         {
             turnListener.BeginTurn(_lastMovementInput);
