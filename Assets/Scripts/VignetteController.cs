@@ -21,11 +21,11 @@ public class VignetteController : MonoBehaviour, ITurnListener
     public TurnState TurnState => _internalState;
     private TurnState _internalState = TurnState.Player;
 
-    public Vignette Vignette  => _vignette;
     private Vignette _vignette;
 
-    public float Intensity => _vignetteIntensity;
     [SerializeField] private float _vignetteIntensity = 0.4f;
+    [SerializeField] private float _vignetteSmoothness = 0.1f;
+    [SerializeField] private Color _vignetteColor = Color.red;
 
     /// <summary>
     /// Initialize Vignette
@@ -37,6 +37,8 @@ public class VignetteController : MonoBehaviour, ITurnListener
         _vignette.color.overrideState = _vignette.center.overrideState =
             _vignette.intensity.overrideState = _vignette.smoothness.overrideState =
             _vignette.rounded.overrideState = true;
+        _vignette.smoothness.value = _vignetteSmoothness;
+        _vignette.color.value = _vignetteColor;
     }
 
     /// <summary>
@@ -64,12 +66,14 @@ public class VignetteController : MonoBehaviour, ITurnListener
         if (_internalState == TurnState.Player)
         {
             Tween.Custom(0f, _vignetteIntensity, _vignetteFadeInTime,
-                newValue => _vignette.intensity.value = newValue, _vignetteStartEasing)
+                newValue => _vignette.intensity.value = newValue, _vignetteStartEasing, 1, CycleMode.Restart,
+                0.0f, 0.2f)
                 .OnComplete(() => ToggleTurnState());
         }
         else
         {
-            Tween.Custom(_vignetteIntensity, 0f, _vignetteFadeOutTime, newValue => _vignette.intensity.value = newValue)
+            Tween.Custom(_vignetteIntensity, 0f, _vignetteFadeOutTime, newValue => _vignette.intensity.value = newValue, _vignetteEndEasing, 1, CycleMode.Restart,
+                0.2f, 0.0f)
             .OnComplete(() => ToggleTurnState());
         }
     }
