@@ -112,6 +112,9 @@ public class CursorManager : MonoBehaviour
         Cursor.SetCursor(_cursor, Vector2.zero, CursorMode.Auto);
     }
 
+    /// <summary>
+    /// Plays a select sound
+    /// </summary>
     private void Select()
     {
         AudioManager.Instance.PlaySound(_clickSound);

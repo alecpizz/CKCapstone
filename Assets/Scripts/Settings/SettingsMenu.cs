@@ -21,8 +21,10 @@ public class SettingsMenu : MonoBehaviour
 
     private Resolution[] _resolutions;
 
-    public const string Fullscreen = "Fullscreen", Resolution = "Resolution", 
-                        Tooltips = "Tooltips", Subtitles = "Subtitles";
+    public const string Fullscreen = "Fullscreen";
+    public const string Resolution = "Resolution";
+    public const string Tooltips = "Tooltips";
+    public const string Subtitles = "Subtitles";
 
     private void Start()
     {
