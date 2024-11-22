@@ -7,6 +7,7 @@
 using FMODUnity;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -16,6 +17,8 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject _tutorialCanvas;
     [SerializeField] private GameObject _optionsScreen;
     [SerializeField] private GameObject _confirmQuit;
+    [SerializeField] private GameObject _mainMenu;
+
 
     [SerializeField] private EventReference _buttonPress;
 
@@ -47,16 +50,25 @@ public class MenuManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Invoked to open the options menu
+    /// Invoked to open the options menu in the main menu
     /// </summary>
-    public void Options()
+    public void OptionsMainMenu()
     {
         AudioManager.Instance.PlaySound(_buttonPress);
-        PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
+        PrimeTween.Tween.Delay(0.2f).OnComplete(() =>
         {
             _optionsScreen.SetActive(true);
         });
     }
+
+    /// <summary>
+    /// Invoked to open the options menu in the pause menu
+    /// </summary>
+    public void Options()
+    {
+        _optionsScreen.SetActive(true);
+    }
+
 
     /// <summary>
     /// Invoked to close the options menu
@@ -91,7 +103,7 @@ public class MenuManager : MonoBehaviour
     public void ActivateTutorialCanvas()
     {
         AudioManager.Instance.PlaySound(_buttonPress);
-        PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
+        PrimeTween.Tween.Delay(0.2f).OnComplete(() =>
         {
             _tutorialCanvas.SetActive(true);
         });
@@ -119,7 +131,7 @@ public class MenuManager : MonoBehaviour
     public void QuitConfirm()
     {
         AudioManager.Instance.PlaySound(_buttonPress);
-        PrimeTween.Tween.Delay(0.6f).OnComplete(() =>
+        PrimeTween.Tween.Delay(0.2f).OnComplete(() =>
         {
            _confirmQuit.SetActive(true);
         });
