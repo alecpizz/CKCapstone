@@ -24,7 +24,7 @@ public class HUDscript : MonoBehaviour, ITimeListener
     [SerializeField] private TextMeshProUGUI _sequenceUI;
     [SerializeField] private GameObject[] _noteImages;
     [SerializeField] private GameObject[] _ghostNoteImages;
-    [SerializeField] private bool isIntermission;
+    [SerializeField] private bool _isIntermission;
     [SerializeField] private TextMeshProUGUI _timeSignatureUIy;
     [SerializeField] private TextMeshProUGUI _timeSignatureUIx;
     [SerializeField] private TMP_Text _levelNumber;
@@ -52,7 +52,7 @@ public class HUDscript : MonoBehaviour, ITimeListener
             foreach (int note in _notes)
             {
                 _sequenceUI.text += " " + note;
-                if (!isIntermission)
+                if (!_isIntermission)
                 {
                     UpdateGhostNotesIcons(note);
                 }
