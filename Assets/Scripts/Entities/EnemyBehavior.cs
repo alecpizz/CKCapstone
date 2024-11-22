@@ -38,8 +38,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     //Destination object values
     [SerializeField] private bool _destAtStart;
     [SerializeField] private int _destCurrentPoint = 0;
-    [SerializeField] private float _destColorChangeRate = 0.01f;
-    public bool collidingWithRay = false;
+    public bool CollidingWithRay = false;
+
     [SerializeField] private float _destYPos = 1f;
     [SerializeField] private float _lineYPosOffset = 1f;
 
@@ -64,11 +64,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     //Check true in the inspector if the enemy is moving in a circular pattern (doesn't want to move back and forth)
     [SerializeField] private bool _circularMovement = false;
 
-    [SerializeField] private float changeAlpha = 0f;
     [SerializeField] private int linePosCount;
     [SerializeField] private int tilesToDraw = 0;
     [SerializeField] private int currentLinePoint = 0;
-    public LineRenderer vfxLine;
+    [SerializeField] private LineRenderer vfxLine;
 
     public bool EnemyFrozen { get; private set; } = false;
 
@@ -129,10 +128,13 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
             TimeSignatureManager.Instance.UnregisterTimeListener(this);
     }
 
-
+    /// <summary>
+    /// DestinationPath is called whenever the mouse ray collides with the enemy.
+    /// This function turns the _destPathVFX and _destinationMarker objects on/off.
+    /// </summary>
     public void DestinationPath()
     {
-        if (collidingWithRay)
+        if (CollidingWithRay)
         {
             _destPathVFX.SetActive(true);
             _destinationMarker.SetActive(true);

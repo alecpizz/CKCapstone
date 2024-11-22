@@ -18,36 +18,47 @@ using FMODUnity;
 
 public class MouseManagerBehavior : MonoBehaviour
 {
-    private Ray ray;
+    private Ray _ray;
     private RaycastHit hit;
     private GameObject lastEnemyHit;
     private EnemyBehavior lastEnemyBehavior;
+    private Camera _cam;
 
+    /// <summary>
+    /// Sets the lastEnemyHit and lastEnemyBehavior values to null.
+    /// Sets _cam to the main camera.
+    /// </summary>
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         lastEnemyHit = null;
         lastEnemyBehavior = null;
+
+        _cam = Camera.main;
     }
 
+    /// <summary>
+    /// Updates the ray's position to the current mouse position every frame.
+    /// Checks for enemy collision with Physics.Raycast.
+    /// </summary>
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
+        _ray = _cam.ScreenPointToRay(Mouse.current.position.ReadValue());
 
         //If the raycast hits the enemy object it's marker with change alpha value calling the ChangeMarkerColor function
-        if (Physics.Raycast(ray, out hit) && hit.collider.gameObject.GetComponent<EnemyBehavior>() != null)
+        if (Physics.Raycast(_ray, out hit) && hit.collider.gameObject.TryGetComponent<EnemyBehavior>(out EnemyBehavior enemyBehavior))
         {
             lastEnemyHit = hit.collider.gameObject;
-            lastEnemyBehavior = lastEnemyHit.GetComponent<EnemyBehavior>();
-            lastEnemyBehavior.collidingWithRay = true;
+            lastEnemyBehavior = enemyBehavior;
+            lastEnemyBehavior.CollidingWithRay = true;
             lastEnemyBehavior.DestinationPath();
         }
         else
         {
             if (lastEnemyHit != null)
             {
-                lastEnemyBehavior.collidingWithRay = false;
+                lastEnemyBehavior.CollidingWithRay = false;
                 lastEnemyBehavior.DestinationPath();
             }
         }
