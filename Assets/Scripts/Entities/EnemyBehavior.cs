@@ -64,10 +64,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     //Check true in the inspector if the enemy is moving in a circular pattern (doesn't want to move back and forth)
     [SerializeField] private bool _circularMovement = false;
 
-    [SerializeField] private int linePosCount;
-    [SerializeField] private int tilesToDraw = 0;
-    [SerializeField] private int currentLinePoint = 0;
-    [SerializeField] private LineRenderer vfxLine;
+    [SerializeField] private int _linePosCount;
+    [SerializeField] private int _tilesToDraw = 0;
+    [SerializeField] private int _currentLinePoint = 0;
+    [SerializeField] private LineRenderer _vfxLine;
 
     public bool EnemyFrozen { get; private set; } = false;
 
@@ -102,7 +102,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.RegisterTimeListener(this);
 
-        vfxLine = _destPathVFX.GetComponent<LineRenderer>();
+        _vfxLine = _destPathVFX.GetComponent<LineRenderer>();
 
         _destPathVFX.SetActive(false);
         _destinationMarker.SetActive(false);
@@ -306,7 +306,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         Vector3 linePos = transform.position;
         linePos.y = _lineYPosOffset;
 
-        vfxLine.SetPosition(currentLinePoint, linePos);
+        _vfxLine.SetPosition(_currentLinePoint, linePos);
 
         //Looks at the time signature for the enemy so it can place multiple moves in advance
         for (int i = 0; i < _enemyMovementTime; ++i)
@@ -348,9 +348,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
             var destPointTiles = destPoint.tilesToMove;
             FindDirection(destPointDirection);
 
-            tilesToDraw += destPointTiles;
-            linePosCount = tilesToDraw + 1;
-            vfxLine.positionCount = linePosCount;
+            _tilesToDraw += destPointTiles;
+            _linePosCount = _tilesToDraw + 1;
+            _vfxLine.positionCount = _linePosCount;
 
             //Reverses if going backward through the list
             if (!_destAtStart)
@@ -366,13 +366,13 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
                 _destinationMarker.transform.position = move;
 
-                if (k <= vfxLine.positionCount + 1)
+                if (k <= _vfxLine.positionCount + 1)
                 {
                     linePos = move;
                     linePos.y = _lineYPosOffset;
                     
-                    vfxLine.SetPosition(currentLinePoint + 1, linePos);
-                    currentLinePoint++;
+                    _vfxLine.SetPosition(_currentLinePoint + 1, linePos);
+                    _currentLinePoint++;
                 }
             }
 
@@ -382,8 +382,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
             _destinationMarker.transform.position = destPos;
         }
 
-        tilesToDraw = 0;
-        currentLinePoint = 0;
+        _tilesToDraw = 0;
+        _currentLinePoint = 0;
     }
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
