@@ -50,7 +50,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     [SerializeField] private float _rotationTime = 0.05f;
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
     [SerializeField] private Ease _movementEase = Ease.OutBack;
-    [SerializeField] private bool _isThereAnEnemy = false; //This is determine what animation happens
+    [SerializeField] private bool _isThereAnEnemy = false; //This is to determine what animation happens
 
     private int _playerMovementTiming = 1;
     private WaitForSeconds _waitForSeconds;
@@ -78,6 +78,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     void Start()
     {
         FacingDirection = new Vector3(0, 0, -1);
+        if (_isThereAnEnemy) _animator.SetBool("Enemies", true);
 
         SnapToGridSpace();
         GridBase.Instance.AddEntry(this);
