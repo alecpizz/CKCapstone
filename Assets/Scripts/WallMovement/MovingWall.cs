@@ -2,9 +2,10 @@
 *    Author: Josephine Qualls
 *    Contributors: Josh Eddy, Alec Pizziferro, Trinity Hutson
 *    Date Created: 10/10/2024
-*    Description: Controls where walls move after switch is triggered.
+*    Description: Controls what walls sink and rise after switch is triggered.
 *******************************************************************/
 
+using PrimeTween;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -12,8 +13,7 @@ using UnityEditor;
 using UnityEngine;
 
 /// <summary>
-/// Class that determines how the walls move
-/// Also operates the ghost wall indicators
+/// Class that determines how the walls and ghost walls move
 /// Inherits from IParentSwitch and IGridEntry
 /// </summary>
 public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
@@ -22,17 +22,29 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     private Vector3 _originWall;
     private Vector3 _originGhost;
 
-    //the offset for the tween animation
-    [SerializeField] private Vector3 _positionOffset;
-
     //used to determine the GridPlacer of specific wall
     [SerializeField] private GridPlacer _wallGrid;
 
     //indicator for where wall will be moved
     [SerializeField] private GameObject _wallGhost;
 
+    //height the walls will sink to
+    [SerializeField] private float _groundHeight;
+
+    //height the walls will rise to
+    [SerializeField] private float _activatedHeight;
+
+    //time it takes for tween to finish
+    [SerializeField] private float _duration;
+
+    //type of tween animation for walls
+    [SerializeField] private Ease _easeType;
+
     //to decide if switch should be true or not
     private bool _worked = true;
+
+    //wall ghost grid placer reference
+    private GridPlacer _ghostPlacer;
 
     //classes required from Alec's IGridEntry Interface
     public bool IsTransparent => false;
@@ -42,6 +54,14 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     public GameObject GetGameObject => gameObject;
 
     public Vector3 Position => transform.position;
+
+    /// <summary>
+    /// References the GridPlacer on the wall ghost
+    /// </summary>
+    private void Awake()
+    {
+        _ghostPlacer = _wallGhost.GetComponent<GridPlacer>(); 
+    }
 
     /// <summary>
     /// Original position of the wall is given
@@ -58,45 +78,47 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
         _originGhost = _wallGhost.transform.position;
         // Maintains same height to ensure consistency when swapping
         _originGhost.y = transform.position.y;
+
     }
 
     /// <summary>
-    /// Swaps the positions of the wall and the ghost
-    /// When switch is turned on
-    /// Allows Player to move where wall once was
+    /// Performs an animation that sinks the wall and raises the ghost wall
+    /// Only works if there is nothing obstucting the transparent wall's tile
     /// </summary>
     public void SwitchActivation()
     {
         if (GridBase.Instance.CellIsTransparent(_originGhost))
         {
-            transform.position = _originGhost;
-            _wallGhost.transform.position = _originWall;
-            //yield return Tween.PositionY(transform, _originWall.y + _positionOffset.y, duration: 0.5f, Ease.OutBack).ToYieldInstruction();
-            _wallGrid.UpdatePosition();
-            
             _worked = true;
+
+            Tween.PositionY(transform, endValue: _groundHeight, duration: _duration, ease: _easeType);
+            Tween.PositionY(_wallGhost.transform, endValue: _activatedHeight, duration: _duration, ease: _easeType);
+
+            _wallGrid.IsTransparent = true;
+            _ghostPlacer.IsTransparent = false;
+
         }
         else
         {
             _worked = false;
-        }
+        }        
     }
 
     /// <summary>
-    /// Swaps wall and ghost back to original positions
-    /// Now that switch is off
-    /// Allows Player to move where wall once was
+    /// Performs an animation that sinks the ghost wall and raises the wall
+    /// Only works if there is nothing obstucting the transparent wall's tile
     /// </summary>
     public void SwitchDeactivation()
     {
-        if (GridBase.Instance.CellIsTransparent(_originWall)) 
+        if (GridBase.Instance.CellIsTransparent(_originWall))
         {
-            transform.position = _originWall;
-            _wallGhost.transform.position = _originGhost;
-            //yield return Tween.Position(transform, _originGhost + _positionOffset, duration: 0.5f, Ease.OutBack).ToYieldInstruction();
-            _wallGrid.UpdatePosition();
-
             _worked = true;
+
+            Tween.PositionY(transform, endValue: _activatedHeight, duration: _duration, ease: _easeType);
+            Tween.PositionY(_wallGhost.transform, endValue: _groundHeight, duration: _duration, ease: _easeType);
+
+            _wallGrid.IsTransparent = false;
+            _ghostPlacer.IsTransparent = true;
 
         }
         else
