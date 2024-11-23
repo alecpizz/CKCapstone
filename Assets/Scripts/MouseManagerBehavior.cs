@@ -23,6 +23,7 @@ public class MouseManagerBehavior : MonoBehaviour
     private GameObject _lastEnemyHit;
     private EnemyBehavior _lastEnemyBehavior;
     private Camera _cam;
+    private bool _enemyStored = false;
 
     /// <summary>
     /// Sets the lastEnemyHit and lastEnemyBehavior values to null.
@@ -49,10 +50,14 @@ public class MouseManagerBehavior : MonoBehaviour
         //If the raycast hits the enemy object it's marker with change alpha value calling the ChangeMarkerColor function
         if (Physics.Raycast(_ray, out _hit) && _hit.collider.gameObject.TryGetComponent<EnemyBehavior>(out EnemyBehavior enemyBehavior))
         {
-            _lastEnemyHit = _hit.collider.gameObject;
-            _lastEnemyBehavior = enemyBehavior;
-            _lastEnemyBehavior.CollidingWithRay = true;
-            _lastEnemyBehavior.DestinationPath();
+            if (!_enemyStored)
+            {
+                _lastEnemyHit = _hit.collider.gameObject;
+                _lastEnemyBehavior = enemyBehavior;
+                _lastEnemyBehavior.CollidingWithRay = true;
+                _lastEnemyBehavior.DestinationPath();
+                _enemyStored = true;
+            }
         }
         else
         {
@@ -60,6 +65,7 @@ public class MouseManagerBehavior : MonoBehaviour
             {
                 _lastEnemyBehavior.CollidingWithRay = false;
                 _lastEnemyBehavior.DestinationPath();
+                _enemyStored = false;
             }
         }
     }
