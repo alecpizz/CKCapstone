@@ -19,7 +19,7 @@ using UnityEngine;
 public class GridPlacer : MonoBehaviour, IGridEntry
 {
     public bool IsTransparent { get => _isTransparent; set => _isTransparent = value; }
-    public bool BlocksHarmonyBeam { get => _blocksHarmonyBeam; }
+    public bool BlocksHarmonyBeam { get => _blocksHarmonyBeam; set => _blocksHarmonyBeam = value; }
     public Vector3 Position { get => transform.position; }
     public GameObject GetGameObject { get => gameObject; }
 
@@ -29,7 +29,7 @@ public class GridPlacer : MonoBehaviour, IGridEntry
     private bool _isTransparent = false;
 
     [SerializeField]
-    private bool _blocksHarmonyBeam = false;
+    private bool _blocksHarmonyBeam = true;
 
     [Space]
     [SerializeField] 
