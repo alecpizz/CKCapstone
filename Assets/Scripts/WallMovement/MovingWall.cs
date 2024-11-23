@@ -66,7 +66,9 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     /// </summary>
     private void Awake()
     {
-        _ghostPlacer = _wallGhost.GetComponent<GridPlacer>(); 
+        _ghostPlacer = _wallGhost.GetComponent<GridPlacer>();
+        _wallCollider = GetComponent<Collider>();
+        _ghostCollider = _wallGhost.GetComponent<Collider>();
     }
 
     /// <summary>
