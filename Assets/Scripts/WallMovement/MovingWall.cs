@@ -43,6 +43,12 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     //to decide if switch should be true or not
     private bool _worked = true;
 
+    //collider for the wall
+    private Collider _wallCollider;
+
+    //collider for the ghost wall
+    private Collider _ghostCollider;
+
     //wall ghost grid placer reference
     private GridPlacer _ghostPlacer;
 
@@ -102,6 +108,9 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
             _wallGrid.BlocksHarmonyBeam = wallGridActive;
             _ghostPlacer.BlocksHarmonyBeam = !wallGridActive;
 
+            _wallCollider.enabled = wallGridActive;
+            _ghostCollider.enabled = !wallGridActive;
+
         }
         else
         {
@@ -129,6 +138,9 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
 
             _wallGrid.BlocksHarmonyBeam = !wallGridActive;
             _ghostPlacer.BlocksHarmonyBeam = wallGridActive;
+
+            _wallCollider.enabled = !wallGridActive;
+            _ghostCollider.enabled = wallGridActive;
 
         }
         else
