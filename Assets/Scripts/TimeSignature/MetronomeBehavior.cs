@@ -9,9 +9,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class MetronomeBehavior : MonoBehaviour
 {
+    public UnityEvent MetronomeTriggered;
+
     //animations for the weight on the metronome moving up and down
     private const string _WEIGHT_ANIM_UP = "Armature|WeightSlide_Up";
     private const string _WEIGHT_ANIM_DOWN = "Armature|WeightSlide_Down";
@@ -61,6 +64,8 @@ public class MetronomeBehavior : MonoBehaviour
     {
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.ToggleTimeSignature();
+
+        MetronomeTriggered?.Invoke();
 
         SetAnimSpeed();
     }
