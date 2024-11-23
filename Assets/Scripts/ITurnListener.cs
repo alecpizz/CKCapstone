@@ -1,4 +1,10 @@
-﻿using UnityEngine;
+﻿/******************************************************************
+ *    Author: Alec Pizziferro
+ *    Contributors: 
+ *    Date Created: 11/21/24
+ *    Description: Interface for entities that register to the rounds system.
+ *******************************************************************/
+using UnityEngine;
 
 /// <summary>
 /// Interface for something that needs its turn managed.
