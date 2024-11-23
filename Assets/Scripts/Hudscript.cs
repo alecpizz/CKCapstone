@@ -24,15 +24,17 @@ public class HUDscript : MonoBehaviour, ITimeListener
     [SerializeField] private TextMeshProUGUI _sequenceUI;
     [SerializeField] private GameObject[] _noteImages;
     [SerializeField] private GameObject[] _ghostNoteImages;
+    [SerializeField] private bool _isIntermission;
     [SerializeField] private TextMeshProUGUI _timeSignatureUIy;
     [SerializeField] private TextMeshProUGUI _timeSignatureUIx;
+    [SerializeField] private TMP_Text _levelNumber;
     private TimeSignatureManager _timeSigManager;
     [SerializeField] private bool timeSignature;
 
     private List<int> _notes;
 
     private const string BaseCollectedText = "Collect the notes in numerical order:";
-
+    private const string LevelText = "Level";
     /// <summary>
     /// Initializing values and registering to actions
     /// </summary>
@@ -46,9 +48,14 @@ public class HUDscript : MonoBehaviour, ITimeListener
         {
             WinChecker winChecker = WinChecker.Instance;
             _notes = winChecker.TargetNoteSequence;
+            WinChecker.CollectedNote += UpdateGhostNotesIcons;
             foreach (int note in _notes)
             {
                 _sequenceUI.text += " " + note;
+                if (!_isIntermission)
+                {
+                    UpdateGhostNotesIcons(note);
+                }
             }
         }
 
@@ -60,10 +67,14 @@ public class HUDscript : MonoBehaviour, ITimeListener
         }
 
         // WinChecker.CollectedNote += UpdateCollectedNotesText;
-        WinChecker.CollectedNote += UpdateColectedNotesIcons;
-        WinChecker.CollectedNote += UpdateGhostNotesIcons;
+        WinChecker.CollectedNote += UpdateColectedNotesIcons;        
         WinChecker.GotCorrectSequence += DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence += DisplayIncorrectMessage;
+
+        if (_levelNumber != null)
+        {
+            _levelNumber.text = $"{LevelText} {SceneManager.GetActiveScene().buildIndex}";
+        }
     }
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
@@ -99,10 +110,12 @@ public class HUDscript : MonoBehaviour, ITimeListener
     /// </summary>
     private void UpdateColectedNotesIcons(int collectedNote)
     {
-        if (collectedNote >= 0 && collectedNote < _noteImages.Length)
+        if (collectedNote < 0 || collectedNote > _noteImages.Length - 1)
         {
-            _noteImages[collectedNote].SetActive(true);
+            return;
         }
+        _noteImages[collectedNote].SetActive(true);
+        _ghostNoteImages[collectedNote].SetActive(false);
     }
 
     /// <summary>
@@ -112,13 +125,7 @@ public class HUDscript : MonoBehaviour, ITimeListener
     {
         if (collectedNote >= 0 && collectedNote < _noteImages.Length - 1)
         {
-            _ghostNoteImages[collectedNote+1].SetActive(true);
-            _ghostNoteImages[collectedNote].SetActive(false);
-        }
-        //if the level is complete don't display another ghost note
-        if (WinChecker.Instance.SequenceComplete)
-        {
-            _ghostNoteImages[collectedNote+1].SetActive(false);
+            _ghostNoteImages[collectedNote].SetActive(true);
         }
     }
 
