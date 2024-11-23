@@ -309,13 +309,18 @@ MonoBehaviour:
   _positionOffset: {x: 0, y: 0.5, z: 0}
   _playerInteraction: {fileID: 6008091980421706137}
   _delayTime: 0.1
-  _movementTime: 0.3
+  _rotationDelay: 0.4
+  _movementTime: 1
+  _rotationTime: 0.2
+  _rotationEase: 4
+  _movementEase: 4
+  _isThereAnEnemy: 1
   OnPlayerMoveComplete:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MinimumTurnsDisplay, Assembly-CSharp
-        m_MethodName: TurnIncrementation
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -339,6 +344,7 @@ MonoBehaviour:
       Data3: 1841327543
       Data4: 747975943
     Path: event:/Wall Bump
+  _animator: {fileID: 8566832595312514844}
 --- !u!114 &6008091980421706137
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3795,6 +3801,12 @@ PrefabInstance:
 --- !u!4 &5170201032756381477 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 674967646467578285, guid: 824a2d5b9c3f6c244a7a6afe6a731f02,
+    type: 3}
+  m_PrefabInstance: {fileID: 5664904967536352904}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &8566832595312514844 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 4070772300579768724, guid: 824a2d5b9c3f6c244a7a6afe6a731f02,
     type: 3}
   m_PrefabInstance: {fileID: 5664904967536352904}
   m_PrefabAsset: {fileID: 0}
