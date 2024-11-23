@@ -94,8 +94,13 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
             Tween.PositionY(transform, endValue: _groundHeight, duration: _duration, ease: _easeType);
             Tween.PositionY(_wallGhost.transform, endValue: _activatedHeight, duration: _duration, ease: _easeType);
 
-            _wallGrid.IsTransparent = true;
-            _ghostPlacer.IsTransparent = false;
+            bool wallGridActive = false;
+
+            _wallGrid.IsTransparent = !wallGridActive;
+            _ghostPlacer.IsTransparent = wallGridActive;
+
+            _wallGrid.BlocksHarmonyBeam = wallGridActive;
+            _ghostPlacer.BlocksHarmonyBeam = !wallGridActive;
 
         }
         else
@@ -117,8 +122,13 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
             Tween.PositionY(transform, endValue: _activatedHeight, duration: _duration, ease: _easeType);
             Tween.PositionY(_wallGhost.transform, endValue: _groundHeight, duration: _duration, ease: _easeType);
 
-            _wallGrid.IsTransparent = false;
-            _ghostPlacer.IsTransparent = true;
+            bool wallGridActive = false;
+
+            _wallGrid.IsTransparent = wallGridActive;
+            _ghostPlacer.IsTransparent = !wallGridActive;
+
+            _wallGrid.BlocksHarmonyBeam = !wallGridActive;
+            _ghostPlacer.BlocksHarmonyBeam = wallGridActive;
 
         }
         else
