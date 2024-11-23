@@ -77,6 +77,11 @@ public sealed class RoundManager : MonoBehaviour
     public bool IsWorldTurn => _turnState == TurnState.World;
 
     /// <summary>
+    /// Whether enemies exist in the given scene.
+    /// </summary>
+    public bool EnemiesPresent => _turnListeners[TurnState.Enemy].Count > 0;
+
+    /// <summary>
     /// Sets the singleton instance and initializes the dictionaries for
     /// state tracking.
     /// </summary>
