@@ -85,7 +85,7 @@ public class VignetteController : MonoBehaviour, ITurnListener
     {
         RoundManager.Instance.CompleteTurn(this);
         RoundManager.Instance.UnRegisterListener(this);
-        _internalState = _internalState == TurnState.Player ? TurnState.PostProcessing : TurnState.Player;
+        _internalState = _internalState == TurnState.Player ? TurnState.Enemy : TurnState.Player;
         RoundManager.Instance.RegisterListener(this);
     }
 

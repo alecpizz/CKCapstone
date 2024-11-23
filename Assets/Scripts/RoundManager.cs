@@ -18,8 +18,7 @@ public enum TurnState
     Player = 0,
     World = 1,
     Enemy = 2,
-    PostProcessing = 3,
-    None = 4,
+    None = 3,
 }
 
 /// <summary>
@@ -270,8 +269,7 @@ public sealed class RoundManager : MonoBehaviour
         {
             TurnState.Player => TurnState.World,
             TurnState.World => TurnState.Enemy,
-            TurnState.Enemy => TurnState.PostProcessing,
-            TurnState.PostProcessing => TurnState.None,
+            TurnState.Enemy => TurnState.None,
             _ => null
         };
     }
@@ -288,7 +286,6 @@ public sealed class RoundManager : MonoBehaviour
             TurnState.Player => TurnState.None,
             TurnState.World => TurnState.Player,
             TurnState.Enemy => TurnState.World,
-            TurnState.PostProcessing => TurnState.Enemy,
             _ => null
         };
     }
