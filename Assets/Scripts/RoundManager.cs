@@ -56,6 +56,9 @@ public sealed class RoundManager : MonoBehaviour
     public bool IsWorldTurn => _turnState == TurnState.World;
 
     /// <summary>
+    /// Whether enemies exist in the given scene.
+    /// </summary>
+    public bool EnemiesPresent => _turnListeners[TurnState.Enemy].Count > 0;
     /// Whether it's the enemy's turn.
     /// </summary>
     public bool IsEnemyTurn => _turnState == TurnState.Enemy;
