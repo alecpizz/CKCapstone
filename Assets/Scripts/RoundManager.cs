@@ -5,7 +5,9 @@
  *    Description: Manager for turn based movement mechanics.
  *******************************************************************/
 
+using System;
 using System.Collections.Generic;
+using FMODUnity;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -19,31 +21,6 @@ public enum TurnState
     World = 1,
     Enemy = 2,
     None = 3,
-}
-
-/// <summary>
-/// Interface for something that needs its turn managed.
-/// Both methods must be implemented.
-/// </summary>
-public interface ITurnListener
-{
-    /// <summary>
-    /// The category of turn this entity will be a part of.
-    /// </summary>
-    TurnState TurnState { get; }
-
-    /// <summary>
-    /// Method that gets called when the entity's turn begins.
-    /// This should be used to start a movement animation or
-    /// some other logic. 
-    /// </summary>
-    /// <param name="direction">The user input direction.</param>
-    void BeginTurn(Vector3 direction);
-
-    /// <summary>
-    /// Method that gets called to end an entity's turn early.
-    /// </summary>
-    void ForceTurnEnd();
 }
 
 
@@ -60,6 +37,8 @@ public sealed class RoundManager : MonoBehaviour
     private PlayerControls _playerControls;
     private Vector3 _lastMovementInput;
     private bool _movementRegistered = false;
+    [SerializeField] private EventReference _playerTurnEvent;
+    [SerializeField] private EventReference _enemyTurnEvent;
 
     /// <summary>
     /// Whether someone is having their turn.
@@ -75,6 +54,14 @@ public sealed class RoundManager : MonoBehaviour
     /// Whether it's the world's turn.
     /// </summary>
     public bool IsWorldTurn => _turnState == TurnState.World;
+
+    /// <summary>
+    /// Whether enemies exist in the given scene.
+    /// </summary>
+    public bool EnemiesPresent => _turnListeners[TurnState.Enemy].Count > 0;
+    /// Whether it's the enemy's turn.
+    /// </summary>
+    public bool IsEnemyTurn => _turnState == TurnState.Enemy;
 
     /// <summary>
     /// Sets the singleton instance and initializes the dictionaries for
@@ -100,6 +87,20 @@ public sealed class RoundManager : MonoBehaviour
             _completedTurnCounts.Add((TurnState)i, 0);
         }
     }
+    
+    
+
+#if UNITY_EDITOR
+    /// <summary>
+    /// Resets default turn events since we can't set default values anymore.
+    /// </summary>
+    private void Reset()
+    {
+        _playerTurnEvent = EventReference.Find("event:/Turn Start Player");
+        _enemyTurnEvent = EventReference.Find("event:/Turn Start Enemy");
+    }
+#endif
+
 
     /// <summary>
     /// Enables the player controls and hooks a callback for movement input.
@@ -146,7 +147,12 @@ public sealed class RoundManager : MonoBehaviour
 
         _movementRegistered = false;
         _turnState = TurnState.Player;
-        //we now wait on the update method to catch the end of the players turn
+    
+        //only play player turn sound if there's enemies in the scene.
+        if (_turnListeners[TurnState.Enemy].Count > 0)
+        {
+            AudioManager.Instance.PlaySound(_playerTurnEvent);
+        }
         //perform the turn now so that it's frame perfect.
         foreach (var turnListener in _turnListeners[TurnState.Player])
         {
@@ -198,6 +204,10 @@ public sealed class RoundManager : MonoBehaviour
 
         if (_turnState != TurnState.None)
         {
+            if (IsEnemyTurn)
+            {
+                AudioManager.Instance.PlaySound(_enemyTurnEvent);
+            }
             foreach (var turnListener in _turnListeners[_turnState])
             {
                 turnListener.BeginTurn(_lastMovementInput);
