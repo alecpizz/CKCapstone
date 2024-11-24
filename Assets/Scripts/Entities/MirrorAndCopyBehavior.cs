@@ -104,7 +104,17 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                     //enemy can't move into other enemies, walls, etc.
                     foreach (var entry in entries)
                     {
-                        if (entry.GetGameObject != _player)
+                        if (entry.IsTransparent)
+                        {
+                            canMove = true;
+                            break;
+                        }
+                        if (entry.GetGameObject == _player)
+                        {
+                            canMove = true;
+                            break;
+                        }
+                        else
                         {
                             canMove = false;
                             break;

@@ -220,7 +220,17 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                     //enemy can't move into other enemies, walls, etc.
                     foreach (var entry in entries)
                     {
-                        if (entry.GetGameObject != _player)
+                        if (entry.IsTransparent)
+                        {
+                            breakLoop = false;
+                            break;
+                        }
+                        if (entry.GetGameObject == _player)
+                        {
+                            breakLoop = false;
+                            break;
+                        }
+                        else
                         {
                             breakLoop = true;
                             break;
