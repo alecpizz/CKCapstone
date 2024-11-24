@@ -10,7 +10,6 @@ using PrimeTween;
 using System;
 using System.Collections;
 using UnityEngine;
-using PrimeTween;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
 using FMODUnity;
@@ -44,7 +43,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     [SerializeField] private PlayerInteraction _playerInteraction;
 
     [SerializeField] private float _delayTime = 0.1f;
-    [SerializeField] private float _rotationDelay = 0.1f;
 
     [SerializeField] private float _movementTime = 0.25f;
     [SerializeField] private float _rotationTime = 0.05f;
@@ -120,7 +118,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// <returns>Waits for short delay while moving</returns>
     private IEnumerator MovementDelay(Vector3 moveDirection)
     {
-        yield return new WaitForSeconds(_rotationDelay);
+        yield return new WaitForSeconds(_rotationTime);
         float modifiedMovementTime = Mathf.Clamp(_movementTime / _playerMovementTiming,
             MinMovementTime, float.MaxValue);
 
