@@ -10,7 +10,6 @@ using PrimeTween;
 using System;
 using System.Collections;
 using UnityEngine;
-using PrimeTween;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
 using FMODUnity;
@@ -44,7 +43,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     [SerializeField] private PlayerInteraction _playerInteraction;
 
     [SerializeField] private float _delayTime = 0.1f;
-    [SerializeField] private float _rotationDelay = 0.1f;
 
     [SerializeField] private float _movementTime = 0.25f;
     [SerializeField] private float _rotationTime = 0.05f;
@@ -80,7 +78,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     // Start is called before the first frame update
     void Start()
     {
-        FacingDirection = new Vector3(0, 0, -1);
+        FacingDirection = new Vector3(0, 0, 0);
         if (RoundManager.Instance.EnemiesPresent)
         {
             _animator.SetBool("Enemies", true);
@@ -120,7 +118,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// <returns>Waits for short delay while moving</returns>
     private IEnumerator MovementDelay(Vector3 moveDirection)
     {
-        yield return new WaitForSeconds(_rotationDelay);
+        yield return new WaitForSeconds(_rotationTime);
         float modifiedMovementTime = Mathf.Clamp(_movementTime / _playerMovementTiming,
             MinMovementTime, float.MaxValue);
 
@@ -189,10 +187,15 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     public void BeginTurn(Vector3 direction)
     {
         Vector3Int dir = new Vector3Int((int) direction.x, (int) direction.y, (int) direction.z);
+
+        bool isSameDirection = FacingDirection == direction;
+
         FacingDirection = direction; //End of animation section
         _playerInteraction.SetDirection(direction);
 
-        Tween.Rotation(transform, endValue: Quaternion.LookRotation(direction), duration: _rotationTime,
+        float rotationTime = isSameDirection ? 0 : _rotationTime;
+
+        Tween.Rotation(transform, endValue: Quaternion.LookRotation(direction), duration: rotationTime,
             ease: _rotationEase).OnComplete(
             () =>
             {
