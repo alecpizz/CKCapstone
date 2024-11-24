@@ -46,8 +46,9 @@ public class VignetteController : MonoBehaviour, ITurnListener
     /// </summary>
     private void Start()
     {
-        _vignette.active = RoundManager.Instance.EnemiesPresent;
-
+        bool enemies = RoundManager.Instance.EnemiesPresent;
+        _vignette.active = enemies;
+        if (!enemies) return;
         RoundManager.Instance.RegisterListener(this);
     }
 
