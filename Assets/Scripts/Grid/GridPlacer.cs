@@ -100,7 +100,7 @@ public class GridPlacer : MonoBehaviour, IGridEntry
     private void Editor_OnGridOffsetChanged()
     {
         var grid = FindObjectOfType<GridBase>();
-        transform.position =grid.CellToWorld(grid.WorldToCell(transform.position)) + offset;
+        transform.position = grid.CellToWorld(grid.WorldToCell(transform.position)) + offset;
     }
     #endif
 
