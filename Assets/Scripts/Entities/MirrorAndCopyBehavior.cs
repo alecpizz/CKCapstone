@@ -156,6 +156,16 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
         if (_movementTiming <= 0)
             _movementTiming = 1;
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (!DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("Player"))
+        {
+            Time.timeScale = 0f;
+
+            SceneController.Instance.ReloadCurrentScene();
+        }
+    }
     public TurnState TurnState => TurnState.World;
 
     public void BeginTurn(Vector3 direction)
