@@ -1,6 +1,6 @@
 /******************************************************************
  *    Author: Alec Pizziferro
- *    Contributors: Nick Grinstead
+ *    Contributors: Nick Grinstead, Trinity Hutson
  *    Date Created: 10/22/24
  *    Description: Manager for turn based movement mechanics.
  *******************************************************************/
@@ -37,6 +37,8 @@ public sealed class RoundManager : MonoBehaviour
     private PlayerControls _playerControls;
     private Vector3 _lastMovementInput;
     private bool _movementRegistered = false;
+    private float _movementRegisteredTime = -1;
+    [SerializeField] private float _inputBufferWindow = 0.5f;
     [SerializeField] private EventReference _playerTurnEvent;
     [SerializeField] private EventReference _enemyTurnEvent;
 
@@ -132,6 +134,7 @@ public sealed class RoundManager : MonoBehaviour
         Vector3 dir = new Vector3(input.x, 0f, input.y);
         _lastMovementInput = dir;
         _movementRegistered = true;
+        _movementRegisteredTime = Time.time;
 
         if (_turnState != TurnState.None) return;
 
@@ -184,7 +187,9 @@ public sealed class RoundManager : MonoBehaviour
         {
             _turnState = TurnState.None;
             // Attempts to move player if they buffered an input
-            PerformMovement();
+            if(Time.time - _movementRegisteredTime <= _inputBufferWindow)
+                PerformMovement();
+
             return;
         }
 
