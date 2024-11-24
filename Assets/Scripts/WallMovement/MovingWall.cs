@@ -43,6 +43,12 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     //to decide if switch should be true or not
     private bool _worked = true;
 
+    //collider for the wall
+    private Collider _wallCollider;
+
+    //collider for the ghost wall
+    private Collider _ghostCollider;
+
     //wall ghost grid placer reference
     private GridPlacer _ghostPlacer;
 
@@ -94,8 +100,16 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
             Tween.PositionY(transform, endValue: _groundHeight, duration: _duration, ease: _easeType);
             Tween.PositionY(_wallGhost.transform, endValue: _activatedHeight, duration: _duration, ease: _easeType);
 
-            _wallGrid.IsTransparent = true;
-            _ghostPlacer.IsTransparent = false;
+            bool wallGridActive = false;
+
+            _wallGrid.IsTransparent = !wallGridActive;
+            _ghostPlacer.IsTransparent = wallGridActive;
+
+            _wallGrid.BlocksHarmonyBeam = wallGridActive;
+            _ghostPlacer.BlocksHarmonyBeam = !wallGridActive;
+
+            _wallCollider.enabled = wallGridActive;
+            _ghostCollider.enabled = !wallGridActive;
 
         }
         else
@@ -117,8 +131,16 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
             Tween.PositionY(transform, endValue: _activatedHeight, duration: _duration, ease: _easeType);
             Tween.PositionY(_wallGhost.transform, endValue: _groundHeight, duration: _duration, ease: _easeType);
 
-            _wallGrid.IsTransparent = false;
-            _ghostPlacer.IsTransparent = true;
+            bool wallGridActive = false;
+
+            _wallGrid.IsTransparent = wallGridActive;
+            _ghostPlacer.IsTransparent = !wallGridActive;
+
+            _wallGrid.BlocksHarmonyBeam = !wallGridActive;
+            _ghostPlacer.BlocksHarmonyBeam = wallGridActive;
+
+            _wallCollider.enabled = !wallGridActive;
+            _ghostCollider.enabled = wallGridActive;
 
         }
         else
