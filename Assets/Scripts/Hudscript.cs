@@ -123,7 +123,7 @@ public class HUDscript : MonoBehaviour, ITimeListener
     /// </summary>
     private void UpdateGhostNotesIcons(int collectedNote)
     {
-        if (collectedNote >= 0 && collectedNote < _noteImages.Length - 1)
+        if (collectedNote >= 0 && collectedNote < _noteImages.Length)
         {
             _ghostNoteImages[collectedNote].SetActive(true);
         }
