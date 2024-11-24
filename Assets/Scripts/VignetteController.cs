@@ -12,11 +12,11 @@ using UnityEngine.Rendering.Universal;
 
 public class VignetteController : MonoBehaviour, ITurnListener
 {
-    [SerializeField] float _vignetteFadeInTime = 0.2f;
-    [SerializeField] Ease _vignetteStartEasing = Ease.InQuad;
+    [SerializeField] private float _vignetteFadeInTime = 0.2f;
+    [SerializeField] private Ease _vignetteStartEasing = Ease.InQuad;
 
-    [SerializeField] float _vignetteFadeOutTime = 0.2f;
-    [SerializeField] Ease _vignetteEndEasing = Ease.OutQuad;
+    [SerializeField] private float _vignetteFadeOutTime = 0.2f;
+    [SerializeField] private Ease _vignetteEndEasing = Ease.OutQuad;
 
     public TurnState TurnState => _internalState;
     private TurnState _internalState = TurnState.Player;
