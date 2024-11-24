@@ -134,7 +134,7 @@ public sealed class RoundManager : MonoBehaviour
         Vector3 dir = new Vector3(input.x, 0f, input.y);
         _lastMovementInput = dir;
         _movementRegistered = true;
-        _movementRegisteredTime = Time.time;
+        _movementRegisteredTime = Time.unscaledTime;
 
         if (_turnState != TurnState.None) return;
 
@@ -187,7 +187,7 @@ public sealed class RoundManager : MonoBehaviour
         {
             _turnState = TurnState.None;
             // Attempts to move player if they buffered an input
-            if(Time.time - _movementRegisteredTime <= _inputBufferWindow)
+            if(Time.unscaledTime - _movementRegisteredTime <= _inputBufferWindow)
                 PerformMovement();
 
             return;
