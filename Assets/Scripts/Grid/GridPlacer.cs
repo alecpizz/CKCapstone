@@ -35,7 +35,7 @@ public class GridPlacer : MonoBehaviour, IGridEntry
     [SerializeField] 
     private bool _snapToGrid = true;
 
-    [SerializeField]
+    [SerializeField] [OnValueChanged(nameof(Editor_OnGridOffsetChanged))]
     private Vector3 offset = Vector3.zero;
 
     [Space]
@@ -95,6 +95,14 @@ public class GridPlacer : MonoBehaviour, IGridEntry
         if (GridBase.Instance == null) return; 
         GridBase.Instance.RemoveEntry(this);
     }
+
+    #if UNITY_EDITOR
+    private void Editor_OnGridOffsetChanged()
+    {
+        var grid = FindObjectOfType<GridBase>();
+        transform.position =grid.CellToWorld(grid.WorldToCell(transform.position)) + offset;
+    }
+    #endif
 
     /// <summary>
     /// Places this object in the center of its grid cell
