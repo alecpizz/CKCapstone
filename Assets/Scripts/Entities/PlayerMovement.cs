@@ -1,6 +1,6 @@
 /******************************************************************
  *    Author: Cole Stranczek
- *    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson, Alec Pizziferro, Josephine Qualls
+ *    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson, Alec Pizziferro, Josephine Qualls, Jamison Parks
  *    Date Created: 9/22/24
  *    Description: Script that handles the player's movement along
  *    the grid
@@ -44,10 +44,12 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     [SerializeField] private PlayerInteraction _playerInteraction;
 
     [SerializeField] private float _delayTime = 0.1f;
+    [SerializeField] private float _rotationDelay = 0.1f;
 
     [SerializeField] private float _movementTime = 0.25f;
     [SerializeField] private float _rotationTime = 0.05f;
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
+    [SerializeField] private Ease _movementEase = Ease.OutBack;
 
     private int _playerMovementTiming = 1;
     private WaitForSeconds _waitForSeconds;
@@ -60,8 +62,14 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     [SerializeField] private EventReference _playerCantMove = default;
 
     public static PlayerMovement Instance;
+    private static readonly int Forward = Animator.StringToHash("Forward");
+    private static readonly int Right = Animator.StringToHash("Right");
+    private static readonly int Left = Animator.StringToHash("Left");
+    private static readonly int Backward = Animator.StringToHash("Backward");
 
     private const float MinMovementTime = 0.175f;
+
+    [SerializeField] private Animator _animator;
     
     private void Awake()
     {
@@ -72,7 +80,11 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     // Start is called before the first frame update
     void Start()
     {
-        FacingDirection = new Vector3(0, 0, 0);
+        FacingDirection = new Vector3(0, 0, -1);
+        if (RoundManager.Instance.EnemiesPresent)
+        {
+            _animator.SetBool("Enemies", true);
+        }
 
         SnapToGridSpace();
         GridBase.Instance.AddEntry(this);
@@ -108,6 +120,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// <returns>Waits for short delay while moving</returns>
     private IEnumerator MovementDelay(Vector3 moveDirection)
     {
+        yield return new WaitForSeconds(_rotationDelay);
         float modifiedMovementTime = Mathf.Clamp(_movementTime / _playerMovementTiming,
             MinMovementTime, float.MaxValue);
 
@@ -115,13 +128,13 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         {
             // Move if there is no wall below the player or if ghost mode is enabled
             var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
-
+            _animator.SetTrigger(Forward);
             if ((GridBase.Instance.CellIsTransparent(move)) ||
                 (DebugMenuManager.Instance.GhostMode))
             {
                 yield return Tween.Position(transform,
                     move + _positionOffset, duration: modifiedMovementTime, 
-                    Ease.OutBack).ToYieldInstruction();
+                    _movementEase).ToYieldInstruction();
                 GridBase.Instance.UpdateEntry(this);
             }
 
@@ -175,6 +188,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// <param name="direction">The direction the player should move</param>
     public void BeginTurn(Vector3 direction)
     {
+        Vector3Int dir = new Vector3Int((int) direction.x, (int) direction.y, (int) direction.z);
+        FacingDirection = direction; //End of animation section
         _playerInteraction.SetDirection(direction);
 
         Tween.Rotation(transform, endValue: Quaternion.LookRotation(direction), duration: _rotationTime,

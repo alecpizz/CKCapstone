@@ -29,6 +29,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
     private GameObject _player;
     [SerializeField] private GameObject _destinationMarker;
+    [SerializeField] private GameObject _destPathVFX;
 
     [SerializeField] private bool _atStart;
     [SerializeField] private int _currentPoint = 0;
@@ -37,9 +38,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     //Destination object values
     [SerializeField] private bool _destAtStart;
     [SerializeField] private int _destCurrentPoint = 0;
-    [SerializeField] private float _destYPos = 1f;
+    public bool CollidingWithRay = false;
 
-    private PlayerMovement _playerMoveRef;
+    [SerializeField] private float _destYPos = 1f;
+    [SerializeField] private float _lineYPosOffset = 1f;
+
 
     //Wait time between enemy moving each individual tile while on path to next destination
     [SerializeField] private float _waitTime = 0.5f;
@@ -60,6 +63,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
     //Check true in the inspector if the enemy is moving in a circular pattern (doesn't want to move back and forth)
     [SerializeField] private bool _circularMovement = false;
+
+    [SerializeField] private int _linePosCount;
+    [SerializeField] private int _tilesToDraw = 0;
+    [SerializeField] private int _currentLinePoint = 0;
+    [SerializeField] private LineRenderer _vfxLine;
 
     public bool EnemyFrozen { get; private set; } = false;
 
@@ -85,7 +93,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         GridBase.Instance.AddEntry(this);
 
         _player = PlayerMovement.Instance.gameObject;
-        _playerMoveRef = _player.GetComponent<PlayerMovement>();
 
         _destinationMarker.transform.SetParent(null);
 
@@ -95,7 +102,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.RegisterTimeListener(this);
 
+        _vfxLine = _destPathVFX.GetComponent<LineRenderer>();
+
+        _destPathVFX.SetActive(false);
+        _destinationMarker.SetActive(false);
         UpdateDestinationMarker();
+        DestinationPath();
     }
 
     private void OnEnable()
@@ -114,6 +126,24 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
             RoundManager.Instance.UnRegisterListener(this);
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.UnregisterTimeListener(this);
+    }
+
+    /// <summary>
+    /// DestinationPath is called whenever the mouse ray collides with the enemy.
+    /// This function turns the _destPathVFX and _destinationMarker objects on/off.
+    /// </summary>
+    public void DestinationPath()
+    {
+        if (CollidingWithRay)
+        {
+            _destPathVFX.SetActive(true);
+            _destinationMarker.SetActive(true);
+        }
+        else
+        {
+            _destPathVFX.SetActive(false);
+            _destinationMarker.SetActive(false);
+        }
     }
 
     /// <summary>
@@ -273,6 +303,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     {
         //Sets the _destinationMarker object to the enemy's current position
         _destinationMarker.transform.position = transform.position;
+        Vector3 linePos = transform.position;
+        linePos.y = _lineYPosOffset;
+
+        _vfxLine.SetPosition(_currentLinePoint, linePos);
 
         //Looks at the time signature for the enemy so it can place multiple moves in advance
         for (int i = 0; i < _enemyMovementTime; ++i)
@@ -314,6 +348,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
             var destPointTiles = destPoint.tilesToMove;
             FindDirection(destPointDirection);
 
+            _tilesToDraw += destPointTiles;
+            _linePosCount = _tilesToDraw + 1;
+            _vfxLine.positionCount = _linePosCount;
+
             //Reverses if going backward through the list
             if (!_destAtStart)
             {
@@ -327,6 +365,15 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                     moveInDirection);
 
                 _destinationMarker.transform.position = move;
+
+                if (k <= _vfxLine.positionCount + 1)
+                {
+                    linePos = move;
+                    linePos.y = _lineYPosOffset;
+                    
+                    _vfxLine.SetPosition(_currentLinePoint + 1, linePos);
+                    _currentLinePoint++;
+                }
             }
 
             //Makes sure the marker is always at a y position of 1 so it is visible on the grid
@@ -334,6 +381,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
             destPos.y += _destYPos;
             _destinationMarker.transform.position = destPos;
         }
+
+        _tilesToDraw = 0;
+        _currentLinePoint = 0;
     }
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
