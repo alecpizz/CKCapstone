@@ -44,11 +44,16 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
     [SerializeField] private float _delayTime = 0.1f;
 
-    [SerializeField] private float _movementTime = 0.25f;
+    [SerializeField] private float _rotationDelay = 0.1f;
+    [Space]
+    [SerializeField] private float _noEnemiesMovementTime = 0.25f;
+    [SerializeField] private float _withEnemiesMovementTime = 0.25f;
+    [Space]
     [SerializeField] private float _rotationTime = 0.05f;
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
     [SerializeField] private Ease _movementEase = Ease.OutBack;
 
+    private float _movementTime;
     private int _playerMovementTiming = 1;
     private WaitForSeconds _waitForSeconds;
 
@@ -91,6 +96,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             TimeSignatureManager.Instance.RegisterTimeListener(this);
 
         _waitForSeconds = new WaitForSeconds(_delayTime);
+
+        _movementTime = RoundManager.Instance.EnemiesPresent ? _withEnemiesMovementTime : _noEnemiesMovementTime;
     }
 
     private void OnEnable()
