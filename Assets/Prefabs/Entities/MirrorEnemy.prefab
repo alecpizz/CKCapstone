@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3350786660489371985}
   - component: {fileID: 7258707969593330878}
   - component: {fileID: 743128194430090133}
+  - component: {fileID: 1680180145278748709}
   m_Layer: 0
   m_Name: MirrorEnemy
   m_TagString: SonEnemy
@@ -131,7 +132,7 @@ Rigidbody:
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 1
-  m_IsKinematic: 1
+  m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 116
   m_CollisionDetection: 0
@@ -153,6 +154,24 @@ MonoBehaviour:
   _rotationTime: 0.1
   _rotationEase: 4
   sonEnemy: 1
+--- !u!114 &1680180145278748709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 986976119600338824}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 814452625f34aba4ab827682fb17a231, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isTransparent: 0
+  _blocksHarmonyBeam: 0
+  _snapToGrid: 1
+  offset: {x: 0, y: 0, z: 0}
+  _disableGridCell: 0
+  _isVisable: 1
 --- !u!1001 &7859340322046838668
 PrefabInstance:
   m_ObjectHideFlags: 0
