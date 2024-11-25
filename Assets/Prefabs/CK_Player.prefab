@@ -308,9 +308,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _positionOffset: {x: 0, y: 0.5, z: 0}
   _playerInteraction: {fileID: 6008091980421706137}
-  _delayTime: 0.1
-  _rotationDelay: 0.4
-  _movementTime: 1
+  _delayTime: 0.01
+  _rotationDelay: 0.2
+  _noEnemiesMovementTime: 0.85
+  _withEnemiesMovementTime: 0.7
   _rotationTime: 0.2
   _rotationEase: 4
   _movementEase: 4
@@ -319,7 +320,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MinimumTurnsDisplay, Assembly-CSharp
-        m_MethodName: 
+        m_MethodName: TurnIncrementation
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
