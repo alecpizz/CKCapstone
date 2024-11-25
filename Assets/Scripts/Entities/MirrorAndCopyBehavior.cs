@@ -166,7 +166,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
             SceneController.Instance.ReloadCurrentScene();
         }
     }
-    public TurnState TurnState => TurnState.World;
+    public TurnState TurnState => TurnState.Enemy;
 
     public void BeginTurn(Vector3 direction)
     {
