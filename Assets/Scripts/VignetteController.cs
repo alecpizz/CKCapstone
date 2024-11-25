@@ -46,6 +46,9 @@ public class VignetteController : MonoBehaviour, ITurnListener
     /// </summary>
     private void Start()
     {
+        if (RoundManager.Instance == null)
+            return;
+
         bool enemies = RoundManager.Instance.EnemiesPresent;
         _vignette.active = enemies;
         if (!enemies) return;
@@ -57,6 +60,9 @@ public class VignetteController : MonoBehaviour, ITurnListener
     /// </summary>
     private void OnDisable()
     {
+        if (RoundManager.Instance == null)
+            return;
+
         RoundManager.Instance.UnRegisterListener(this);
     }
 
@@ -86,6 +92,9 @@ public class VignetteController : MonoBehaviour, ITurnListener
     /// </summary>
     private void ToggleTurnState()
     {
+        if (RoundManager.Instance == null)
+            return;
+
         RoundManager.Instance.CompleteTurn(this);
         RoundManager.Instance.UnRegisterListener(this);
         _internalState = _internalState == TurnState.Player ? TurnState.Enemy : TurnState.Player;
@@ -97,6 +106,9 @@ public class VignetteController : MonoBehaviour, ITurnListener
     /// </summary>
     public void ForceTurnEnd()
     {
+        if (RoundManager.Instance == null)
+            return;
+
         RoundManager.Instance.CompleteTurn(this);
     }
 }
