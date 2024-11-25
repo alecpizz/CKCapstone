@@ -44,7 +44,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
     [SerializeField] private float _delayTime = 0.1f;
 
-    [SerializeField] private float _movementTime = 0.25f;
     [SerializeField] private float _rotationDelay = 0.1f;
     [Space]
     [SerializeField] private float _noEnemiesMovementTime = 0.25f;
