@@ -14,7 +14,7 @@ using UnityEngine.EventSystems;
 
 public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener, IHarmonyBeamEntity
 {
-    public bool IsTransparent { get => true; }
+    public bool IsTransparent { get => false; }
     public bool BlocksHarmonyBeam { get => false; }
     public Vector3 Position { get => transform.position; }
     public GameObject GetGameObject { get => gameObject; }
@@ -41,6 +41,8 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     // Bool checked if this enemy is a Son Enemy
     [SerializeField] private bool sonEnemy;
 
+    private Rigidbody _rb;
+
     private void Awake()
     {
         PrimeTweenConfig.warnEndValueEqualsCurrent = false;
@@ -50,8 +52,8 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     void Start()
     {
         GridBase.Instance.AddEntry(this);
-
         _player = PlayerMovement.Instance.gameObject;
+        _rb = GetComponent<Rigidbody>();
 
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.RegisterTimeListener(this);
@@ -90,7 +92,6 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                 moveDirection = -moveDirection;
             }
 
-
             for (int i = 0; i < _movementTiming; ++i)
             {
                 // Moves if there is no objects in the next grid space
@@ -98,50 +99,49 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                 var entries = GridBase.Instance.GetCellEntries(move);
                 bool canMove = true;
 
-                if (GridBase.Instance.CellIsEmpty(move))
+                //If the next cell contains an object that is not the player then the loop breaks
+                //enemy can't move into other enemies, walls, etc.
+                foreach (var entry in entries)
                 {
-                    //If the next cell contains an object that is not the player then the loop breaks
-                    //enemy can't move into other enemies, walls, etc.
-                    foreach (var entry in entries)
+                    if (entry.GetGameObject.CompareTag("Wall") && entry.IsTransparent)
                     {
-                        if (entry.GetGameObject != _player)
-                        {
-                            canMove = false;
-                            break;
-                        }
+                        _rb.isKinematic = true;
+                        canMove = true;
+                        break;
                     }
-                    if (canMove == true)
+                    if (entry.GetGameObject == _player)
                     {
-                        Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
-                        ease: _rotationEase);
-
-                        yield return Tween.Position(transform,
-                            move + _positionOffset, _movementTime, ease: Ease.OutBack).OnUpdate<MirrorAndCopyBehavior>(target: this, (target, tween) =>
-                            {
-                                GridBase.Instance.UpdateEntry(this);
-                            }).ToYieldInstruction();
+                        _rb.isKinematic = false;
+                        canMove = true;
+                        break;
                     }
-
-                    GridBase.Instance.UpdateEntry(this);
+                    else
+                    {
+                        canMove = false;
+                        break;
+                    }
                 }
-                else
-                {
-                    if (_movementTiming > 1)
-                    {
-                        yield return _waitForSeconds;
-                    }
 
-                    RoundManager.Instance.CompleteTurn(this);
+                if (canMove == false || EnemyFrozen)
+                {
                     break;
                 }
 
-                if (_movementTiming > 1)
+                if (canMove == true)
                 {
-                    yield return _waitForSeconds;
+                    Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
+                    ease: _rotationEase);
+
+                    yield return Tween.Position(transform,
+                        move + _positionOffset, _movementTime, ease: Ease.OutBack).OnUpdate<MirrorAndCopyBehavior>(target: this, (target, tween) =>
+                        {
+                            GridBase.Instance.UpdateEntry(this);
+                        }).ToYieldInstruction();
                 }
             }
         }
 
+        GridBase.Instance.UpdateEntry(this);
         RoundManager.Instance.CompleteTurn(this);
     }
 
@@ -156,7 +156,17 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
         if (_movementTiming <= 0)
             _movementTiming = 1;
     }
-    public TurnState TurnState => TurnState.World;
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (!DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("Player"))
+        {
+            Time.timeScale = 0f;
+
+            SceneController.Instance.ReloadCurrentScene();
+        }
+    }
+    public TurnState TurnState => TurnState.Enemy;
 
     public void BeginTurn(Vector3 direction)
     {
