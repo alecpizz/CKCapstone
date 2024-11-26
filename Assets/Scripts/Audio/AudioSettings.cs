@@ -42,10 +42,30 @@ public class AudioSettings : MonoBehaviour
 
     private void Start()
     {
-        Load();
-        SetMasterVolume();
-        SetMusicVolume();
-        SetSFXVolume();
+        if (!PlayerPrefs.HasKey(MasterVolume))
+        {
+            Debug.Log("Data not found");
+            _masterSlider.value = 1;
+            _bgMusicSlider.value = 1;
+            _SFXSlider.value = 1;
+
+            PlayerPrefs.SetFloat(MasterVolume, 1f);
+            PlayerPrefs.SetFloat(MusicVolume, 1f);
+            PlayerPrefs.SetFloat(SFXVolume, 1f);
+
+            _master.setVolume(_masterSlider.value);
+            _bgMusic.setVolume(_bgMusicSlider.value);
+            _SFX.setVolume(_SFXSlider.value);
+
+        }
+        else
+        {
+            Debug.Log("Data found");
+            Load();
+            SetMasterVolume();
+            SetMusicVolume();
+            SetSFXVolume();
+        }
     }
 
     /// <summary>
@@ -53,7 +73,7 @@ public class AudioSettings : MonoBehaviour
     /// </summary>
     public void SetMasterVolume()
     {
-        _master.setVolume(_masterSlider.value / _masterSlider.maxValue);
+        _master.setVolume(_masterSlider.value);
         PlayerPrefs.SetFloat(MasterVolume, _masterSlider.value);
     }
 
@@ -62,7 +82,7 @@ public class AudioSettings : MonoBehaviour
     /// </summary>
     public void SetMusicVolume()
     {
-        _bgMusic.setVolume(_bgMusicSlider.value / _bgMusicSlider.maxValue);
+        _bgMusic.setVolume(_bgMusicSlider.value);
         PlayerPrefs.SetFloat(MusicVolume, _bgMusicSlider.value);
     }
 
@@ -71,7 +91,7 @@ public class AudioSettings : MonoBehaviour
     /// </summary>
     public void SetSFXVolume()
     {
-        _SFX.setVolume(_SFXSlider.value / _SFXSlider.maxValue);
+        _SFX.setVolume(_SFXSlider.value);
         PlayerPrefs.SetFloat(SFXVolume, _SFXSlider.value);
     }
 
