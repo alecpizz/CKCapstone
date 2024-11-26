@@ -28,6 +28,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     public GameObject GetGameObject { get => gameObject; }
 
     private GameObject _player;
+    private PlayerMovement _playerMove;
     [SerializeField] private GameObject _destinationMarker;
     [SerializeField] private GameObject _destPathVFX;
 
@@ -93,6 +94,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         GridBase.Instance.AddEntry(this);
 
         _player = PlayerMovement.Instance.gameObject;
+        _playerMove = _player.GetComponent<PlayerMovement>();
 
         _destinationMarker.transform.SetParent(null);
 
@@ -183,7 +185,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         /// and if the enemy is currently frozen by the harmony beam
         /// </summary>
 
-        if (!EnemyFrozen)
+        if (!EnemyFrozen && _playerMove.playerMoved)
         {
             for (int i = 0; i < _enemyMovementTime; ++i)
             {

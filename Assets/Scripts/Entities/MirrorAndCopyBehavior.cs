@@ -26,6 +26,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     [SerializeField]
     private PlayerInteraction _playerInteraction;
     private GameObject _player;
+    private PlayerMovement _playerMove;
 
     //Determines whether or not the enemy's movement is reversed
     [SerializeField] private bool _mirrored;
@@ -52,6 +53,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
         GridBase.Instance.AddEntry(this);
 
         _player = PlayerMovement.Instance.gameObject;
+        _playerMove = _player.GetComponent<PlayerMovement>();
 
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.RegisterTimeListener(this);
@@ -83,7 +85,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     /// <returns></returns>
     private IEnumerator MoveEnemy(Vector3 moveDirection)
     {
-        if (!EnemyFrozen)
+        if (!EnemyFrozen && _playerMove.playerMoved)
         {
             if (_mirrored)
             {
