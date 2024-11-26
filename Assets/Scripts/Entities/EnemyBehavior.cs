@@ -97,7 +97,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
         _rb = GetComponent<Rigidbody>();
         _player = PlayerMovement.Instance.gameObject;
-        _playerMove = _player.GetComponent<PlayerMovement>();
+        _playerMove = PlayerMovement.Instance;
 
         _destinationMarker.transform.SetParent(null);
 

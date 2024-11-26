@@ -55,7 +55,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
         GridBase.Instance.AddEntry(this);
 
         _player = PlayerMovement.Instance.gameObject;
-        _playerMove = _player.GetComponent<PlayerMovement>();
+        _playerMove = PlayerMovement.Instance;
         _rb = GetComponent<Rigidbody>();
 
         if (TimeSignatureManager.Instance != null)
