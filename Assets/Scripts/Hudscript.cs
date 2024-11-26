@@ -25,6 +25,7 @@ public class HUDscript : MonoBehaviour, ITimeListener
     [SerializeField] private GameObject[] _noteImages;
     [SerializeField] private GameObject[] _ghostNoteImages;
     [SerializeField] private bool _isIntermission;
+    [SerializeField] private bool _isChallenge;
     [SerializeField] private TextMeshProUGUI _timeSignatureUIy;
     [SerializeField] private TextMeshProUGUI _timeSignatureUIx;
     [SerializeField] private TMP_Text _levelNumber;
@@ -73,7 +74,10 @@ public class HUDscript : MonoBehaviour, ITimeListener
 
         if (_levelNumber != null)
         {
-            _levelNumber.text = $"{LevelText} {SceneManager.GetActiveScene().buildIndex}";
+            if (_isChallenge)
+                _levelNumber.text = "Challenge";
+            else
+                _levelNumber.text = $"{LevelText} {SceneManager.GetActiveScene().buildIndex}";
         }
     }
 
@@ -123,7 +127,7 @@ public class HUDscript : MonoBehaviour, ITimeListener
     /// </summary>
     private void UpdateGhostNotesIcons(int collectedNote)
     {
-        if (collectedNote >= 0 && collectedNote < _noteImages.Length - 1)
+        if (collectedNote >= 0 && collectedNote < _noteImages.Length)
         {
             _ghostNoteImages[collectedNote].SetActive(true);
         }

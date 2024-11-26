@@ -10,7 +10,6 @@ using PrimeTween;
 using System;
 using System.Collections;
 using UnityEngine;
-using PrimeTween;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
 using FMODUnity;
@@ -44,6 +43,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     [SerializeField] private PlayerInteraction _playerInteraction;
 
     [SerializeField] private float _delayTime = 0.1f;
+
     [SerializeField] private float _rotationDelay = 0.1f;
     [Space]
     [SerializeField] private float _noEnemiesMovementTime = 0.25f;
@@ -73,7 +73,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     private const float MinMovementTime = 0.175f;
 
     [SerializeField] private Animator _animator;
-    
+    public bool playerMoved { get; private set; }
+
     private void Awake()
     {
         Instance = this;
@@ -83,7 +84,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     // Start is called before the first frame update
     void Start()
     {
-        FacingDirection = new Vector3(0, 0, -1);
+        playerMoved = false;
+        FacingDirection = new Vector3(0, 0, 0);
         if (RoundManager.Instance.EnemiesPresent)
         {
             _animator.SetBool("Enemies", true);
@@ -125,7 +127,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// <returns>Waits for short delay while moving</returns>
     private IEnumerator MovementDelay(Vector3 moveDirection)
     {
-        yield return new WaitForSeconds(_rotationDelay);
+        yield return new WaitForSeconds(_rotationTime);
         float modifiedMovementTime = Mathf.Clamp(_movementTime / _playerMovementTiming,
             MinMovementTime, float.MaxValue);
 
@@ -133,14 +135,22 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         {
             // Move if there is no wall below the player or if ghost mode is enabled
             var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
-            _animator.SetTrigger(Forward);
-            if ((GridBase.Instance.CellIsTransparent(move)) ||
+            var readPos = move;
+            readPos.y = gameObject.transform.position.y;
+            
+            if ((GridBase.Instance.CellIsTransparent(move) && gameObject.transform.position != readPos) ||
                 (DebugMenuManager.Instance.GhostMode))
             {
+                _animator.SetTrigger(Forward);
                 yield return Tween.Position(transform,
                     move + _positionOffset, duration: modifiedMovementTime, 
                     _movementEase).ToYieldInstruction();
                 GridBase.Instance.UpdateEntry(this);
+                playerMoved = true;
+            }
+            else
+            {
+                playerMoved = false;
             }
 
             if (_playerMovementTiming > 1)
@@ -164,6 +174,10 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             // Checks if the enemy is frozen; if they are, doesn't reload the scene
             EnemyBehavior enemy = collision.collider.GetComponent<EnemyBehavior>();
             if (enemy == null)
+                return;
+
+            MirrorAndCopyBehavior mirrorCopy = collision.collider.GetComponent<MirrorAndCopyBehavior>();
+            if (mirrorCopy == null)
                 return;
 
             Time.timeScale = 0f;
@@ -194,10 +208,15 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     public void BeginTurn(Vector3 direction)
     {
         Vector3Int dir = new Vector3Int((int) direction.x, (int) direction.y, (int) direction.z);
+
+        bool isSameDirection = FacingDirection == direction;
+
         FacingDirection = direction; //End of animation section
         _playerInteraction.SetDirection(direction);
 
-        Tween.Rotation(transform, endValue: Quaternion.LookRotation(direction), duration: _rotationTime,
+        float rotationTime = isSameDirection ? 0 : _rotationTime;
+
+        Tween.Rotation(transform, endValue: Quaternion.LookRotation(direction), duration: rotationTime,
             ease: _rotationEase).OnComplete(
             () =>
             {
