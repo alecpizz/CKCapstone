@@ -175,6 +175,10 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             if (enemy == null)
                 return;
 
+            MirrorAndCopyBehavior mirrorCopy = collision.collider.GetComponent<MirrorAndCopyBehavior>();
+            if (mirrorCopy == null)
+                return;
+
             Time.timeScale = 0f;
 
             SceneController.Instance.ReloadCurrentScene();
