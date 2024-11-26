@@ -148,7 +148,10 @@ public class SupplementalUI : MonoBehaviour
     /// Updates transparency of text and orientation of UI.
     /// </summary>
     private void Update()
-    {   
+    {
+        if (_camera == null || _text == null)
+            return;
+
         //makes the UI always face the camera if it isn't already
         if (_text.transform.localEulerAngles != 
             _camera.transform.eulerAngles)

@@ -133,10 +133,11 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         {
             // Move if there is no wall below the player or if ghost mode is enabled
             var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
-            _animator.SetTrigger(Forward);
-            if ((GridBase.Instance.CellIsTransparent(move)) ||
+
+            if (GridBase.Instance.CellIsTransparent(move) ||
                 (DebugMenuManager.Instance.GhostMode))
             {
+                _animator.SetTrigger(Forward);
                 yield return Tween.Position(transform,
                     move + _positionOffset, duration: modifiedMovementTime, 
                     _movementEase).ToYieldInstruction();
@@ -164,6 +165,10 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             // Checks if the enemy is frozen; if they are, doesn't reload the scene
             EnemyBehavior enemy = collision.collider.GetComponent<EnemyBehavior>();
             if (enemy == null)
+                return;
+
+            MirrorAndCopyBehavior mirrorCopy = collision.collider.GetComponent<MirrorAndCopyBehavior>();
+            if (mirrorCopy == null)
                 return;
 
             Time.timeScale = 0f;
