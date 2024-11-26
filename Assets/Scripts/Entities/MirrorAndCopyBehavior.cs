@@ -26,6 +26,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     [SerializeField]
     private PlayerInteraction _playerInteraction;
     private GameObject _player;
+    private PlayerMovement _playerMove;
 
     //Determines whether or not the enemy's movement is reversed
     [SerializeField] private bool _mirrored;
@@ -52,7 +53,9 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     void Start()
     {
         GridBase.Instance.AddEntry(this);
+
         _player = PlayerMovement.Instance.gameObject;
+        _playerMove = PlayerMovement.Instance;
         _rb = GetComponent<Rigidbody>();
 
         if (TimeSignatureManager.Instance != null)
@@ -85,12 +88,13 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     /// <returns></returns>
     private IEnumerator MoveEnemy(Vector3 moveDirection)
     {
-        if (!EnemyFrozen)
+        if (!EnemyFrozen && _playerMove.playerMoved)
         {
             if (_mirrored)
             {
                 moveDirection = -moveDirection;
             }
+
 
             for (int i = 0; i < _movementTiming; ++i)
             {
@@ -121,12 +125,6 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                         break;
                     }
                 }
-
-                if (canMove == false || EnemyFrozen)
-                {
-                    break;
-                }
-
                 if (canMove == true)
                 {
                     Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
@@ -138,9 +136,12 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                             GridBase.Instance.UpdateEntry(this);
                         }).ToYieldInstruction();
                 }
+                else
+                {
+                    break;
+                }
             }
         }
-
         GridBase.Instance.UpdateEntry(this);
         RoundManager.Instance.CompleteTurn(this);
     }
@@ -166,6 +167,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
             SceneController.Instance.ReloadCurrentScene();
         }
     }
+
     public TurnState TurnState => TurnState.Enemy;
 
     public void BeginTurn(Vector3 direction)
