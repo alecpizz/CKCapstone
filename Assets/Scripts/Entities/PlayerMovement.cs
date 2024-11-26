@@ -73,7 +73,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     private const float MinMovementTime = 0.175f;
 
     [SerializeField] private Animator _animator;
-    
+    public bool playerMoved { get; private set; }
+
     private void Awake()
     {
         Instance = this;
@@ -83,6 +84,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     // Start is called before the first frame update
     void Start()
     {
+        playerMoved = false;
         FacingDirection = new Vector3(0, 0, 0);
         if (RoundManager.Instance.EnemiesPresent)
         {
@@ -133,8 +135,10 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         {
             // Move if there is no wall below the player or if ghost mode is enabled
             var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
-
-            if (GridBase.Instance.CellIsTransparent(move) ||
+            var readPos = move;
+            readPos.y = gameObject.transform.position.y;
+            
+            if ((GridBase.Instance.CellIsTransparent(move) && gameObject.transform.position != readPos) ||
                 (DebugMenuManager.Instance.GhostMode))
             {
                 _animator.SetTrigger(Forward);
@@ -142,6 +146,11 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                     move + _positionOffset, duration: modifiedMovementTime, 
                     _movementEase).ToYieldInstruction();
                 GridBase.Instance.UpdateEntry(this);
+                playerMoved = true;
+            }
+            else
+            {
+                playerMoved = false;
             }
 
             if (_playerMovementTiming > 1)
