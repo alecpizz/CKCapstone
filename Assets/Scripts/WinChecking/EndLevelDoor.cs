@@ -19,6 +19,10 @@ public class EndLevelDoor : MonoBehaviour
 
     [SerializeField] private ParticleSystem _unlockedParticles;
 
+    [SerializeField] private Animator _anim;
+
+    [SerializeField] private DoorLightBehaviour _lanternScript; 
+
     private void Awake()
     {
         doorGlow = GetComponent<DoorGlow>();
@@ -64,6 +68,12 @@ public class EndLevelDoor : MonoBehaviour
 
             //play "door unlocked" VFX
             _unlockedParticles.Play();
+
+            //make the door open
+            _anim.Play("ANIM_DoorOpen");
+
+            //light the lantern
+            _lanternScript.TurnLightOn();
         }
     }
 
@@ -81,6 +91,7 @@ public class EndLevelDoor : MonoBehaviour
             if (other.gameObject.TryGetComponent<PlayerMovement>(out playerMovement))
             {
                 playerMovement.ForceTurnEnd();
+                playerMovement.enabled = false;
             }
 
             SceneController.Instance.LoadNewScene(_levelIndexToLoad);

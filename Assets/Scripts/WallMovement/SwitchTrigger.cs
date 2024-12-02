@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.EventSystems.EventTrigger;
+using FMODUnity;
+using FMOD.Studio;
 
 /// <summary>
 /// Class for actions taken once switch is triggered
@@ -30,6 +32,19 @@ public class SwitchTrigger : MonoBehaviour
     // Reference to Animator component
     [SerializeReference] private Animator _animator;
 
+    //reference for sound of switch
+    [SerializeField] private EventReference _switchSound = default;
+
+    private const float yOffset = 0.86f;
+
+    /// <summary>
+    /// Positions the switch to be at a height where it doesn't clip into the ground
+    /// </summary>
+    private void Awake()
+    {
+        transform.localPosition = 
+            new Vector3(transform.localPosition.x, yOffset, transform.localPosition.z);
+    }
 
     /// <summary>
     /// Turns the switch on/off everytime the Player steps on it
@@ -38,7 +53,7 @@ public class SwitchTrigger : MonoBehaviour
     /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") || other.CompareTag("SonEnemy") || other.CompareTag("Enemy"))
         {
             PlayerMovement playerMovement;
             if (other.gameObject.TryGetComponent<PlayerMovement>(out playerMovement))
@@ -48,20 +63,32 @@ public class SwitchTrigger : MonoBehaviour
 
             _isTriggered = !_isTriggered;
 
-            //changes the walls
+            //changes the walls and plays a sound
             for (int i = 0; i < _affectedWalls.Count; i++)
             {
                 if (_isTriggered)
                 {
                     _affectedWalls[i].SwitchActivation();
+
+                    if (!_affectedWalls[i].GetWorked())
+                    {
+                        _isTriggered = false;
+                    }
                 }
                 else
                 {
                     _affectedWalls[i].SwitchDeactivation();
+
+                    if (!_affectedWalls[i].GetWorked())
+                    {
+                        _isTriggered = true;
+                    }
                 }
+
+                AudioManager.Instance.PlaySound(_switchSound);
             }
 
-            //changes the reflection cubes
+            //changes the reflection cubes and plays a sound
             for (int i = 0; i < _affectedReflectors.Count; i++)
             {
                 if (_isTriggered)
@@ -72,9 +99,11 @@ public class SwitchTrigger : MonoBehaviour
                 {
                     _affectedReflectors[i].SwitchDeactivation();
                 }
+
+                AudioManager.Instance.PlaySound(_switchSound);
             }
 
-            //changes the harmony beams
+            //changes the harmony beams and plays a sound
             for (int i = 0; i < _affectedBeams.Count; i++)
             {
                 if (_isTriggered)
@@ -85,6 +114,8 @@ public class SwitchTrigger : MonoBehaviour
                 {
                     _affectedBeams[i].SwitchDeactivation();
                 }
+
+                AudioManager.Instance.PlaySound(_switchSound);
             }
 
             if (_animator != null)
@@ -94,10 +125,13 @@ public class SwitchTrigger : MonoBehaviour
         }
     }
 
-    // Visually raises the pressure plate when the player steps off
+    /// <summary>
+    /// Visually raises the pressure plate when the player steps off
+    /// </summary>
+    /// <param name="other"></param>
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") || other.CompareTag("SonEnemy") || other.CompareTag("Enemy"))
         {
             if (_animator != null)
             {

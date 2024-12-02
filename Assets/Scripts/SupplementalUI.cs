@@ -26,14 +26,6 @@ public class SupplementalUI : MonoBehaviour
     //background panel
     [SerializeField] private GameObject _panel;
 
-    /* This is being replaced with a unity icon
-
-    //an orange sphere that indicates where the trigger is on the
-    //canvas; this will help designers when placing it on the grid
-    //[SerializeField] private GameObject _triggerIndicator;
-
-    ^^^ this is being replaced with a unity icon */
-
     //color variable for making the text fade in and out
     private Color _textColor;
 
@@ -41,7 +33,13 @@ public class SupplementalUI : MonoBehaviour
     private Color _panelColor;
 
     //image component of the UI panel
-    private Image _panelBackground; 
+    private Image _panelBackground;
+
+    //does the text blurb need to appear on a delay?
+    [SerializeField] private bool _hasDelay;
+
+    //countdown for delayed text blurbs
+    private float _delayTimer;
 
     /// <summary>
     /// Assigns the color value based on the text UI, and makes it 
@@ -54,6 +52,11 @@ public class SupplementalUI : MonoBehaviour
         _panelBackground = _panel.GetComponent<Image>();
         _panelColor = _panelBackground.color;
         _panelColor.a = 0;
+
+        if (_hasDelay)
+        {
+            _delayTimer = 3.5f;
+        }
     }
 
     /// <summary>
@@ -63,15 +66,15 @@ public class SupplementalUI : MonoBehaviour
     /// <param name="other">the player</param>
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Player"))
+        if (other.gameObject.CompareTag("Player") && _delayTimer == 0)
         {
             StopAllCoroutines();
             StartCoroutine("FadingIn");
         }
     }
 
-    /* Commenting out OnTriggerStay in case a bug shows up involving 
-       player collision
+     //Commenting out OnTriggerStay in case a bug shows up involving 
+       //player collision
 
     /// <summary>
     /// Tells the text to start fading in if the player is still 
@@ -80,24 +83,15 @@ public class SupplementalUI : MonoBehaviour
     /// <param name="other">the player</param>
     private void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.CompareTag("Player"))
+        if (other.gameObject.CompareTag("Player") && _hasDelay && _delayTimer == 0)
         {
-            if (color.a < 1)
-            {
-                color.a += (Time.deltaTime * _textFadeSpeed);
-            }
-
-            //this check is here in case OnTriggerEnter doesn't
-            //get detecetd
-            if (fadingOut)
-            {
-                fadingOut = false;
-            }
+            StopAllCoroutines();
+            StartCoroutine("FadingIn");
         }
     }
 
-    Commenting out OnTriggerStay in case a bug shows up involving
-    player collision */
+    //Commenting out OnTriggerStay in case a bug shows up involving
+    //player collision 
 
     /// <summary>
     /// Tells the text to start fading out when the player leaves.
@@ -154,7 +148,10 @@ public class SupplementalUI : MonoBehaviour
     /// Updates transparency of text and orientation of UI.
     /// </summary>
     private void Update()
-    {   
+    {
+        if (_camera == null || _text == null)
+            return;
+
         //makes the UI always face the camera if it isn't already
         if (_text.transform.localEulerAngles != 
             _camera.transform.eulerAngles)
@@ -176,5 +173,16 @@ public class SupplementalUI : MonoBehaviour
 
         //updates background panel color
         _panelBackground.color = _panelColor;
+
+        //the function that delays the text blurb from showing up instantly
+        if (_hasDelay && _delayTimer != 0)
+        {
+            _delayTimer -= (1 * Time.deltaTime);
+
+            if (_delayTimer <= 0)
+            {
+                _delayTimer = 0;
+            }
+        }
     }
 }

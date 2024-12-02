@@ -23,6 +23,7 @@ public class DebugMenuManager : MonoBehaviour
 
     public bool GhostMode { get; private set; } = false;
     public bool Invincibility { get; private set; } = false;
+    public bool PauseMenu = false;
 
     [SerializeField] private GameObject _debugMenuFirst;
     [SerializeField] private GameObject _quitMenuFirst;
@@ -182,9 +183,17 @@ public class DebugMenuManager : MonoBehaviour
         else if (_pMenu == true)
         {
             _puzzleSelectMenu.SetActive(false);
-            _debugMenu.SetActive(true);
-            _pMenu = false;
-            EventSystem.current.SetSelectedGameObject(_debugMenuFirst);
+            if (PauseMenu)
+            {
+                //doesn't go back to the dubug menu
+                _pMenu = false;
+            }
+            else
+            {
+                _debugMenu.SetActive(true);
+                _pMenu = false;
+                EventSystem.current.SetSelectedGameObject(_debugMenuFirst);
+            }            
         }
     }
 

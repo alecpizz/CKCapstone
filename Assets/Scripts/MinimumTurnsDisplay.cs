@@ -18,7 +18,12 @@ public class MinimumTurnsDisplay : MonoBehaviour
 {
     //designers can assign the minimum turn number they want for their level
     [SerializeField] private int _minimumTurns;
-
+    [Space]
+    [SerializeField]
+    private string _minTurnsPrefix = "Par: ";
+    [SerializeField]
+    private string _playerCounterPrefix = "Turns Taken: ";
+    [Space]
     //assign the text refering to minimum turns and player turns
     [SerializeField] private TMP_Text _minTurnsText;
     [SerializeField] private TMP_Text _playerCounter;
@@ -31,7 +36,7 @@ public class MinimumTurnsDisplay : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        _minTurnsText.text = _minimumTurns.ToString();
+        _minTurnsText.text = _minTurnsPrefix + _minimumTurns;
     }
 
     /// <summary>
@@ -48,6 +53,6 @@ public class MinimumTurnsDisplay : MonoBehaviour
     /// </summary>
     private void TurnText()
     {
-        _playerCounter.text = TurnsMade.ToString();
+        _playerCounter.text = _playerCounterPrefix + TurnsMade;
     }
 }

@@ -15,10 +15,21 @@ public interface IGridEntry
     /// Whether or not the object can be passed through on the grid.
     /// </summary>
     bool IsTransparent { get; }
+
+    /// <summary>
+    /// Whether or not the object stops a harmony beam
+    /// </summary>
+    bool BlocksHarmonyBeam { get; }
+
     /// <summary>
     /// The position of the object, in world space.
     /// </summary>
     Vector3 Position { get; }
 
     GameObject GetGameObject { get; }
+
+    /// <summary>
+    /// Used to position this object in the center of its grid cell
+    /// </summary>
+    void SnapToGridSpace();
 }

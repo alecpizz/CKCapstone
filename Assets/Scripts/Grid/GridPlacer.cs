@@ -8,6 +8,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using SaintsField;
 using SaintsField.Playa;
 using UnityEngine;
@@ -17,7 +18,8 @@ using UnityEngine;
 /// </summary>
 public class GridPlacer : MonoBehaviour, IGridEntry
 {
-    public bool IsTransparent { get => _isTransparent; }
+    public bool IsTransparent { get => _isTransparent; set => _isTransparent = value; }
+    public bool BlocksHarmonyBeam { get => _blocksHarmonyBeam; set => _blocksHarmonyBeam = value; }
     public Vector3 Position { get => transform.position; }
     public GameObject GetGameObject { get => gameObject; }
 
@@ -25,6 +27,9 @@ public class GridPlacer : MonoBehaviour, IGridEntry
     [LayoutStart("Settings", ELayout.Background | ELayout.TitleBox)]
     [SerializeField] 
     private bool _isTransparent = false;
+
+    [SerializeField]
+    private bool _blocksHarmonyBeam = true;
 
     [Space]
     [SerializeField] 
@@ -89,5 +94,14 @@ public class GridPlacer : MonoBehaviour, IGridEntry
     {
         if (GridBase.Instance == null) return; 
         GridBase.Instance.RemoveEntry(this);
+    }
+
+    /// <summary>
+    /// Places this object in the center of its grid cell
+    /// </summary>
+    public void SnapToGridSpace()
+    {
+        Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
+        transform.position = GridBase.Instance.CellToWorld(cellPos);
     }
 }

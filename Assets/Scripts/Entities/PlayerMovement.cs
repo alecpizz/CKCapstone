@@ -1,16 +1,15 @@
 /******************************************************************
-*    Author: Cole Stranczek
-*    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson, Alec Pizziferro, Josephine Qualls
-*    Date Created: 9/22/24
-*    Description: Script that handles the player's movement along
-*    the grid
-*******************************************************************/
+ *    Author: Cole Stranczek
+ *    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson, Alec Pizziferro, Josephine Qualls, Jamison Parks
+ *    Date Created: 9/22/24
+ *    Description: Script that handles the player's movement along
+ *    the grid
+ *******************************************************************/
 
 using PrimeTween;
 using System;
 using System.Collections;
 using UnityEngine;
-using PrimeTween;
 using UnityEngine.InputSystem;
 using UnityEngine.Events;
 using FMODUnity;
@@ -19,20 +18,42 @@ using FMOD.Studio;
 public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
 {
     public Vector3 FacingDirection { get; private set; }
-    public bool IsTransparent { get => true; }
-    public Vector3 Position { get => transform.position; }
-    public GameObject GetGameObject { get => gameObject; }
 
-    [SerializeField]
-    private Vector3 _positionOffset;
-    [SerializeField]
-    private PlayerInteraction _playerInteraction;
+    public bool IsTransparent
+    {
+        get => true;
+    }
 
-    [SerializeField]
-    private float _delayTime = 0.1f;
+    public bool BlocksHarmonyBeam
+    {
+        get => false;
+    }
 
-    [SerializeField] private float _movementTime = 0.25f;
+    public Vector3 Position
+    {
+        get => transform.position;
+    }
 
+    public GameObject GetGameObject
+    {
+        get => gameObject;
+    }
+
+    [SerializeField] private Vector3 _positionOffset;
+    [SerializeField] private PlayerInteraction _playerInteraction;
+
+    [SerializeField] private float _delayTime = 0.1f;
+
+    [SerializeField] private float _rotationDelay = 0.1f;
+    [Space]
+    [SerializeField] private float _noEnemiesMovementTime = 0.25f;
+    [SerializeField] private float _withEnemiesMovementTime = 0.25f;
+    [Space]
+    [SerializeField] private float _rotationTime = 0.05f;
+    [SerializeField] private Ease _rotationEase = Ease.InOutSine;
+    [SerializeField] private Ease _movementEase = Ease.OutBack;
+
+    private float _movementTime;
     private int _playerMovementTiming = 1;
     private WaitForSeconds _waitForSeconds;
 
@@ -44,23 +65,41 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     [SerializeField] private EventReference _playerCantMove = default;
 
     public static PlayerMovement Instance;
-    
+    private static readonly int Forward = Animator.StringToHash("Forward");
+    private static readonly int Right = Animator.StringToHash("Right");
+    private static readonly int Left = Animator.StringToHash("Left");
+    private static readonly int Backward = Animator.StringToHash("Backward");
+
+    private const float MinMovementTime = 0.175f;
+
+    [SerializeField] private Animator _animator;
+    public bool playerMoved { get; private set; }
+
     private void Awake()
     {
         Instance = this;
+        PrimeTweenConfig.warnEndValueEqualsCurrent = false;
     }
 
     // Start is called before the first frame update
     void Start()
     {
+        playerMoved = false;
         FacingDirection = new Vector3(0, 0, 0);
+        if (RoundManager.Instance.EnemiesPresent)
+        {
+            _animator.SetBool("Enemies", true);
+        }
 
+        SnapToGridSpace();
         GridBase.Instance.AddEntry(this);
 
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.RegisterTimeListener(this);
 
         _waitForSeconds = new WaitForSeconds(_delayTime);
+
+        _movementTime = RoundManager.Instance.EnemiesPresent ? _withEnemiesMovementTime : _noEnemiesMovementTime;
     }
 
     private void OnEnable()
@@ -88,20 +127,30 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// <returns>Waits for short delay while moving</returns>
     private IEnumerator MovementDelay(Vector3 moveDirection)
     {
+        yield return new WaitForSeconds(_rotationTime);
+        float modifiedMovementTime = Mathf.Clamp(_movementTime / _playerMovementTiming,
+            MinMovementTime, float.MaxValue);
+
         for (int i = 0; i < _playerMovementTiming; i++)
         {
             // Move if there is no wall below the player or if ghost mode is enabled
             var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
-            if ((GridBase.Instance.CellIsTransparent(move)) ||
+            var readPos = move;
+            readPos.y = gameObject.transform.position.y;
+            
+            if ((GridBase.Instance.CellIsTransparent(move) && gameObject.transform.position != readPos) ||
                 (DebugMenuManager.Instance.GhostMode))
             {
+                _animator.SetTrigger(Forward);
                 yield return Tween.Position(transform,
-                    move + _positionOffset, duration: _movementTime, Ease.OutBack).ToYieldInstruction();
+                    move + _positionOffset, duration: modifiedMovementTime, 
+                    _movementEase).ToYieldInstruction();
                 GridBase.Instance.UpdateEntry(this);
+                playerMoved = true;
             }
             else
             {
-                break;
+                playerMoved = false;
             }
 
             if (_playerMovementTiming > 1)
@@ -119,11 +168,16 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// <param name="collision">Data from collision</param>
     private void OnCollisionEnter(Collision collision)
     {
-        if (!DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("Enemy"))
+        if (!DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("Enemy") ||
+            !DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("SonEnemy"))
         {
             // Checks if the enemy is frozen; if they are, doesn't reload the scene
             EnemyBehavior enemy = collision.collider.GetComponent<EnemyBehavior>();
-            if (enemy == null || enemy.EnemyFrozen)
+            if (enemy == null)
+                return;
+
+            MirrorAndCopyBehavior mirrorCopy = collision.collider.GetComponent<MirrorAndCopyBehavior>();
+            if (mirrorCopy == null)
                 return;
 
             Time.timeScale = 0f;
@@ -131,7 +185,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             SceneController.Instance.ReloadCurrentScene();
         }
     }
-    
+
 
     /// <summary>
     /// Receives the new player movement speed when time signature updates
@@ -153,20 +207,33 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// <param name="direction">The direction the player should move</param>
     public void BeginTurn(Vector3 direction)
     {
+        Vector3Int dir = new Vector3Int((int) direction.x, (int) direction.y, (int) direction.z);
+
+        bool isSameDirection = FacingDirection == direction;
+
+        FacingDirection = direction; //End of animation section
         _playerInteraction.SetDirection(direction);
 
-        var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
-        if ((GridBase.Instance.CellIsTransparent(move) || DebugMenuManager.Instance.GhostMode))
-        {
-            AudioManager.Instance.PlaySound(_playerMove);
-            StartCoroutine(MovementDelay(direction));
-            OnPlayerMoveComplete?.Invoke(); //keeps track of movement completion
-        }
-        else
-        {
-            AudioManager.Instance.PlaySound(_playerCantMove);
-            RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
-        }
+        float rotationTime = isSameDirection ? 0 : _rotationTime;
+
+        Tween.Rotation(transform, endValue: Quaternion.LookRotation(direction), duration: rotationTime,
+            ease: _rotationEase).OnComplete(
+            () =>
+            {
+                var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
+                if ((GridBase.Instance.CellIsTransparent(move) || DebugMenuManager.Instance.GhostMode))
+                {
+                    AudioManager.Instance.PlaySound(_playerMove);
+                    StartCoroutine(MovementDelay(direction));
+                    OnPlayerMoveComplete?.Invoke(); //keeps track of movement completion
+                }
+                else
+                {
+                    AudioManager.Instance.PlaySound(_playerCantMove);
+                    RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
+                }
+            });
+        
     }
 
     /// <summary>
@@ -177,5 +244,15 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         StopAllCoroutines();
         GridBase.Instance.UpdateEntry(this);
         RoundManager.Instance.CompleteTurn(this);
+    }
+
+    /// <summary>
+    /// Places this object in the center of its grid cell
+    /// </summary>
+    public void SnapToGridSpace()
+    {
+        Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
+        Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos);
+        transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z);
     }
 }
