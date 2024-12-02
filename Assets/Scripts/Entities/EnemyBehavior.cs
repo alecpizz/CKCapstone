@@ -28,6 +28,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     public GameObject GetGameObject { get => gameObject; }
 
     private GameObject _player;
+    private PlayerMovement _playerMove;
     [SerializeField] private GameObject _destinationMarker;
     [SerializeField] private GameObject _destPathVFX;
 
@@ -77,6 +78,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     [SerializeField] private EventReference _enemyMove = default;
     [SerializeField] public bool sonEnemy;
 
+    private Rigidbody _rb;
+
     private void Awake()
     {
         PrimeTweenConfig.warnEndValueEqualsCurrent = false;
@@ -92,7 +95,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         SnapToGridSpace();
         GridBase.Instance.AddEntry(this);
 
+        _rb = GetComponent<Rigidbody>();
         _player = PlayerMovement.Instance.gameObject;
+        _playerMove = PlayerMovement.Instance;
 
         _destinationMarker.transform.SetParent(null);
 
@@ -183,8 +188,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         /// and if the enemy is currently frozen by the harmony beam
         /// </summary>
 
-        if (!EnemyFrozen)
+        if (!EnemyFrozen && _playerMove.playerMoved)
         {
+
             for (int i = 0; i < _enemyMovementTime; ++i)
             {
                 /// <summary>
@@ -220,7 +226,19 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                     //enemy can't move into other enemies, walls, etc.
                     foreach (var entry in entries)
                     {
-                        if (entry.GetGameObject != _player)
+                        if (entry.GetGameObject.CompareTag("Wall") && entry.IsTransparent)
+                        {
+                            _rb.isKinematic = true;
+                            breakLoop = false;
+                            break;
+                        }
+                        if (entry.GetGameObject == _player)
+                        {
+                            _rb.isKinematic = false;
+                            breakLoop = false;
+                            break;
+                        }
+                        else
                         {
                             breakLoop = true;
                             break;
@@ -392,6 +410,15 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
 
         if (_enemyMovementTime <= 0)
             _enemyMovementTime = 1;
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (!DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("Player"))
+        {
+            Time.timeScale = 0f;
+
+            SceneController.Instance.ReloadCurrentScene();
+        }
     }
 
     public TurnState TurnState => TurnState.Enemy;

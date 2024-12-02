@@ -14,7 +14,7 @@ using UnityEngine.Rendering.Universal;
 public class ColorSettings : MonoBehaviour
 {
     [SerializeField] TMP_Dropdown _dropdown;
-    public enum ColorBlindMode { Normal, Protanopia, Protanomaly, Deuteranopia, Deuteranomaly, 
+    public enum ColorBlindMode { Default, Protanopia, Protanomaly, Deuteranopia, Deuteranomaly, 
         Tritanopia, Tritanomaly, Achromatopsia, Achromatomaly }
 
     private ColorBlindMode _selection;
@@ -73,7 +73,7 @@ public class ColorSettings : MonoBehaviour
     {
         switch (mode)
         {
-            case ColorBlindMode.Normal:
+            case ColorBlindMode.Default:
                 ChangeVolume(new Vector3(100, 0, 0),
                              new Vector3(0, 100, 0),
                              new Vector3(0, 0, 100));

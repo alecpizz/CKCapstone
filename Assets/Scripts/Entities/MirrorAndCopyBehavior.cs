@@ -14,7 +14,7 @@ using UnityEngine.EventSystems;
 
 public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener, IHarmonyBeamEntity
 {
-    public bool IsTransparent { get => true; }
+    public bool IsTransparent { get => false; }
     public bool BlocksHarmonyBeam { get => false; }
     public Vector3 Position { get => transform.position; }
     public GameObject GetGameObject { get => gameObject; }
@@ -26,6 +26,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     [SerializeField]
     private PlayerInteraction _playerInteraction;
     private GameObject _player;
+    private PlayerMovement _playerMove;
 
     //Determines whether or not the enemy's movement is reversed
     [SerializeField] private bool _mirrored;
@@ -41,6 +42,8 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     // Bool checked if this enemy is a Son Enemy
     [SerializeField] private bool sonEnemy;
 
+    private Rigidbody _rb;
+
     private void Awake()
     {
         PrimeTweenConfig.warnEndValueEqualsCurrent = false;
@@ -52,6 +55,8 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
         GridBase.Instance.AddEntry(this);
 
         _player = PlayerMovement.Instance.gameObject;
+        _playerMove = PlayerMovement.Instance;
+        _rb = GetComponent<Rigidbody>();
 
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.RegisterTimeListener(this);
@@ -83,7 +88,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     /// <returns></returns>
     private IEnumerator MoveEnemy(Vector3 moveDirection)
     {
-        if (!EnemyFrozen)
+        if (!EnemyFrozen && _playerMove.playerMoved)
         {
             if (_mirrored)
             {
@@ -98,50 +103,46 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                 var entries = GridBase.Instance.GetCellEntries(move);
                 bool canMove = true;
 
-                if (GridBase.Instance.CellIsEmpty(move))
+                //If the next cell contains an object that is not the player then the loop breaks
+                //enemy can't move into other enemies, walls, etc.
+                foreach (var entry in entries)
                 {
-                    //If the next cell contains an object that is not the player then the loop breaks
-                    //enemy can't move into other enemies, walls, etc.
-                    foreach (var entry in entries)
+                    if (entry.GetGameObject.CompareTag("Wall") && entry.IsTransparent)
                     {
-                        if (entry.GetGameObject != _player)
+                        _rb.isKinematic = true;
+                        canMove = true;
+                        break;
+                    }
+                    if (entry.GetGameObject == _player)
+                    {
+                        _rb.isKinematic = false;
+                        canMove = true;
+                        break;
+                    }
+                    else
+                    {
+                        canMove = false;
+                        break;
+                    }
+                }
+                if (canMove == true)
+                {
+                    Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
+                    ease: _rotationEase);
+
+                    yield return Tween.Position(transform,
+                        move + _positionOffset, _movementTime, ease: Ease.OutBack).OnUpdate<MirrorAndCopyBehavior>(target: this, (target, tween) =>
                         {
-                            canMove = false;
-                            break;
-                        }
-                    }
-                    if (canMove == true)
-                    {
-                        Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
-                        ease: _rotationEase);
-
-                        yield return Tween.Position(transform,
-                            move + _positionOffset, _movementTime, ease: Ease.OutBack).OnUpdate<MirrorAndCopyBehavior>(target: this, (target, tween) =>
-                            {
-                                GridBase.Instance.UpdateEntry(this);
-                            }).ToYieldInstruction();
-                    }
-
-                    GridBase.Instance.UpdateEntry(this);
+                            GridBase.Instance.UpdateEntry(this);
+                        }).ToYieldInstruction();
                 }
                 else
                 {
-                    if (_movementTiming > 1)
-                    {
-                        yield return _waitForSeconds;
-                    }
-
-                    RoundManager.Instance.CompleteTurn(this);
                     break;
-                }
-
-                if (_movementTiming > 1)
-                {
-                    yield return _waitForSeconds;
                 }
             }
         }
-
+        GridBase.Instance.UpdateEntry(this);
         RoundManager.Instance.CompleteTurn(this);
     }
 
@@ -156,7 +157,18 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
         if (_movementTiming <= 0)
             _movementTiming = 1;
     }
-    public TurnState TurnState => TurnState.World;
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (!DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("Player"))
+        {
+            Time.timeScale = 0f;
+
+            SceneController.Instance.ReloadCurrentScene();
+        }
+    }
+
+    public TurnState TurnState => TurnState.Enemy;
 
     public void BeginTurn(Vector3 direction)
     {
