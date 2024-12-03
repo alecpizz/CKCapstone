@@ -47,6 +47,7 @@ public class CutsceneFramework : MonoBehaviour
     [Scene]
     [SerializeField] private int _loadingLevelIndex = 0;
 
+    [SerializeField] private float _audioVolumeOverride = 150f;
     /// <summary>
     /// Determines whether to play the Challenge or End Chapter Cutscene
     /// </summary>
@@ -79,7 +80,8 @@ public class CutsceneFramework : MonoBehaviour
         }
 
         // Plays the audio accompanying the Challenge Cutscene
-        AudioManager.Instance.PlaySound(_cutsceneAudio);
+        var instance = AudioManager.Instance.PlaySound(_cutsceneAudio);
+        AudioManager.Instance.AdjustVolume(instance, _audioVolumeOverride);
 
         // Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement the
         // functionality for playing a video, particularly for the End Chapter Cutscene)
@@ -98,7 +100,8 @@ public class CutsceneFramework : MonoBehaviour
         _endChapterCutsceneVideo.Play();
 
         // Plays the audio accompanying the End Chapter Cutscene
-        AudioManager.Instance.PlaySound(_cutsceneAudio);
+        var instance = AudioManager.Instance.PlaySound(_cutsceneAudio);
+        AudioManager.Instance.AdjustVolume(instance, _audioVolumeOverride);
 
         // Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement the
         // functionality for playing a video, particularly for the End Chapter Cutscene)
