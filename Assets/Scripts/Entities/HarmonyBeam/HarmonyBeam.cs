@@ -31,6 +31,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     // Array for managing the multiple child particle systems
     [Header("Particles")] [SerializeField] private ParticleSystem[] _beamParticleSystems;
     [SerializeField] private GameObject _enemyHitEffectPrefab;
+    [SerializeField] private Vector3 _enemyHitOffset;
     [SerializeField] private GameObject _wallCollisionEffectPrefab;
 
     private GameObject _activeWallEffect; // Instance of the active wall collision effect
@@ -170,7 +171,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
                         {
                             if (!_wrappedEnemyFX.ContainsKey(entity))
                             {
-                                GameObject enemyFX = Instantiate(_enemyHitEffectPrefab, entity.Position, Quaternion.identity);
+                                GameObject enemyFX = Instantiate(_enemyHitEffectPrefab, entity.Position + _enemyHitOffset, Quaternion.identity);
                                 _wrappedEnemyFX.TryAdd(entity, enemyFX);
                                 _wrappedEnemyFX[entity] = enemyFX;
                                 _enemyGrabbedInstance = AudioManager.Instance.PlaySound(_enemyHarmonization);
