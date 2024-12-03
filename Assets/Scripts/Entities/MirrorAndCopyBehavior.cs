@@ -88,7 +88,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     /// <returns></returns>
     private IEnumerator MoveEnemy(Vector3 moveDirection)
     {
-        if (!EnemyFrozen && _playerMove.playerMoved)
+        if (!EnemyFrozen)
         {
             if (_mirrored)
             {
