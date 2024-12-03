@@ -188,7 +188,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
         /// and if the enemy is currently frozen by the harmony beam
         /// </summary>
 
-        if (!EnemyFrozen && _playerMove.playerMoved)
+        if (!EnemyFrozen)
         {
 
             for (int i = 0; i < _enemyMovementTime; ++i)
