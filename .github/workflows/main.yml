@@ -21,7 +21,7 @@ jobs:
           - StandaloneWindows64 # Build a Windows 64-bit standalone.
     steps:
       - run: |
-          docker pull unityci/editor:${{ env.UNITY_VERSION }}-ubuntu-${{ matrix.targetPlatform }} &
+          docker pull unityci/editor:${{ env.UNITY_VERSION }}-ubuntu-windows-mono &
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
