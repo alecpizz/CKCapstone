@@ -13,9 +13,8 @@ public class EndLevelDoor : MonoBehaviour
 {
     [Scene]
     [SerializeField] private int _levelIndexToLoad = 0;
-    [SerializeField]
-    bool _isUnlocked = false;
-    DoorGlow doorGlow;
+    [SerializeField] private bool _isUnlocked = false;
+    private DoorGlow _doorGlow;
 
     [SerializeField] private ParticleSystem _unlockedParticles;
 
@@ -25,7 +24,7 @@ public class EndLevelDoor : MonoBehaviour
 
     private void Awake()
     {
-        doorGlow = GetComponent<DoorGlow>();
+        _doorGlow = GetComponent<DoorGlow>();
     }
 
     /// <summary>
@@ -61,10 +60,10 @@ public class EndLevelDoor : MonoBehaviour
     public void UnlockDoor()
     {
         _isUnlocked = true;
-         if (doorGlow != null)
+         if (_doorGlow != null)
         {
             // Call the UnlockDoor method from EndLevelDoor
-            doorGlow.GlowAndUnlockDoor();
+            _doorGlow.GlowAndUnlockDoor();
 
             //play "door unlocked" VFX
             _unlockedParticles.Play();
