@@ -8,11 +8,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class DoorGlow : MonoBehaviour
 {
-    [SerializeField] private Color _glowColor = Color.yellow; // Set the glow color
-    [SerializeField] private float _glowIntensity = 15.0f; // Intensity of the glow
+    [SerializeField] [FormerlySerializedAs("glowColor")] private Color _glowColor = Color.yellow; // Set the glow color
+    [SerializeField] [FormerlySerializedAs("glowIntensity")] private float _glowIntensity = 15.0f; // Intensity of the glow
 
     private Renderer _renderer; // The renderer attached to this object
 
