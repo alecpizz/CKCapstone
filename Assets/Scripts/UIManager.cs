@@ -17,17 +17,27 @@ using UnityEngine.Serialization;
 
 public class UIManager : MonoBehaviour, ITimeListener
 {
-    [Required] [SerializeField] private TextMeshProUGUI _collectedNotesUI;
+    [FormerlySerializedAs("_collectedNotesUI")] [Required] [SerializeField]
+    private TextMeshProUGUI _collectedNotesUi;
+
     [SerializeField] private float _messageWaitTime;
     [SerializeField] private GameObject _doorUnlockMessage;
     [SerializeField] private GameObject _incorrectMessage;
-    [SerializeField] private TextMeshProUGUI _sequenceUI;
+
+    [FormerlySerializedAs("_sequenceUI")] [SerializeField]
+    private TextMeshProUGUI _sequenceUi;
+
     [SerializeField] private GameObject[] _noteImages;
     [SerializeField] private GameObject[] _ghostNoteImages;
     [SerializeField] private bool _isIntermission;
     [SerializeField] private bool _isChallenge;
-    [SerializeField] private TextMeshProUGUI _timeSignatureUIy;
-    [SerializeField] private TextMeshProUGUI _timeSignatureUIx;
+
+    [FormerlySerializedAs("_timeSignatureUIy")] [SerializeField]
+    private TextMeshProUGUI _timeSignatureUiY;
+
+    [FormerlySerializedAs("_timeSignatureUIx")] [SerializeField]
+    private TextMeshProUGUI _timeSignatureUiX;
+
     [SerializeField] private TMP_Text _levelNumber;
     private TimeSignatureManager _timeSigManager;
 
@@ -49,7 +59,7 @@ public class UIManager : MonoBehaviour, ITimeListener
             _messageWaitTime = 5f;
         }
 
-        _collectedNotesUI.text = BaseCollectedText;
+        _collectedNotesUi.text = BaseCollectedText;
 
         if (WinChecker.Instance != null)
         {
@@ -58,7 +68,7 @@ public class UIManager : MonoBehaviour, ITimeListener
             WinChecker.CollectedNote += UpdateGhostNotesIcons;
             foreach (int note in _notes)
             {
-                _sequenceUI.text += " " + note;
+                _sequenceUi.text += " " + note;
                 if (!_isIntermission)
                 {
                     UpdateGhostNotesIcons(note);
@@ -89,14 +99,14 @@ public class UIManager : MonoBehaviour, ITimeListener
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
     {
-        if (_timeSignatureUIx == null || _timeSignatureUIy == null)
+        if (_timeSignatureUiX == null || _timeSignatureUiY == null)
         {
             Debug.LogWarning("Missing hud elements");
             return;
         }
 
-        _timeSignatureUIy.text = newTimeSignature.y.ToString();
-        _timeSignatureUIx.text = newTimeSignature.x.ToString();
+        _timeSignatureUiY.text = newTimeSignature.y.ToString();
+        _timeSignatureUiX.text = newTimeSignature.x.ToString();
     }
 
     /// <summary>
@@ -146,7 +156,7 @@ public class UIManager : MonoBehaviour, ITimeListener
     /// </summary>
     private void ResetCollectedNotesText()
     {
-        _collectedNotesUI.text = BaseCollectedText;
+        _collectedNotesUi.text = BaseCollectedText;
     }
 
     /// <summary>
