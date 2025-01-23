@@ -7,11 +7,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class DestroyGlowEffect : MonoBehaviour
 {
-     // variables 
-    public GameObject glowEffectPrefab { get; private set; }
+    // variables
+    [FormerlySerializedAs("glowEffectPrefab")]
+    [SerializeField] private GameObject glowEffectPrefab;
 
     /// <summary>
     /// This method is called the player collides 
