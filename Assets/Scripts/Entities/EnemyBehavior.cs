@@ -48,12 +48,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [SerializeField] private GameObject _destinationMarker;
     [SerializeField] private GameObject _destPathVFX;
 
-    [SerializeField] private bool _firstPoint;
+    [SerializeField] private bool _atFirstPoint;
     [SerializeField] private int _currentPoint = 0;
     private int _currentPointIndex = 0;
 
     //Destination object values
-    [SerializeField] private bool _destfirstPoint;
+    [SerializeField] private bool _destAtFirstPoint;
     [SerializeField] private int _destCurrentPoint = 0;
     public bool CollidingWithRay = false;
 
@@ -128,7 +128,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _destinationMarker.transform.SetParent(null);
 
         // Make sure enemies are always seen at the start
-        _firstPoint = true;
+        _atFirstPoint = true;
 
         if (TimeSignatureManager.Instance != null)
         {
@@ -235,7 +235,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 FindDirection(pointDirection);
 
                 //Reverses move direction if going back through the list
-                if (!_firstPoint)
+                if (!_atFirstPoint)
                 {
                     moveInDirection = -moveInDirection;
                 }
@@ -294,8 +294,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 }
 
                 // If the current point is equal to the length of the list then the if/else statement 
-                // will check the firstPoint bool and concurrently reverse through the list
-                if (!EnemyFrozen && _firstPoint == true)
+                // will check the atFirstPoint bool and concurrently reverse through the list
+                if (!EnemyFrozen && _atFirstPoint == true)
                 {
                     _currentPointIndex = 0;
 
@@ -303,7 +303,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                     {
                         if (!_circularMovement)
                         {
-                            _firstPoint = false;
+                            _atFirstPoint = false;
                         }
                         else
                         {
@@ -321,7 +321,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
                     if (_currentPoint <= 0)
                     {
-                        _firstPoint = true;
+                        _atFirstPoint = true;
                     }
                     else
                     {
@@ -356,13 +356,13 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         for (int i = 0; i < _enemyMovementTime; ++i)
         {
             //Updates the current point index before moving
-            if (_destfirstPoint == true)
+            if (_destAtFirstPoint == true)
             {
                 if (_destCurrentPoint >= _movePoints.Count - 1)
                 {
                     if (!_circularMovement)
                     {
-                        _destfirstPoint = false;
+                        _destAtFirstPoint = false;
                     }
                     else
                     {
@@ -378,7 +378,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             {
                 if (_destCurrentPoint <= 0)
                 {
-                    _destfirstPoint = true;
+                    _destAtFirstPoint = true;
                 }
                 else
                 {
@@ -397,7 +397,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             _vfxLine.positionCount = _linePosCount;
 
             //Reverses if going backward through the list
-            if (!_destfirstPoint)
+            if (!_destAtFirstPoint)
             {
                 moveInDirection = -moveInDirection;
             }
