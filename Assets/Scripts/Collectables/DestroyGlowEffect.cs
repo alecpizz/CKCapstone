@@ -11,7 +11,7 @@ using UnityEngine;
 public class DestroyGlowEffect : MonoBehaviour
 {
      // variables 
-    public GameObject glowEffectPrefab;
+    public GameObject glowEffectPrefab { get; private set; }
 
     /// <summary>
     /// This method is called the player collides 
