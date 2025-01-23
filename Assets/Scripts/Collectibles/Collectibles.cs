@@ -10,13 +10,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using SaintsField;
 using FMODUnity;
+using UnityEngine.Serialization;
 
 public class Collectibles : MonoBehaviour
 {
 
     // variables
-    public DestroyGlowEffect destroyGlowEffect { get; private set; }
+    public DestroyGlowEffect DestroyGlowEffect { get; private set; }
     [MinValue(0), MaxValue(10)]
+    [FormerlySerializedAs("_collectableNumber")]
     [SerializeField] private int _collectibleNumber;
     [SerializeField] private EventReference _sound;
     [SerializeField] private GameObject NoteGlow;
@@ -60,7 +62,7 @@ public class Collectibles : MonoBehaviour
             AudioManager.Instance.PlaySound(_sound);
         }
         WinChecker.CollectedNote?.Invoke(_collectibleNumber);
-        destroyGlowEffect.DestroyCollectible();
+        DestroyGlowEffect.DestroyCollectible();
     }
 
     /// <summary>
