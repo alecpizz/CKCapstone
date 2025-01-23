@@ -16,20 +16,21 @@ public interface IHarmonyBeamEntity
     /// <summary>
     /// Whether lasers can pass through this object.
     /// </summary>
-    bool AllowLaserPassThrough { get; }
+    public bool AllowLaserPassThrough { get; }
     /// <summary>
     /// When a laser hit this object.
     /// </summary>
-    void OnLaserHit();
+    public void OnLaserHit();
     /// <summary>
     /// When a laser left this object after
     /// previously hitting it.
     /// </summary>
-    void OnLaserExit();
+ 
+    public void OnLaserExit();
     /// <summary>
     /// Whether the laser should spawn vfx to wrap around this object.
     /// </summary>
-    bool HitWrapAround { get; }
+    public bool HitWrapAround { get; }
     /// <summary>
     /// The position of the object.
     /// </summary>
