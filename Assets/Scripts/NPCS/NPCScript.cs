@@ -19,21 +19,21 @@ using UnityEngine.SceneManagement;
 using SaintsField.Playa;
 using Debug = UnityEngine.Debug;
 
-[Serializable]
-public struct DialogueEntry
-{
-    public EventReference _sound;
-    [TextArea] public string _text;
-    [InfoBox("This adjusts the speed of the text. " +
-        "A value of -5 slows it down while a value of 5 speeds it up", EMessageType.Info)]
-    [Range(-5f, 5f)] public float _adjustTypingSpeed;
-}
-
 public class NPCScript : MonoBehaviour, IInteractable
 {
     [SerializeField] private TMP_Text _dialogueBox;
     [SerializeField] private Image _background;
     [SerializeField] private EndLevelDoor[] _doors;
+
+    [Serializable]
+    public struct DialogueEntry
+    {
+        public EventReference sound;
+        [TextArea] public string text;
+        [InfoBox("This adjusts the speed of the text. " +
+            "A value of -5 slows it down while a value of 5 speeds it up", EMessageType.Info)]
+        [Range(-5f, 5f)] public float adjustTypingSpeed;
+    }
 
     private bool _isTalking;
     [InfoBox("This adjusts the base typing speed. 2 is the slowest, 10 is the fastest", EMessageType.Info)]
@@ -114,7 +114,7 @@ public class NPCScript : MonoBehaviour, IInteractable
         _totalNPCs = FindObjectsOfType<NPCScript>().Length;
         if (CheckForEntries())
         {
-            _dialogueBox.SetText(_dialogueEntries[_currentDialogue]._text);
+            _dialogueBox.SetText(_dialogueEntries[_currentDialogue].text);
         }
 
         var canvas = _dialogueBox.transform.parent;
@@ -128,7 +128,7 @@ public class NPCScript : MonoBehaviour, IInteractable
         _occupied = false;
         _isTalking = false;
         _currentTypingSpeed = Mathf.Clamp(
-            _typingSpeed - _dialogueEntries[_currentDialogue]._adjustTypingSpeed, 2f, 15f) / 100f;
+            _typingSpeed - _dialogueEntries[_currentDialogue].adjustTypingSpeed, 2f, 15f) / 100f;
 
         if (PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) >= _totalNPCs)
         {
@@ -151,7 +151,7 @@ public class NPCScript : MonoBehaviour, IInteractable
                 {
                     StopCoroutine(_typingCoroutine);
                 }
-                _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue]._text));
+                _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue].text));
             }
 
             _dialogueBox.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
@@ -205,8 +205,8 @@ public class NPCScript : MonoBehaviour, IInteractable
             }
 
             // adjusts typing speed on a per-entry basis
-            _currentTypingSpeed = Mathf.Clamp(_typingSpeed - _dialogueEntries[_currentDialogue]._adjustTypingSpeed, 2f, 15f) / 100f;
-            _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue]._text));
+            _currentTypingSpeed = Mathf.Clamp(_typingSpeed - _dialogueEntries[_currentDialogue].adjustTypingSpeed, 2f, 15f) / 100f;
+            _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue].text));
         }
     }
 
