@@ -20,12 +20,12 @@ public interface IHarmonyBeamEntity
     /// <summary>
     /// When a laser hit this object.
     /// </summary>
+    
     public void OnLaserHit();
     /// <summary>
     /// When a laser left this object after
     /// previously hitting it.
     /// </summary>
- 
     public void OnLaserExit();
     /// <summary>
     /// Whether the laser should spawn vfx to wrap around this object.
