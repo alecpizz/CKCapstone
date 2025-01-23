@@ -23,7 +23,7 @@ public class DebugMenuManager : MonoBehaviour
 
     public bool GhostMode { get; private set; } = false;
     public bool Invincibility { get; private set; } = false;
-    public bool PauseMenu { get; private set; } = false;
+    public bool PauseMenu { get; set; } = false;
 
     [SerializeField] private GameObject _debugMenuFirst;
     [SerializeField] private GameObject _quitMenuFirst;
