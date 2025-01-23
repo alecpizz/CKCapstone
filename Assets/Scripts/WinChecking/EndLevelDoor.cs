@@ -22,6 +22,9 @@ public class EndLevelDoor : MonoBehaviour
 
     [SerializeField] private DoorLightBehaviour _lanternScript; 
 
+    /// <summary>
+    /// Door glow is assigned a value when the function awakens
+    /// </summary>
     private void Awake()
     {
         _doorGlow = GetComponent<DoorGlow>();
