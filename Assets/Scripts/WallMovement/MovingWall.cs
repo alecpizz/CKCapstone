@@ -57,7 +57,7 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
 
     public bool BlocksHarmonyBeam { get => true; }
 
-    public GameObject GetGameObject => gameObject;
+    public GameObject GameObject => gameObject;
 
     public Vector3 Position => transform.position;
 

@@ -25,7 +25,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
     [SerializeField]
     private Vector3 _positionOffset;
 
-    public GameObject GetGameObject { get => gameObject; }
+    public GameObject GameObject { get => gameObject; }
 
     private GameObject _player;
     private PlayerMovement _playerMove;
@@ -226,13 +226,13 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnList
                     //enemy can't move into other enemies, walls, etc.
                     foreach (var entry in entries)
                     {
-                        if (entry.GetGameObject.CompareTag("Wall") && entry.IsTransparent)
+                        if (entry.GameObject.CompareTag("Wall") && entry.IsTransparent)
                         {
                             _rb.isKinematic = true;
                             breakLoop = false;
                             break;
                         }
-                        if (entry.GetGameObject == _player)
+                        if (entry.GameObject == _player)
                         {
                             _rb.isKinematic = false;
                             breakLoop = false;

@@ -17,7 +17,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     public bool IsTransparent { get => false; }
     public bool BlocksHarmonyBeam { get => false; }
     public Vector3 Position { get => transform.position; }
-    public GameObject GetGameObject { get => gameObject; }
+    public GameObject GameObject { get => gameObject; }
 
     public bool EnemyFrozen { get; private set; } = false;
 
@@ -107,13 +107,13 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                 //enemy can't move into other enemies, walls, etc.
                 foreach (var entry in entries)
                 {
-                    if (entry.GetGameObject.CompareTag("Wall") && entry.IsTransparent)
+                    if (entry.GameObject.CompareTag("Wall") && entry.IsTransparent)
                     {
                         _rb.isKinematic = true;
                         canMove = true;
                         break;
                     }
-                    if (entry.GetGameObject == _player)
+                    if (entry.GameObject == _player)
                     {
                         _rb.isKinematic = false;
                         canMove = true;

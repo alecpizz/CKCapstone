@@ -26,7 +26,10 @@ public interface IGridEntry
     /// </summary>
     Vector3 Position { get; }
 
-    GameObject GetGameObject { get; }
+    /// <summary>
+    /// The gameObject this entry is attached to.
+    /// </summary>
+    GameObject GameObject { get; }
 
     /// <summary>
     /// Used to position this object in the center of its grid cell
