@@ -13,7 +13,7 @@ public class DestroyGlowEffect : MonoBehaviour
 {
     // variables
     [FormerlySerializedAs("glowEffectPrefab")]
-    [SerializeField] private GameObject glowEffectPrefab;
+    [SerializeField] private GameObject _glowEffectPrefab;
 
     /// <summary>
     /// This method is called the player collides 
@@ -22,9 +22,9 @@ public class DestroyGlowEffect : MonoBehaviour
     /// </summary>
     public void DestroyCollectible()
     {
-        if (glowEffectPrefab != null)
+        if (_glowEffectPrefab != null)
         {
-            Instantiate(glowEffectPrefab, transform.position, transform.rotation);
+            Instantiate(_glowEffectPrefab, transform.position, transform.rotation);
         }
 
         Destroy(gameObject);
