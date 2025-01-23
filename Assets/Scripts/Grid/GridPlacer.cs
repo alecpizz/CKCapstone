@@ -5,6 +5,7 @@
  *    Description: Placement tool for grid objects.
  *    To use, simply attach to a gameobject that you wish to position on the grid.
  *******************************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,39 +13,50 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using SaintsField;
 using SaintsField.Playa;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// Placement tool for grid objects. To use, simply attach to a gameobject that you wish to position on the grid.
 /// </summary>
 public class GridPlacer : MonoBehaviour, IGridEntry
 {
-    public bool IsTransparent { get => _isTransparent; set => _isTransparent = value; }
-    public bool BlocksHarmonyBeam { get => _blocksHarmonyBeam; set => _blocksHarmonyBeam = value; }
-    public Vector3 Position { get => transform.position; }
-    public GameObject GetGameObject { get => gameObject; }
+    public bool IsTransparent
+    {
+        get => _isTransparent;
+        set => _isTransparent = value;
+    }
+
+    public bool BlocksHarmonyBeam
+    {
+        get => _blocksHarmonyBeam;
+        set => _blocksHarmonyBeam = value;
+    }
+
+    public Vector3 Position
+    {
+        get => transform.position;
+    }
+
+    public GameObject GetGameObject
+    {
+        get => gameObject;
+    }
 
     [InfoBox("Use this component to add this gameObject to a grid.")]
     [LayoutStart("Settings", ELayout.Background | ELayout.TitleBox)]
-    [SerializeField] 
+    [SerializeField]
     private bool _isTransparent = false;
 
-    [SerializeField]
-    private bool _blocksHarmonyBeam = true;
+    [SerializeField] private bool _blocksHarmonyBeam = true;
 
-    [Space]
-    [SerializeField] 
-    private bool _snapToGrid = true;
+    [Space] [SerializeField] private bool _snapToGrid = true;
 
-    [SerializeField]
-    private Vector3 offset = Vector3.zero;
+    [FormerlySerializedAs("offset")] [SerializeField]
+    private Vector3 _offset = Vector3.zero;
 
-    [Space]
-    [SerializeField] 
-    private bool _disableGridCell = false;
+    [Space] [SerializeField] private bool _disableGridCell = false;
 
-    [Space]
-    [SerializeField] 
-    private bool _isVisable = true;
+    [Space] [SerializeField] private bool _isVisable = true;
 
     /// <summary>
     /// Places the object on the grid and updates its position. Also disables the mesh rendere on transparent grid objects
@@ -53,13 +65,16 @@ public class GridPlacer : MonoBehaviour, IGridEntry
     {
         if (_snapToGrid)
         {
-            transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position)) + offset;
+            transform.position = GridBase.Instance.CellToWorld(
+                GridBase.Instance.WorldToCell(transform.position)) + _offset;
         }
+
         GridBase.Instance.AddEntry(this);
         if (_disableGridCell)
         {
             GridBase.Instance.DisableCellVisual(GridBase.Instance.WorldToCell(transform.position));
         }
+
         if (!_isVisable && gameObject.TryGetComponent(out Renderer renderer))
         {
             renderer.enabled = false;
@@ -82,8 +97,10 @@ public class GridPlacer : MonoBehaviour, IGridEntry
         if (GridBase.Instance == null) return;
         if (_snapToGrid)
         {
-            transform.position = GridBase.Instance.CellToWorld(GridBase.Instance.WorldToCell(transform.position)) + offset;
+            transform.position = GridBase.Instance.CellToWorld(
+                GridBase.Instance.WorldToCell(transform.position)) + _offset;
         }
+
         GridBase.Instance.UpdateEntry(this);
     }
 
@@ -92,7 +109,7 @@ public class GridPlacer : MonoBehaviour, IGridEntry
     /// </summary>
     private void OnDestroy()
     {
-        if (GridBase.Instance == null) return; 
+        if (GridBase.Instance == null) return;
         GridBase.Instance.RemoveEntry(this);
     }
 
