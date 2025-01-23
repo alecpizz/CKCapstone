@@ -16,7 +16,7 @@ public class DoorLightBehaviour : MonoBehaviour
         "the script is integrated into proper code.")]
 
     [FormerlySerializedAs("testLightSwitch")]
-    [SerializeField] private bool testLightSwitch = false;
+    [SerializeField] private bool _testLightSwitch = false;
 
     [Tooltip("Set the emission value (lamp brightness) for when the light is on.")]
     [SerializeField] private float _onEmission = 1f;
