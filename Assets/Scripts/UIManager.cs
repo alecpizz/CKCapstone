@@ -1,12 +1,11 @@
 /******************************************************************
-*    Author: Nick Grinstead 
-*    Contributors:  Rider Hagen
-*    Date Created: 9/28/24
-*    Description: Temporary script that updates UI to reflect the 
-*       player's progress with collecting the correct melody.
-*       (Copied then edited from TEMP_ProgressUI which was 
-*       originally written by Nick)
-*******************************************************************/
+ *    Author: Nick Grinstead
+ *    Contributors:  Rider Hagen, Alec Pizziferro
+ *    Date Created: 9/28/24
+ *    Description: Script designed to handle all realtime
+ *    UI related functionality.
+ *******************************************************************/
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,10 +13,11 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using SaintsField;
 using Unity.VisualScripting;
+using UnityEngine.Serialization;
 
-public class HUDscript : MonoBehaviour, ITimeListener
+public class UIManager : MonoBehaviour, ITimeListener
 {
-    [Required][SerializeField] private TextMeshProUGUI _collectedNotesUI;
+    [Required] [SerializeField] private TextMeshProUGUI _collectedNotesUI;
     [SerializeField] private float _messageWaitTime;
     [SerializeField] private GameObject _doorUnlockMessage;
     [SerializeField] private GameObject _incorrectMessage;
@@ -30,18 +30,24 @@ public class HUDscript : MonoBehaviour, ITimeListener
     [SerializeField] private TextMeshProUGUI _timeSignatureUIx;
     [SerializeField] private TMP_Text _levelNumber;
     private TimeSignatureManager _timeSigManager;
-    [SerializeField] private bool timeSignature;
+
+    [FormerlySerializedAs("timeSignature")] [SerializeField]
+    private bool _timeSignature;
 
     private List<int> _notes;
 
     private const string BaseCollectedText = "Collect the notes in numerical order:";
     private const string LevelText = "Level";
+
     /// <summary>
     /// Initializing values and registering to actions
     /// </summary>
     private void Start()
     {
-        if (_messageWaitTime <= 0) { _messageWaitTime = 5f; }
+        if (_messageWaitTime <= 0)
+        {
+            _messageWaitTime = 5f;
+        }
 
         _collectedNotesUI.text = BaseCollectedText;
 
@@ -68,7 +74,7 @@ public class HUDscript : MonoBehaviour, ITimeListener
         }
 
         // WinChecker.CollectedNote += UpdateCollectedNotesText;
-        WinChecker.CollectedNote += UpdateColectedNotesIcons;        
+        WinChecker.CollectedNote += UpdateColectedNotesIcons;
         WinChecker.GotCorrectSequence += DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence += DisplayIncorrectMessage;
 
@@ -88,6 +94,7 @@ public class HUDscript : MonoBehaviour, ITimeListener
             Debug.LogWarning("Missing hud elements");
             return;
         }
+
         _timeSignatureUIy.text = newTimeSignature.y.ToString();
         _timeSignatureUIx.text = newTimeSignature.x.ToString();
     }
@@ -118,6 +125,7 @@ public class HUDscript : MonoBehaviour, ITimeListener
         {
             return;
         }
+
         _noteImages[collectedNote].SetActive(true);
         _ghostNoteImages[collectedNote].SetActive(false);
     }
