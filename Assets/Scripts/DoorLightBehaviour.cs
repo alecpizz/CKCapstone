@@ -13,7 +13,7 @@ public class DoorLightBehaviour : MonoBehaviour
     [Tooltip("For testing purposes only - this bool allows the user to turn " +
         "the light on and off in the inspector.  This can be removed once " +
         "the script is integrated into proper code.")]
-    public bool testLightSwitch = false;
+    public bool testLightSwitch { get; private set; }
 
     [Tooltip("Set the emission value (lamp brightness) for when the light is on.")]
     [SerializeField] private float _onEmission = 1f;
@@ -44,6 +44,9 @@ public class DoorLightBehaviour : MonoBehaviour
     /// </summary>
     void Start()
     {
+        //setting the light switch initially to false
+        testLightSwitch = false;
+
         // Get the light object from the gameobject hierarchy
         _pointLight = _pointLightChild.gameObject;
 
