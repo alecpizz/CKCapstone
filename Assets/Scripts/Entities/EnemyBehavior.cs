@@ -10,6 +10,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.InputSystem;
 using PrimeTween;
 using Unity.VisualScripting;
@@ -48,6 +49,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [SerializeField] private GameObject _destinationMarker;
     [SerializeField] private GameObject _destPathVFX;
 
+    [FormerlySerializedAs("_atStart")]
     [SerializeField] private bool _atFirstPoint;
     [SerializeField] private int _currentPoint = 0;
     private int _currentPointIndex = 0;
