@@ -18,6 +18,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using SaintsField.Playa;
 using Debug = UnityEngine.Debug;
+using UnityEngine.Serialization;
 
 public class NpcDialogueController : MonoBehaviour, IInteractable
 {
@@ -28,10 +29,13 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
     [Serializable]
     public struct DialogueEntry
     {
+        [FormerlySerializedAs("_sound")]
         public EventReference sound;
+        [FormerlySerializedAs("_text")]
         [TextArea] public string text;
         [InfoBox("This adjusts the speed of the text. " +
             "A value of -5 slows it down while a value of 5 speeds it up", EMessageType.Info)]
+        [FormerlySerializedAs("_adjustTypingSpeed")]
         [Range(-5f, 5f)] public float adjustTypingSpeed;
     }
 
