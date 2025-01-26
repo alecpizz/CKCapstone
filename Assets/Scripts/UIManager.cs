@@ -1,12 +1,11 @@
 /******************************************************************
-*    Author: Nick Grinstead 
-*    Contributors:  Rider Hagen
-*    Date Created: 9/28/24
-*    Description: Temporary script that updates UI to reflect the 
-*       player's progress with collecting the correct melody.
-*       (Copied then edited from TEMP_ProgressUI which was 
-*       originally written by Nick)
-*******************************************************************/
+ *    Author: Nick Grinstead
+ *    Contributors:  Rider Hagen, Alec Pizziferro
+ *    Date Created: 9/28/24
+ *    Description: Script designed to handle all realtime
+ *    UI related functionality.
+ *******************************************************************/
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,36 +13,53 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using SaintsField;
 using Unity.VisualScripting;
+using UnityEngine.Serialization;
 
-public class HUDscript : MonoBehaviour, ITimeListener
+public class UIManager : MonoBehaviour, ITimeListener
 {
-    [Required][SerializeField] private TextMeshProUGUI _collectedNotesUI;
+    [FormerlySerializedAs("_collectedNotesUI")] [Required] [SerializeField]
+    private TextMeshProUGUI _collectedNotesUi;
+
     [SerializeField] private float _messageWaitTime;
     [SerializeField] private GameObject _doorUnlockMessage;
     [SerializeField] private GameObject _incorrectMessage;
-    [SerializeField] private TextMeshProUGUI _sequenceUI;
+
+    [FormerlySerializedAs("_sequenceUI")] [SerializeField]
+    private TextMeshProUGUI _sequenceUi;
+
     [SerializeField] private GameObject[] _noteImages;
     [SerializeField] private GameObject[] _ghostNoteImages;
     [SerializeField] private bool _isIntermission;
     [SerializeField] private bool _isChallenge;
-    [SerializeField] private TextMeshProUGUI _timeSignatureUIy;
-    [SerializeField] private TextMeshProUGUI _timeSignatureUIx;
+
+    [FormerlySerializedAs("_timeSignatureUIy")] [SerializeField]
+    private TextMeshProUGUI _timeSignatureUiY;
+
+    [FormerlySerializedAs("_timeSignatureUIx")] [SerializeField]
+    private TextMeshProUGUI _timeSignatureUiX;
+
     [SerializeField] private TMP_Text _levelNumber;
     private TimeSignatureManager _timeSigManager;
-    [SerializeField] private bool timeSignature;
+
+    [FormerlySerializedAs("timeSignature")] [SerializeField]
+    private bool _timeSignature;
 
     private List<int> _notes;
 
     private const string BaseCollectedText = "Collect the notes in numerical order:";
     private const string LevelText = "Level";
+
     /// <summary>
     /// Initializing values and registering to actions
     /// </summary>
     private void Start()
     {
-        if (_messageWaitTime <= 0) { _messageWaitTime = 5f; }
+        if (_messageWaitTime <= 0)
+        {
+            _messageWaitTime = 5f;
+        }
 
-        _collectedNotesUI.text = BaseCollectedText;
+        _collectedNotesUi.text = BaseCollectedText;
 
         if (WinChecker.Instance != null)
         {
@@ -52,7 +68,7 @@ public class HUDscript : MonoBehaviour, ITimeListener
             WinChecker.CollectedNote += UpdateGhostNotesIcons;
             foreach (int note in _notes)
             {
-                _sequenceUI.text += " " + note;
+                _sequenceUi.text += " " + note;
                 if (!_isIntermission)
                 {
                     UpdateGhostNotesIcons(note);
@@ -68,7 +84,7 @@ public class HUDscript : MonoBehaviour, ITimeListener
         }
 
         // WinChecker.CollectedNote += UpdateCollectedNotesText;
-        WinChecker.CollectedNote += UpdateColectedNotesIcons;        
+        WinChecker.CollectedNote += UpdateColectedNotesIcons;
         WinChecker.GotCorrectSequence += DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence += DisplayIncorrectMessage;
 
@@ -83,13 +99,14 @@ public class HUDscript : MonoBehaviour, ITimeListener
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
     {
-        if (_timeSignatureUIx == null || _timeSignatureUIy == null)
+        if (_timeSignatureUiX == null || _timeSignatureUiY == null)
         {
             Debug.LogWarning("Missing hud elements");
             return;
         }
-        _timeSignatureUIy.text = newTimeSignature.y.ToString();
-        _timeSignatureUIx.text = newTimeSignature.x.ToString();
+
+        _timeSignatureUiY.text = newTimeSignature.y.ToString();
+        _timeSignatureUiX.text = newTimeSignature.x.ToString();
     }
 
     /// <summary>
@@ -118,6 +135,7 @@ public class HUDscript : MonoBehaviour, ITimeListener
         {
             return;
         }
+
         _noteImages[collectedNote].SetActive(true);
         _ghostNoteImages[collectedNote].SetActive(false);
     }
@@ -138,7 +156,7 @@ public class HUDscript : MonoBehaviour, ITimeListener
     /// </summary>
     private void ResetCollectedNotesText()
     {
-        _collectedNotesUI.text = BaseCollectedText;
+        _collectedNotesUi.text = BaseCollectedText;
     }
 
     /// <summary>
