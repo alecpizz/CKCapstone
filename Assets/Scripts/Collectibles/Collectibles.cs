@@ -16,7 +16,8 @@ public class Collectibles : MonoBehaviour
 {
 
     // variables
-    public DestroyGlowEffect DestroyGlowEffect { get; private set; }
+    [FormerlySerializedAs("destroyGlowEffect")]
+    [SerializeField] private DestroyGlowEffect destroyGlowEffect;
     [MinValue(0), MaxValue(10)]
     [FormerlySerializedAs("_collectableNumber")]
     [SerializeField] private int _collectibleNumber;
@@ -62,7 +63,7 @@ public class Collectibles : MonoBehaviour
             AudioManager.Instance.PlaySound(_sound);
         }
         WinChecker.CollectedNote?.Invoke(_collectibleNumber);
-        DestroyGlowEffect.DestroyCollectible();
+        destroyGlowEffect.DestroyCollectible();
     }
 
     /// <summary>
