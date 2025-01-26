@@ -10,16 +10,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using SaintsField;
 using FMODUnity;
+using UnityEngine.Serialization;
 
-public class Collectables : MonoBehaviour
+public class Collectibles : MonoBehaviour
 {
 
     // variables
-    public DestroyGlowEffect destroyGlowEffect;
+    [FormerlySerializedAs("destroyGlowEffect")]
+    [SerializeField] private DestroyGlowEffect _destroyGlowEffect;
     [MinValue(0), MaxValue(10)]
-    [SerializeField] private int _collectableNumber;
+    [FormerlySerializedAs("_collectableNumber")]
+    [SerializeField] private int _collectibleNumber;
     [SerializeField] private EventReference _sound;
-    [SerializeField] private GameObject NoteGlow;
+    [FormerlySerializedAs("NoteGlow")] [SerializeField] private GameObject _noteGlow;
 
     private void Start()
     {
@@ -38,7 +41,7 @@ public class Collectables : MonoBehaviour
     /// </summary>
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Player" && WinChecker.Instance.CheckForCollection(_collectableNumber)) 
+        if (other.tag == "Player" && WinChecker.Instance.CheckForCollection(_collectibleNumber)) 
         {
             Collect();
         }        
@@ -53,14 +56,14 @@ public class Collectables : MonoBehaviour
     /// </summary>
     private void Collect() 
     {
-        Debug.Log("You got a collectable!");
+        Debug.Log("You got a collectible!");
 
         if (AudioManager.Instance != null)
         {
             AudioManager.Instance.PlaySound(_sound);
         }
-        WinChecker.CollectedNote?.Invoke(_collectableNumber);
-        destroyGlowEffect.DestroyCollectible();
+        WinChecker.CollectedNote?.Invoke(_collectibleNumber);
+        _destroyGlowEffect.DestroyCollectible();
     }
 
     /// <summary>
@@ -68,13 +71,13 @@ public class Collectables : MonoBehaviour
     /// </summary>
     public void GlowCheck(int noteCollected)
     {
-        if (noteCollected +1 == _collectableNumber)
+        if (noteCollected +1 == _collectibleNumber)
         {
-            NoteGlow.SetActive(true);
+            _noteGlow.SetActive(true);
         }
         else
         {
-            NoteGlow.SetActive(false);
+            _noteGlow.SetActive(false);
         }
     }
 }

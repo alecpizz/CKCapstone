@@ -1,6 +1,7 @@
 /******************************************************************
  *    Author: Cole Stranczek
- *    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson, Alec Pizziferro, Josephine Qualls, Jamison Parks
+ *    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, 
+ *    Trinity Hutson, Alec Pizziferro, Josephine Qualls, Jamison Parks
  *    Date Created: 9/22/24
  *    Description: Script that handles the player's movement along
  *    the grid
@@ -17,7 +18,10 @@ using FMOD.Studio;
 
 public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
 {
-    public Vector3 FacingDirection { get; private set; }
+    public Vector3 FacingDirection 
+    { 
+        get; private set; 
+    }
 
     public bool IsTransparent
     {
@@ -74,14 +78,19 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
     [SerializeField] private Animator _animator;
 
+    /// <summary>
+    /// Sets instance upon awake.
+    /// </summary>
     private void Awake()
     {
         Instance = this;
         PrimeTweenConfig.warnEndValueEqualsCurrent = false;
     }
 
-    // Start is called before the first frame update
-    void Start()
+    /// <summary>
+    ///  Start is called before the first frame update
+    /// </summary>
+    private void Start()
     {
         FacingDirection = new Vector3(0, 0, 0);
         if (RoundManager.Instance.EnemiesPresent)
@@ -97,9 +106,13 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
         _waitForSeconds = new WaitForSeconds(_delayTime);
 
-        _movementTime = RoundManager.Instance.EnemiesPresent ? _withEnemiesMovementTime : _noEnemiesMovementTime;
+        _movementTime = RoundManager.Instance.EnemiesPresent ? 
+            _withEnemiesMovementTime : _noEnemiesMovementTime;
     }
 
+    /// <summary>
+    /// Registers instance to the RoundManager
+    /// </summary>
     private void OnEnable()
     {
         if (RoundManager.Instance != null)
@@ -132,11 +145,13 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         for (int i = 0; i < _playerMovementTiming; i++)
         {
             // Move if there is no wall below the player or if ghost mode is enabled
-            var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
+            var move = GridBase.Instance.GetCellPositionInDirection
+                (gameObject.transform.position, moveDirection);
             var readPos = move;
             readPos.y = gameObject.transform.position.y;
             
-            if ((GridBase.Instance.CellIsTransparent(move) && gameObject.transform.position != readPos) ||
+            if ((GridBase.Instance.CellIsTransparent(move) 
+                && gameObject.transform.position != readPos) ||
                 (DebugMenuManager.Instance.GhostMode))
             {
                 _animator.SetTrigger(Forward);
@@ -161,8 +176,10 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// <param name="collision">Data from collision</param>
     private void OnCollisionEnter(Collision collision)
     {
-        if (!DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("Enemy") ||
-            !DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("SonEnemy"))
+        if (!DebugMenuManager.Instance.Invincibility 
+            && collision.gameObject.CompareTag("Enemy") ||
+            !DebugMenuManager.Instance.Invincibility 
+            && collision.gameObject.CompareTag("SonEnemy"))
         {
             // Checks if the enemy is frozen; if they are, doesn't reload the scene
             EnemyBehavior enemy = collision.collider.GetComponent<EnemyBehavior>();

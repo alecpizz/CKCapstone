@@ -171,10 +171,12 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
                         {
                             if (!_wrappedEnemyFX.ContainsKey(entity))
                             {
-                                GameObject enemyFX = Instantiate(_enemyHitEffectPrefab, entity.Position + _enemyHitOffset, Quaternion.identity);
+                                GameObject enemyFX = Instantiate(_enemyHitEffectPrefab, entity.Position
+                                    + _enemyHitOffset, Quaternion.identity);
                                 _wrappedEnemyFX.TryAdd(entity, enemyFX);
                                 _wrappedEnemyFX[entity] = enemyFX;
-                                _enemyGrabbedInstance = AudioManager.Instance.PlaySound(_enemyHarmonization);
+                                _enemyGrabbedInstance = 
+                                    AudioManager.Instance.PlaySound(_enemyHarmonization);
                             }
 
                             enemyHit = true;
@@ -213,7 +215,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     /// <returns>null</returns>
     private IEnumerator WaitForPotentialBlockers()
     {
-        //gross! we shouldn't have to wait, but the moving walls/platforms aren't turn based currently... 
+        // we shouldn't have to wait, but the moving walls/platforms aren't turn based currently 
         yield return new WaitForSeconds(_beamDetectionWaitTime);
         ScanForObjects();
 
@@ -229,7 +231,8 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     private void UpdateWallEffect(bool active, Vector3? hitPosition = null)
     {
         if (_activeWallEffect == null) return;
-        // Offset the hit position slightly in the direction of the normal to ensure the effect is on the surface
+        // Offset the hit position slightly in the direction of
+        // the normal to ensure the effect is on the surface
         if (hitPosition.HasValue)
         {
             Vector3 surfacePosition = hitPosition.Value;
