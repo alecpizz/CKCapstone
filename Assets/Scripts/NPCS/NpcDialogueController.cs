@@ -28,11 +28,11 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
     [Serializable]
     public struct DialogueEntry
     {
-        public EventReference Sound;
-        [TextArea] public string Text;
+        public EventReference sound;
+        [TextArea] public string text;
         [InfoBox("This adjusts the speed of the text. " +
             "A value of -5 slows it down while a value of 5 speeds it up", EMessageType.Info)]
-        [Range(-5f, 5f)] public float AdjustTypingSpeed;
+        [Range(-5f, 5f)] public float adjustTypingSpeed;
     }
 
     private bool _isTalking;
@@ -114,7 +114,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
         _totalNpcs = FindObjectsOfType<NpcDialogueController>().Length;
         if (CheckForEntries())
         {
-            _dialogueBox.SetText(_dialogueEntries[_currentDialogue].Text);
+            _dialogueBox.SetText(_dialogueEntries[_currentDialogue].text);
         }
 
         var canvas = _dialogueBox.transform.parent;
@@ -128,7 +128,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
         _occupied = false;
         _isTalking = false;
         _currentTypingSpeed = Mathf.Clamp(
-            _typingSpeed - _dialogueEntries[_currentDialogue].AdjustTypingSpeed, 2f, 15f) / 100f;
+            _typingSpeed - _dialogueEntries[_currentDialogue].adjustTypingSpeed, 2f, 15f) / 100f;
 
         if (PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) >= _totalNpcs)
         {
@@ -151,7 +151,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
                 {
                     StopCoroutine(_typingCoroutine);
                 }
-                _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue].Text));
+                _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue].text));
             }
 
             _dialogueBox.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
@@ -205,8 +205,8 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
             }
 
             // adjusts typing speed on a per-entry basis
-            _currentTypingSpeed = Mathf.Clamp(_typingSpeed - _dialogueEntries[_currentDialogue].AdjustTypingSpeed, 2f, 15f) / 100f;
-            _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue].Text));
+            _currentTypingSpeed = Mathf.Clamp(_typingSpeed - _dialogueEntries[_currentDialogue].adjustTypingSpeed, 2f, 15f) / 100f;
+            _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue].text));
         }
     }
 
