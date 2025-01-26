@@ -11,7 +11,7 @@ using UnityEngine.InputSystem;
 public class PlayerInteract : MonoBehaviour
 {
     //npc
-    private NPCScript _npc;
+    private NpcDialogueController _npc;
     private PlayerControls _input;
 
     /// <summary>
@@ -33,7 +33,7 @@ public class PlayerInteract : MonoBehaviour
     /// <param name="collision">Data from a collision</param>
     void OnCollisionEnter(Collision collision)
     {
-        _npc = collision.gameObject.GetComponent<NPCScript>();
+        _npc = collision.gameObject.GetComponent<NpcDialogueController>();
         if ( _npc != null)
         {
             //_npc.ShowDialogue();
@@ -46,7 +46,7 @@ public class PlayerInteract : MonoBehaviour
     /// <param name="collision">Data from a collision</param>
     void OnCollisionExit(Collision collision)
     {
-        _npc = collision.gameObject.GetComponent<NPCScript>();
+        _npc = collision.gameObject.GetComponent<NpcDialogueController>();
         if (_npc != null)
         {
             _npc.HideDialogue();
