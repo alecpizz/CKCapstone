@@ -17,12 +17,12 @@ public class Collectibles : MonoBehaviour
 
     // variables
     [FormerlySerializedAs("destroyGlowEffect")]
-    [SerializeField] private DestroyGlowEffect destroyGlowEffect;
+    [SerializeField] private DestroyGlowEffect _destroyGlowEffect;
     [MinValue(0), MaxValue(10)]
     [FormerlySerializedAs("_collectableNumber")]
     [SerializeField] private int _collectibleNumber;
     [SerializeField] private EventReference _sound;
-    [SerializeField] private GameObject NoteGlow;
+    [FormerlySerializedAs("NoteGlow")] [SerializeField] private GameObject _noteGlow;
 
     private void Start()
     {
@@ -63,7 +63,7 @@ public class Collectibles : MonoBehaviour
             AudioManager.Instance.PlaySound(_sound);
         }
         WinChecker.CollectedNote?.Invoke(_collectibleNumber);
-        destroyGlowEffect.DestroyCollectible();
+        _destroyGlowEffect.DestroyCollectible();
     }
 
     /// <summary>
@@ -73,11 +73,11 @@ public class Collectibles : MonoBehaviour
     {
         if (noteCollected +1 == _collectibleNumber)
         {
-            NoteGlow.SetActive(true);
+            _noteGlow.SetActive(true);
         }
         else
         {
-            NoteGlow.SetActive(false);
+            _noteGlow.SetActive(false);
         }
     }
 }
