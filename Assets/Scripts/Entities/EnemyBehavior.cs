@@ -55,6 +55,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private int _currentPointIndex = 0;
 
     //Destination object values
+    [FormerlySerializedAs("_destAtStart")]
     [SerializeField] private bool _destAtFirstPoint;
     [SerializeField] private int _destCurrentPoint = 0;
     public bool CollidingWithRay = false;
