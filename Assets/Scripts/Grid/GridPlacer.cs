@@ -21,7 +21,7 @@ public class GridPlacer : MonoBehaviour, IGridEntry
     public bool IsTransparent { get => _isTransparent; set => _isTransparent = value; }
     public bool BlocksHarmonyBeam { get => _blocksHarmonyBeam; set => _blocksHarmonyBeam = value; }
     public Vector3 Position { get => transform.position; }
-    public GameObject GameObject { get => gameObject; }
+    public GameObject EntryObject { get => gameObject; }
 
     [InfoBox("Use this component to add this gameObject to a grid.")]
     [LayoutStart("Settings", ELayout.Background | ELayout.TitleBox)]

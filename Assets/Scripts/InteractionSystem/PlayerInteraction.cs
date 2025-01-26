@@ -62,7 +62,7 @@ public class PlayerInteraction : MonoBehaviour
         foreach (var entry in _gridEntries)
         {
             IInteractable interactable;
-            if (entry.GameObject.TryGetComponent<IInteractable>(out interactable))
+            if (entry.EntryObject.TryGetComponent<IInteractable>(out interactable))
             {
                 _currentInteractable = interactable;
                 interactable.OnInteract();

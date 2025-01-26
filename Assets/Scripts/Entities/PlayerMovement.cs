@@ -34,7 +34,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         get => transform.position;
     }
 
-    public GameObject GameObject
+    public GameObject EntryObject
     {
         get => gameObject;
     }

@@ -152,7 +152,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
                 {
                     if (gridEntry == null) continue;
                     //the entry has a harmony beam type :)
-                    if (gridEntry.GameObject.TryGetComponent(out IHarmonyBeamEntity entity))
+                    if (gridEntry.EntryObject.TryGetComponent(out IHarmonyBeamEntity entity))
                     {
                         //we haven't seen this one before, hit it!
                         if (!_prevHitEntities.Contains(entity))
