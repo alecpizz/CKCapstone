@@ -25,7 +25,9 @@ public class MenuManager : MonoBehaviour
     private DebugInputActions _inputActions;
 
 
-
+    /// <summary>
+    /// Enables player input for opening the pause menu
+    /// </summary>
     private void Awake()
     {
         _inputActions = new DebugInputActions();
@@ -33,6 +35,9 @@ public class MenuManager : MonoBehaviour
         _inputActions.Player.Quit.performed += ctx => Pause();
     }
 
+    /// <summary>
+    /// Disables player input for opening the pause menu
+    /// </summary>
     private void OnDisable()
     {
         _inputActions.Disable();
