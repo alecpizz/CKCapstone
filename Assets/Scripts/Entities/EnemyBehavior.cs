@@ -17,7 +17,7 @@ using Unity.VisualScripting;
 using FMODUnity;
 
 public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, 
-    ITurnListener, IHarmonyBeamEntity
+    ITurnListener
 {
     public bool IsTransparent 
     { 
@@ -41,6 +41,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     public GameObject EntryObject { get => gameObject; }
 
+    private PlayerControls _input;
     private GameObject _player;
     private PlayerMovement _playerMove;
     [SerializeField] private GameObject _destinationMarker;
@@ -63,6 +64,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     //Wait time between enemy moving each individual tile while on path to next destination
     [SerializeField] private float _waitTime = 0.5f;
+
+    [SerializeField] private bool _currentToggle = true;
 
     [SerializeField] private float _rotationTime = 0.10f;
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
@@ -141,6 +144,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _destinationMarker.SetActive(false);
         UpdateDestinationMarker();
         DestinationPath();
+
+        _input = new PlayerControls();
+        _input.InGame.Enable();
+
+        _input.InGame.Toggle.performed += PathingToggle;
     }
 
     /// <summary>
@@ -185,6 +193,26 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         {
             _destPathVFX.SetActive(false);
             _destinationMarker.SetActive(false);
+        }
+    }
+
+    /// <summary>
+    /// Toggles all enemy pathing on the current level when the player
+    /// presses spacebar.
+    /// </summary>
+    /// <param name="context"></param>
+    private void PathingToggle(InputAction.CallbackContext context)
+    {
+        _destPathVFX.SetActive(_currentToggle);
+        _destinationMarker.SetActive(_currentToggle);
+
+        if (_currentToggle)
+        {
+            _currentToggle = false;
+        }
+        else
+        {
+            _currentToggle = true;
         }
     }
 
