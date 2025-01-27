@@ -70,6 +70,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     [SerializeField] private float _rotationTime = 0.10f;
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
+    [SerializeField] private Ease _movementEase = Ease.OutBack;
 
     //List of movePoint structs that contain a direction enum and a tiles to move integer.
     public enum Direction 
@@ -287,7 +288,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
                     yield return Tween.Position(transform,
                         move + _positionOffset, duration: movementTime, 
-                        ease: Ease.OutBack).OnUpdate<EnemyBehavior>(target: this, (target, tween) =>
+                        ease: _movementEase).OnUpdate<EnemyBehavior>(target: this, (target, tween) =>
                         {
                             GridBase.Instance.UpdateEntry(this);
                         }).ToYieldInstruction();

@@ -41,6 +41,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
 
     [SerializeField] private float _rotationTime = 0.10f;
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
+    [SerializeField] private Ease _movementEase = Ease.OutBack;
 
     // Bool checked if this enemy is a Son Enemy
     [SerializeField] private bool sonEnemy;
@@ -134,7 +135,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                     ease: _rotationEase);
 
                     yield return Tween.Position(transform,
-                        move + _positionOffset, _movementTime, ease: Ease.OutBack).OnUpdate<MirrorAndCopyBehavior>(target: this, (target, tween) =>
+                        move + _positionOffset, _movementTime, ease: _movementEase).OnUpdate<MirrorAndCopyBehavior>(target: this, (target, tween) =>
                         {
                             GridBase.Instance.UpdateEntry(this);
                         }).ToYieldInstruction();
