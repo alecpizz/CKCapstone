@@ -15,6 +15,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.Events;
 using FMODUnity;
 using FMOD.Studio;
+using SaintsField.Playa;
 
 public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
 {
@@ -48,10 +49,13 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
     [SerializeField] private float _delayTime = 0.1f;
 
-    [SerializeField] private float _rotationDelay = 0.1f;
     [Space]
+    [PlayaInfoBox("Time to move one tile based on if there are enemies or not. " +
+        "\n This will be divided by the number of tiles they will move.")]
     [SerializeField] private float _noEnemiesMovementTime = 0.25f;
     [SerializeField] private float _withEnemiesMovementTime = 0.25f;
+    [PlayaInfoBox("The floor for how fast the player can move.")]
+    [SerializeField] private float _minMovementTime = 0.175f;
     [Space]
     [SerializeField] private float _rotationTime = 0.05f;
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
@@ -73,8 +77,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     private static readonly int Right = Animator.StringToHash("Right");
     private static readonly int Left = Animator.StringToHash("Left");
     private static readonly int Backward = Animator.StringToHash("Backward");
-
-    private const float MinMovementTime = 0.175f;
 
     [SerializeField] private Animator _animator;
 
@@ -140,7 +142,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     {
         yield return new WaitForSeconds(_rotationTime);
         float modifiedMovementTime = Mathf.Clamp(_movementTime / _playerMovementTiming,
-            MinMovementTime, float.MaxValue);
+            _minMovementTime, float.MaxValue);
 
         for (int i = 0; i < _playerMovementTiming; i++)
         {
