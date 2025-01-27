@@ -34,6 +34,8 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
 
     [PlayaInfoBox("Time it takes to move one space.")]
     [SerializeField] private float _movementTime = 0.55f;
+    [PlayaInfoBox("The floor for how fast the enemy can move.")]
+    [SerializeField] private float _minMoveTime = 0.175f;
 
     // Timing from metronome
     private int _movementTiming = 1;
@@ -99,6 +101,8 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                 moveDirection = -moveDirection;
             }
 
+            float modifiedMovementTime = Mathf.Clamp(_movementTime / _movementTiming,
+                        _minMoveTime, float.MaxValue);
 
             for (int i = 0; i < _movementTiming; ++i)
             {
@@ -135,7 +139,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                     ease: _rotationEase);
 
                     yield return Tween.Position(transform,
-                        move + _positionOffset, _movementTime, ease: _movementEase).OnUpdate<MirrorAndCopyBehavior>(target: this, (target, tween) =>
+                        move + _positionOffset, modifiedMovementTime, ease: _movementEase).OnUpdate<MirrorAndCopyBehavior>(target: this, (target, tween) =>
                         {
                             GridBase.Instance.UpdateEntry(this);
                         }).ToYieldInstruction();
