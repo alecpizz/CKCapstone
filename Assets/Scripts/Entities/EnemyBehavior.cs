@@ -184,15 +184,18 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// </summary>
     public void DestinationPath()
     {
-        if (CollidingWithRay)
+        if (_currentToggle)
         {
-            _destPathVFX.SetActive(true);
-            _destinationMarker.SetActive(true);
-        }
-        else
-        {
-            _destPathVFX.SetActive(false);
-            _destinationMarker.SetActive(false);
+            if (CollidingWithRay)
+            {
+                _destPathVFX.SetActive(true);
+                _destinationMarker.SetActive(true);
+            }
+            else
+            {
+                _destPathVFX.SetActive(false);
+                _destinationMarker.SetActive(false);
+            }
         }
     }
 
