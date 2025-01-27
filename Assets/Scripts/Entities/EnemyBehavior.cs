@@ -60,7 +60,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [SerializeField] private float _destYPos = 1f;
     [SerializeField] private float _lineYPosOffset = 1f;
 
-
+    [SerializeField] private int _enemyMovementTime = 1;
     //Wait time between enemy moving each individual tile while on path to next destination
     [SerializeField] private float _waitTime = 0.5f;
 
@@ -95,8 +95,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         get; private set; 
     } 
         = false;
-
-    private int _enemyMovementTime = 1;
 
     // Event reference for the enemy movement sound
     [SerializeField] private EventReference _enemyMove = default;

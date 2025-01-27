@@ -31,9 +31,9 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     //Determines whether or not the enemy's movement is reversed
     [SerializeField] private bool _mirrored;
 
-    private float _movementTime = 0.55f;
+    [SerializeField] private float _movementTime = 0.55f;
+    [SerializeField] private int _movementTiming = 1;
 
-    private int _movementTiming = 1;
     private WaitForSeconds _waitForSeconds;
 
     [SerializeField] private float _rotationTime = 0.10f;
