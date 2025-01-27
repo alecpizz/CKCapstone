@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Mitchell Young
-*    Contributors: Mitchell Young
+*    Contributors: Mitchell Young, Nick Grinstead
 *    Date Created: 10/27/24
 *    Description: Script that handles the behavior of the mirror and
 *    copy enemy that mirrors or copies player movement.
@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using PrimeTween;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using SaintsField.Playa;
 
 public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener, IHarmonyBeamEntity
 {
@@ -31,9 +32,11 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     //Determines whether or not the enemy's movement is reversed
     [SerializeField] private bool _mirrored;
 
+    [PlayaInfoBox("Time it takes to move one space.")]
     [SerializeField] private float _movementTime = 0.55f;
-    [SerializeField] private int _movementTiming = 1;
 
+    // Timing from metronome
+    private int _movementTiming = 1;
     private WaitForSeconds _waitForSeconds;
 
     [SerializeField] private float _rotationTime = 0.10f;

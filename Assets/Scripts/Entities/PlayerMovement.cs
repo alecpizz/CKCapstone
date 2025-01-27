@@ -62,6 +62,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     [SerializeField] private Ease _movementEase = Ease.OutBack;
 
     private float _movementTime;
+    // Timing from metronome
     private int _playerMovementTiming = 1;
     private WaitForSeconds _waitForSeconds;
 

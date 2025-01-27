@@ -15,6 +15,7 @@ using UnityEngine.InputSystem;
 using PrimeTween;
 using Unity.VisualScripting;
 using FMODUnity;
+using SaintsField.Playa;
 
 public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, 
     ITurnListener, IHarmonyBeamEntity
@@ -60,9 +61,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [SerializeField] private float _destYPos = 1f;
     [SerializeField] private float _lineYPosOffset = 1f;
 
-    [SerializeField] private int _enemyMovementTime = 1;
     //Wait time between enemy moving each individual tile while on path to next destination
+    [PlayaInfoBox("Time for the enemy to move between each tile. " +
+        "\n This will be divided by the number of spaces it will move.")]
     [SerializeField] private float _waitTime = 0.5f;
+    [PlayaInfoBox("The floor for how fast the enemy can move.")]
+    [SerializeField] private float _minMoveTime = 0.175f;
 
     [SerializeField] private float _rotationTime = 0.10f;
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
@@ -100,14 +104,15 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [SerializeField] private EventReference _enemyMove = default;
     [SerializeField] public bool sonEnemy;
 
+    // Timing from metronome
+    private int _enemyMovementTime = 1;
+
     private Rigidbody _rb;
 
     private void Awake()
     {
         PrimeTweenConfig.warnEndValueEqualsCurrent = false;
     }
-
-    private const float MinMoveTime = 0.175f;
 
     /// <summary>
     /// Start is called before the first frame update.
@@ -247,7 +252,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                     var entries = GridBase.Instance.GetCellEntries(move);
                     bool breakLoop = false;
                     float movementTime = Mathf.Clamp((_waitTime / pointTiles) / _enemyMovementTime, 
-                        MinMoveTime, float.MaxValue);
+                        _minMoveTime, float.MaxValue);
 
                     //If the next cell contains an object that is not the player then the loop breaks
                     //enemy can't move into other enemies, walls, etc.
