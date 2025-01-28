@@ -8,6 +8,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "LevelOrder", menuName = "ScriptableObjects/Level Order", order = 0)]
 public class LevelOrder : ScriptableSingleton<LevelOrder>
 {
+    [field: SerializeField]
+    public SceneAsset MainMenuScene { get; private set; }
     [Serializable]
     public class Chapter
     {
