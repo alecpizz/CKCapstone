@@ -159,6 +159,7 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListene
         if (_shouldMoveOnTurn == false)
         {
             RoundManager.Instance.CompleteTurn(this);
+            return;
         }
 
         _shouldMoveOnTurn = false;
@@ -175,16 +176,18 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListene
             if (_shouldActivate)
             {
                 Tween.PositionY(transform, endValue: _groundHeight, 
-                    duration: _duration, ease: _easeType);
-                Tween.PositionY(_wallGhost.transform, endValue: _activatedHeight, 
-                    duration: _duration, ease: _easeType);
+                    duration: _duration, ease: _easeType).Group(
+                    Tween.PositionY(_wallGhost.transform, endValue: _activatedHeight, 
+                    duration: _duration, ease: _easeType)).OnComplete(
+                    () => RoundManager.Instance.CompleteTurn(this));
             }
             else
             {
                 Tween.PositionY(transform, endValue: _activatedHeight, 
-                    duration: _duration, ease: _easeType);
-                Tween.PositionY(_wallGhost.transform, endValue: _groundHeight, 
-                    duration: _duration, ease: _easeType);
+                    duration: _duration, ease: _easeType).Group(
+                    Tween.PositionY(_wallGhost.transform, endValue: _groundHeight, 
+                    duration: _duration, ease: _easeType)).OnComplete(
+                    () => RoundManager.Instance.CompleteTurn(this));
             }
 
             _wallGrid.IsTransparent = _shouldActivate;
@@ -199,9 +202,9 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListene
         else
         {
             _worked = false;
-        }
 
-        RoundManager.Instance.CompleteTurn(this);
+            RoundManager.Instance.CompleteTurn(this);
+        }
     }
 
     public void ForceTurnEnd()

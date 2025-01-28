@@ -55,12 +55,6 @@ public class SwitchTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player") || other.CompareTag("SonEnemy") || other.CompareTag("Enemy"))
         {
-            PlayerMovement playerMovement;
-            if (other.gameObject.TryGetComponent<PlayerMovement>(out playerMovement))
-            {
-                playerMovement.ForceTurnEnd();
-            }
-
             _isTriggered = !_isTriggered;
 
             //changes the walls and plays a sound
@@ -121,6 +115,12 @@ public class SwitchTrigger : MonoBehaviour
             if (_animator != null)
             {
                 _animator.SetTrigger("Pressed");
+            }
+
+            PlayerMovement playerMovement;
+            if (other.gameObject.TryGetComponent<PlayerMovement>(out playerMovement))
+            {
+                playerMovement.ForceTurnEnd();
             }
         }
     }
