@@ -23,7 +23,6 @@ public class GameSpeedOptions : MonoBehaviour
     [Tooltip("Default value is 1, so make sure this is less than 1")]
     [SerializeField] private float _slowDownRate = 0.5f;
 
-    // Start is called before the first frame update
     void Start()
     {
         _playerControls = new PlayerControls();
@@ -34,8 +33,13 @@ public class GameSpeedOptions : MonoBehaviour
         _speedDown = false;
     }
 
+    /// <summary>
+    /// This function handles how the game's speed changes based on what speed the game is
+    /// currently at when the Shift key is hit
+    /// </summary>
     private void SpeedChange()
     {
+        // Speed up if the game is at normal speed
         if(!_speedUp && !_speedDown)
         {
             Debug.Log("Speeding Up!");
@@ -43,6 +47,7 @@ public class GameSpeedOptions : MonoBehaviour
 
             Time.timeScale = _speedUpRate;
         }
+        // Slow down if the game is sped up
         else if(_speedUp)
         {
             Debug.Log("Slowing Down!");
@@ -51,6 +56,7 @@ public class GameSpeedOptions : MonoBehaviour
 
             Time.timeScale = _slowDownRate;
         }
+        // Return to normal speed if the game is slowed down
         else
         {
             Debug.Log("Back to Normal!");
