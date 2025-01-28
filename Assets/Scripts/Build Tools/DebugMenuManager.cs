@@ -19,11 +19,11 @@ using UnityEngine.Rendering.UI;
 
 public class DebugMenuManager : MonoBehaviour
 {
-    public static DebugMenuManager Instance;
+    public static DebugMenuManager Instance { get; private set; }
 
     public bool GhostMode { get; private set; } = false;
     public bool Invincibility { get; private set; } = false;
-    public bool PauseMenu = false;
+    public bool PauseMenu { get; set; } = false;
 
     [SerializeField] private GameObject _debugMenuFirst;
     [SerializeField] private GameObject _quitMenuFirst;
@@ -32,6 +32,7 @@ public class DebugMenuManager : MonoBehaviour
     [SerializeField] private GameObject _quitMenu;
     [SerializeField] private GameObject _puzzleSelectMenu;
     [SerializeField] private GameObject _fpsCounter;
+    //reminder variables show the player that debug functions are on in the top right corner
     [SerializeField] private GameObject _ghostModeReminder;
     [SerializeField] private GameObject _invincibilityReminder;
 
@@ -56,7 +57,7 @@ public class DebugMenuManager : MonoBehaviour
     /// Does the calculation for determining the game's frame rate.
     /// Credit: https://www.youtube.com/shorts/I2r97r9h074
     /// </summary>
-    private float FPSCalculation()
+    private float FpsCalculation()
     {
         float total = 0f;
         foreach (float deltaTime in _frameDeltaTimeArray)
@@ -124,7 +125,7 @@ public class DebugMenuManager : MonoBehaviour
         //updates the FPS Counter
         _frameDeltaTimeArray[_lastFrameIndex] = Time.unscaledDeltaTime;
         _lastFrameIndex = (_lastFrameIndex + 1) % _frameDeltaTimeArray.Length;
-        _fpsText.text = (Mathf.RoundToInt(FPSCalculation()).ToString() + " FPS");
+        _fpsText.text = (Mathf.RoundToInt(FpsCalculation()).ToString() + " FPS");
     }
 
     /// <summary>
@@ -200,7 +201,7 @@ public class DebugMenuManager : MonoBehaviour
     /// <summary>
     /// Toggles viewing the FPS Counter
     /// </summary>
-    public void FPSCounterToggle()
+    public void ToggleFpsCounter()
     {
         if (_fpsCount == false)
         {
@@ -219,7 +220,7 @@ public class DebugMenuManager : MonoBehaviour
     /// <summary>
     /// Will toggle ghost mode
     /// </summary>
-    public void GhostModeToggle()
+    public void ToggleGhostMode()
     {
         if (GhostMode == false)
         {
@@ -238,7 +239,7 @@ public class DebugMenuManager : MonoBehaviour
     /// <summary>
     /// Will toggle player invincibility.
     /// </summary>
-    public void InvincibilityToggle()
+    public void ToggleInvincibility()
     {
         if (Invincibility == false)
         {
@@ -264,11 +265,11 @@ public class DebugMenuManager : MonoBehaviour
 
     /// <summary>
     /// Sets up scene navigation for changing levels or just loading specific scenes.
-    /// The sceneID is taken in as an int to allow the code to go to any specified scene
+    /// The sceneId is taken in as an int to allow the code to go to any specified scene
     /// </summary>
-    public void SceneChange(int sceneID)
+    public void SceneChange(int sceneId)
     {
-        if(sceneID >= SceneManager.sceneCountInBuildSettings)
+        if(sceneId >= SceneManager.sceneCountInBuildSettings)
         {
             SceneManager.LoadScene(0);
         }
@@ -276,7 +277,7 @@ public class DebugMenuManager : MonoBehaviour
         {
             Time.timeScale = 1f;
             EventSystem.current.SetSelectedGameObject(null);
-            SceneManager.LoadScene(sceneID);
+            SceneManager.LoadScene(sceneId);
         }   
     }
 
