@@ -23,8 +23,12 @@ public class GameSpeedOptions : MonoBehaviour
     [Tooltip("Default value is 1, so make sure this is less than 1")]
     [SerializeField] private float _slowDownRate = 0.5f;
 
-    void Start()
-    {
+    /// <summary>
+    /// Enables the controls to allow the input to work, and ensures that the bools are always
+    /// that default speed is always the norm at the start of a scene
+    /// </summary>
+    private void Start()
+    { 
         _playerControls = new PlayerControls();
         _playerControls.Enable();
         _playerControls.InGame.GameSpeed.performed += ctx => SpeedChange();
