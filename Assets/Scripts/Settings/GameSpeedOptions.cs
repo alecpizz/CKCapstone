@@ -70,6 +70,4 @@ public class GameSpeedOptions : MonoBehaviour
             Time.timeScale = 1f;
         }
     }
-
-
 }
