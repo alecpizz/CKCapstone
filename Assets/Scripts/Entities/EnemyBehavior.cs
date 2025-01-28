@@ -17,7 +17,7 @@ using Unity.VisualScripting;
 using FMODUnity;
 
 public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, 
-    ITurnListener
+    ITurnListener, IHarmonyBeamEntity
 {
     public bool IsTransparent 
     { 
@@ -176,6 +176,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         {
             TimeSignatureManager.Instance.UnregisterTimeListener(this);
         }
+        _input.InGame.Toggle.performed -= PathingToggle;
+        _input.InGame.Disable();
     }
 
     /// <summary>
@@ -184,19 +186,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// </summary>
     public void DestinationPath()
     {
-        if (_currentToggle)
+        if (!_currentToggle)
         {
-            if (CollidingWithRay)
-            {
-                _destPathVFX.SetActive(true);
-                _destinationMarker.SetActive(true);
-            }
-            else
-            {
-                _destPathVFX.SetActive(false);
-                _destinationMarker.SetActive(false);
-            }
+            return;
         }
+        _destPathVFX.SetActive(CollidingWithRay);
+        _destinationMarker.SetActive(CollidingWithRay);
     }
 
     /// <summary>
@@ -209,14 +204,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _destPathVFX.SetActive(_currentToggle);
         _destinationMarker.SetActive(_currentToggle);
 
-        if (_currentToggle)
-        {
-            _currentToggle = false;
-        }
-        else
-        {
-            _currentToggle = true;
-        }
+        _currentToggle = !_currentToggle;
     }
 
     /// <summary>
