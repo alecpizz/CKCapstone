@@ -22,6 +22,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "GameSpeed",
+                    "type": "Button",
+                    "id": "6b4c0a9b-c270-43f0-a490-c3a558692430",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -156,6 +165,17 @@
                     "action": "Movement",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "3edbba48-2b71-43d2-80dd-d6c372e5f635",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "GameSpeed",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }
