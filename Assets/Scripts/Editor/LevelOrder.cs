@@ -33,10 +33,12 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
     }
 
     [field: SerializeField]
-    public List<LevelData> Levels { get; private set; } = new();
-    [field: SerializeField]
     public List<Chapter> Chapters { get; private set; } = new();
 
+
+    [SerializeField] private string _chapterName = "Chapter CHANGEME";
+    
+    
     [SepTitle("Level Input", EColor.White)] [SerializeField] 
     [BelowButton(nameof(AddLevel), groupBy: "Build")]
     [BelowButton(nameof(RunBuildPreProcess), groupBy: "Build")]
@@ -44,10 +46,10 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
     [SaintsRow(inline:true)]
     private LevelData _inputLevelData;
 
+
     
     private void AddLevel()
     {
-        Levels.Add(_inputLevelData);
         EditorUtility.SetDirty(this);
     }
     
@@ -58,7 +60,6 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
 
     private void ClearLevels()
     {
-        Levels.Clear();
         EditorUtility.SetDirty(this);
         EditorUtility.SetDirty(EditorWindow.focusedWindow);
     }
