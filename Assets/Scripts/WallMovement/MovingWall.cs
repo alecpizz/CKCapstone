@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Josephine Qualls
-*    Contributors: Josh Eddy, Alec Pizziferro, Trinity Hutson
+*    Contributors: Josh Eddy, Alec Pizziferro, Trinity Hutson, Nick Grinstead
 *    Date Created: 10/10/2024
 *    Description: Controls what walls sink and rise after switch is triggered.
 *******************************************************************/
@@ -154,6 +154,10 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListene
         transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z);
     }
 
+    /// <summary>
+    /// Invoked to start the wall's turn. Will only move if it's switch was pressed.
+    /// </summary>
+    /// <param name="direction">Direction of player movement</param>
     public void BeginTurn(Vector3 direction)
     {
         if (_shouldMoveOnTurn == false)
@@ -166,8 +170,12 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListene
         MoveWall();
     }
 
+    /// <summary>
+    /// Helper method to move the wall to its active or inactive state
+    /// </summary>
     private void MoveWall()
     {
+        // Check for object blocking the wall's target space
         if (_shouldActivate ? GridBase.Instance.CellIsTransparent(_originGhost) :
             GridBase.Instance.CellIsTransparent(_originWall))
         {
@@ -207,6 +215,9 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListene
         }
     }
 
+    /// <summary>
+    /// Forcibly stops the wall's turn
+    /// </summary>
     public void ForceTurnEnd()
     {
         _shouldMoveOnTurn = false;

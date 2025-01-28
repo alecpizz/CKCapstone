@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Josephine Qualls
-*    Contributors: Josh Eddy, Alec Pizziferro
+*    Contributors: Josh Eddy, Alec Pizziferro, Nick Grinstead
 *    Date Created: 10/10/2024
 *    Description: Switch that moves mechanics.
 *    Only moves registered mechanics.
