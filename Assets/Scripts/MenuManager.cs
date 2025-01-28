@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
@@ -18,7 +19,12 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject _optionsScreen;
     [SerializeField] private GameObject _confirmQuit;
     [SerializeField] private GameObject _mainMenu;
-
+    [SerializeField] private GameObject _mainMenuFirst;
+    [SerializeField] private GameObject _settingsMenuFirst;
+    [SerializeField] private GameObject _mainMenuStart;
+    [SerializeField] private GameObject _mainMenuSettings;
+    [SerializeField] private GameObject _mainMenuQuit;
+    [SerializeField] private GameObject _restartButton;
 
     [SerializeField] private EventReference _buttonPress;
 
@@ -33,6 +39,10 @@ public class MenuManager : MonoBehaviour
         _inputActions = new DebugInputActions();
         _inputActions.Enable();
         _inputActions.Player.Quit.performed += ctx => Pause();
+    }
+    private void Update()
+    {
+        Debug.Log(EventSystem.current);
     }
 
     /// <summary>
@@ -51,6 +61,7 @@ public class MenuManager : MonoBehaviour
     {
         DebugMenuManager.Instance.PauseMenu = false;
         _pauseScreen.SetActive(false);
+        _restartButton.SetActive(true);
         Time.timeScale = 1f;
     }
 
@@ -63,6 +74,10 @@ public class MenuManager : MonoBehaviour
         PrimeTween.Tween.Delay(0.2f).OnComplete(() =>
         {
             _optionsScreen.SetActive(true);
+            _mainMenuStart.SetActive(false);
+            _mainMenuSettings.SetActive(false);
+            _mainMenuQuit.SetActive(false);
+            EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
         });
     }
 
@@ -72,6 +87,10 @@ public class MenuManager : MonoBehaviour
     public void Options()
     {
         _optionsScreen.SetActive(true);
+        _mainMenuStart.SetActive(false);
+        _mainMenuSettings.SetActive(false);
+        _mainMenuQuit.SetActive(false);
+        EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
     }
 
 
@@ -81,6 +100,10 @@ public class MenuManager : MonoBehaviour
     public void OptionsClose()
     {
         _optionsScreen.SetActive(false);
+        _mainMenuFirst.SetActive(true);
+        _mainMenuSettings.SetActive(true);
+        _mainMenuQuit.SetActive(true);
+        EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
     }
 
     /// <summary>
@@ -90,6 +113,8 @@ public class MenuManager : MonoBehaviour
     {
         DebugMenuManager.Instance.PauseMenu = true;
         _pauseScreen.SetActive(true);
+        _restartButton.SetActive(false);
+        EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
         Time.timeScale = 0f;
     }
 

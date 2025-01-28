@@ -26,8 +26,10 @@ public class DebugMenuManager : MonoBehaviour
     public bool PauseMenu = false;
 
     [SerializeField] private GameObject _debugMenuFirst;
+    [SerializeField] private GameObject _mainMenuFirst;
     [SerializeField] private GameObject _quitMenuFirst;
     [SerializeField] private GameObject _puzzleSelectFirst;
+    [SerializeField] private GameObject _settingsFirst;
     [SerializeField] private GameObject _debugMenu;
     [SerializeField] private GameObject _quitMenu;
     [SerializeField] private GameObject _puzzleSelectMenu;
@@ -100,11 +102,13 @@ public class DebugMenuManager : MonoBehaviour
 
     private void Start()
     {
+        Scene currentScene = SceneManager.GetActiveScene();
         //unlocks the cursor if locked
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         //Sets an default game object for the event system to hold on to for menuing
-        EventSystem.current.SetSelectedGameObject(_debugMenuFirst);
+        EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+        
     }
 
     private void Update()
@@ -172,6 +176,7 @@ public class DebugMenuManager : MonoBehaviour
     /// </summary>
     public void TogglePuzzleSelectMenu()
     {
+        Scene currentScene = SceneManager.GetActiveScene();
         if (_pMenu == false)
         {
             _puzzleSelectMenu.SetActive(true);
@@ -183,10 +188,11 @@ public class DebugMenuManager : MonoBehaviour
         else if (_pMenu == true)
         {
             _puzzleSelectMenu.SetActive(false);
-            if (PauseMenu)
+            if (PauseMenu || currentScene.name == "MainMenu2")
             {
                 //doesn't go back to the dubug menu
                 _pMenu = false;
+                EventSystem.current.SetSelectedGameObject(_settingsFirst);
             }
             else
             {
