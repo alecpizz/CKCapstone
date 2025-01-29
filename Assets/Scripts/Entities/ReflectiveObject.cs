@@ -45,7 +45,6 @@ public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity
     public void OnLaserHit()
     {
         _harmonyBeam.ToggleBeam(true);
-        _harmonyBeam.ScanForObjects();
     }
 
     /// <summary>
@@ -55,7 +54,5 @@ public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity
     public void OnLaserExit()
     {
         _harmonyBeam.ToggleBeam(false);
-        _harmonyBeam.ScanForObjects();
     }
-
 }
