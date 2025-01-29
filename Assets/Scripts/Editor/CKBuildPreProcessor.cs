@@ -24,13 +24,14 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         // // Find valid Scene paths and make a list of EditorBuildSettingsScene
         AddScenesToBuild();
         var levelData = LevelOrder.instance;
+        var loadedScene = EditorSceneManager.GetActiveScene();
         for (var chapterIndex = 0; chapterIndex < levelData.Chapters.Count; chapterIndex++)
         {
             var chapter = levelData.Chapters[chapterIndex];
             for (int puzzleIndex = 0; puzzleIndex < chapter.Puzzles.Count; puzzleIndex++)
             {
                 var currentLevel = chapter.Puzzles[puzzleIndex];
-                
+
                 //determine exit scene
                 SceneAsset nextScene = null;
                 SceneAsset bonusScene = null;
@@ -63,7 +64,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 {
                     bonusScene = currentLevel.ChallengeScene;
                 }
-                
+
                 Debug.Log(nextScene.name);
                 if (bonusScene != null) Debug.Log(bonusScene.name);
                 //load in the scene here
@@ -74,6 +75,9 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                     //do something with the doors here
                     Debug.Log(endLevelDoor.gameObject.name);
                 }
+
+                //save the changes
+                EditorSceneManager.SaveScene(currScene);
 
                 //close the scene
                 EditorSceneManager.CloseScene(currScene, true);
@@ -106,6 +110,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                     AssetDatabase.GetAssetPath(level.Scene),
                     true));
             }
+
             //add outro scene
             if (chapter.Outro.Scene != null)
             {
@@ -113,10 +118,19 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                     AssetDatabase.GetAssetPath(chapter.Outro.Scene),
                     true));
             }
-            
-            
         }
-        
+
+        if (levelData.CreditsScene == null)
+        {
+            Debug.LogError("No credits scene assigned!");
+        }
+        else
+        {
+            editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
+                AssetDatabase.GetAssetPath(levelData.CreditsScene),
+                true));
+        }
+
         EditorBuildSettings.scenes = editorBuildSettingsScenes.ToArray();
     }
 }

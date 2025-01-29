@@ -12,17 +12,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4878cea2c054dab8a2841cebff270eb, type: 3}
   m_Name: LevelOrder
   m_EditorClassIdentifier: 
-  <MainMenuScene>k__BackingField: {fileID: 0}
+  <MainMenuScene>k__BackingField: {fileID: 102900000, guid: 308b9b37ce5531346a99fe640a0c323a,
+    type: 3}
   <Chapters>k__BackingField:
-  - <ChapterName>k__BackingField: 
+  - <ChapterName>k__BackingField: Chapter 1
     <Intro>k__BackingField:
-      <LevelName>k__BackingField: 
-      <Scene>k__BackingField: {fileID: 0}
-      <UseNextLevelInListAsExit>k__BackingField: 0
+      <LevelName>k__BackingField: Intro 1
+      <Scene>k__BackingField: {fileID: 102900000, guid: d758253bd1150de4bb7d4fc8cec8d0f2,
+        type: 3}
+      <UseNextLevelInListAsExit>k__BackingField: 1
       <ExitScene>k__BackingField: {fileID: 0}
       <HasChallengeExit>k__BackingField: 0
       <ChallengeScene>k__BackingField: {fileID: 0}
-    <Levels>k__BackingField: []
+    <Puzzles>k__BackingField:
+    - <LevelName>k__BackingField: Level 1
+      <Scene>k__BackingField: {fileID: 102900000, guid: 49dd10a46241a8743b97794ac369f65a,
+        type: 3}
+      <UseNextLevelInListAsExit>k__BackingField: 1
+      <ExitScene>k__BackingField: {fileID: 0}
+      <HasChallengeExit>k__BackingField: 1
+      <ChallengeScene>k__BackingField: {fileID: 102900000, guid: d5ed97b3dd891ce4ca4c7c062fdbb837,
+        type: 3}
+    - <LevelName>k__BackingField: Level 1
+      <Scene>k__BackingField: {fileID: 102900000, guid: d5ed97b3dd891ce4ca4c7c062fdbb837,
+        type: 3}
+      <UseNextLevelInListAsExit>k__BackingField: 1
+      <ExitScene>k__BackingField: {fileID: 0}
+      <HasChallengeExit>k__BackingField: 0
+      <ChallengeScene>k__BackingField: {fileID: 0}
     <Outro>k__BackingField:
       <LevelName>k__BackingField: 
       <Scene>k__BackingField: {fileID: 0}
@@ -30,10 +47,13 @@ MonoBehaviour:
       <ExitScene>k__BackingField: {fileID: 0}
       <HasChallengeExit>k__BackingField: 0
       <ChallengeScene>k__BackingField: {fileID: 0}
+  <CreditsScene>k__BackingField: {fileID: 102900000, guid: 308b9b37ce5531346a99fe640a0c323a,
+    type: 3}
   _chapterName: Chapter CHANGEME
   _inputLevelData:
     <LevelName>k__BackingField: CHANGEME
-    <Scene>k__BackingField: {fileID: 0}
+    <Scene>k__BackingField: {fileID: 102900000, guid: 308b9b37ce5531346a99fe640a0c323a,
+      type: 3}
     <UseNextLevelInListAsExit>k__BackingField: 1
     <ExitScene>k__BackingField: {fileID: 0}
     <HasChallengeExit>k__BackingField: 0
