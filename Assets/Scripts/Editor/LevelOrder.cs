@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using SaintsField;
 using SaintsField.Playa;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "LevelOrder", menuName = "ScriptableObjects/Level Order", order = 0)]
@@ -23,13 +24,14 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
 
         [field: SerializeField, SepTitle("Outro Level", EColor.Red), SaintsRow(inline: true)]
         public LevelData Outro { get; internal set; } = new();
+        public LevelData GetStartingLevel => Intro.Scene ? Intro : Puzzles[0];
     }
 
     [Serializable]
     public class LevelData
     {
         [field: SerializeField] public string LevelName { get; private set; } = "CHANGEME";
-        [field: SerializeField] public SceneAsset Scene { get; private set; }
+        [field: SerializeField] public SceneAsset Scene { get; internal set; }
         [field: SerializeField] public bool UseNextLevelInListAsExit { get; private set; } = true;
 
         [field: SerializeField, HideIf(nameof(UseNextLevelInListAsExit))]
@@ -39,6 +41,24 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
 
         [field: SerializeField, ShowIf(nameof(HasChallengeExit))]
         public SceneAsset ChallengeScene { get; private set; }
+
+        public LevelData(LevelData other)
+        {
+            LevelName = other.LevelName;
+            Scene = other.Scene;
+            UseNextLevelInListAsExit = other.UseNextLevelInListAsExit;
+            ExitScene = other.ExitScene;
+            HasChallengeExit = other.HasChallengeExit;
+            ChallengeScene = other.ChallengeScene;
+        }
+
+        public LevelData()
+        {
+            LevelName = "";
+            Scene = null;
+            ExitScene = null;
+            ChallengeScene = null;
+        }
     }
 
     [field: SerializeField, ListDrawerSettings(searchable: true, 2)]
@@ -66,8 +86,7 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
     private void AddLevel()
     {
         var chapter = TryGetOrAddChapter(_chapterName);
-        Debug.Log("add level");
-        chapter.Puzzles.Add(_inputLevelData);
+        chapter.Puzzles.Add(new LevelData(_inputLevelData));
         EditorUtility.SetDirty(this);
         Undo.RecordObject(this, "Add Level");
     }
@@ -75,7 +94,7 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
     private void SetIntro()
     {
         var chapter = TryGetOrAddChapter(_chapterName);
-        chapter.Intro = _inputLevelData;
+        chapter.Intro = new LevelData(_inputLevelData);
         EditorUtility.SetDirty(this);
         Undo.RecordObject(this, "Set Intro");
     }
@@ -91,7 +110,7 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
     private void SetOutro()
     {
         var chapter = TryGetOrAddChapter(_chapterName);
-        chapter.Outro = _inputLevelData;
+        chapter.Outro = new LevelData(_inputLevelData);
         EditorUtility.SetDirty(this);
         Undo.RecordObject(this, "Set Outro");
     }

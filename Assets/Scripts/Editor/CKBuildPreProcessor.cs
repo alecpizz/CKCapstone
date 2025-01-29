@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CKBuildPreProcessor : IPreprocessBuildWithReport
 {
@@ -28,60 +30,91 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         for (var chapterIndex = 0; chapterIndex < levelData.Chapters.Count; chapterIndex++)
         {
             var chapter = levelData.Chapters[chapterIndex];
-            for (int puzzleIndex = 0; puzzleIndex < chapter.Puzzles.Count; puzzleIndex++)
+            var intro = chapter.Intro;
+            if (intro.Scene != null)
             {
-                var currentLevel = chapter.Puzzles[puzzleIndex];
+                //apply transitions for intro
+            }
 
-                //determine exit scene
-                SceneAsset nextScene = null;
-                SceneAsset bonusScene = null;
-                if (currentLevel.UseNextLevelInListAsExit)
+            UpdatePuzzleExits(chapter, chapterIndex, levelData);
+
+            var outro = chapter.Outro;
+            if (outro.Scene != null)
+            {
+                //apply transitions for outro
+            }
+        }
+    }
+
+    private static void UpdatePuzzleExits(LevelOrder.Chapter chapter, int chapterIndex, LevelOrder levelData)
+    {
+        for (int puzzleIndex = 0; puzzleIndex < chapter.Puzzles.Count; puzzleIndex++)
+        {
+            var currentLevel = chapter.Puzzles[puzzleIndex];
+
+            //determine exit scene
+            SceneAsset nextScene = null;
+            SceneAsset bonusScene = null;
+            if (currentLevel.UseNextLevelInListAsExit)
+            {
+                //still in the list, grab the next one
+                if (puzzleIndex != chapter.Puzzles.Count - 1)
                 {
-                    //still in the list, grab the next one
-                    if (puzzleIndex != chapter.Puzzles.Count - 1)
-                    {
-                        nextScene = chapter.Puzzles[puzzleIndex + 1].Scene;
-                    }
-                    else
-                    {
-                        //use next chapter intro
-                        if (chapterIndex != levelData.Chapters.Count - 1)
-                        {
-                            nextScene = levelData.Chapters[chapterIndex + 1].Intro.Scene;
-                        }
-                        else //loop to end scene
-                        {
-                            nextScene = levelData.CreditsScene;
-                        }
-                    }
+                    nextScene = chapter.Puzzles[puzzleIndex + 1].Scene;
                 }
                 else
                 {
-                    nextScene = currentLevel.ExitScene;
+                    //last level, go to outro
+                    if (chapter.Outro.Scene != null)
+                    {
+                        nextScene = chapter.Outro.Scene;
+                    }
+                    else if (chapterIndex != levelData.Chapters.Count - 1)
+                    {
+                        //use next chapter intro
+                        nextScene = levelData.Chapters[chapterIndex + 1].GetStartingLevel.Scene;
+                    }
+                    else //loop to end of the game
+                    {
+                        nextScene = levelData.CreditsScene;
+                    }
                 }
-
-                if (currentLevel.HasChallengeExit)
-                {
-                    bonusScene = currentLevel.ChallengeScene;
-                }
-
-                Debug.Log(nextScene.name);
-                if (bonusScene != null) Debug.Log(bonusScene.name);
-                //load in the scene here
-                var currScene = EditorSceneManager.OpenScene(AssetDatabase.GetAssetPath(currentLevel.Scene));
-                var doors = Object.FindObjectsOfType<EndLevelDoor>();
-                foreach (var endLevelDoor in doors)
-                {
-                    //do something with the doors here
-                    Debug.Log(endLevelDoor.gameObject.name);
-                }
-
-                //save the changes
-                EditorSceneManager.SaveScene(currScene);
-
-                //close the scene
-                EditorSceneManager.CloseScene(currScene, true);
             }
+            else
+            {
+                nextScene = currentLevel.ExitScene;
+            }
+
+            if (currentLevel.HasChallengeExit)
+            {
+                bonusScene = currentLevel.ChallengeScene;
+            }
+
+            Debug.Log(nextScene.name);
+            if (bonusScene != null) Debug.Log(bonusScene.name);
+            //load in the scene here
+            var currScene = EditorSceneManager.OpenScene(AssetDatabase.GetAssetPath(currentLevel.Scene));
+            var doors = Object.FindObjectsOfType<EndLevelDoor>();
+            foreach (var endLevelDoor in doors)
+            {
+                Debug.Log(endLevelDoor.gameObject.name);
+                if (endLevelDoor.isActiveAndEnabled)
+                {
+                    //challenge door TODO: do something besides checking gameobject name for this.
+                    bool isBonusDoor = endLevelDoor.name.ToLower().Contains("challenge");
+                    //use reflection to set the next level index to the next scene. 
+                    endLevelDoor.GetType().GetField("_levelIndexToLoad",
+                            BindingFlags.Instance | BindingFlags.NonPublic)?.SetValue(endLevelDoor,
+                        SceneUtility.GetBuildIndexByScenePath(
+                            AssetDatabase.GetAssetPath(isBonusDoor ? bonusScene : nextScene)));
+                }
+            }
+
+            //save the changes
+            EditorSceneManager.SaveScene(currScene);
+
+            //close the scene
+            EditorSceneManager.CloseScene(currScene, true);
         }
     }
 
