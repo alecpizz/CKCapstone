@@ -123,7 +123,7 @@ public sealed class RoundManager : MonoBehaviour
     /// <summary>
     /// Allows a direction input to be held when it comes to movement
     /// </summary>
-    public void Update()
+    private void Update()
     {
         if (_playerControls.InGame.Movement.IsPressed() && !TurnInProgress)
         {
@@ -144,8 +144,6 @@ public sealed class RoundManager : MonoBehaviour
         _lastMovementInput = dir;
         _movementRegistered = true;
         _movementRegisteredTime = Time.unscaledTime;
-
-        print("hello");
 
         if (_turnState != TurnState.None) return;
 
