@@ -122,6 +122,80 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &32562039
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 972184866}
+    m_Modifications:
+    - target: {fileID: 1066457527364679113, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: m_Name
+      value: Disable Tile Wall (34)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 481ef263620677f4da33125bd7de384d, type: 3}
+--- !u!4 &32562040 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
+    type: 3}
+  m_PrefabInstance: {fileID: 32562039}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &34182303 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2735164925453966809, guid: 4b4ed906bab175f468c3e8cc2650a794,
@@ -2190,6 +2264,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 155123191}
+  - {fileID: 32562040}
   - {fileID: 1243946610}
   - {fileID: 611520229}
   - {fileID: 1704218819}
@@ -2361,7 +2436,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19f5d69acac8fa54fb1e9ebfa50ecee0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  glowEffectPrefab: {fileID: 8771972552311404799, guid: 4026826b70e5d384faa33d20f6cf588a,
+  _glowEffectPrefab: {fileID: 8771972552311404799, guid: 4026826b70e5d384faa33d20f6cf588a,
     type: 3}
 --- !u!4 &995022007 stripped
 Transform:
@@ -4617,7 +4692,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19f5d69acac8fa54fb1e9ebfa50ecee0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  glowEffectPrefab: {fileID: 8771972552311404799, guid: 4026826b70e5d384faa33d20f6cf588a,
+  _glowEffectPrefab: {fileID: 8771972552311404799, guid: 4026826b70e5d384faa33d20f6cf588a,
     type: 3}
 --- !u!4 &1848893422 stripped
 Transform:
@@ -5606,7 +5681,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19f5d69acac8fa54fb1e9ebfa50ecee0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  glowEffectPrefab: {fileID: 8771972552311404799, guid: 4026826b70e5d384faa33d20f6cf588a,
+  _glowEffectPrefab: {fileID: 8771972552311404799, guid: 4026826b70e5d384faa33d20f6cf588a,
     type: 3}
 --- !u!1001 &2100877754
 PrefabInstance:
