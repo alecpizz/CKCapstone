@@ -169,7 +169,7 @@ MonoBehaviour:
   _isTransparent: 0
   _blocksHarmonyBeam: 0
   _snapToGrid: 1
-  offset: {x: 0, y: 0.5, z: 0}
+  _offset: {x: 0, y: 0.5, z: 0}
   _disableGridCell: 0
   _isVisable: 1
 --- !u!114 &3686184718579247327
@@ -206,6 +206,7 @@ MonoBehaviour:
   - {fileID: 7764666926146324011}
   _enemyHitEffectPrefab: {fileID: 8758868317394974223, guid: 1ddf6febd6502cd41907df1bc729db68,
     type: 3}
+  _enemyHitOffset: {x: 0, y: 0, z: 0}
   _wallCollisionEffectPrefab: {fileID: 0}
 --- !u!1001 &1858446099240012047
 PrefabInstance:
@@ -538,7 +539,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.2
+      scalar: 0.1
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -592,7 +593,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 1, b: 1, a: 1}
+      maxColor: {r: 1, g: 1, b: 1, a: 0.64705884}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -657,7 +658,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 3
       scalar: 3
-      minScalar: 2
+      minScalar: 2.5
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -1239,7 +1240,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 2
+      scalar: 1
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -1357,20 +1358,20 @@ ParticleSystem:
         - serializedVersion: 3
           time: 0.0031433105
           value: 0
-          inSlope: 6.794791
-          outSlope: 6.794791
+          inSlope: 5.6519113
+          outSlope: 5.6519113
           tangentMode: 0
           weightedMode: 0
           inWeight: 0
-          outWeight: 0.11356586
+          outWeight: 0.14472194
         - serializedVersion: 3
           time: 1
           value: 0
-          inSlope: -2.6402934
-          outSlope: -2.6402934
+          inSlope: -2.0986612
+          outSlope: -2.0986612
           tangentMode: 0
           weightedMode: 0
-          inWeight: 0.1987379
+          inWeight: 0.18384488
           outWeight: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
