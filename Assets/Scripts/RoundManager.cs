@@ -282,9 +282,9 @@ public sealed class RoundManager : MonoBehaviour
     {
         return turnState switch
         {
-            TurnState.Player => TurnState.World,
-            TurnState.World => TurnState.Enemy,
-            TurnState.Enemy => TurnState.None,
+            TurnState.Player => TurnState.Enemy,
+            TurnState.Enemy => TurnState.World,
+            TurnState.World => TurnState.None,
             _ => null
         };
     }
@@ -299,8 +299,8 @@ public sealed class RoundManager : MonoBehaviour
         return turnState switch
         {
             TurnState.Player => TurnState.None,
-            TurnState.World => TurnState.Player,
-            TurnState.Enemy => TurnState.World,
+            TurnState.Enemy => TurnState.Player,
+            TurnState.World => TurnState.Enemy,
             _ => null
         };
     }
