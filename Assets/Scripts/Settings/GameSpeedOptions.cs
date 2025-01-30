@@ -15,13 +15,13 @@ public class GameSpeedOptions : MonoBehaviour
 {
     private PlayerControls _playerControls;
     private bool _speedUp;
-    private bool _speedDown;
 
-    [Tooltip("Default value is 1, so make sure this is greater than 1")]
+    private int[] _speedModes = new int[2];
+    private int _currentSpeed;
+
+    [Tooltip("What the timescale is changed to when the game is sped up." +
+        "The defualt value is 1, so make sure this is higher than 1 to see an actual change.")]
     [SerializeField] private float _speedUpRate = 2f;
-
-    [Tooltip("Default value is 1, so make sure this is less than 1")]
-    [SerializeField] private float _slowDownRate = 0.5f;
 
     /// <summary>
     /// Enables the controls to allow the input to work, and ensures that the bools are always
@@ -33,8 +33,7 @@ public class GameSpeedOptions : MonoBehaviour
         _playerControls.Enable();
         _playerControls.InGame.GameSpeed.performed += ctx => SpeedChange();
 
-        _speedUp = false;
-        _speedDown = false;
+        _currentSpeed = System.Array.IndexOf(_speedModes, _speedModes[0]);
     }
 
     /// <summary>
@@ -44,30 +43,20 @@ public class GameSpeedOptions : MonoBehaviour
     private void SpeedChange()
     {
         // Speed up if the game is at normal speed
-        if(!_speedUp && !_speedDown)
+        if (_currentSpeed == 0)
         {
             Debug.Log("Speeding Up!");
-            _speedUp = true;
 
             Time.timeScale = _speedUpRate;
+            _currentSpeed++;
         }
-        // Slow down if the game is sped up
-        else if(_speedUp)
-        {
-            Debug.Log("Slowing Down!");
-            _speedUp = false;
-            _speedDown = true;
-
-            Time.timeScale = _slowDownRate;
-        }
-        // Return to normal speed if the game is slowed down
+        // Return to normal speed if the game is sped up
         else
         {
             Debug.Log("Back to Normal!");
-            _speedUp = false;
-            _speedDown = false;
 
             Time.timeScale = 1f;
+            _currentSpeed--;
         }
     }
 }
