@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEditor;
 using UnityEngine;
+using SaintsField.Playa;
 
 /// <summary>
 /// Class that determines how the walls and ghost walls move
@@ -35,6 +36,7 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListene
     [SerializeField] private float _activatedHeight;
 
     //time it takes for tween to finish
+    [PlayaInfoBox("Time it takes for the tween between positions to finish.")]
     [SerializeField] private float _duration;
 
     //type of tween animation for walls
