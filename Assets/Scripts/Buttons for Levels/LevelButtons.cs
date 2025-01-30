@@ -21,15 +21,15 @@ public class LevelButtons : MonoBehaviour
     /// <summary>
     /// At run-time, buttons equal to the number of scenes are generated.
     /// </summary>
-    void Start()
+    private void Start()
     {
         //cycles through all loaded scenes except main menu
-        for (int i = 1; i < sceneNum(); i++)
+        for (int i = 1; i < SceneNum(); i++)
         {
             //loads scene when button is clicked
             IndividualButtons obj = Instantiate(_buttonPrefab, transform).GetComponent<IndividualButtons>();
             obj.GetComponentInChildren<TextMeshProUGUI>().text = "Level " + i;
-            obj.setIndex(i);
+            obj.SetIndex(i);
         }
         
     }
@@ -38,7 +38,7 @@ public class LevelButtons : MonoBehaviour
     /// Gives the number of scenes in the build.
     /// </summary>
     /// <returns></returns>
-    private int sceneNum()
+    private int SceneNum()
     {
         return SceneManager.sceneCountInBuildSettings;
     }

@@ -2,7 +2,7 @@
 *    Author: Josephine Qualls
 *    Contributors: Trinity Hutson
 *    Date Created: 01/28/2025
-*    Description: 
+*    Description: Sets the index and loads the scene for the buttons that'll be made.
 *******************************************************************/
 
 using System.Collections;
@@ -14,12 +14,19 @@ public class IndividualButtons : MonoBehaviour
 {
     private int _index = 0;
 
-    public void setIndex(int num)
+    /// <summary>
+    /// The index of the scene is set for the individual buttons
+    /// </summary>
+    /// <param name="num"></param>
+    public void SetIndex(int num)
     {
         _index = num;
     }
 
-    public void changeScene()
+    /// <summary>
+    /// Loads the scene for the relevant button
+    /// </summary>
+    public void ChangeScene()
     {
         SceneManager.LoadScene(_index);
     }
