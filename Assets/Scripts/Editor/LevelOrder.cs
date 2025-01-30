@@ -139,7 +139,6 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
         Undo.RecordObject(this, "Clear Levels");
     }
 
-
     /// <summary>
     /// Set the intro level for a chapter.
     /// </summary>

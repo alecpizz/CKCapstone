@@ -36,7 +36,6 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         }
     }
 
-
     /// <summary>
     /// Goes through the entire project and links
     /// all scenes together, as well as add them to the
@@ -96,7 +95,8 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         //apply transitions for intro/outro
         //currently handled data types: CutsceneFramework, EndLevelDoor.
         //TODO: wrap this in an interface
-        var introScene = EditorSceneManager.OpenScene(AssetDatabase.GetAssetPath(entrance.Scene));
+        var introScene = EditorSceneManager.OpenScene(
+            AssetDatabase.GetAssetPath(entrance.Scene));
         var cutsceneFrameWork = Object.FindObjectOfType<CutsceneFramework>();
         if (cutsceneFrameWork != null)
         {
@@ -120,7 +120,6 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             SetDoorExitScene(endLevelDoor, SceneUtility.GetBuildIndexByScenePath(
                 AssetDatabase.GetAssetPath(scene)));
         }
-
 
         EditorSceneManager.SaveScene(introScene);
     }
@@ -177,13 +176,15 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             }
 
             //load in the scene here
-            var currScene = EditorSceneManager.OpenScene(AssetDatabase.GetAssetPath(currentLevel.Scene));
+            var currScene = EditorSceneManager.OpenScene(
+                AssetDatabase.GetAssetPath(currentLevel.Scene));
             var doors = Object.FindObjectsOfType<EndLevelDoor>();
 
             //apply door exits
             if (doors.Length > 2)
             {
-                Debug.LogWarning("There are more than 2 doors in this scene. There may be duplicate exits...");
+                Debug.LogWarning("There are more than 2 doors in this scene. " +
+                    "There may be duplicate exits...");
             }
 
             foreach (var endLevelDoor in doors)
@@ -195,11 +196,13 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 int index;
                 if (bonusScene != null && isBonusDoor)
                 {
-                    index = SceneUtility.GetBuildIndexByScenePath(AssetDatabase.GetAssetPath(bonusScene));
+                    index = SceneUtility.GetBuildIndexByScenePath(
+                        AssetDatabase.GetAssetPath(bonusScene));
                 }
                 else
                 {
-                    index = SceneUtility.GetBuildIndexByScenePath(AssetDatabase.GetAssetPath(nextScene));
+                    index = SceneUtility.GetBuildIndexByScenePath(
+                        AssetDatabase.GetAssetPath(nextScene));
                 }
 
                 SetDoorExitScene(endLevelDoor, index);
@@ -245,10 +248,12 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
     /// </summary>
     private static void AddScenesToBuild()
     {
-        List<EditorBuildSettingsScene> editorBuildSettingsScenes = new List<EditorBuildSettingsScene>();
+        List<EditorBuildSettingsScene> editorBuildSettingsScenes = 
+            new List<EditorBuildSettingsScene>();
         var levelData = LevelOrder.instance;
         //add the main menu scene
-        editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(AssetDatabase.GetAssetPath(levelData.MainMenuScene),
+        editorBuildSettingsScenes.Add(
+            new EditorBuildSettingsScene(AssetDatabase.GetAssetPath(levelData.MainMenuScene),
             true));
 
         //add each chapter's data
