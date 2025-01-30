@@ -70,7 +70,18 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": ""2D Vector"",
+                    ""name"": """",
+                    ""id"": ""784866ad-ef98-4b48-a5a8-f061791d7210"",
+                    ""path"": ""<SwitchProControllerHID>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""WASD"",
                     ""id"": ""cf21957c-1f06-46ba-94dd-e51c9cb89268"",
                     ""path"": ""2DVector"",
                     ""interactions"": """",
@@ -125,7 +136,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""2D Vector"",
+                    ""name"": ""Arrow Keys"",
                     ""id"": ""1741beb5-b882-42d6-aaed-56765a73a84c"",
                     ""path"": ""2DVector"",
                     ""interactions"": """",
@@ -180,7 +191,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""2D Vector"",
+                    ""name"": ""Left Control Stick"",
                     ""id"": ""06b0959e-8795-46b2-9093-9d817ceaa8f3"",
                     ""path"": ""2DVector"",
                     ""interactions"": """",
@@ -235,7 +246,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""2D Vector"",
+                    ""name"": ""D-Pad"",
                     ""id"": ""415c3ae1-17ed-4fcd-b095-611dff744fa1"",
                     ""path"": ""2DVector"",
                     ""interactions"": """",
