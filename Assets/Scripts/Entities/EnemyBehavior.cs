@@ -43,8 +43,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     private PlayerControls _input;
     private GameObject _player;
-    private GameObject _pathingToggleButtonManager;
-    private PathingToggleButtonManager _pathingToggleButtonScript;
     private PlayerMovement _playerMove;
     [SerializeField] private GameObject _destinationMarker;
     [SerializeField] private GameObject _destPathVFX;
@@ -129,8 +127,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _rb = GetComponent<Rigidbody>();
         _player = PlayerMovement.Instance.gameObject;
         _playerMove = PlayerMovement.Instance;
-        _pathingToggleButtonManager = PathingToggleButtonManager.Instance.gameObject;
-        _pathingToggleButtonScript = _pathingToggleButtonManager.GetComponent<PathingToggleButtonManager>();
 
 
         _destinationMarker.transform.SetParent(null);
@@ -154,18 +150,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _input.InGame.Enable();
 
         _input.InGame.Toggle.performed += PathingToggle;
-    }
-    /// <summary>
-    /// Updates every frame.
-    /// </summary>
-    private void Update()
-    {
-        //Only runs ButtonToggle function if button was recently pressed
-        if (!_pathingToggleButtonScript.pressed)
-        {
-            return;
-        }
-        ButtonToggle();
     }
 
     /// <summary>
@@ -222,17 +206,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _destinationMarker.SetActive(_currentToggle);
 
         _currentToggle = !_currentToggle;
-    }
-
-    /// <summary>
-    /// Toggles all enemy pathing on the current level when the player
-    /// clicks on the canvas toggle button.
-    /// </summary>
-    public void ButtonToggle()
-    {   
-       _currentToggle = _pathingToggleButtonScript.buttonToggled;
-       _destPathVFX.SetActive(_currentToggle);
-       _destinationMarker.SetActive(_currentToggle);
     }
 
     /// <summary>

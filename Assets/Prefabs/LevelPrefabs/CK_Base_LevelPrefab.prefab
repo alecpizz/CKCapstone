@@ -47143,52 +47143,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &6208160081068305450
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7936867863005635002}
-  - component: {fileID: 5467597773873487134}
-  m_Layer: 0
-  m_Name: PathingToggleButtonManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &7936867863005635002
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6208160081068305450}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 448.97, y: 256.33, z: -7.85}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 6409311488171112465}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5467597773873487134
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6208160081068305450}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2633fef5c012c92468e3a8e7b2271d0f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  buttonToggled: 0
-  pressed: 0
 --- !u!1 &6209595321620251760
 GameObject:
   m_ObjectHideFlags: 0
@@ -64409,7 +64363,6 @@ Transform:
   - {fileID: 5235367107790197496}
   - {fileID: 2847843138469851440}
   - {fileID: 2899967879648720470}
-  - {fileID: 7936867863005635002}
   m_Father: {fileID: 7757164700761813088}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8363599494331842171
@@ -66175,6 +66128,7 @@ GameObject:
   - component: {fileID: 705315685049530571}
   - component: {fileID: 6114318052516075537}
   - component: {fileID: 7832827681025606459}
+  - component: {fileID: 5425975215936116612}
   m_Layer: 5
   m_Name: PathingToggleButton
   m_TagString: Untagged
@@ -66284,9 +66238,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5467597773873487134}
+      - m_Target: {fileID: 5425975215936116612}
         m_TargetAssemblyTypeName: PathingToggleButtonManager, Assembly-CSharp
-        m_MethodName: ButtonToggle
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -66296,6 +66250,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &5425975215936116612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8515386904444733437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2633fef5c012c92468e3a8e7b2271d0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ControlPath: <Keyboard>/space
 --- !u!1 &8522443867608514384
 GameObject:
   m_ObjectHideFlags: 0
