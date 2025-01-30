@@ -1,3 +1,11 @@
+/******************************************************************
+ *    Author: Alec Pizziferro
+ *    Contributors:  nullptr
+ *    Date Created: 1/30/2025
+ *    Description: A scriptable object for handling level ordering.
+ *    contains tools to add scenes quicker. This is a EDITOR ONLY
+ *    class. It is also a singleton.
+ *******************************************************************/
 using System;
 using System.Collections.Generic;
 using SaintsField;
@@ -11,6 +19,14 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
 {
     [field: SerializeField] public SceneAsset MainMenuScene { get; private set; }
 
+    /// <summary>
+    /// A class representing a chapter.
+    /// A chapter contains:
+    ///     - The chapter name
+    ///     - The Intro Level or Scene
+    ///     - The puzzles in the chapter
+    ///     - The Outro Level or Scene
+    /// </summary>
     [Serializable]
     public class Chapter
     {
@@ -27,6 +43,15 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
         public LevelData GetStartingLevel => Intro.Scene ? Intro : Puzzles[0];
     }
 
+    /// <summary>
+    /// A representation of level data.
+    /// A level data contains:
+    ///     - The name of the level
+    ///     - The scene asset of the level itself.
+    ///     - Some determination of whether or not the scene should
+    ///       exit to the next level or a custom target.
+    ///     - A potential challenge scene.
+    /// </summary>
     [Serializable]
     public class LevelData
     {
@@ -42,6 +67,10 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
         [field: SerializeField, ShowIf(nameof(HasChallengeExit))]
         public SceneAsset ChallengeScene { get; private set; }
 
+        /// <summary>
+        /// Copy constructor for the level data.
+        /// </summary>
+        /// <param name="other">The level data to copy from.</param>
         public LevelData(LevelData other)
         {
             LevelName = other.LevelName;
@@ -52,6 +81,9 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
             ChallengeScene = other.ChallengeScene;
         }
 
+        /// <summary>
+        /// Empty constructor for level data. 
+        /// </summary>
         public LevelData()
         {
             LevelName = "";
@@ -69,6 +101,7 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
     private string _chapterName = "Chapter CHANGEME";
 
 
+    //holy attributes batman! This just handles the buttons below the field.
     [SepTitle("Level Input", EColor.White)]
     [SerializeField]
     [BelowSeparator("Adding to Chapter", EColor.White)]
@@ -83,6 +116,10 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
     private LevelData _inputLevelData;
 
 
+    /// <summary>
+    /// Add a level to the current chapter.
+    /// Editor only
+    /// </summary>
     private void AddLevel()
     {
         var chapter = TryGetOrAddChapter(_chapterName);
@@ -90,7 +127,22 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
         EditorUtility.SetDirty(this);
         Undo.RecordObject(this, "Add Level");
     }
+    
+    /// <summary>
+    /// Clears the levels in a chapter.
+    /// </summary>
+    private void ClearLevels()
+    {
+        var chapter = TryGetOrAddChapter(_chapterName);
+        chapter.Puzzles.Clear();
+        EditorUtility.SetDirty(this);
+        Undo.RecordObject(this, "Clear Levels");
+    }
 
+
+    /// <summary>
+    /// Set the intro level for a chapter.
+    /// </summary>
     private void SetIntro()
     {
         var chapter = TryGetOrAddChapter(_chapterName);
@@ -99,6 +151,9 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
         Undo.RecordObject(this, "Set Intro");
     }
 
+    /// <summary>
+    /// Clears the intro for a chapter
+    /// </summary>
     private void ClearIntro()
     {
         var chapter = TryGetOrAddChapter(_chapterName);
@@ -107,6 +162,9 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
         Undo.RecordObject(this, "Clear Intro");
     }
 
+    /// <summary>
+    /// Sets the outro for a chapter.
+    /// </summary>
     private void SetOutro()
     {
         var chapter = TryGetOrAddChapter(_chapterName);
@@ -115,6 +173,9 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
         Undo.RecordObject(this, "Set Outro");
     }
 
+    /// <summary>
+    /// Clears the outro for a chapter.
+    /// </summary>
     private void ClearOutro()
     {
         var chapter = TryGetOrAddChapter(_chapterName);
@@ -123,6 +184,9 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
         Undo.RecordObject(this, "Clear Intro");
     }
 
+    /// <summary>
+    /// Runs the build linking step manually.
+    /// </summary>
     private void RunBuildPreProcess()
     {
         if (EditorUtility.DisplayDialog("Build Pre-Process Warning",
@@ -132,15 +196,12 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
             CKBuildPreProcessor.BuildSceneIndex();
         }
     }
-
-    private void ClearLevels()
-    {
-        var chapter = TryGetOrAddChapter(_chapterName);
-        chapter.Puzzles.Clear();
-        EditorUtility.SetDirty(this);
-        Undo.RecordObject(this, "Clear Levels");
-    }
-
+    
+    /// <summary>
+    /// Will grab or add the chapter by name.
+    /// </summary>
+    /// <param name="chapterName">The name of the chapter to search for, case insensitive.</param>
+    /// <returns>The newly created or found chapter.</returns>
     private Chapter TryGetOrAddChapter(string chapterName)
     {
         var chapter = Chapters.Find(p =>
