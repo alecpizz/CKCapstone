@@ -30,5 +30,4 @@ public class IndividualButtons : MonoBehaviour
     {
         SceneManager.LoadScene(_index);
     }
-
 }

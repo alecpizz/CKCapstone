@@ -17,7 +17,6 @@ public class LevelButtons : MonoBehaviour
     //Button in charge of levels
     [SerializeField] private GameObject _buttonPrefab;
     
-
     /// <summary>
     /// At run-time, buttons equal to the number of scenes are generated.
     /// </summary>
@@ -31,7 +30,6 @@ public class LevelButtons : MonoBehaviour
             obj.GetComponentInChildren<TextMeshProUGUI>().text = "Level " + i;
             obj.SetIndex(i);
         }
-        
     }
 
     /// <summary>
@@ -42,5 +40,4 @@ public class LevelButtons : MonoBehaviour
     {
         return SceneManager.sceneCountInBuildSettings;
     }
-
 }
