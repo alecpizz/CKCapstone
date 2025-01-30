@@ -100,7 +100,6 @@ public class SettingsTabs : MonoBehaviour
         foreach (var panel in _panels)
         {
             panel.Value.SetActive(panel.Key == tab);
-
         }
 
         HighlightButton(tab);

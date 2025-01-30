@@ -30,7 +30,6 @@ public class MenuManager : MonoBehaviour
 
     private DebugInputActions _inputActions;
 
-
     /// <summary>
     /// Enables player input for opening the pause menu
     /// </summary>
@@ -40,14 +39,6 @@ public class MenuManager : MonoBehaviour
         _inputActions.Enable();
         _inputActions.Player.Quit.performed += ctx => Pause();
     }
-
-    /// <summary>
-    /// Logs what's selected in the event system to check if it's being used by a Controller or Keyboard
-    /// </summary>
-    /*private void Update()
-    {
-        Debug.Log(EventSystem.current);
-    }*/
 
     /// <summary>
     /// Disables player input for opening the pause menu
@@ -177,7 +168,6 @@ public class MenuManager : MonoBehaviour
     public void QuitDecline()
     {
         _confirmQuit.SetActive(false);
-
     }
 
     /// <summary>
