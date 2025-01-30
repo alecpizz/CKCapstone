@@ -89,8 +89,6 @@ public sealed class RoundManager : MonoBehaviour
             _completedTurnCounts.Add((TurnState)i, 0);
         }
     }
-    
-    
 
 #if UNITY_EDITOR
     /// <summary>
@@ -123,6 +121,17 @@ public sealed class RoundManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Allows a direction input to be held when it comes to movement
+    /// </summary>
+    public void Update()
+    {
+        if (_playerControls.InGame.Movement.IsPressed() && !TurnInProgress)
+        {
+            PerformMovement();
+        }
+    }
+
+    /// <summary>
     /// Invoked when a movement input is pressed.
     /// Will attempt to move if possible, but if it's not the player's turn
     /// the movement will be rejected.
@@ -136,6 +145,8 @@ public sealed class RoundManager : MonoBehaviour
         _movementRegistered = true;
         _movementRegisteredTime = Time.unscaledTime;
 
+        print("hello");
+
         if (_turnState != TurnState.None) return;
 
         PerformMovement();
@@ -148,9 +159,13 @@ public sealed class RoundManager : MonoBehaviour
     {
         if (!_movementRegistered) return;
 
-        _movementRegistered = false;
+        if (!_playerControls.InGame.Movement.IsPressed())
+        {
+            _movementRegistered = false;
+        }
+
         _turnState = TurnState.Player;
-    
+
         //only play player turn sound if there's enemies in the scene.
         if (_turnListeners[TurnState.Enemy].Count > 0)
         {
@@ -226,6 +241,9 @@ public sealed class RoundManager : MonoBehaviour
     /// <param name="listener">The listener to repeat a turn.</param>
     public void RequestRepeatTurnStateRepeat(ITurnListener listener)
     {
+        //Stops Holded Movement
+        _movementRegistered = false;
+
         if (listener.TurnState != _turnState)
         {
             return;
