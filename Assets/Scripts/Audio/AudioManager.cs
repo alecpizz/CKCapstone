@@ -12,6 +12,10 @@ using FMOD.Studio;
 using STOP_MODE = FMOD.Studio.STOP_MODE;
 using System;
 using System.Collections;
+using FMOD;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
+using Debug = UnityEngine.Debug;
 
 
 public class AudioManager : MonoBehaviour
@@ -24,6 +28,10 @@ public class AudioManager : MonoBehaviour
     private Dictionary<EventReference, EventInstance> AudioInstances;
 
     private EventInstance _key;
+
+    private float _frequency = 1f;
+    private bool _ignoreSeekSpeed = false;
+    private PARAMETER_ID _parameterId = default;
 
     private void Awake()
     {
@@ -42,6 +50,17 @@ public class AudioManager : MonoBehaviour
     void Update()
     {
         _key.setParameterByName("MusicLayering", _musicLayering);
+        _key.setPitch(_frequency);
+        if (Keyboard.current.leftShiftKey.wasPressedThisFrame)
+        {
+            _frequency -= 0.1f;
+            
+        }
+
+        if (Keyboard.current.rightShiftKey.wasPressedThisFrame)
+        {
+            _frequency += 0.1f;
+        }
     }
 
     /// <summary>
@@ -71,7 +90,7 @@ public class AudioManager : MonoBehaviour
         audioEvent.start();
         return audioEvent;
     }
-
+    
     /// <summary>
     /// Plays an FMOD sound using a reference. Just add an EventReference and setup the sound
     /// in the inspector. See the FMOD Guide in resources for more info.
@@ -189,6 +208,7 @@ public class AudioManager : MonoBehaviour
         }
         audioEvent.setVolume(goalVolume);
     }
+    
 
     /// <summary>
     /// Internal function to convert event references to instances

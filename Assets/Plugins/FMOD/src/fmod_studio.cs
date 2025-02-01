@@ -1336,6 +1336,7 @@ namespace FMOD.Studio
         {
             return FMOD_Studio_EventInstance_Set3DAttributes(this.handle, ref attributes);
         }
+        
         public RESULT getListenerMask(out uint mask)
         {
             return FMOD_Studio_EventInstance_GetListenerMask(this.handle, out mask);
@@ -1364,6 +1365,7 @@ namespace FMOD.Studio
         {
             return FMOD_Studio_EventInstance_GetPaused(this.handle, out paused);
         }
+
         public RESULT setPaused(bool paused)
         {
             return FMOD_Studio_EventInstance_SetPaused(this.handle, paused);
