@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Mitchell Young
-*    Contributors: Mitchell Young
+*    Contributors: Mitchell Young, Nick Grinstead
 *    Date Created: 10/27/24
 *    Description: Script that handles the behavior of the mirror and
 *    copy enemy that mirrors or copies player movement.
@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using PrimeTween;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using SaintsField.Playa;
 
 public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener, IHarmonyBeamEntity
 {
@@ -31,13 +32,18 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     //Determines whether or not the enemy's movement is reversed
     [SerializeField] private bool _mirrored;
 
-    private float _movementTime = 0.55f;
+    [PlayaInfoBox("Time it takes to move one space.")]
+    [SerializeField] private float _movementTime = 0.55f;
+    [PlayaInfoBox("The floor for how fast the enemy can move.")]
+    [SerializeField] private float _minMoveTime = 0.175f;
 
+    // Timing from metronome
     private int _movementTiming = 1;
     private WaitForSeconds _waitForSeconds;
 
     [SerializeField] private float _rotationTime = 0.10f;
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
+    [SerializeField] private Ease _movementEase = Ease.OutBack;
 
     // Bool checked if this enemy is a Son Enemy
     [SerializeField] private bool sonEnemy;
@@ -95,6 +101,8 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                 moveDirection = -moveDirection;
             }
 
+            float modifiedMovementTime = Mathf.Clamp(_movementTime / _movementTiming,
+                        _minMoveTime, float.MaxValue);
 
             for (int i = 0; i < _movementTiming; ++i)
             {
@@ -131,7 +139,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                     ease: _rotationEase);
 
                     yield return Tween.Position(transform,
-                        move + _positionOffset, _movementTime, ease: Ease.OutBack).OnUpdate<MirrorAndCopyBehavior>(target: this, (target, tween) =>
+                        move + _positionOffset, modifiedMovementTime, ease: _movementEase).OnUpdate<MirrorAndCopyBehavior>(target: this, (target, tween) =>
                         {
                             GridBase.Instance.UpdateEntry(this);
                         }).ToYieldInstruction();

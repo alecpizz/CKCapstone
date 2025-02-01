@@ -15,6 +15,7 @@ using UnityEngine.InputSystem;
 using PrimeTween;
 using Unity.VisualScripting;
 using FMODUnity;
+using SaintsField.Playa;
 
 public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, 
     ITurnListener, IHarmonyBeamEntity
@@ -41,6 +42,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     public GameObject EntryObject { get => gameObject; }
 
+    private PlayerControls _input;
     private GameObject _player;
     private PlayerMovement _playerMove;
     [SerializeField] private GameObject _destinationMarker;
@@ -60,12 +62,18 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [SerializeField] private float _destYPos = 1f;
     [SerializeField] private float _lineYPosOffset = 1f;
 
-
     //Wait time between enemy moving each individual tile while on path to next destination
+    [PlayaInfoBox("Time for the enemy to move between each tile. " +
+        "\n This will be divided by the number of spaces it will move.")]
     [SerializeField] private float _waitTime = 0.5f;
+    [PlayaInfoBox("The floor for how fast the enemy can move.")]
+    [SerializeField] private float _minMoveTime = 0.175f;
+
+    [SerializeField] private bool _currentToggle = true;
 
     [SerializeField] private float _rotationTime = 0.10f;
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
+    [SerializeField] private Ease _movementEase = Ease.OutBack;
 
     //List of movePoint structs that contain a direction enum and a tiles to move integer.
     public enum Direction 
@@ -96,11 +104,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     } 
         = false;
 
-    private int _enemyMovementTime = 1;
-
     // Event reference for the enemy movement sound
     [SerializeField] private EventReference _enemyMove = default;
     [SerializeField] public bool sonEnemy;
+
+    // Timing from metronome
+    private int _enemyMovementTime = 1;
 
     private Rigidbody _rb;
 
@@ -108,8 +117,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     {
         PrimeTweenConfig.warnEndValueEqualsCurrent = false;
     }
-
-    private const float MinMoveTime = 0.175f;
 
     /// <summary>
     /// Start is called before the first frame update.
@@ -124,6 +131,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _rb = GetComponent<Rigidbody>();
         _player = PlayerMovement.Instance.gameObject;
         _playerMove = PlayerMovement.Instance;
+
 
         _destinationMarker.transform.SetParent(null);
 
@@ -141,6 +149,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _destinationMarker.SetActive(false);
         UpdateDestinationMarker();
         DestinationPath();
+
+        _input = new PlayerControls();
+        _input.InGame.Enable();
+
+        _input.InGame.Toggle.performed += PathingToggle;
     }
 
     /// <summary>
@@ -168,6 +181,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         {
             TimeSignatureManager.Instance.UnregisterTimeListener(this);
         }
+        _input.InGame.Toggle.performed -= PathingToggle;
+        _input.InGame.Disable();
     }
 
     /// <summary>
@@ -176,16 +191,25 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// </summary>
     public void DestinationPath()
     {
-        if (CollidingWithRay)
+        if (!_currentToggle)
         {
-            _destPathVFX.SetActive(true);
-            _destinationMarker.SetActive(true);
+            return;
         }
-        else
-        {
-            _destPathVFX.SetActive(false);
-            _destinationMarker.SetActive(false);
-        }
+        _destPathVFX.SetActive(CollidingWithRay);
+        _destinationMarker.SetActive(CollidingWithRay);
+    }
+
+    /// <summary>
+    /// Toggles all enemy pathing on the current level when the player
+    /// presses spacebar.
+    /// </summary>
+    /// <param name="context"></param>
+    private void PathingToggle(InputAction.CallbackContext context)
+    {
+        _destPathVFX.SetActive(_currentToggle);
+        _destinationMarker.SetActive(_currentToggle);
+
+        _currentToggle = !_currentToggle;
     }
 
     /// <summary>
@@ -249,7 +273,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                     var entries = GridBase.Instance.GetCellEntries(move);
                     bool breakLoop = false;
                     float movementTime = Mathf.Clamp((_waitTime / pointTiles) / _enemyMovementTime, 
-                        MinMoveTime, float.MaxValue);
+                        _minMoveTime, float.MaxValue);
 
                     //If the next cell contains an object that is not the player then the loop breaks
                     //enemy can't move into other enemies, walls, etc.
@@ -284,7 +308,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
                     yield return Tween.Position(transform,
                         move + _positionOffset, duration: movementTime, 
-                        ease: Ease.OutBack).OnUpdate<EnemyBehavior>(target: this, (target, tween) =>
+                        ease: _movementEase).OnUpdate<EnemyBehavior>(target: this, (target, tween) =>
                         {
                             GridBase.Instance.UpdateEntry(this);
                         }).ToYieldInstruction();
