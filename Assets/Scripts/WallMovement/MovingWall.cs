@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Josephine Qualls
-*    Contributors: Josh Eddy, Alec Pizziferro, Trinity Hutson
+*    Contributors: Josh Eddy, Alec Pizziferro, Trinity Hutson, Nick Grinstead
 *    Date Created: 10/10/2024
 *    Description: Controls what walls sink and rise after switch is triggered.
 *******************************************************************/
@@ -11,12 +11,13 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEditor;
 using UnityEngine;
+using SaintsField.Playa;
 
 /// <summary>
 /// Class that determines how the walls and ghost walls move
 /// Inherits from IParentSwitch and IGridEntry
 /// </summary>
-public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
+public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListener
 {
     //original position of wall and ghost
     private Vector3 _originWall;
@@ -35,6 +36,7 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     [SerializeField] private float _activatedHeight;
 
     //time it takes for tween to finish
+    [PlayaInfoBox("Time it takes for the tween between positions to finish.")]
     [SerializeField] private float _duration;
 
     //type of tween animation for walls
@@ -57,9 +59,14 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
 
     public bool BlocksHarmonyBeam { get => true; }
 
-    public GameObject GetGameObject => gameObject;
+    public GameObject EntryObject => gameObject;
 
     public Vector3 Position => transform.position;
+
+    public TurnState TurnState => TurnState.World;
+
+    private bool _shouldMoveOnTurn = false;
+    private bool _shouldActivate = false;
 
     /// <summary>
     /// References the GridPlacer on the wall ghost
@@ -86,7 +93,28 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
         _originGhost = _wallGhost.transform.position;
         // Maintains same height to ensure consistency when swapping
         _originGhost.y = transform.position.y;
+    }
 
+    /// <summary>
+    /// Registers instance to the RoundManager
+    /// </summary>
+    private void OnEnable()
+    {
+        if (RoundManager.Instance != null)
+        {
+            RoundManager.Instance.RegisterListener(this);
+        }
+    }
+
+    /// <summary>
+    /// Unregistering from RoundManager
+    /// </summary>
+    private void OnDisable()
+    {
+        if (RoundManager.Instance != null)
+        {
+            RoundManager.Instance.UnRegisterListener(this);
+        }
     }
 
     /// <summary>
@@ -95,29 +123,8 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     /// </summary>
     public void SwitchActivation()
     {
-        if (GridBase.Instance.CellIsTransparent(_originGhost))
-        {
-            _worked = true;
-
-            Tween.PositionY(transform, endValue: _groundHeight, duration: _duration, ease: _easeType);
-            Tween.PositionY(_wallGhost.transform, endValue: _activatedHeight, duration: _duration, ease: _easeType);
-
-            bool wallGridActive = false;
-
-            _wallGrid.IsTransparent = !wallGridActive;
-            _ghostPlacer.IsTransparent = wallGridActive;
-
-            _wallGrid.BlocksHarmonyBeam = wallGridActive;
-            _ghostPlacer.BlocksHarmonyBeam = !wallGridActive;
-
-            _wallCollider.enabled = wallGridActive;
-            _ghostCollider.enabled = !wallGridActive;
-
-        }
-        else
-        {
-            _worked = false;
-        }        
+        _shouldMoveOnTurn = true;
+        _shouldActivate = true;
     }
 
     /// <summary>
@@ -126,29 +133,8 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     /// </summary>
     public void SwitchDeactivation()
     {
-        if (GridBase.Instance.CellIsTransparent(_originWall))
-        {
-            _worked = true;
-
-            Tween.PositionY(transform, endValue: _activatedHeight, duration: _duration, ease: _easeType);
-            Tween.PositionY(_wallGhost.transform, endValue: _groundHeight, duration: _duration, ease: _easeType);
-
-            bool wallGridActive = false;
-
-            _wallGrid.IsTransparent = wallGridActive;
-            _ghostPlacer.IsTransparent = !wallGridActive;
-
-            _wallGrid.BlocksHarmonyBeam = !wallGridActive;
-            _ghostPlacer.BlocksHarmonyBeam = wallGridActive;
-
-            _wallCollider.enabled = !wallGridActive;
-            _ghostCollider.enabled = wallGridActive;
-
-        }
-        else
-        {
-            _worked = false;
-        }
+        _shouldMoveOnTurn = true;
+        _shouldActivate = false;
     }
 
     /// <summary>
@@ -168,5 +154,75 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
         Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
         Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos);
         transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z);
+    }
+
+    /// <summary>
+    /// Invoked to start the wall's turn. Will only move if it's switch was pressed.
+    /// </summary>
+    /// <param name="direction">Direction of player movement</param>
+    public void BeginTurn(Vector3 direction)
+    {
+        if (_shouldMoveOnTurn == false)
+        {
+            RoundManager.Instance.CompleteTurn(this);
+            return;
+        }
+
+        _shouldMoveOnTurn = false;
+        MoveWall();
+    }
+
+    /// <summary>
+    /// Helper method to move the wall to its active or inactive state
+    /// </summary>
+    private void MoveWall()
+    {
+        // Check for object blocking the wall's target space
+        if (_shouldActivate ? GridBase.Instance.CellIsTransparent(_originGhost) :
+            GridBase.Instance.CellIsTransparent(_originWall))
+        {
+            _worked = true;
+
+            if (_shouldActivate)
+            {
+                Tween.PositionY(transform, endValue: _groundHeight, 
+                    duration: _duration, ease: _easeType).Group(
+                    Tween.PositionY(_wallGhost.transform, endValue: _activatedHeight, 
+                    duration: _duration, ease: _easeType)).OnComplete(
+                    () => RoundManager.Instance.CompleteTurn(this));
+            }
+            else
+            {
+                Tween.PositionY(transform, endValue: _activatedHeight, 
+                    duration: _duration, ease: _easeType).Group(
+                    Tween.PositionY(_wallGhost.transform, endValue: _groundHeight, 
+                    duration: _duration, ease: _easeType)).OnComplete(
+                    () => RoundManager.Instance.CompleteTurn(this));
+            }
+
+            _wallGrid.IsTransparent = _shouldActivate;
+            _ghostPlacer.IsTransparent = !_shouldActivate;
+
+            _wallGrid.BlocksHarmonyBeam = !_shouldActivate;
+            _ghostPlacer.BlocksHarmonyBeam = _shouldActivate;
+
+            _wallCollider.enabled = !_shouldActivate;
+            _ghostCollider.enabled = _shouldActivate;
+        }
+        else
+        {
+            _worked = false;
+
+            RoundManager.Instance.CompleteTurn(this);
+        }
+    }
+
+    /// <summary>
+    /// Forcibly stops the wall's turn
+    /// </summary>
+    public void ForceTurnEnd()
+    {
+        _shouldMoveOnTurn = false;
+        RoundManager.Instance.CompleteTurn(this);
     }
 }

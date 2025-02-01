@@ -4,8 +4,6 @@
 *    Date Created: 10/12/24
 *    Description: Script that handles harmony beam reflections
 *******************************************************************/
-
-
 using UnityEngine;
 
 public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity
@@ -14,11 +12,12 @@ public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity
     public bool HitWrapAround => false;
     public Vector3 Position => transform.position;
     private HarmonyBeam _harmonyBeam;
-    private Vector3 _fwdDir;
 
+    /// <summary>
+    /// Sets up references to harmony beam attached to this object
+    /// </summary>
     private void Start()
     {
-        _fwdDir = transform.forward;
         _harmonyBeam = GetComponent<HarmonyBeam>();
         _harmonyBeam.ToggleBeam(false);
     }
@@ -41,28 +40,11 @@ public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity
     }
 
     /// <summary>
-    /// Toggles the direction of the reflection
-    /// </summary>
-    /// <param name="left">true for left, false for right</param>
-    public void FlipDirection(bool flip = true)
-    {
-        if (flip)
-        {
-            transform.forward = -_fwdDir;
-        }
-        else
-        {
-            transform.forward = _fwdDir;
-        }
-    }
-
-    /// <summary>
     /// When this object is hit by a laser, turn on the beam, and check for objects.
     /// </summary>
     public void OnLaserHit()
     {
         _harmonyBeam.ToggleBeam(true);
-        _harmonyBeam.ScanForObjects();
     }
 
     /// <summary>
@@ -72,7 +54,5 @@ public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity
     public void OnLaserExit()
     {
         _harmonyBeam.ToggleBeam(false);
-        _harmonyBeam.ScanForObjects();
     }
-
 }
