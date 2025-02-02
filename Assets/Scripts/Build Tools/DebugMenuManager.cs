@@ -26,8 +26,10 @@ public class DebugMenuManager : MonoBehaviour
     public bool PauseMenu { get; set; } = false;
 
     [SerializeField] private GameObject _debugMenuFirst;
+    [SerializeField] private GameObject _mainMenuFirst;
     [SerializeField] private GameObject _quitMenuFirst;
     [SerializeField] private GameObject _puzzleSelectFirst;
+    [SerializeField] private GameObject _settingsFirst;
     [SerializeField] private GameObject _debugMenu;
     [SerializeField] private GameObject _quitMenu;
     [SerializeField] private GameObject _puzzleSelectMenu;
@@ -45,6 +47,8 @@ public class DebugMenuManager : MonoBehaviour
     private bool _qMenu = false;
     private bool _pMenu = false;
     private bool _fpsCount = false;
+
+    private const string MainMenuSceneName = "MainMenu2";
 
     private int _lastFrameIndex;
     private float[] _frameDeltaTimeArray;
@@ -99,15 +103,22 @@ public class DebugMenuManager : MonoBehaviour
         _restartInput.Disable();
     }
 
+    /// <summary>
+    /// Sets up pointers for code functionality and makes sure the cursor is unlocked if it is ever hidden
+    /// </summary>
     private void Start()
     {
+        Scene currentScene = SceneManager.GetActiveScene();
         //unlocks the cursor if locked
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         //Sets an default game object for the event system to hold on to for menuing
-        EventSystem.current.SetSelectedGameObject(_debugMenuFirst);
+        EventSystem.current.SetSelectedGameObject(_mainMenuFirst);   
     }
-
+ 
+    /// <summary>
+    /// Updates the frame rate counter and makes sure debug unputs execute their code when pressed
+    /// </summary>
     private void Update()
     {   
         //handles opening and closing the debug menu
@@ -173,6 +184,7 @@ public class DebugMenuManager : MonoBehaviour
     /// </summary>
     public void TogglePuzzleSelectMenu()
     {
+        Scene currentScene = SceneManager.GetActiveScene();
         if (_pMenu == false)
         {
             _puzzleSelectMenu.SetActive(true);
@@ -184,10 +196,11 @@ public class DebugMenuManager : MonoBehaviour
         else if (_pMenu == true)
         {
             _puzzleSelectMenu.SetActive(false);
-            if (PauseMenu)
+            if (PauseMenu || currentScene.name == MainMenuSceneName)
             {
                 //doesn't go back to the dubug menu
                 _pMenu = false;
+                EventSystem.current.SetSelectedGameObject(_settingsFirst);
             }
             else
             {
