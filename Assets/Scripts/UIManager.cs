@@ -88,13 +88,14 @@ public class UIManager : MonoBehaviour, ITimeListener
         WinChecker.GotCorrectSequence += DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence += DisplayIncorrectMessage;
 
-        if (_levelNumber != null)
-        {
-            if (_isChallenge)
-                _levelNumber.text = "Challenge";
-            else
-                _levelNumber.text = $"{LevelText} {SceneManager.GetActiveScene().buildIndex}";
-        }
+        //Note (ALEC): I commented this out assuming that we will set this up in build.
+        // if (_levelNumber != null)
+        // {
+        //     if (_isChallenge)
+        //         _levelNumber.text = "Challenge";
+        //     else
+        //         _levelNumber.text = $"{LevelText} {SceneManager.GetActiveScene().buildIndex}";
+        // }
     }
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
