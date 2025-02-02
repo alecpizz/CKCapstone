@@ -14,7 +14,6 @@ using UnityEngine.Rendering;
 public class GameSpeedOptions : MonoBehaviour
 {
     private PlayerControls _playerControls;
-    private bool _speedUp;
 
     private int[] _speedModes = new int[2];
     private int _currentSpeed;
@@ -45,16 +44,12 @@ public class GameSpeedOptions : MonoBehaviour
         // Speed up if the game is at normal speed
         if (_currentSpeed == 0)
         {
-            Debug.Log("Speeding Up!");
-
             Time.timeScale = _speedUpRate;
             _currentSpeed++;
         }
         // Return to normal speed if the game is sped up
         else
         {
-            Debug.Log("Back to Normal!");
-
             Time.timeScale = 1f;
             _currentSpeed--;
         }
