@@ -46,9 +46,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""Game Speed"",
+                    ""name"": ""Toggle"",
                     ""type"": ""Button"",
-                    ""id"": ""6b4c0a9b-c270-43f0-a490-c3a558692430"",
+                    ""id"": ""9445f5bc-5bd8-4269-bbaf-316a6e881833"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -190,12 +190,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""3edbba48-2b71-43d2-80dd-d6c372e5f635"",
-                    ""path"": ""<Keyboard>/shift"",
+                    ""id"": ""860eccfc-d03a-4cf7-b50b-0ece6ea5c760"",
+                    ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Game Speed"",
+                    ""action"": ""Toggle"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -208,7 +208,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_InGame = asset.FindActionMap("InGame", throwIfNotFound: true);
         m_InGame_Interact = m_InGame.FindAction("Interact", throwIfNotFound: true);
         m_InGame_Movement = m_InGame.FindAction("Movement", throwIfNotFound: true);
-        m_InGame_GameSpeed = m_InGame.FindAction("Game Speed", throwIfNotFound: true);
+        m_InGame_Toggle = m_InGame.FindAction("Toggle", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -272,14 +272,14 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private List<IInGameActions> m_InGameActionsCallbackInterfaces = new List<IInGameActions>();
     private readonly InputAction m_InGame_Interact;
     private readonly InputAction m_InGame_Movement;
-    private readonly InputAction m_InGame_GameSpeed;
+    private readonly InputAction m_InGame_Toggle;
     public struct InGameActions
     {
         private @PlayerControls m_Wrapper;
         public InGameActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Interact => m_Wrapper.m_InGame_Interact;
         public InputAction @Movement => m_Wrapper.m_InGame_Movement;
-        public InputAction @GameSpeed => m_Wrapper.m_InGame_GameSpeed;
+        public InputAction @Toggle => m_Wrapper.m_InGame_Toggle;
         public InputActionMap Get() { return m_Wrapper.m_InGame; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -295,9 +295,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Movement.started += instance.OnMovement;
             @Movement.performed += instance.OnMovement;
             @Movement.canceled += instance.OnMovement;
-            @GameSpeed.started += instance.OnGameSpeed;
-            @GameSpeed.performed += instance.OnGameSpeed;
-            @GameSpeed.canceled += instance.OnGameSpeed;
+            @Toggle.started += instance.OnToggle;
+            @Toggle.performed += instance.OnToggle;
+            @Toggle.canceled += instance.OnToggle;
         }
 
         private void UnregisterCallbacks(IInGameActions instance)
@@ -308,9 +308,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Movement.started -= instance.OnMovement;
             @Movement.performed -= instance.OnMovement;
             @Movement.canceled -= instance.OnMovement;
-            @GameSpeed.started -= instance.OnGameSpeed;
-            @GameSpeed.performed -= instance.OnGameSpeed;
-            @GameSpeed.canceled -= instance.OnGameSpeed;
+            @Toggle.started -= instance.OnToggle;
+            @Toggle.performed -= instance.OnToggle;
+            @Toggle.canceled -= instance.OnToggle;
         }
 
         public void RemoveCallbacks(IInGameActions instance)
@@ -332,6 +332,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     {
         void OnInteract(InputAction.CallbackContext context);
         void OnMovement(InputAction.CallbackContext context);
-        void OnGameSpeed(InputAction.CallbackContext context);
+        void OnToggle(InputAction.CallbackContext context);
     }
 }
