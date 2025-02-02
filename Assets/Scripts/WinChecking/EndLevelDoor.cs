@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Nick Grinstead
-*    Contributors: David Galmines
+*    Contributors: David Galmines, Cole Stranczek
 *    Date Created: 9/24/24
 *    Description: Door unlocks when action on WinChecker is invoked.
 *       If door is unlocked and player walks into it, a new scene will load.
@@ -89,6 +89,12 @@ public class EndLevelDoor : MonoBehaviour
     {
         if (_isUnlocked && other.CompareTag("Player"))
         {
+            // Edit from Cole, this is to make sure the game speed is immediately normalized
+            // upon completing a level in case the player has the game sped up or slowed down
+            // so that any post-level isn't messed up. Just to make sure my game speed changes
+            // don't screw up anything.
+            Time.timeScale = 1f;
+
             PlayerMovement playerMovement;
             if (other.gameObject.TryGetComponent<PlayerMovement>(out playerMovement))
             {
