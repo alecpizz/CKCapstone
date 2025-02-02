@@ -134,15 +134,15 @@ public sealed class RoundManager : MonoBehaviour
         {
             return;
         }
-            Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>();
-            Vector3 dir = new Vector3(input.x, 0f, input.y);
-            _lastMovementInput = dir;
-            _movementRegistered = true;
-            _movementRegisteredTime = Time.unscaledTime;
+        Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>();
+        Vector3 dir = new Vector3(input.x, 0f, input.y);
+        _lastMovementInput = dir;
+        _movementRegistered = true;
+        _movementRegisteredTime = Time.unscaledTime;
 
-            if (_turnState != TurnState.None) return;
+        if (_turnState != TurnState.None) return;
 
-            PerformMovement();
+        PerformMovement();
     }
 
     /// <summary>
