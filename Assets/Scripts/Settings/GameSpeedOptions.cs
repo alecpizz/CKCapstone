@@ -8,6 +8,8 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using FMOD.Studio;
+using FMODUnity;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -17,6 +19,9 @@ public class GameSpeedOptions : MonoBehaviour
 
     private int[] _speedModes = new int[2];
     private int _currentSpeed;
+    
+    //Event instances for the player movement sounds
+    [SerializeField] private EventReference _walkSpeed;
 
     [Tooltip("What the timescale is changed to when the game is sped up." +
         "The defualt value is 1, so make sure this is higher than 1 to see an actual change.")]
@@ -46,12 +51,14 @@ public class GameSpeedOptions : MonoBehaviour
         {
             Time.timeScale = _speedUpRate;
             _currentSpeed++;
+            AudioManager.Instance.SpeedSound(_walkSpeed, _currentSpeed + 1);
         }
         // Return to normal speed if the game is sped up
         else
         {
             Time.timeScale = 1f;
             _currentSpeed--;
+            AudioManager.Instance.SpeedSound(_walkSpeed, _currentSpeed + 1);
         }
     }
 }

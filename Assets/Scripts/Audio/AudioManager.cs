@@ -143,10 +143,25 @@ public class AudioManager : MonoBehaviour
     /// <summary>
     /// Changes a sounds speed to go faster or slower if need be
     /// </summary>
-    /// <param name="audioEvent">the direct sound being effected</param>
+    /// <param name="reference">the direct sound being effected</param>
     /// <param name="frequency">the speed of what the sound</param>
-    public void SpeedSound(EventInstance audioEvent, float frequency)
+    public void SpeedSound(EventReference reference, float frequency)
     {
+        if (reference.IsNull)
+        {
+            Debug.LogWarning("NO REFERENCE SOUND!");
+        }
+        
+        EventInstance audioEvent =  RuntimeManager.CreateInstance(reference);
+        
+        if (AudioInstances.ContainsKey(reference))
+            AudioInstances.TryGetValue(reference, out audioEvent);
+        else
+        {
+            audioEvent = RuntimeManager.CreateInstance(reference);
+            AudioInstances.Add(reference, audioEvent);
+        }
+        
         if (audioEvent.isValid())
         {
             audioEvent.setPitch(frequency);
