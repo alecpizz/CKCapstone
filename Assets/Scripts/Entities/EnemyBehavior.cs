@@ -42,6 +42,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     public GameObject EntryObject { get => gameObject; }
 
+    private PlayerControls _input;
     private GameObject _player;
     private PlayerMovement _playerMove;
     [SerializeField] private GameObject _destinationMarker;
@@ -67,6 +68,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [SerializeField] private float _waitTime = 0.5f;
     [PlayaInfoBox("The floor for how fast the enemy can move.")]
     [SerializeField] private float _minMoveTime = 0.175f;
+
+    [SerializeField] private bool _currentToggle = true;
 
     [SerializeField] private float _rotationTime = 0.10f;
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
@@ -129,6 +132,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _player = PlayerMovement.Instance.gameObject;
         _playerMove = PlayerMovement.Instance;
 
+
         _destinationMarker.transform.SetParent(null);
 
         // Make sure enemies are always seen at the start
@@ -145,6 +149,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _destinationMarker.SetActive(false);
         UpdateDestinationMarker();
         DestinationPath();
+
+        _input = new PlayerControls();
+        _input.InGame.Enable();
+
+        _input.InGame.Toggle.performed += PathingToggle;
     }
 
     /// <summary>
@@ -172,6 +181,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         {
             TimeSignatureManager.Instance.UnregisterTimeListener(this);
         }
+        _input.InGame.Toggle.performed -= PathingToggle;
+        _input.InGame.Disable();
     }
 
     /// <summary>
@@ -180,16 +191,25 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// </summary>
     public void DestinationPath()
     {
-        if (CollidingWithRay)
+        if (!_currentToggle)
         {
-            _destPathVFX.SetActive(true);
-            _destinationMarker.SetActive(true);
+            return;
         }
-        else
-        {
-            _destPathVFX.SetActive(false);
-            _destinationMarker.SetActive(false);
-        }
+        _destPathVFX.SetActive(CollidingWithRay);
+        _destinationMarker.SetActive(CollidingWithRay);
+    }
+
+    /// <summary>
+    /// Toggles all enemy pathing on the current level when the player
+    /// presses spacebar.
+    /// </summary>
+    /// <param name="context"></param>
+    private void PathingToggle(InputAction.CallbackContext context)
+    {
+        _destPathVFX.SetActive(_currentToggle);
+        _destinationMarker.SetActive(_currentToggle);
+
+        _currentToggle = !_currentToggle;
     }
 
     /// <summary>
