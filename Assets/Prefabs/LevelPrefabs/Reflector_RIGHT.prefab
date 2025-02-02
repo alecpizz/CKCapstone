@@ -48,6 +48,7 @@ GameObject:
   - component: {fileID: 4784836867817577750}
   - component: {fileID: 3468946106816415631}
   - component: {fileID: 3686184718579247327}
+  - component: {fileID: 6904783521048427998}
   m_Layer: 7
   m_Name: Reflector_RIGHT
   m_TagString: Reflective
@@ -208,6 +209,21 @@ MonoBehaviour:
     type: 3}
   _enemyHitOffset: {x: 0, y: 0, z: 0}
   _wallCollisionEffectPrefab: {fileID: 0}
+--- !u!114 &6904783521048427998
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4783140714631010918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27d44a7cb5cd65049a512dcad8b2e00c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _mirror: {fileID: 4784836867817577750}
+  _rotationDuration: 0.2
+  _beamToggleDelay: 0.6
 --- !u!1001 &1858446099240012047
 PrefabInstance:
   m_ObjectHideFlags: 0
