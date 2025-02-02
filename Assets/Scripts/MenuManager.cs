@@ -7,6 +7,7 @@
 using FMODUnity;
 using System.Collections;
 using System.Collections.Generic;
+using SaintsField;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -19,6 +20,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject _optionsScreen;
     [SerializeField] private GameObject _confirmQuit;
     [SerializeField] private GameObject _mainMenu;
+    [Scene] [SerializeField] private int _firstLevelIndex = 1;
     [SerializeField] private GameObject _mainMenuFirst;
     [SerializeField] private GameObject _settingsMenuFirst;
     [SerializeField] private GameObject _mainMenuStart;
@@ -147,7 +149,7 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void StartGame()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(_firstLevelIndex);
     }
 
     /// <summary>
