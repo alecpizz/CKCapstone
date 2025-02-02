@@ -130,15 +130,19 @@ public sealed class RoundManager : MonoBehaviour
     /// <param name="obj"></param>
     private void RegisterMovementInput(InputAction.CallbackContext obj)
     {
-        Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>();
-        Vector3 dir = new Vector3(input.x, 0f, input.y);
-        _lastMovementInput = dir;
-        _movementRegistered = true;
-        _movementRegisteredTime = Time.unscaledTime;
+        if (_turnState != TurnState.None)
+        {
+            return;
+        }
+            Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>();
+            Vector3 dir = new Vector3(input.x, 0f, input.y);
+            _lastMovementInput = dir;
+            _movementRegistered = true;
+            _movementRegisteredTime = Time.unscaledTime;
 
-        if (_turnState != TurnState.None) return;
+            if (_turnState != TurnState.None) return;
 
-        PerformMovement();
+            PerformMovement();
     }
 
     /// <summary>
