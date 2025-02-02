@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Claire Noto
-*    Contributors: Claire Noto, Alec Pizziferro
+*    Contributors: Claire Noto, Alec Pizziferro, Mark Hanson
 *    Date Created: 09/19/2024
 *    Description: Audio Manager using FMOD. See FMOD documentation 
 *    for more info
@@ -24,19 +24,23 @@ public class AudioManager : MonoBehaviour
 
     [SerializeField] private EventReference _music = default;
     [SerializeField] [Range(0, 4)] private int _musicLayering = 0;
-
+    //The frequency that is later used as the speed of the sound or music
+    [SerializeField] [Range(0, 2)] private float _frequency = 1;
+    
+    
     private Dictionary<EventReference, EventInstance> AudioInstances;
 
     private EventInstance _key;
 
-    private float _frequency = 1f;
-    private bool _ignoreSeekSpeed = false;
-    private PARAMETER_ID _parameterId = default;
+    
 
     private void Awake()
     {
         if (Instance != null && Instance != this)
             Destroy(Instance.gameObject);
+        
+        //Set the music speed to an accessible slider on the script
+        _key.setParameterByName("Music Speed", _frequency);
         
         Instance = this;
         AudioInstances = new Dictionary<EventReference, EventInstance>();
@@ -50,17 +54,6 @@ public class AudioManager : MonoBehaviour
     void Update()
     {
         _key.setParameterByName("MusicLayering", _musicLayering);
-        _key.setPitch(_frequency);
-        if (Keyboard.current.leftShiftKey.wasPressedThisFrame)
-        {
-            _frequency -= 0.1f;
-            
-        }
-
-        if (Keyboard.current.rightShiftKey.wasPressedThisFrame)
-        {
-            _frequency += 0.1f;
-        }
     }
 
     /// <summary>
@@ -146,6 +139,25 @@ public class AudioManager : MonoBehaviour
             Debug.LogWarning("Null audioEvent. Please use a real event instance.");
         }
     }
+
+    /// <summary>
+    /// Changes a sounds speed to go faster or slower if need be
+    /// </summary>
+    /// <param name="audioEvent">the direct sound being effected</param>
+    /// <param name="frequency">the speed of what the sound</param>
+    public void SpeedSound(EventInstance audioEvent, float frequency)
+    {
+        if (audioEvent.isValid())
+        {
+            audioEvent.setPitch(frequency);
+        }
+        else
+        {
+            Debug.LogWarning("Null audioEvent. Please use a real event instance.");
+        }
+        
+    }
+    
 
     /// <summary>
     /// Changes the current volume instantly
