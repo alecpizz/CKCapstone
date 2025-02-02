@@ -6,6 +6,7 @@
 *******************************************************************/
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class SettingsTabs : MonoBehaviour
@@ -37,6 +38,14 @@ public class SettingsTabs : MonoBehaviour
     [SerializeField] private Button _howToPlayButton;
     [SerializeField] private Button _levelSelectButton;
 
+    [Header("Button Game Objects")]
+    [SerializeField] private GameObject _displayButtonGameObject;
+    [SerializeField] private GameObject _audioButtonGameObject;
+    [SerializeField] private GameObject _accessibilityButtonGameObject;
+    [SerializeField] private GameObject _gameplayButtonGameObject;
+    [SerializeField] private GameObject _howToPlayButtonGameObject;
+    [SerializeField] private GameObject _levelSelectButtonGameObject;
+
     private Dictionary<Tab, GameObject> _panels;
     private Dictionary<Tab, Button> _buttons;
 
@@ -66,11 +75,17 @@ public class SettingsTabs : MonoBehaviour
 
         // Assign button click events
         _displayButton.onClick.AddListener(() => OpenTab(Tab.Display));
+        _displayButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_displayButtonGameObject));
         _audioButton.onClick.AddListener(() => OpenTab(Tab.Audio));
+        _audioButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_audioButtonGameObject));
         _accessibilityButton.onClick.AddListener(() => OpenTab(Tab.Accessibility));
+        _accessibilityButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_accessibilityButtonGameObject));
         _gameplayButton.onClick.AddListener(() => OpenTab(Tab.Gameplay));
+        _gameplayButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_gameplayButtonGameObject));
         _howToPlayButton.onClick.AddListener(() => OpenTab(Tab.HowToPlay));
+        _howToPlayButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_howToPlayButtonGameObject));
         _levelSelectButton.onClick.AddListener(() => OpenTab(Tab.LevelSelect));
+        _levelSelectButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_levelSelectButtonGameObject));
 
         // Open the default tab at start
         OpenTab(Tab.Display);
