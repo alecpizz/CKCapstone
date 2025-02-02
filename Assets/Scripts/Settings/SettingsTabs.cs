@@ -76,6 +76,7 @@ public class SettingsTabs : MonoBehaviour
         // Assign button click events
         _displayButton.onClick.AddListener(() => OpenTab(Tab.Display));
         _displayButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_displayButtonGameObject));
+        _displayButton.onClick.AddListener(() => ChangeImage(Tab.Display));
         _audioButton.onClick.AddListener(() => OpenTab(Tab.Audio));
         _audioButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_audioButtonGameObject));
         _accessibilityButton.onClick.AddListener(() => OpenTab(Tab.Accessibility));
@@ -89,6 +90,19 @@ public class SettingsTabs : MonoBehaviour
 
         // Open the default tab at start
         OpenTab(Tab.Display);
+    }
+
+    private void ChangeImage(Tab tab)
+    {
+        foreach(var buttons in _buttons)
+        {
+            if(buttons.Key != tab)
+            {
+                buttons.Value.GetComponent<Image>().sprite = null;
+            }
+            //add tags to each gameobject and do && condition to check fro that specific object
+            //else if same conditional except changed tag
+        }
     }
 
     /// <summary>
