@@ -62,6 +62,10 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                     AssetDatabase.GetAssetPath(levelData.Chapters[0].GetStartingLevel.Scene));
                 field.SetValue(menuManager, index);
             }
+            else
+            {
+                Debug.LogError("Missing field _firstLevelIndex!");
+            }
         }
 
         EditorSceneManager.SaveScene(menuScene);
