@@ -343,6 +343,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8902230939137655927, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8902230939137655927, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
@@ -363,6 +368,12 @@ PrefabInstance:
 --- !u!1 &381800724 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 138618493934716620, guid: dbb0dd27c6fab3344aab4441094b0849,
+    type: 3}
+  m_PrefabInstance: {fileID: 381800723}
+  m_PrefabAsset: {fileID: 0}
+--- !u!20 &381800725 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 7663816770030828482, guid: dbb0dd27c6fab3344aab4441094b0849,
     type: 3}
   m_PrefabInstance: {fileID: 381800723}
   m_PrefabAsset: {fileID: 0}
@@ -1511,12 +1522,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 104df417cc52e654ba0e5d7b9070697e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isChallengeCutscene: 1
-  _isEndChapterCutscene: 0
+  _isChallengeCutscene: 0
+  _isEndChapterCutscene: 1
   _challengeCutsceneImages:
   - {fileID: 987237890}
-  _endChapterCutsceneVideo: {fileID: 0}
-  _cutsceneDuration: 54
+  _endChapterCutsceneVideo: {fileID: 1571041920}
+  _cutsceneDuration: 26
   _cutsceneAudio:
     Guid:
       Data1: -129330510
@@ -1524,7 +1535,7 @@ MonoBehaviour:
       Data3: -1739112038
       Data4: 592403969
     Path: event:/Chapter 2 End Cutscene
-  _loadingLevelIndex: 0
+  _loadingLevelIndex: 10
   _audioVolumeOverride: 5
 --- !u!4 &1312136891
 Transform:
@@ -1693,6 +1704,74 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
+--- !u!1 &1571041919
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1571041921}
+  - component: {fileID: 1571041920}
+  m_Layer: 0
+  m_Name: Video Player
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!328 &1571041920
+VideoPlayer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1571041919}
+  m_Enabled: 1
+  m_VideoClip: {fileID: 32900000, guid: 95be340f3fb619346bac3d77380eaed1, type: 3}
+  m_TargetCameraAlpha: 1
+  m_TargetCamera3DLayout: 0
+  m_TargetCamera: {fileID: 381800725}
+  m_TargetTexture: {fileID: 0}
+  m_TimeReference: 0
+  m_TargetMaterialRenderer: {fileID: 0}
+  m_TargetMaterialProperty: <noninit>
+  m_RenderMode: 1
+  m_AspectRatio: 3
+  m_DataSource: 0
+  m_TimeUpdateMode: 2
+  m_PlaybackSpeed: 1
+  m_AudioOutputMode: 0
+  m_TargetAudioSources:
+  - {fileID: 0}
+  m_DirectAudioVolumes:
+  - 1
+  m_Url: 
+  m_EnabledAudioTracks: 01
+  m_DirectAudioMutes: 00
+  m_ControlledAudioTrackCount: 1
+  m_PlayOnAwake: 0
+  m_SkipOnDrop: 0
+  m_Looping: 0
+  m_WaitForFirstFrame: 1
+  m_FrameReadyEventEnabled: 0
+  m_VideoShaders: []
+--- !u!4 &1571041921
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1571041919}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 15.045567, y: 0.5462441, z: 14.867503}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1582450840
 GameObject:
   m_ObjectHideFlags: 0
@@ -1895,3 +1974,4 @@ SceneRoots:
   - {fileID: 1922030914}
   - {fileID: 1312136891}
   - {fileID: 1273226983}
+  - {fileID: 1571041921}
