@@ -14,6 +14,11 @@ using SaintsField.Playa;
 
 public class VignetteController : MonoBehaviour, ITurnListener
 {
+    [SerializeField] private Color _vignetteColor = Color.red;
+
+    [Space]
+
+    [InfoBox("Movement Vignette Settings")]
     [SerializeField] private float _vignetteFadeInTime = 0.2f;
     [SerializeField] private Ease _vignetteStartEasing = Ease.InQuad;
 
@@ -27,7 +32,15 @@ public class VignetteController : MonoBehaviour, ITurnListener
 
     [SerializeField] private float _vignetteIntensity = 0.4f;
     [SerializeField] private float _vignetteSmoothness = 0.1f;
-    [SerializeField] private Color _vignetteColor = Color.red;
+
+    [Space]
+
+    [InfoBox("Interaction Vignette Settings")]
+    [SerializeField] private float _interactableFadeInTime = 0.4f;
+    [SerializeField] private Ease _interactableStartEasing = Ease.InQuad;
+
+    [SerializeField] private float _interactableFadeOutTime = 0.4f;
+    [SerializeField] private Ease _interactableEndEasing = Ease.OutQuad;
 
     [SerializeField] private float _interactableVignetteIntensity = 0.7f;
     [SerializeField] private float _interactableVignetteSmoothness = 0.9f;
@@ -120,6 +133,11 @@ public class VignetteController : MonoBehaviour, ITurnListener
         RoundManager.Instance.CompleteTurn(this);
     }
 
+    /// <summary>
+    /// Invoked to toggle the vignette for interacting with story objects
+    /// on or off
+    /// </summary>
+    /// <param name="isActive">True if the vignette should toggle on</param>
     private void ToggleInteractableVignette(bool isActive)
     {
         if (isActive)
@@ -127,25 +145,25 @@ public class VignetteController : MonoBehaviour, ITurnListener
             float currentIntensity = _vignette.intensity.value;
 
             Sequence.Create(1).Group(
-                Tween.Custom(currentIntensity, _interactableVignetteIntensity, _vignetteFadeInTime,
+                Tween.Custom(currentIntensity, _interactableVignetteIntensity, _interactableFadeInTime,
                 newIntensity => _vignette.intensity.value = newIntensity,
-                _vignetteStartEasing, 1, CycleMode.Restart,
+                _interactableStartEasing, 1, CycleMode.Restart,
                 0.0f, 0.2f)).Group(
-                Tween.Custom(currentIntensity, _interactableVignetteSmoothness, _vignetteFadeInTime,
+                Tween.Custom(currentIntensity, _interactableVignetteSmoothness, _interactableFadeInTime,
                 newSmoothness => _vignette.smoothness.value = newSmoothness,
-                _vignetteStartEasing, 1, CycleMode.Restart,
+                _interactableStartEasing, 1, CycleMode.Restart,
                 0.0f, 0.2f));
         }
         else
         {
             Sequence.Create(1).Group(
-                Tween.Custom(_interactableVignetteIntensity, 0f, _vignetteFadeInTime,
+                Tween.Custom(_interactableVignetteIntensity, 0f, _interactableFadeOutTime,
                 newIntensity => _vignette.intensity.value = newIntensity,
-                _vignetteStartEasing, 1, CycleMode.Restart,
+                _interactableEndEasing, 1, CycleMode.Restart,
                 0.0f, 0.2f)).Group(
-                Tween.Custom(_interactableVignetteSmoothness, 0f, _vignetteFadeInTime,
+                Tween.Custom(_interactableVignetteSmoothness, 0f, _interactableFadeOutTime,
                 newSmoothness => _vignette.smoothness.value = newSmoothness,
-                _vignetteStartEasing, 1, CycleMode.Restart,
+                _interactableEndEasing, 1, CycleMode.Restart,
                 0.0f, 0.2f));
         }
     }
