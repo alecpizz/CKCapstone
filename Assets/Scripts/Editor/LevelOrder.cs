@@ -17,7 +17,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "LevelOrder", menuName = "ScriptableObjects/Level Order", order = 0)]
 public class LevelOrder : ScriptableSingleton<LevelOrder>
 {
-    [field: SerializeField] public SceneAsset MainMenuScene { get; private set; }
+    [field: SerializeField, SepTitle("Main Menu", EColor.Aqua), BelowSeparator(EColor.Aqua)]
+    public SceneAsset MainMenuScene { get; private set; }
 
     /// <summary>
     /// A class representing a chapter.
@@ -95,7 +96,8 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
 
     [field: SerializeField, ListDrawerSettings(searchable: true, 2)]
     public List<Chapter> Chapters { get; private set; } = new();
-    [field: SerializeField] public SceneAsset CreditsScene { get; private set; }
+    [field: SerializeField, SepTitle("Credits Scene", EColor.Magenta), BelowSeparator(EColor.Magenta)] 
+    public SceneAsset CreditsScene { get; private set; }
 
     [PlayaInfoBox("Chapter Creation", EMessageType.Info)] [SerializeField]
     private string _chapterName = "Chapter CHANGEME";
