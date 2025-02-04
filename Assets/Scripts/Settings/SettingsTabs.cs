@@ -46,6 +46,14 @@ public class SettingsTabs : MonoBehaviour
     [SerializeField] private GameObject _howToPlayButtonGameObject;
     [SerializeField] private GameObject _levelSelectButtonGameObject;
 
+    [Header("Original Button Sprites")]
+    [SerializeField] private Sprite _ogDisplayImage;
+    [SerializeField] private Sprite _ogAudioImage;
+    [SerializeField] private Sprite _ogAccessibilityImage;
+    [SerializeField] private Sprite _ogGameplayImage;
+    [SerializeField] private Sprite _ogHowToPlayImage;
+    [SerializeField] private Sprite _ogLevelSelectImage;
+
     [Header("Alternate Button Sprites")]
     [SerializeField] private Sprite _displayImage;
     [SerializeField] private Sprite _audioImage;
@@ -175,6 +183,31 @@ public class SettingsTabs : MonoBehaviour
     {
         foreach (var button in _buttons)
         {
+            if(button.Value.tag == "display")
+            {
+                button.Value.GetComponent<Image>().sprite = _ogDisplayImage;
+
+            }else if(button.Value.tag == "audio")
+            {
+                button.Value.GetComponent<Image>().sprite = _ogAudioImage;
+
+            }else if(button.Value.tag == "accessibility")
+            {
+                button.Value.GetComponent<Image>().sprite = _ogAccessibilityImage;
+
+            }else if(button.Value.tag == "gameplay")
+            {
+                button.Value.GetComponent<Image>().sprite = _ogGameplayImage;
+
+            }else if(button.Value.tag == "how to")
+            {
+                button.Value.GetComponent<Image>().sprite = _ogHowToPlayImage;
+
+            }else if(button.Value.tag == "level")
+            {
+                button.Value.GetComponent<Image>().sprite = _ogLevelSelectImage;
+            }
+
             button.Value.interactable = button.Key != tab;  // Disable the button for the active tab
         }
     }

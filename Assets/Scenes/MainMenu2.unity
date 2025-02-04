@@ -1928,6 +1928,7 @@ MonoBehaviour:
   _optionsScreen: {fileID: 2839288372686986014}
   _confirmQuit: {fileID: 665595967}
   _mainMenu: {fileID: 1043149804}
+  _firstLevelIndex: 1
   _mainMenuFirst: {fileID: 891552278}
   _settingsMenuFirst: {fileID: 2081803080}
   _mainMenuStart: {fileID: 891552278}
@@ -6933,7 +6934,7 @@ GameObject:
   - component: {fileID: 1182807999476846742}
   m_Layer: 5
   m_Name: Audio Panel
-  m_TagString: Untagged
+  m_TagString: audio
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7537,6 +7538,21 @@ MonoBehaviour:
   _gameplayButtonGameObject: {fileID: 676639246963836347}
   _howToPlayButtonGameObject: {fileID: 7256998647206498699}
   _levelSelectButtonGameObject: {fileID: 3676626245744688516}
+  _ogDisplayImage: {fileID: 21300000, guid: c7a7a4c7ac7876e49a7919317f8a5aaf, type: 3}
+  _ogAudioImage: {fileID: 21300000, guid: cbbab6d4b82d88d41a6f3dee91325e8d, type: 3}
+  _ogAccessibilityImage: {fileID: 21300000, guid: 52b588f286aab8b46b9296f2a67d21fd,
+    type: 3}
+  _ogGameplayImage: {fileID: 21300000, guid: e027bd50e82d9b54f975163cf18b563b, type: 3}
+  _ogHowToPlayImage: {fileID: 21300000, guid: 970568f386841434db56f410e419af5a, type: 3}
+  _ogLevelSelectImage: {fileID: 21300000, guid: 6cd55b29c89995b4cba7866079ca2e6f,
+    type: 3}
+  _displayImage: {fileID: 21300000, guid: 49c0879a91cf1b24a93c0d71f40e06d2, type: 3}
+  _audioImage: {fileID: 21300000, guid: dded684224f7fe247b12f3a1ac42536f, type: 3}
+  _accessibilityImage: {fileID: 21300000, guid: 353edd3052cb35c4f8b4088e1849a012,
+    type: 3}
+  _gameplayImage: {fileID: 21300000, guid: 27a2365aa12bee24190578cc6d159a63, type: 3}
+  _howToPlayImage: {fileID: 21300000, guid: 5f5e1df332ed1e74d9d182c9854d0ff2, type: 3}
+  _levelSelectImage: {fileID: 21300000, guid: 439f89ef29f990b4ebdfa63fc7663489, type: 3}
 --- !u!114 &4022178621712347168
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7922,7 +7938,7 @@ GameObject:
   - component: {fileID: 5473066495851402022}
   m_Layer: 5
   m_Name: LevelSelect Panel
-  m_TagString: Untagged
+  m_TagString: level
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8202,7 +8218,7 @@ GameObject:
   - component: {fileID: 8856245352184532735}
   m_Layer: 5
   m_Name: Accessibility Panel
-  m_TagString: Untagged
+  m_TagString: accessibility
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9061,7 +9077,7 @@ GameObject:
   - component: {fileID: 4187909319219276022}
   m_Layer: 5
   m_Name: Gameplay Panel
-  m_TagString: Untagged
+  m_TagString: gameplay
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -10148,7 +10164,7 @@ GameObject:
   - component: {fileID: 8032621060219126226}
   m_Layer: 5
   m_Name: HowtoPlay Panel
-  m_TagString: Untagged
+  m_TagString: how to
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -12302,7 +12318,7 @@ GameObject:
   - component: {fileID: 4279201008950183586}
   m_Layer: 5
   m_Name: Display Panel
-  m_TagString: Untagged
+  m_TagString: display
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
