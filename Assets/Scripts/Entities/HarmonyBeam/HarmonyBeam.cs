@@ -119,7 +119,6 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     public void BeginTurn(Vector3 direction)
     {
         ScanForObjects();
-        RoundManager.Instance.CompleteTurn(this);
     }
 
     /// <summary>
@@ -195,6 +194,11 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
         UpdateWallEffect(hitPoint.HasValue, hitPoint);
         _prevHitEntities.Clear();
         _hitEntities.ForEach(entity => _prevHitEntities.Add(entity));
+
+        if (RoundManager.Instance.IsHarmonyTurn)
+        {
+            RoundManager.Instance.CompleteTurn(this);
+        }
     }
 
     /// <summary>
