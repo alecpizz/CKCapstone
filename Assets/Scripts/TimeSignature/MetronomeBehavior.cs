@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Nick Grinstead
-*    Contributors: David Galmines, Trinity Hutson
+*    Contributors: David Galmines, Trinity Hutson, Mitchell Young
 *    Date Created: 10/28/24
 *    Description: Checks for collisions with the player and then 
 *       calls the TimeSignatureManager to update the time signature.
@@ -46,11 +46,14 @@ public class MetronomeBehavior : MonoBehaviour
     private bool _isSlow = true;
     private static readonly int GoFaster = Animator.StringToHash("GoFaster");
 
+    private GameObject _player;
+
     /// <summary>
     /// Keeps the particle effects from playing right away.
     /// </summary>
     private void Awake()
     {
+        _player = PlayerMovement.Instance.gameObject;
         _contactIndicator.Pause();
         //_anim = GetComponentInParent<Animator>();
 
@@ -140,6 +143,34 @@ public class MetronomeBehavior : MonoBehaviour
             if (other.gameObject.TryGetComponent<PlayerMovement>(out playerMovement))
             {
                 playerMovement.ForceTurnEnd();
+            }
+        }
+
+        if (other.gameObject.CompareTag("Enemy") || other.gameObject.CompareTag("SonEnemy"))
+        {
+            ActivateMetronome();
+
+            if (_isThisTheTutorial)
+            {
+                StopAllCoroutines();
+                StartCoroutine("HUDIndicator");
+            }
+
+            _contactIndicator.Play();
+            _HUDEffect.SetActive(false);
+
+            _player.GetComponent<PlayerMovement>().ForceTurnEnd();
+
+            EnemyBehavior enemyBehavior;
+            if (other.gameObject.TryGetComponent<EnemyBehavior>(out enemyBehavior))
+            {
+                enemyBehavior.ForceTurnEnd();
+            }
+
+            MirrorAndCopyBehavior mirrorAndCopyBehavior;
+            if (other.gameObject.TryGetComponent<MirrorAndCopyBehavior>(out mirrorAndCopyBehavior))
+            {
+                mirrorAndCopyBehavior.ForceTurnEnd();
             }
         }
     }
