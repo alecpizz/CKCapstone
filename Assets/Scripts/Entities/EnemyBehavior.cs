@@ -113,9 +113,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     private Rigidbody _rb;
 
-    /// <summary>
-    /// Prime tween configuration
-    /// </summary>
     private void Awake()
     {
         PrimeTweenConfig.warnEndValueEqualsCurrent = false;
@@ -316,7 +313,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                             GridBase.Instance.UpdateEntry(this);
                         }).ToYieldInstruction();
 
-                    HarmonyBeam.TriggerHarmonyScan.Invoke();
                     AudioManager.Instance.PlaySound(_enemyMove);
                     GridBase.Instance.UpdateEntry(this);
                 }
@@ -458,10 +454,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _currentLinePoint = 0;
     }
 
-    /// <summary>
-    /// Receives a new movement time from the metronome
-    /// </summary>
-    /// <param name="newTimeSignature">The new timing for enemy movement</param>
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
     {
         _enemyMovementTime = newTimeSignature.y;
@@ -471,11 +463,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             _enemyMovementTime = 1;
         }
     }
-
-    /// <summary>
-    /// Checks if the player dies on collision
-    /// </summary>
-    /// <param name="collision"></param>
     private void OnCollisionEnter(Collision collision)
     {
         if (!DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("Player"))

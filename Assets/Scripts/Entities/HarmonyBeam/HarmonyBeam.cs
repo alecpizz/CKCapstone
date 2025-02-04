@@ -22,7 +22,7 @@ using UnityEditor;
 /// </summary>
 public class HarmonyBeam : MonoBehaviour, ITurnListener
 {
-    public TurnState TurnState => TurnState.Harmony;
+    public TurnState TurnState => TurnState.World;
     [SerializeField] private EventReference _harmonySound = default;
     [SerializeField] private EventReference _enemyHarmonization = default;
     [Space] [SerializeField] private bool _beamActive = true;
@@ -42,15 +42,12 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     private EventInstance _beamInstance;
     private EventInstance _enemyGrabbedInstance;
 
-    public static Action TriggerHarmonyScan;
 
     /// <summary>
     /// Starts sound playback and instantiates a wall effect if possible.
     /// </summary>
     private void Start()
     {
-        TriggerHarmonyScan += ScanForObjects;
-
         _beamInstance = AudioManager.Instance.PlaySound(_harmonySound);
         if (_wallCollisionEffectPrefab != null)
         {
@@ -74,9 +71,15 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     /// </summary>
     private void OnDisable()
     {
-        TriggerHarmonyScan -= ScanForObjects;
-
         RoundManager.Instance.RegisterListener(this);
+    }
+
+    /// <summary>
+    /// Periodically scans for objects in order to detect moving enemies
+    /// </summary>
+    private void FixedUpdate()
+    {
+        ScanForObjects();
     }
 
     /// <summary>
@@ -98,6 +101,8 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
             {
                 particleSystem.Play();
             }
+
+            _prevHitEntities.Clear();
         }
         else
         {
@@ -116,7 +121,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     /// <param name="direction">Keyboard input direction.</param>
     public void BeginTurn(Vector3 direction)
     {
-        ScanForObjects();
+        StartCoroutine(WaitForPotentialBlockers());
     }
 
     /// <summary>
@@ -192,11 +197,6 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
         UpdateWallEffect(hitPoint.HasValue, hitPoint);
         _prevHitEntities.Clear();
         _hitEntities.ForEach(entity => _prevHitEntities.Add(entity));
-
-        if (RoundManager.Instance.IsHarmonyTurn)
-        {
-            RoundManager.Instance.CompleteTurn(this);
-        }
     }
 
     /// <summary>
@@ -207,6 +207,21 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
         ScanForObjects();
         RoundManager.Instance.CompleteTurn(this);
     }
+
+    /// <summary>
+    /// Stinky coroutine to wait for anything else to move just in case.
+    /// TODO: Remove this!
+    /// </summary>
+    /// <returns>null</returns>
+    private IEnumerator WaitForPotentialBlockers()
+    {
+        // we shouldn't have to wait, but the moving walls/platforms aren't turn based currently 
+        yield return new WaitForSeconds(_beamDetectionWaitTime);
+        ScanForObjects();
+
+        RoundManager.Instance.CompleteTurn(this);
+    }
+
 
     /// <summary>
     /// Handles the visual effect when the beam hits a wall.

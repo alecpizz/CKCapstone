@@ -50,17 +50,12 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
 
     private Rigidbody _rb;
 
-    /// <summary>
-    /// Prime tween configuration
-    /// </summary>
     private void Awake()
     {
         PrimeTweenConfig.warnEndValueEqualsCurrent = false;
     }
 
-    /// <summary>
-    /// Registers to the time signature and finds player
-    /// </summary>
+    // Start is called before the first frame update
     void Start()
     {
         GridBase.Instance.AddEntry(this);
@@ -73,9 +68,6 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
             TimeSignatureManager.Instance.RegisterTimeListener(this);
     }
 
-    /// <summary>
-    /// Unregisters from round manager
-    /// </summary>
     private void OnEnable()
     {
         if (RoundManager.Instance != null)
@@ -151,8 +143,6 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                         {
                             GridBase.Instance.UpdateEntry(this);
                         }).ToYieldInstruction();
-
-                    HarmonyBeam.TriggerHarmonyScan.Invoke();
                 }
                 else
                 {
@@ -176,10 +166,6 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
             _movementTiming = 1;
     }
 
-    /// <summary>
-    /// Checks to see if player dies on collision
-    /// </summary>
-    /// <param name="collision"></param>
     private void OnCollisionEnter(Collision collision)
     {
         if (!DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("Player"))
@@ -192,18 +178,11 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
 
     public TurnState TurnState => TurnState.Enemy;
 
-    /// <summary>
-    /// Starts the enemy's movement coroutine
-    /// </summary>
-    /// <param name="direction">The direction the player moved</param>
     public void BeginTurn(Vector3 direction)
     {
         StartCoroutine(MoveEnemy(direction));
     }
 
-    /// <summary>
-    /// Forcibly ends the enemy's turn
-    /// </summary>
     public void ForceTurnEnd()
     {
         StopAllCoroutines();
@@ -235,9 +214,6 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
 
     public bool HitWrapAround { get => sonEnemy; }
 
-    /// <summary>
-    /// Called to center the enemy on its grid space
-    /// </summary>
     public void SnapToGridSpace()
     {
         Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
