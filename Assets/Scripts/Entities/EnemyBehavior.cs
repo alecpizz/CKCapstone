@@ -1,10 +1,10 @@
 /******************************************************************
-*    Author: Cole Stranczek
-*    Contributors: Cole Stranczek, Mitchell Young, Nick Grinstead, Alec Pizziferro
-*    Date Created: 10/3/24
-*    Description: Script that handles the behavior of the enemy,
-*    from movement to causing a failstate with the player
-*******************************************************************/
+ *    Author: Cole Stranczek
+ *    Contributors: Cole Stranczek, Mitchell Young, Nick Grinstead, Alec Pizziferro
+ *    Date Created: 10/3/24
+ *    Description: Script that handles the behavior of the enemy,
+ *    from movement to causing a failstate with the player
+ *******************************************************************/
 
 using System;
 using System.Collections;
@@ -17,45 +17,46 @@ using Unity.VisualScripting;
 using FMODUnity;
 using SaintsField.Playa;
 
-public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener, 
+public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     ITurnListener, IHarmonyBeamEntity
 {
-    public bool IsTransparent 
-    { 
-        get => false; 
-    }
-    public bool BlocksHarmonyBeam 
-    { 
-        get => false; 
-    }
-    public Vector3 moveInDirection 
-    { 
-        get; private set; 
-    }
-    public Vector3 Position 
-    { 
-        get => transform.position; 
+    public bool IsTransparent
+    {
+        get => false;
     }
 
-    [SerializeField]
-    private Vector3 _positionOffset;
+    public bool BlocksHarmonyBeam
+    {
+        get => false;
+    }
 
-    public GameObject EntryObject { get => gameObject; }
+    public Vector3 moveInDirection { get; private set; }
+
+    public Vector3 Position
+    {
+        get => transform.position;
+    }
+
+    [SerializeField] private Vector3 _positionOffset;
+
+    public GameObject EntryObject
+    {
+        get => gameObject;
+    }
 
     private PlayerControls _input;
     private GameObject _player;
     private PlayerMovement _playerMove;
     [SerializeField] private GameObject _destinationMarker;
     [SerializeField] private GameObject _destPathVFX;
+    private bool _atFirstPoint;
 
-    [FormerlySerializedAs("_atStart")]
-    [SerializeField] private bool _atFirstPoint;
     [SerializeField] private int _currentPoint = 0;
     private int _currentPointIndex = 0;
 
     //Destination object values
-    [FormerlySerializedAs("_destAtStart")]
-    [SerializeField] private bool _destAtFirstPoint;
+    private bool _destAtFirstPoint = true;
+
     [SerializeField] private int _destCurrentPoint = 0;
     public bool CollidingWithRay = false;
 
@@ -64,10 +65,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     //Wait time between enemy moving each individual tile while on path to next destination
     [PlayaInfoBox("Time for the enemy to move between each tile. " +
-        "\n This will be divided by the number of spaces it will move.")]
-    [SerializeField] private float _waitTime = 0.5f;
-    [PlayaInfoBox("The floor for how fast the enemy can move.")]
-    [SerializeField] private float _minMoveTime = 0.175f;
+                  "\n This will be divided by the number of spaces it will move.")]
+    [SerializeField]
+    private float _waitTime = 0.5f;
+
+    [PlayaInfoBox("The floor for how fast the enemy can move.")] [SerializeField]
+    private float _minMoveTime = 0.175f;
 
     [SerializeField] private bool _currentToggle = true;
 
@@ -76,9 +79,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [SerializeField] private Ease _movementEase = Ease.OutBack;
 
     //List of movePoint structs that contain a direction enum and a tiles to move integer.
-    public enum Direction 
-    { 
-        Up, Down, Left, Right 
+    public enum Direction
+    {
+        Up,
+        Down,
+        Left,
+        Right
     }
 
     [System.Serializable]
@@ -87,6 +93,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         public Direction direction;
         public int tilesToMove;
     }
+
     [SerializeField] private List<movePoints> _movePoints;
 
     //Check true in the inspector if the enemy is moving in
@@ -98,10 +105,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [SerializeField] private int _currentLinePoint = 0;
     [SerializeField] private LineRenderer _vfxLine;
 
-    public bool EnemyFrozen 
-    { 
-        get; private set; 
-    } 
+    public bool EnemyFrozen { get; private set; }
         = false;
 
     // Event reference for the enemy movement sound
@@ -177,10 +181,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         {
             RoundManager.Instance.UnRegisterListener(this);
         }
+
         if (TimeSignatureManager.Instance != null)
         {
             TimeSignatureManager.Instance.UnregisterTimeListener(this);
         }
+
         _input.InGame.Toggle.performed -= PathingToggle;
         _input.InGame.Disable();
     }
@@ -195,6 +201,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         {
             return;
         }
+
         _destPathVFX.SetActive(CollidingWithRay);
         _destinationMarker.SetActive(CollidingWithRay);
     }
@@ -248,9 +255,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         // and if the enemy is currently frozen by the harmony beam
         if (!EnemyFrozen)
         {
-
             for (int i = 0; i < _enemyMovementTime; ++i)
-            {           
+            {
                 //Looks at current point the the struct object list to pull the current direction
                 //(enum) and amount of tiles to move in direction (int)
                 var point = _movePoints[_currentPoint];
@@ -272,7 +278,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                         moveInDirection);
                     var entries = GridBase.Instance.GetCellEntries(move);
                     bool breakLoop = false;
-                    float movementTime = Mathf.Clamp((_waitTime / pointTiles) / _enemyMovementTime, 
+                    float movementTime = Mathf.Clamp((_waitTime / pointTiles) / _enemyMovementTime,
                         _minMoveTime, float.MaxValue);
 
                     //If the next cell contains an object that is not the player then the loop breaks
@@ -285,6 +291,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                             breakLoop = false;
                             break;
                         }
+
                         if (entry.EntryObject == _player)
                         {
                             _rb.isKinematic = false;
@@ -303,15 +310,16 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                         break;
                     }
 
-                    Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveInDirection), duration: _rotationTime,
+                    Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveInDirection),
+                        duration: _rotationTime,
                         ease: _rotationEase);
 
                     yield return Tween.Position(transform,
-                        move + _positionOffset, duration: movementTime, 
-                        ease: _movementEase).OnUpdate<EnemyBehavior>(target: this, (target, tween) =>
-                        {
-                            GridBase.Instance.UpdateEntry(this);
-                        }).ToYieldInstruction();
+                            move + _positionOffset, duration: movementTime,
+                            ease: _movementEase)
+                        .OnUpdate<EnemyBehavior>(target: this,
+                            (target, tween) => { GridBase.Instance.UpdateEntry(this); })
+                        .ToYieldInstruction();
 
                     AudioManager.Instance.PlaySound(_enemyMove);
                     GridBase.Instance.UpdateEntry(this);
@@ -353,10 +361,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                     }
                 }
             }
+
             UpdateDestinationMarker();
         }
 
-        Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveInDirection), 
+        Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveInDirection),
             duration: _rotationTime, ease: _rotationEase);
 
         GridBase.Instance.UpdateEntry(this);
@@ -438,7 +447,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 {
                     linePos = move;
                     linePos.y = _lineYPosOffset;
-                    
+
                     _vfxLine.SetPosition(_currentLinePoint + 1, linePos);
                     _currentLinePoint++;
                 }
@@ -463,6 +472,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             _enemyMovementTime = 1;
         }
     }
+
     private void OnCollisionEnter(Collision collision)
     {
         if (!DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("Player"))
@@ -474,6 +484,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     }
 
     public TurnState TurnState => TurnState.Enemy;
+
     /// <summary>
     /// Called by RoundManager to start this entity's turn
     /// </summary>
@@ -492,8 +503,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         GridBase.Instance.UpdateEntry(this);
         RoundManager.Instance.CompleteTurn(this);
     }
-    
-    public bool AllowLaserPassThrough { get => true; }
+
+    public bool AllowLaserPassThrough
+    {
+        get => true;
+    }
+
     /// <summary>
     /// Freezes the enemy.
     /// </summary>
@@ -513,9 +528,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         EnemyFrozen = false;
     }
 
-    public bool HitWrapAround 
-    { 
-        get => sonEnemy; 
+    public bool HitWrapAround
+    {
+        get => sonEnemy;
     }
 
     /// <summary>
