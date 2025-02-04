@@ -98,8 +98,6 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
             {
                 particleSystem.Play();
             }
-
-            _prevHitEntities.Clear();
         }
         else
         {
