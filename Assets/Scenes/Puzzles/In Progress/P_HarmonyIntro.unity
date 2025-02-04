@@ -7775,6 +7775,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 714330035}
   - {fileID: 968796148}
   - {fileID: 787159841}
   - {fileID: 1391887279}
@@ -7796,7 +7797,6 @@ Transform:
   - {fileID: 1042477125}
   - {fileID: 110753121}
   - {fileID: 71240}
-  - {fileID: 714330035}
   - {fileID: 1710039054}
   - {fileID: 124792283}
   - {fileID: 2035969108}
@@ -12239,6 +12239,11 @@ PrefabInstance:
     - target: {fileID: 8902230939137655927, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8902230939137655927, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8902230939137655927, guid: dbb0dd27c6fab3344aab4441094b0849,
@@ -23553,6 +23558,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Beam Cube (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2179937955725682169, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
+        type: 3}
+      propertyPath: _beamToggleDelay
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2179937955725682169, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
+        type: 3}
+      propertyPath: _rotationDuration
+      value: 0.8
+      objectReference: {fileID: 0}
     - target: {fileID: 8997804269895301853, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -23610,42 +23625,32 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1621863209}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 47317306802859145, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 655929379}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a5c0f4e94bc8d984bbfcbcf006755d9a, type: 3}
---- !u!1 &655929377 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 47317306802859145, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
-    type: 3}
-  m_PrefabInstance: {fileID: 655929376}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &655929378 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5094846716672399154, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
     type: 3}
   m_PrefabInstance: {fileID: 655929376}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &655929379
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 655929377}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0640cc4e3ba172479b84befa667aa2c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &655929385 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8997804269895301853, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
     type: 3}
   m_PrefabInstance: {fileID: 655929376}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &655929386 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2179937955725682169, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
+    type: 3}
+  m_PrefabInstance: {fileID: 655929376}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0640cc4e3ba172479b84befa667aa2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &661032408
 GameObject:
   m_ObjectHideFlags: 0
@@ -25801,6 +25806,11 @@ PrefabInstance:
     - target: {fileID: 3444983967883238341, guid: 481ef263620677f4da33125bd7de384d,
         type: 3}
       propertyPath: _isTransparent
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444983967883238341, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: _blocksHarmonyBeam
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
@@ -38539,6 +38549,11 @@ PrefabInstance:
     - target: {fileID: 3444983967883238341, guid: 481ef263620677f4da33125bd7de384d,
         type: 3}
       propertyPath: _isTransparent
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444983967883238341, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: _blocksHarmonyBeam
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
@@ -51751,6 +51766,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Disable Tile Wall (16)
       objectReference: {fileID: 0}
+    - target: {fileID: 3444983967883238341, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: _blocksHarmonyBeam
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -59259,6 +59279,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Beam Cube
       objectReference: {fileID: 0}
+    - target: {fileID: 2179937955725682169, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
+        type: 3}
+      propertyPath: _beamToggleDelay
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2179937955725682169, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
+        type: 3}
+      propertyPath: _rotationDuration
+      value: 0.8
+      objectReference: {fileID: 0}
     - target: {fileID: 8997804269895301853, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -59316,42 +59346,32 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 38833838}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 47317306802859145, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1616229875}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a5c0f4e94bc8d984bbfcbcf006755d9a, type: 3}
---- !u!1 &1616229873 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 47317306802859145, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
-    type: 3}
-  m_PrefabInstance: {fileID: 1616229872}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1616229874 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5094846716672399154, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
     type: 3}
   m_PrefabInstance: {fileID: 1616229872}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1616229875
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1616229873}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0640cc4e3ba172479b84befa667aa2c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &1616229881 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8997804269895301853, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
     type: 3}
   m_PrefabInstance: {fileID: 1616229872}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1616229882 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2179937955725682169, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1616229872}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0640cc4e3ba172479b84befa667aa2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1621660775
 GameObject:
   m_ObjectHideFlags: 0
@@ -68981,12 +69001,12 @@ PrefabInstance:
         type: 3}
       propertyPath: _affectedBeams.Array.data[0]
       value: 
-      objectReference: {fileID: 1616229875}
+      objectReference: {fileID: 1616229882}
     - target: {fileID: 2406617457571976407, guid: 62a1c1e43ce298e4199ef08e39e09f4f,
         type: 3}
       propertyPath: _affectedBeams.Array.data[1]
       value: 
-      objectReference: {fileID: 655929379}
+      objectReference: {fileID: 655929386}
     - target: {fileID: 2406617457571976407, guid: 62a1c1e43ce298e4199ef08e39e09f4f,
         type: 3}
       propertyPath: _affectedBeams.Array.data[2]
