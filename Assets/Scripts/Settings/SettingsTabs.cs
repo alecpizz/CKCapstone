@@ -65,6 +65,10 @@ public class SettingsTabs : MonoBehaviour
     private Dictionary<Tab, GameObject> _panels;
     private Dictionary<Tab, Button> _buttons;
 
+    /// <summary>
+    /// Initializes the dictionary for the panels and buttons.
+    /// Also assigns tags and Listener events related to the panels and buttons.
+    /// </summary>
     private void Start()
     {
         // Initialize the panel dictionary
@@ -89,7 +93,7 @@ public class SettingsTabs : MonoBehaviour
             { Tab.LevelSelect, _levelSelectButton }
         };
 
-        //tags for the buttons to decide images later
+        //tags for the buttons so the right images will be shown
         _displayButton.tag = "display";
         _audioButton.tag = "audio";
         _accessibilityButton.tag = "accessibility";
@@ -98,21 +102,32 @@ public class SettingsTabs : MonoBehaviour
         _levelSelectButton.tag = "level";
 
         // Assign button click events
+        //display events
         _displayButton.onClick.AddListener(() => OpenTab(Tab.Display));
         _displayButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_displayButtonGameObject));
         _displayButton.onClick.AddListener(() => ChangeImage(Tab.Display));
+
+        //audio events
         _audioButton.onClick.AddListener(() => OpenTab(Tab.Audio));
         _audioButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_audioButtonGameObject));
         _audioButton.onClick.AddListener(() => ChangeImage(Tab.Audio));
+
+        //accessibility events
         _accessibilityButton.onClick.AddListener(() => OpenTab(Tab.Accessibility));
         _accessibilityButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_accessibilityButtonGameObject));
         _accessibilityButton.onClick.AddListener(() => ChangeImage(Tab.Accessibility));
+
+        //gameplay events
         _gameplayButton.onClick.AddListener(() => OpenTab(Tab.Gameplay));
         _gameplayButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_gameplayButtonGameObject));
         _gameplayButton.onClick.AddListener(() => ChangeImage(Tab.Gameplay));
+
+        //how to play events
         _howToPlayButton.onClick.AddListener(() => OpenTab(Tab.HowToPlay));
         _howToPlayButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_howToPlayButtonGameObject));
         _howToPlayButton.onClick.AddListener(() => ChangeImage(Tab.HowToPlay));
+
+        //level select events
         _levelSelectButton.onClick.AddListener(() => OpenTab(Tab.LevelSelect));
         _levelSelectButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_levelSelectButtonGameObject));
         _levelSelectButton.onClick.AddListener(() => ChangeImage(Tab.LevelSelect));
@@ -129,32 +144,39 @@ public class SettingsTabs : MonoBehaviour
     {
         foreach(var buttons in _buttons)
         {
+            //statements to decide which tabs will be shown as small
             if(buttons.Key != tab && buttons.Value.tag == "display")
             {
+
                 buttons.Value.GetComponent<Image>().sprite = _displayImage;
 
             }else if(buttons.Key != tab && buttons.Value.tag == "audio")
             {
+
                 buttons.Value.GetComponent<Image>().sprite = _audioImage;
 
             }
             else if(buttons.Key != tab && buttons.Value.tag == "accessibility")
             {
+
                 buttons.Value.GetComponent<Image>().sprite = _accessibilityImage;
 
             }
             else if(buttons.Key != tab && buttons.Value.tag == "gameplay")
             {
+
                 buttons.Value.GetComponent<Image>().sprite = _gameplayImage;
 
             }
             else if(buttons.Key != tab && buttons.Value.tag == "how to")
             {
+
                 buttons.Value.GetComponent<Image>().sprite = _howToPlayImage;
 
             }
             else if(buttons.Key != tab && buttons.Value.tag == "level")
             {
+
                 buttons.Value.GetComponent<Image>().sprite = _levelSelectImage;
 
             }
@@ -176,35 +198,43 @@ public class SettingsTabs : MonoBehaviour
     }
 
     /// <summary>
-    /// Highlights the active tab button by disabling its interactability.
+    /// Highlights and displays the full image of the active tab button
+    /// plus disables its interactability.
     /// </summary>
     /// <param name="tab">The tab to highlight</param>
     private void HighlightButton(Tab tab)
     {
         foreach (var button in _buttons)
         {
+            //statements to figure out which button will show full image
             if(button.Value.tag == "display")
             {
+
                 button.Value.GetComponent<Image>().sprite = _ogDisplayImage;
 
             }else if(button.Value.tag == "audio")
             {
+
                 button.Value.GetComponent<Image>().sprite = _ogAudioImage;
 
             }else if(button.Value.tag == "accessibility")
             {
+
                 button.Value.GetComponent<Image>().sprite = _ogAccessibilityImage;
 
             }else if(button.Value.tag == "gameplay")
             {
+
                 button.Value.GetComponent<Image>().sprite = _ogGameplayImage;
 
             }else if(button.Value.tag == "how to")
             {
+
                 button.Value.GetComponent<Image>().sprite = _ogHowToPlayImage;
 
             }else if(button.Value.tag == "level")
             {
+
                 button.Value.GetComponent<Image>().sprite = _ogLevelSelectImage;
             }
 
