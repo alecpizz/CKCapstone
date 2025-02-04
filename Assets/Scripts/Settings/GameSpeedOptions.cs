@@ -15,9 +15,6 @@ public class GameSpeedOptions : MonoBehaviour
 {
     private PlayerControls _playerControls;
 
-    private int[] _speedModes = new int[2];
-    private int _currentSpeed;
-
     [Tooltip("What the timescale is changed to when the game is sped up." +
         "The defualt value is 1, so make sure this is higher than 1 to see an actual change.")]
     [SerializeField] private float _speedUpRate = 2f;
@@ -31,8 +28,6 @@ public class GameSpeedOptions : MonoBehaviour
         _playerControls = new PlayerControls();
         _playerControls.Enable();
         _playerControls.InGame.GameSpeed.performed += ctx => SpeedChange();
-
-        _currentSpeed = System.Array.IndexOf(_speedModes, _speedModes[0]);
     }
 
     /// <summary>
@@ -42,16 +37,14 @@ public class GameSpeedOptions : MonoBehaviour
     private void SpeedChange()
     {
         // Speed up if the game is at normal speed
-        if (_currentSpeed == 0)
+        if (Time.timeScale == 1f)
         {
             Time.timeScale = _speedUpRate;
-            _currentSpeed++;
         }
         // Return to normal speed if the game is sped up
         else
         {
             Time.timeScale = 1f;
-            _currentSpeed--;
         }
     }
 }
