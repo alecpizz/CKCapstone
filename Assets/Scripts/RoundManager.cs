@@ -20,7 +20,8 @@ public enum TurnState
     Player = 0,
     World = 1,
     Enemy = 2,
-    None = 3,
+    Harmony = 3,
+    None = 4,
 }
 
 
@@ -61,6 +62,8 @@ public sealed class RoundManager : MonoBehaviour
     /// Whether enemies exist in the given scene.
     /// </summary>
     public bool EnemiesPresent => _turnListeners[TurnState.Enemy].Count > 0;
+
+    /// </summary>
     /// Whether it's the enemy's turn.
     /// </summary>
     public bool IsEnemyTurn => _turnState == TurnState.Enemy;
@@ -243,7 +246,7 @@ public sealed class RoundManager : MonoBehaviour
     /// <param name="listener">The listener to repeat a turn.</param>
     public void RequestRepeatTurnStateRepeat(ITurnListener listener)
     {
-        //Stops Holded Movement
+        //Stops Held Movement
         _movementRegistered = false;
 
         if (listener.TurnState != _turnState)
@@ -304,7 +307,8 @@ public sealed class RoundManager : MonoBehaviour
         {
             TurnState.Player => TurnState.Enemy,
             TurnState.Enemy => TurnState.World,
-            TurnState.World => TurnState.None,
+            TurnState.World => TurnState.Harmony,
+            TurnState.Harmony => TurnState.None,
             _ => null
         };
     }
@@ -321,6 +325,7 @@ public sealed class RoundManager : MonoBehaviour
             TurnState.Player => TurnState.None,
             TurnState.Enemy => TurnState.Player,
             TurnState.World => TurnState.Enemy,
+            TurnState.Harmony => TurnState.World,
             _ => null
         };
     }

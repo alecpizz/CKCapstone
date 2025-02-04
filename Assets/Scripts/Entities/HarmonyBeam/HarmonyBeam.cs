@@ -22,7 +22,7 @@ using UnityEditor;
 /// </summary>
 public class HarmonyBeam : MonoBehaviour, ITurnListener
 {
-    public TurnState TurnState => TurnState.World;
+    public TurnState TurnState => TurnState.Harmony;
     [SerializeField] private EventReference _harmonySound = default;
     [SerializeField] private EventReference _enemyHarmonization = default;
     [Space] [SerializeField] private bool _beamActive = true;
@@ -42,12 +42,15 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     private EventInstance _beamInstance;
     private EventInstance _enemyGrabbedInstance;
 
+    public static Action TriggerHarmonyScan;
 
     /// <summary>
     /// Starts sound playback and instantiates a wall effect if possible.
     /// </summary>
     private void Start()
     {
+        TriggerHarmonyScan += ScanForObjects;
+
         _beamInstance = AudioManager.Instance.PlaySound(_harmonySound);
         if (_wallCollisionEffectPrefab != null)
         {
@@ -71,15 +74,9 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     /// </summary>
     private void OnDisable()
     {
-        RoundManager.Instance.RegisterListener(this);
-    }
+        TriggerHarmonyScan -= ScanForObjects;
 
-    /// <summary>
-    /// Periodically scans for objects in order to detect moving enemies
-    /// </summary>
-    private void FixedUpdate()
-    {
-        ScanForObjects();
+        RoundManager.Instance.RegisterListener(this);
     }
 
     /// <summary>
@@ -121,7 +118,8 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     /// <param name="direction">Keyboard input direction.</param>
     public void BeginTurn(Vector3 direction)
     {
-        StartCoroutine(WaitForPotentialBlockers());
+        ScanForObjects();
+        RoundManager.Instance.CompleteTurn(this);
     }
 
     /// <summary>
@@ -207,21 +205,6 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
         ScanForObjects();
         RoundManager.Instance.CompleteTurn(this);
     }
-
-    /// <summary>
-    /// Stinky coroutine to wait for anything else to move just in case.
-    /// TODO: Remove this!
-    /// </summary>
-    /// <returns>null</returns>
-    private IEnumerator WaitForPotentialBlockers()
-    {
-        // we shouldn't have to wait, but the moving walls/platforms aren't turn based currently 
-        yield return new WaitForSeconds(_beamDetectionWaitTime);
-        ScanForObjects();
-
-        RoundManager.Instance.CompleteTurn(this);
-    }
-
 
     /// <summary>
     /// Handles the visual effect when the beam hits a wall.
