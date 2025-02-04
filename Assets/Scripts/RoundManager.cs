@@ -69,6 +69,11 @@ public sealed class RoundManager : MonoBehaviour
     public bool IsEnemyTurn => _turnState == TurnState.Enemy;
 
     /// <summary>
+    /// Whether it's the harmony's turn
+    /// </summary>
+    public bool IsHarmonyTurn => _turnState == TurnState.Harmony;
+
+    /// <summary>
     /// Sets the singleton instance and initializes the dictionaries for
     /// state tracking.
     /// </summary>
