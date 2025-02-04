@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Nick Grinstead
-*    Contributors: David Galmines
+*    Contributors: David Galmines, Cole Stranczek
 *    Date Created: 9/24/24
 *    Description: Door unlocks when action on WinChecker is invoked.
 *       If door is unlocked and player walks into it, a new scene will load.
@@ -13,9 +13,8 @@ public class EndLevelDoor : MonoBehaviour
 {
     [Scene]
     [SerializeField] private int _levelIndexToLoad = 0;
-    [SerializeField]
-    bool _isUnlocked = false;
-    DoorGlow doorGlow;
+    [SerializeField] private bool _isUnlocked = false;
+    private DoorGlow _doorGlow;
 
     [SerializeField] private ParticleSystem _unlockedParticles;
 
@@ -23,9 +22,12 @@ public class EndLevelDoor : MonoBehaviour
 
     [SerializeField] private DoorLightBehaviour _lanternScript; 
 
+    /// <summary>
+    /// Door glow is assigned a value when the function awakens
+    /// </summary>
     private void Awake()
     {
-        doorGlow = GetComponent<DoorGlow>();
+        _doorGlow = GetComponent<DoorGlow>();
     }
 
     /// <summary>
@@ -61,10 +63,10 @@ public class EndLevelDoor : MonoBehaviour
     public void UnlockDoor()
     {
         _isUnlocked = true;
-         if (doorGlow != null)
+         if (_doorGlow != null)
         {
             // Call the UnlockDoor method from EndLevelDoor
-            doorGlow.GlowAndUnlockDoor();
+            _doorGlow.GlowAndUnlockDoor();
 
             //play "door unlocked" VFX
             _unlockedParticles.Play();
@@ -87,6 +89,12 @@ public class EndLevelDoor : MonoBehaviour
     {
         if (_isUnlocked && other.CompareTag("Player"))
         {
+            // Edit from Cole, this is to make sure the game speed is immediately normalized
+            // upon completing a level in case the player has the game sped up or slowed down
+            // so that any post-level isn't messed up. Just to make sure my game speed changes
+            // don't screw up anything.
+            Time.timeScale = 1f;
+
             PlayerMovement playerMovement;
             if (other.gameObject.TryGetComponent<PlayerMovement>(out playerMovement))
             {

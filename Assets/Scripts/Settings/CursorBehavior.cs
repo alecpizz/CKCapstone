@@ -17,14 +17,14 @@ public class CursorManager : MonoBehaviour
     [SerializeField] private Texture2D _cursor;
     [SerializeField] private Texture2D _cursorHover;
     [SerializeField] private EventReference _clickSound = default;
+    [SerializeField] private Canvas _canvas;
 
     private void Start()
     {
         // Find the Canvas or root UI GameObject
-        Canvas canvas = FindObjectOfType<Canvas>();
-        if (canvas != null)
+        if (_canvas != null)
         {
-            AddEventTriggersToChildren(canvas.gameObject);
+            AddEventTriggersToChildren(_canvas.gameObject);
         }
     }
 
@@ -112,6 +112,9 @@ public class CursorManager : MonoBehaviour
         Cursor.SetCursor(_cursor, Vector2.zero, CursorMode.Auto);
     }
 
+    /// <summary>
+    /// Plays a select sound
+    /// </summary>
     private void Select()
     {
         AudioManager.Instance.PlaySound(_clickSound);

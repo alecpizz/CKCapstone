@@ -1,11 +1,13 @@
 /******************************************************************
  *    Author: Alec Pizziferro
- *    Contributors: Nick Grinstead
+ *    Contributors: Nick Grinstead, Trinity Hutson
  *    Date Created: 10/22/24
  *    Description: Manager for turn based movement mechanics.
  *******************************************************************/
 
+using System;
 using System.Collections.Generic;
+using FMODUnity;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -19,31 +21,6 @@ public enum TurnState
     World = 1,
     Enemy = 2,
     None = 3,
-}
-
-/// <summary>
-/// Interface for something that needs its turn managed.
-/// Both methods must be implemented.
-/// </summary>
-public interface ITurnListener
-{
-    /// <summary>
-    /// The category of turn this entity will be a part of.
-    /// </summary>
-    TurnState TurnState { get; }
-
-    /// <summary>
-    /// Method that gets called when the entity's turn begins.
-    /// This should be used to start a movement animation or
-    /// some other logic. 
-    /// </summary>
-    /// <param name="direction">The user input direction.</param>
-    void BeginTurn(Vector3 direction);
-
-    /// <summary>
-    /// Method that gets called to end an entity's turn early.
-    /// </summary>
-    void ForceTurnEnd();
 }
 
 
@@ -60,6 +37,10 @@ public sealed class RoundManager : MonoBehaviour
     private PlayerControls _playerControls;
     private Vector3 _lastMovementInput;
     private bool _movementRegistered = false;
+    private float _movementRegisteredTime = -1;
+    [SerializeField] private float _inputBufferWindow = 0.5f;
+    [SerializeField] private EventReference _playerTurnEvent;
+    [SerializeField] private EventReference _enemyTurnEvent;
 
     /// <summary>
     /// Whether someone is having their turn.
@@ -75,6 +56,14 @@ public sealed class RoundManager : MonoBehaviour
     /// Whether it's the world's turn.
     /// </summary>
     public bool IsWorldTurn => _turnState == TurnState.World;
+
+    /// <summary>
+    /// Whether enemies exist in the given scene.
+    /// </summary>
+    public bool EnemiesPresent => _turnListeners[TurnState.Enemy].Count > 0;
+    /// Whether it's the enemy's turn.
+    /// </summary>
+    public bool IsEnemyTurn => _turnState == TurnState.Enemy;
 
     /// <summary>
     /// Sets the singleton instance and initializes the dictionaries for
@@ -101,6 +90,18 @@ public sealed class RoundManager : MonoBehaviour
         }
     }
 
+#if UNITY_EDITOR
+    /// <summary>
+    /// Resets default turn events since we can't set default values anymore.
+    /// </summary>
+    private void Reset()
+    {
+        _playerTurnEvent = EventReference.Find("event:/Turn Start Player");
+        _enemyTurnEvent = EventReference.Find("event:/Turn Start Enemy");
+    }
+#endif
+
+
     /// <summary>
     /// Enables the player controls and hooks a callback for movement input.
     /// </summary>
@@ -120,6 +121,17 @@ public sealed class RoundManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Allows a direction input to be held when it comes to movement
+    /// </summary>
+    private void Update()
+    {
+        if (_playerControls.InGame.Movement.IsPressed() && !TurnInProgress)
+        {
+            PerformMovement();
+        }
+    }
+
+    /// <summary>
     /// Invoked when a movement input is pressed.
     /// Will attempt to move if possible, but if it's not the player's turn
     /// the movement will be rejected.
@@ -127,10 +139,15 @@ public sealed class RoundManager : MonoBehaviour
     /// <param name="obj"></param>
     private void RegisterMovementInput(InputAction.CallbackContext obj)
     {
+        if (_turnState != TurnState.None)
+        {
+            return;
+        }
         Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>();
         Vector3 dir = new Vector3(input.x, 0f, input.y);
         _lastMovementInput = dir;
         _movementRegistered = true;
+        _movementRegisteredTime = Time.unscaledTime;
 
         if (_turnState != TurnState.None) return;
 
@@ -144,9 +161,18 @@ public sealed class RoundManager : MonoBehaviour
     {
         if (!_movementRegistered) return;
 
-        _movementRegistered = false;
+        if (!_playerControls.InGame.Movement.IsPressed())
+        {
+            _movementRegistered = false;
+        }
+
         _turnState = TurnState.Player;
-        //we now wait on the update method to catch the end of the players turn
+
+        //only play player turn sound if there's enemies in the scene.
+        if (_turnListeners[TurnState.Enemy].Count > 0)
+        {
+            AudioManager.Instance.PlaySound(_playerTurnEvent);
+        }
         //perform the turn now so that it's frame perfect.
         foreach (var turnListener in _turnListeners[TurnState.Player])
         {
@@ -178,7 +204,9 @@ public sealed class RoundManager : MonoBehaviour
         {
             _turnState = TurnState.None;
             // Attempts to move player if they buffered an input
-            PerformMovement();
+            if(Time.unscaledTime - _movementRegisteredTime <= _inputBufferWindow)
+                PerformMovement();
+
             return;
         }
 
@@ -198,6 +226,10 @@ public sealed class RoundManager : MonoBehaviour
 
         if (_turnState != TurnState.None)
         {
+            if (IsEnemyTurn)
+            {
+                AudioManager.Instance.PlaySound(_enemyTurnEvent);
+            }
             foreach (var turnListener in _turnListeners[_turnState])
             {
                 turnListener.BeginTurn(_lastMovementInput);
@@ -211,6 +243,9 @@ public sealed class RoundManager : MonoBehaviour
     /// <param name="listener">The listener to repeat a turn.</param>
     public void RequestRepeatTurnStateRepeat(ITurnListener listener)
     {
+        //Stops Holded Movement
+        _movementRegistered = false;
+
         if (listener.TurnState != _turnState)
         {
             return;
@@ -267,9 +302,9 @@ public sealed class RoundManager : MonoBehaviour
     {
         return turnState switch
         {
-            TurnState.Player => TurnState.World,
-            TurnState.World => TurnState.Enemy,
-            TurnState.Enemy => TurnState.None,
+            TurnState.Player => TurnState.Enemy,
+            TurnState.Enemy => TurnState.World,
+            TurnState.World => TurnState.None,
             _ => null
         };
     }
@@ -284,8 +319,8 @@ public sealed class RoundManager : MonoBehaviour
         return turnState switch
         {
             TurnState.Player => TurnState.None,
-            TurnState.World => TurnState.Player,
-            TurnState.Enemy => TurnState.World,
+            TurnState.Enemy => TurnState.Player,
+            TurnState.World => TurnState.Enemy,
             _ => null
         };
     }

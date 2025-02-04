@@ -2609,7 +2609,7 @@ RectTransform:
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &7375838404608818948
 Canvas:
   m_ObjectHideFlags: 0
@@ -3502,7 +3502,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 0358449444d3acc44b089731c3813735, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6cd55b29c89995b4cba7866079ca2e6f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7920,8 +7920,8 @@ MonoBehaviour:
   m_ChildAlignment: 1
   m_StartCorner: 0
   m_StartAxis: 1
-  m_CellSize: {x: 624, y: 199}
-  m_Spacing: {x: 0, y: -62.1}
+  m_CellSize: {x: 700, y: 200}
+  m_Spacing: {x: 0, y: -62}
   m_Constraint: 1
   m_ConstraintCount: 1
 --- !u!114 &3994814297478969548
@@ -8418,7 +8418,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: edd98e8e72fff1943a20942ef31747f1, type: 3}
+  m_Sprite: {fileID: 21300000, guid: aa8dcde08a3e4e24eb25c2707ea8dc16, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -9180,10 +9180,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 333c6e75a84851447a1a0044851fd6af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _resolutionDropdown: {fileID: 0}
-  _fullscreenToggle: {fileID: 0}
-  _tooltipsToggle: {fileID: 0}
-  _subtitlesToggle: {fileID: 0}
+  _resolutionDropdown: {fileID: 4897728239474731777}
+  _fullscreenToggle: {fileID: 5188053775815857638}
+  _tooltipsToggle: {fileID: 3992401312051630832}
+  _subtitlesToggle: {fileID: 6270762153234036077}
 --- !u!1 &8149429688634792594
 GameObject:
   m_ObjectHideFlags: 0
@@ -10391,7 +10391,6 @@ GameObject:
   - component: {fileID: 3065555049801013391}
   - component: {fileID: 942048190466329567}
   - component: {fileID: 8692742364173820836}
-  - component: {fileID: 6883211635654474207}
   m_Layer: 5
   m_Name: OptionsController
   m_TagString: Untagged
@@ -10462,24 +10461,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dropdown: {fileID: 3360359416474415652}
---- !u!114 &6883211635654474207
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9178334106961898390}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 033f2829a57e6a348a403d93b1e9ded9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _cursor: {fileID: 10904, guid: 0000000000000000f000000000000000, type: 0}
-  _cursorHover: {fileID: 10912, guid: 0000000000000000f000000000000000, type: 0}
-  _clickSound:
-    Guid:
-      Data1: 207925213
-      Data2: 1125044607
-      Data3: -890037886
-      Data4: -448360349
-    Path: event:/Button Press

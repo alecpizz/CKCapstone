@@ -19,19 +19,22 @@ using UnityEngine.Rendering.UI;
 
 public class DebugMenuManager : MonoBehaviour
 {
-    public static DebugMenuManager Instance;
+    public static DebugMenuManager Instance { get; private set; }
 
     public bool GhostMode { get; private set; } = false;
     public bool Invincibility { get; private set; } = false;
-    public bool PauseMenu = false;
+    public bool PauseMenu { get; set; } = false;
 
     [SerializeField] private GameObject _debugMenuFirst;
+    [SerializeField] private GameObject _mainMenuFirst;
     [SerializeField] private GameObject _quitMenuFirst;
     [SerializeField] private GameObject _puzzleSelectFirst;
+    [SerializeField] private GameObject _settingsFirst;
     [SerializeField] private GameObject _debugMenu;
     [SerializeField] private GameObject _quitMenu;
     [SerializeField] private GameObject _puzzleSelectMenu;
     [SerializeField] private GameObject _fpsCounter;
+    //reminder variables show the player that debug functions are on in the top right corner
     [SerializeField] private GameObject _ghostModeReminder;
     [SerializeField] private GameObject _invincibilityReminder;
 
@@ -45,6 +48,8 @@ public class DebugMenuManager : MonoBehaviour
     private bool _pMenu = false;
     private bool _fpsCount = false;
 
+    private const string MainMenuSceneName = "MainMenu2";
+
     private int _lastFrameIndex;
     private float[] _frameDeltaTimeArray;
 
@@ -56,7 +61,7 @@ public class DebugMenuManager : MonoBehaviour
     /// Does the calculation for determining the game's frame rate.
     /// Credit: https://www.youtube.com/shorts/I2r97r9h074
     /// </summary>
-    private float FPSCalculation()
+    private float FpsCalculation()
     {
         float total = 0f;
         foreach (float deltaTime in _frameDeltaTimeArray)
@@ -98,15 +103,22 @@ public class DebugMenuManager : MonoBehaviour
         _restartInput.Disable();
     }
 
+    /// <summary>
+    /// Sets up pointers for code functionality and makes sure the cursor is unlocked if it is ever hidden
+    /// </summary>
     private void Start()
     {
+        Scene currentScene = SceneManager.GetActiveScene();
         //unlocks the cursor if locked
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         //Sets an default game object for the event system to hold on to for menuing
-        EventSystem.current.SetSelectedGameObject(_debugMenuFirst);
+        EventSystem.current.SetSelectedGameObject(_mainMenuFirst);   
     }
-
+ 
+    /// <summary>
+    /// Updates the frame rate counter and makes sure debug unputs execute their code when pressed
+    /// </summary>
     private void Update()
     {   
         //handles opening and closing the debug menu
@@ -124,7 +136,7 @@ public class DebugMenuManager : MonoBehaviour
         //updates the FPS Counter
         _frameDeltaTimeArray[_lastFrameIndex] = Time.unscaledDeltaTime;
         _lastFrameIndex = (_lastFrameIndex + 1) % _frameDeltaTimeArray.Length;
-        _fpsText.text = (Mathf.RoundToInt(FPSCalculation()).ToString() + " FPS");
+        _fpsText.text = (Mathf.RoundToInt(FpsCalculation()).ToString() + " FPS");
     }
 
     /// <summary>
@@ -172,6 +184,7 @@ public class DebugMenuManager : MonoBehaviour
     /// </summary>
     public void TogglePuzzleSelectMenu()
     {
+        Scene currentScene = SceneManager.GetActiveScene();
         if (_pMenu == false)
         {
             _puzzleSelectMenu.SetActive(true);
@@ -183,10 +196,11 @@ public class DebugMenuManager : MonoBehaviour
         else if (_pMenu == true)
         {
             _puzzleSelectMenu.SetActive(false);
-            if (PauseMenu)
+            if (PauseMenu || currentScene.name == MainMenuSceneName)
             {
                 //doesn't go back to the dubug menu
                 _pMenu = false;
+                EventSystem.current.SetSelectedGameObject(_settingsFirst);
             }
             else
             {
@@ -200,7 +214,7 @@ public class DebugMenuManager : MonoBehaviour
     /// <summary>
     /// Toggles viewing the FPS Counter
     /// </summary>
-    public void FPSCounterToggle()
+    public void ToggleFpsCounter()
     {
         if (_fpsCount == false)
         {
@@ -219,7 +233,7 @@ public class DebugMenuManager : MonoBehaviour
     /// <summary>
     /// Will toggle ghost mode
     /// </summary>
-    public void GhostModeToggle()
+    public void ToggleGhostMode()
     {
         if (GhostMode == false)
         {
@@ -238,7 +252,7 @@ public class DebugMenuManager : MonoBehaviour
     /// <summary>
     /// Will toggle player invincibility.
     /// </summary>
-    public void InvincibilityToggle()
+    public void ToggleInvincibility()
     {
         if (Invincibility == false)
         {
@@ -264,11 +278,11 @@ public class DebugMenuManager : MonoBehaviour
 
     /// <summary>
     /// Sets up scene navigation for changing levels or just loading specific scenes.
-    /// The sceneID is taken in as an int to allow the code to go to any specified scene
+    /// The sceneId is taken in as an int to allow the code to go to any specified scene
     /// </summary>
-    public void SceneChange(int sceneID)
+    public void SceneChange(int sceneId)
     {
-        if(sceneID >= SceneManager.sceneCountInBuildSettings)
+        if(sceneId >= SceneManager.sceneCountInBuildSettings)
         {
             SceneManager.LoadScene(0);
         }
@@ -276,7 +290,7 @@ public class DebugMenuManager : MonoBehaviour
         {
             Time.timeScale = 1f;
             EventSystem.current.SetSelectedGameObject(null);
-            SceneManager.LoadScene(sceneID);
+            SceneManager.LoadScene(sceneId);
         }   
     }
 

@@ -14,9 +14,10 @@ public class WinChecker : MonoBehaviour
 {
     public static WinChecker Instance { get; private set; }
 
-    public static Action<int> CollectedNote;
-    public static Action GotCorrectSequence;
-    public static Action GotWrongSequence;
+    // These need to be setable so other scripts can subscribe methods to them
+    public static Action<int> CollectedNote { get; set; }
+    public static Action GotCorrectSequence { get; set; }
+    public static Action GotWrongSequence { get; set; }
 
     public bool SequenceComplete = false;
 
@@ -35,8 +36,7 @@ public class WinChecker : MonoBehaviour
     /// <returns>true if note matches next one in sequence</returns>
     public bool CheckForCollection(int noteToCollect)
     {
-        if (TargetNoteSequence.Count == 0)
-            return true;
+        if (TargetNoteSequence.Count == 0) { return true; }
 
         if (_collectedSequence.Count < TargetNoteSequence.Count)
         {
@@ -126,24 +126,36 @@ public class WinChecker : MonoBehaviour
 #if UNITY_EDITOR
     // The following three methods are used for testing in editor
 
+    /// <summary>
+    /// Collects the first note via button
+    /// </summary>
     [Button]
     private void TestCollectNoteZero()
     {
         CollectedNote(0);
     }
 
+    /// <summary>
+    /// Collects the second note via button
+    /// </summary>
     [Button]
     private void TestCollectNoteOne()
     {
         CollectedNote(1);
     }
 
+    /// <summary>
+    /// Collects the third note via button
+    /// </summary>
     [Button]
     private void TestCollectNoteTwo()
     {
         CollectedNote(2);
     }
 
+    /// <summary>
+    /// Collects the fourth note via button
+    /// </summary>
     [Button]
     private void TestCollectNoteThree()
     {

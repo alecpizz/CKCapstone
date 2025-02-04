@@ -14,10 +14,10 @@ using UnityEngine.Rendering.Universal;
 public class ColorSettings : MonoBehaviour
 {
     [SerializeField] TMP_Dropdown _dropdown;
-    public enum ColorBlindMode { Normal, Protanopia, Protanomaly, Deuteranopia, Deuteranomaly, 
+    public enum ColorBlindMode { Default, Protanopia, Protanomaly, Deuteranopia, Deuteranomaly, 
         Tritanopia, Tritanomaly, Achromatopsia, Achromatomaly }
 
-    private ColorBlindMode selection;
+    private ColorBlindMode _selection;
     private ChannelMixer _channelMixer;
 
     private const string ColorMode = "colorMode";
@@ -37,7 +37,7 @@ public class ColorSettings : MonoBehaviour
 
         // Load saved color mode or set to Normal (0) by default
         int savedMode = PlayerPrefs.GetInt(ColorMode, 0);
-        selection = (ColorBlindMode)savedMode;
+        _selection = (ColorBlindMode)savedMode;
 
         // Populate dropdown and set the initial selection
         PopulateDropDownWithEnum(_dropdown);
@@ -45,7 +45,7 @@ public class ColorSettings : MonoBehaviour
         _dropdown.RefreshShownValue();
 
         // Apply the saved color mode
-        ChangeColorMode(selection);
+        ChangeColorMode(_selection);
     }
 
     /// <summary>
@@ -54,8 +54,8 @@ public class ColorSettings : MonoBehaviour
     /// <param name="value">Used to save the setting to PlayerPrefs</param>
     private void DropdownValueChanged(int value)
     {
-        selection = (ColorBlindMode)value;
-        ChangeColorMode(selection);
+        _selection = (ColorBlindMode)value;
+        ChangeColorMode(_selection);
 
         // Save the selection to PlayerPrefs
         PlayerPrefs.SetInt(ColorMode, value);
@@ -73,7 +73,7 @@ public class ColorSettings : MonoBehaviour
     {
         switch (mode)
         {
-            case ColorBlindMode.Normal:
+            case ColorBlindMode.Default:
                 ChangeVolume(new Vector3(100, 0, 0),
                              new Vector3(0, 100, 0),
                              new Vector3(0, 0, 100));
