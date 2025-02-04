@@ -62,6 +62,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""GameSpeed(Hold)"",
+                    ""type"": ""Button"",
+                    ""id"": ""04e38de1-1f49-487b-b752-ae6004e4a340"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -339,6 +348,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""GameSpeed"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""148f5b34-ab4a-4e0a-aaa7-cfde7f45ca00"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": ""Hold"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""GameSpeed(Hold)"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -351,6 +371,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_InGame_Movement = m_InGame.FindAction("Movement", throwIfNotFound: true);
         m_InGame_Toggle = m_InGame.FindAction("Toggle", throwIfNotFound: true);
         m_InGame_GameSpeed = m_InGame.FindAction("GameSpeed", throwIfNotFound: true);
+        m_InGame_GameSpeedHold = m_InGame.FindAction("GameSpeed(Hold)", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -416,6 +437,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_InGame_Movement;
     private readonly InputAction m_InGame_Toggle;
     private readonly InputAction m_InGame_GameSpeed;
+    private readonly InputAction m_InGame_GameSpeedHold;
     public struct InGameActions
     {
         private @PlayerControls m_Wrapper;
@@ -424,6 +446,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @Movement => m_Wrapper.m_InGame_Movement;
         public InputAction @Toggle => m_Wrapper.m_InGame_Toggle;
         public InputAction @GameSpeed => m_Wrapper.m_InGame_GameSpeed;
+        public InputAction @GameSpeedHold => m_Wrapper.m_InGame_GameSpeedHold;
         public InputActionMap Get() { return m_Wrapper.m_InGame; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -445,6 +468,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @GameSpeed.started += instance.OnGameSpeed;
             @GameSpeed.performed += instance.OnGameSpeed;
             @GameSpeed.canceled += instance.OnGameSpeed;
+            @GameSpeedHold.started += instance.OnGameSpeedHold;
+            @GameSpeedHold.performed += instance.OnGameSpeedHold;
+            @GameSpeedHold.canceled += instance.OnGameSpeedHold;
         }
 
         private void UnregisterCallbacks(IInGameActions instance)
@@ -461,6 +487,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @GameSpeed.started -= instance.OnGameSpeed;
             @GameSpeed.performed -= instance.OnGameSpeed;
             @GameSpeed.canceled -= instance.OnGameSpeed;
+            @GameSpeedHold.started -= instance.OnGameSpeedHold;
+            @GameSpeedHold.performed -= instance.OnGameSpeedHold;
+            @GameSpeedHold.canceled -= instance.OnGameSpeedHold;
         }
 
         public void RemoveCallbacks(IInGameActions instance)
@@ -484,5 +513,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnMovement(InputAction.CallbackContext context);
         void OnToggle(InputAction.CallbackContext context);
         void OnGameSpeed(InputAction.CallbackContext context);
+        void OnGameSpeedHold(InputAction.CallbackContext context);
     }
 }

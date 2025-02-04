@@ -8,12 +8,16 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 
 public class GameSpeedOptions : MonoBehaviour
 {
     private PlayerControls _playerControls;
+
+    public bool holdMode;
 
     [Tooltip("What the timescale is changed to when the game is sped up." +
         "The defualt value is 1, so make sure this is higher than 1 to see an actual change.")]
@@ -26,8 +30,22 @@ public class GameSpeedOptions : MonoBehaviour
     private void Start()
     { 
         _playerControls = new PlayerControls();
-        _playerControls.Enable();
-        _playerControls.InGame.GameSpeed.performed += ctx => SpeedChange();
+        _playerControls.InGame.GameSpeed.Enable();
+        _playerControls.InGame.GameSpeedHold.Enable();
+
+        if(holdMode)
+        {
+            _playerControls.InGame.GameSpeed.Disable();
+
+            _playerControls.InGame.GameSpeedHold.started += hold => SpeedChangeHoldStart();
+            _playerControls.InGame.GameSpeedHold.canceled += release => SpeedChangeHoldEnd();
+        }
+        else
+        {
+            _playerControls.InGame.GameSpeedHold.Disable();
+
+            _playerControls.InGame.GameSpeed.performed += ctx => SpeedChange();
+        }
     }
 
     /// <summary>
@@ -37,13 +55,33 @@ public class GameSpeedOptions : MonoBehaviour
     private void SpeedChange()
     {
         // Speed up if the game is at normal speed
-        if (Time.timeScale == 1f)
+        if(Time.timeScale == 1f)
         {
+            Debug.Log("Speeding Up (Toggle)");
             Time.timeScale = _speedUpRate;
         }
         // Return to normal speed if the game is sped up
         else
         {
+            Debug.Log("Back to Normal (Toggle)");
+            Time.timeScale = 1f;
+        }
+    }
+
+    private void SpeedChangeHoldStart()
+    {
+        if (Time.timeScale == 1f)
+        {
+            Debug.Log("Speeding Up (Held)");
+            Time.timeScale = _speedUpRate;
+        }
+    }
+
+    private void SpeedChangeHoldEnd()
+    {
+        if (Time.timeScale == _speedUpRate)
+        {
+            Debug.Log("Back to Normal (Released)");
             Time.timeScale = 1f;
         }
     }

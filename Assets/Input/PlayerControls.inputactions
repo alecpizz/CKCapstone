@@ -40,6 +40,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "GameSpeed(Hold)",
+                    "type": "Button",
+                    "id": "04e38de1-1f49-487b-b752-ae6004e4a340",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -315,6 +324,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "GameSpeed",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "148f5b34-ab4a-4e0a-aaa7-cfde7f45ca00",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": "",
+                    "action": "GameSpeed(Hold)",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
