@@ -6,6 +6,7 @@
 *******************************************************************/
 
 using PrimeTween;
+using SaintsField;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,6 +21,9 @@ public class ReflectionSwitch : MonoBehaviour, IParentSwitch, ITurnListener
 
     [SerializeField] private float _rotationDuration = 0.2f;
     [SerializeField] private float _beamToggleDelay = 0.6f;
+
+    [ProgressBar(-270f, 270f, 90f)]
+    [SerializeField] private float _rotationDegrees = 180f;
 
     public TurnState TurnState => TurnState.World;
 
@@ -83,7 +87,7 @@ public class ReflectionSwitch : MonoBehaviour, IParentSwitch, ITurnListener
         _mirror.ToggleBeam(false);
 
         Vector3 targetRotation = transform.eulerAngles;
-        targetRotation.y += _shouldActivate ? 180 : -180;
+        targetRotation.y += _shouldActivate ? _rotationDegrees : -_rotationDegrees;
 
         Sequence.Create(1).Chain(
             Tween.Delay(_beamToggleDelay)).Chain(
