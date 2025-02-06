@@ -1928,6 +1928,13 @@ MonoBehaviour:
   _optionsScreen: {fileID: 2839288372686986014}
   _confirmQuit: {fileID: 665595967}
   _mainMenu: {fileID: 1043149804}
+  _firstLevelIndex: 1
+  _mainMenuFirst: {fileID: 891552278}
+  _settingsMenuFirst: {fileID: 2081803080}
+  _mainMenuStart: {fileID: 891552278}
+  _mainMenuSettings: {fileID: 1300315847}
+  _mainMenuQuit: {fileID: 1798851191}
+  _restartButton: {fileID: 0}
   _buttonPress:
     Guid:
       Data1: 207925213
@@ -2255,7 +2262,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_FirstSelected: {fileID: 0}
+  m_FirstSelected: {fileID: 891552278}
   m_sendNavigationEvents: 1
   m_DragThreshold: 10
 --- !u!4 &1570075921
@@ -2341,6 +2348,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Debug Menu Manager
       objectReference: {fileID: 0}
+    - target: {fileID: 7172596820257482301, guid: 827190c66e6dc884baf12ae7abf21796,
+        type: 3}
+      propertyPath: _mainMenuFirst
+      value: 
+      objectReference: {fileID: 891552278}
+    - target: {fileID: 7172596820257482301, guid: 827190c66e6dc884baf12ae7abf21796,
+        type: 3}
+      propertyPath: _settingsFirst
+      value: 
+      objectReference: {fileID: 916550986}
     - target: {fileID: 7747258579968569632, guid: 827190c66e6dc884baf12ae7abf21796,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
@@ -3955,8 +3972,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 750, y: -784}
-  m_SizeDelta: {x: 624, y: 199}
+  m_AnchoredPosition: {x: 750, y: -790}
+  m_SizeDelta: {x: 700, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &570074267009275772
 MonoBehaviour:
@@ -6865,8 +6882,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 750, y: -99.5}
-  m_SizeDelta: {x: 624, y: 199}
+  m_AnchoredPosition: {x: 750, y: -100}
+  m_SizeDelta: {x: 700, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &3577535255033643500
 GameObject:
@@ -7515,6 +7532,12 @@ MonoBehaviour:
   _gameplayButton: {fileID: 1257187518202879019}
   _howToPlayButton: {fileID: 869616674201812690}
   _levelSelectButton: {fileID: 5880423960017748160}
+  _displayButtonGameObject: {fileID: 5194867779298897797}
+  _audioButtonGameObject: {fileID: 632626838070775639}
+  _accessibilityButtonGameObject: {fileID: 5218070843487339366}
+  _gameplayButtonGameObject: {fileID: 676639246963836347}
+  _howToPlayButtonGameObject: {fileID: 7256998647206498699}
+  _levelSelectButtonGameObject: {fileID: 3676626245744688516}
 --- !u!114 &4022178621712347168
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8255,8 +8278,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 750, y: -647.1}
-  m_SizeDelta: {x: 624, y: 199}
+  m_AnchoredPosition: {x: 750, y: -652}
+  m_SizeDelta: {x: 700, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &4756134286295475002
 RectTransform:
@@ -9201,8 +9224,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 750, y: -236.4}
-  m_SizeDelta: {x: 624, y: 199}
+  m_AnchoredPosition: {x: 750, y: -238}
+  m_SizeDelta: {x: 700, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &5645402497821685944
 MonoBehaviour:
@@ -9608,8 +9631,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 750, y: -510.2}
-  m_SizeDelta: {x: 624, y: 199}
+  m_AnchoredPosition: {x: 750, y: -514}
+  m_SizeDelta: {x: 700, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &5907468132568634711
 MonoBehaviour:
@@ -13432,8 +13455,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 750, y: -373.3}
-  m_SizeDelta: {x: 624, y: 199}
+  m_AnchoredPosition: {x: 750, y: -376}
+  m_SizeDelta: {x: 700, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &8856245352184532735
 RectTransform:

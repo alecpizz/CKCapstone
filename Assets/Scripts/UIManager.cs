@@ -88,6 +88,7 @@ public class UIManager : MonoBehaviour, ITimeListener
         WinChecker.GotCorrectSequence += DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence += DisplayIncorrectMessage;
 
+        //Note (ALEC): I commented this out assuming that we will set this up in build.
         if (_levelNumber != null)
         {
             if (_isChallenge)

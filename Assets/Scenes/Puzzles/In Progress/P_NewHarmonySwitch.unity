@@ -822,6 +822,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8902230939137655927, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8902230939137655927, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
@@ -3163,7 +3168,7 @@ PrefabInstance:
     - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.9682517
+      value: 4.877
       objectReference: {fileID: 0}
     - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
         type: 3}
@@ -3914,6 +3919,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Disable Tile Wall (22)
       objectReference: {fileID: 0}
+    - target: {fileID: 3444983967883238341, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: _isTransparent
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444983967883238341, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: _disableGridCell
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -4294,6 +4309,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0640cc4e3ba172479b84befa667aa2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _rotationDuration: 0.2
+  _beamToggleDelay: 0.6
 --- !u!1 &1283900300
 GameObject:
   m_ObjectHideFlags: 0
@@ -4538,6 +4555,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Disable Tile Wall (20)
       objectReference: {fileID: 0}
+    - target: {fileID: 3444983967883238341, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: _isTransparent
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444983967883238341, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: _disableGridCell
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -4780,7 +4807,7 @@ PrefabInstance:
     - target: {fileID: 141339540878061802, guid: dda7842c0387e794a8c66ddc56220932,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 5.316
+      value: 3.32
       objectReference: {fileID: 0}
     - target: {fileID: 141339540878061802, guid: dda7842c0387e794a8c66ddc56220932,
         type: 3}
@@ -4825,7 +4852,7 @@ PrefabInstance:
     - target: {fileID: 2136362874793484460, guid: dda7842c0387e794a8c66ddc56220932,
         type: 3}
       propertyPath: _levelIndexToLoad
-      value: 14
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3725983269745070237, guid: dda7842c0387e794a8c66ddc56220932,
         type: 3}
