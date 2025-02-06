@@ -46,14 +46,14 @@ public class MetronomeBehavior : MonoBehaviour
     private bool _isSlow = true;
     private static readonly int GoFaster = Animator.StringToHash("GoFaster");
 
-    private GameObject _player;
+    private PlayerMovement _player;
 
     /// <summary>
     /// Keeps the particle effects from playing right away.
     /// </summary>
     private void Awake()
     {
-        _player = PlayerMovement.Instance.gameObject;
+        _player = PlayerMovement.Instance;
         _contactIndicator.Pause();
         //_anim = GetComponentInParent<Animator>();
 
@@ -90,7 +90,7 @@ public class MetronomeBehavior : MonoBehaviour
     /// Play's the HUD indicator effect on a delay after the player 
     /// touches the metronome (for tutorial level only).
     /// </summary>
-    private IEnumerator HUDIndicator()
+    private IEnumerator HudIndicator()
     {
         WaitForSeconds wait = new(_flashSpeed);
 
@@ -126,52 +126,34 @@ public class MetronomeBehavior : MonoBehaviour
     /// <param name="other">Data from a collision</param>
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Player"))
+        if (!other.gameObject.CompareTag("Player") && !other.gameObject.CompareTag("Enemy") && !other.gameObject.CompareTag("SonEnemy"))
         {
-            ActivateMetronome();
-
-            if (_isThisTheTutorial)
-            {
-                StopAllCoroutines();
-                StartCoroutine("HUDIndicator");
-            }
-
-            _contactIndicator.Play();
-            _HUDEffect.SetActive(false);
-
-            PlayerMovement playerMovement;
-            if (other.gameObject.TryGetComponent<PlayerMovement>(out playerMovement))
-            {
-                playerMovement.ForceTurnEnd();
-            }
+            return;
         }
 
-        if (other.gameObject.CompareTag("Enemy") || other.gameObject.CompareTag("SonEnemy"))
+        ActivateMetronome();
+
+        if (_isThisTheTutorial)
         {
-            ActivateMetronome();
+            StopAllCoroutines();
+            StartCoroutine(HudIndicator());
+        }
 
-            if (_isThisTheTutorial)
-            {
-                StopAllCoroutines();
-                StartCoroutine("HUDIndicator");
-            }
+        _contactIndicator.Play();
+        _HUDEffect.SetActive(false);
 
-            _contactIndicator.Play();
-            _HUDEffect.SetActive(false);
+        _player.ForceTurnEnd();
 
-            _player.GetComponent<PlayerMovement>().ForceTurnEnd();
+        EnemyBehavior enemyBehavior;
+        if (other.gameObject.TryGetComponent<EnemyBehavior>(out enemyBehavior))
+        {
+            enemyBehavior.ForceTurnEnd();
+        }
 
-            EnemyBehavior enemyBehavior;
-            if (other.gameObject.TryGetComponent<EnemyBehavior>(out enemyBehavior))
-            {
-                enemyBehavior.ForceTurnEnd();
-            }
-
-            MirrorAndCopyBehavior mirrorAndCopyBehavior;
-            if (other.gameObject.TryGetComponent<MirrorAndCopyBehavior>(out mirrorAndCopyBehavior))
-            {
-                mirrorAndCopyBehavior.ForceTurnEnd();
-            }
+        MirrorAndCopyBehavior mirrorAndCopyBehavior;
+        if (other.gameObject.TryGetComponent<MirrorAndCopyBehavior>(out mirrorAndCopyBehavior))
+        {
+            mirrorAndCopyBehavior.ForceTurnEnd();
         }
     }
 }
