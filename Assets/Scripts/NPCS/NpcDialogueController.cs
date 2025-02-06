@@ -158,6 +158,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
                 _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue].text));
             }
 
+            VignetteController.InteractionTriggered.Invoke(true);
             _dialogueBox.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
             _background.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
             _occupied = true;
@@ -235,6 +236,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
     /// </summary>
     public void HideDialogue()
     {
+        VignetteController.InteractionTriggered.Invoke(false);
         _dialogueBox.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
         _background.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
         _occupied = false;
