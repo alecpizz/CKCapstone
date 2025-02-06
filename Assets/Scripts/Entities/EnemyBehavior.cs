@@ -30,8 +30,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         get => false;
     }
 
-    public Vector3 moveInDirection { get; private set; }
-
     public Vector3 Position
     {
         get => transform.position;
@@ -47,15 +45,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private PlayerControls _input;
     [SerializeField] private GameObject _destinationMarker;
     [SerializeField] private GameObject _destPathVFX;
-    private bool _atFirstPoint;
 
-    [SerializeField] private int _currentPoint = 0;
-    private int _currentPointIndex = 0;
 
     //Destination object values
-    private bool _destAtFirstPoint = true;
 
-    [SerializeField] private int _destCurrentPoint = 0;
     public bool CollidingWithRay = false;
 
     [SerializeField] private float _destYPos = 1f;
@@ -110,23 +103,26 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     //a circular pattern (doesn't want to move back and forth)
     [SerializeField] private bool _circularMovement = false;
 
-    [SerializeField] private int _linePosCount;
-    [SerializeField] private int _tilesToDraw = 0;
-    [SerializeField] private int _currentLinePoint = 0;
     [SerializeField] private LineRenderer _vfxLine;
+    [SerializeField] private float _enemyRotateToMovementDelay = 0.0f;
 
     private bool _isFrozen = false;
 
     // Event reference for the enemy movement sound
     [SerializeField] private EventReference _enemyMove = default;
-    [SerializeField] public bool sonEnemy;
+    [FormerlySerializedAs("sonEnemy")] [SerializeField] private bool _isSonEnemy;
 
-    private List<Vector3Int> _moveDestinations = new();
+    private readonly List<Vector3Int> _moveDestinations = new();
 
     // Timing from metronome
     private int _enemyMovementTime = 1;
 
     private Rigidbody _rb;
+
+    private int _moveIndex = 0;
+    private bool _isReturningToStart = false;
+    private int _indicatorIndex = 0;
+    private bool _indicatorReturningToStart = false;
 
     private void Awake()
     {
@@ -138,7 +134,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// </summary>
     private void Start()
     {
-        moveInDirection = new Vector3(0, 0, 0);
         SnapToGridSpace();
         BuildCellList();
         GridBase.Instance.AddEntry(this);
@@ -149,7 +144,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _destinationMarker.transform.SetParent(null);
 
         // Make sure enemies are always seen at the start
-        _atFirstPoint = true;
 
         if (TimeSignatureManager.Instance != null)
         {
@@ -297,159 +291,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     }
 
     /// <summary>
-    /// Function that tells the enemy which direction to move in
-    /// </summary>
-    /// <param name="myDirection"></param>
-    public void FindDirection(Direction myDirection)
-    {
-        switch (myDirection)
-        {
-            case Direction.Up:
-                moveInDirection = Vector3.forward;
-                break;
-            case Direction.Down:
-                moveInDirection = Vector3.back;
-                break;
-            case Direction.Left:
-                moveInDirection = Vector3.left;
-                break;
-            case Direction.Right:
-                moveInDirection = Vector3.right;
-                break;
-            default:
-                break;
-        }
-    }
-
-    /// <summary>
-    /// Coroutine that handles the enemy's movement along the provided points in the struct object list.
-    /// Also contains the destination marker movement behavior for the enemy.
-    /// </summary>
-    /// <returns></returns>
-    private IEnumerator MoveEnemy()
-    {
-        // Checks to see if all enemies have finished moving via a bool in the player script 
-        // and if the enemy is currently frozen by the harmony beam
-        if (!_isFrozen)
-        {
-            for (int i = 0; i < _enemyMovementTime; ++i)
-            {
-                //Looks at current point the the struct object list to pull the current direction
-                //(enum) and amount of tiles to move in direction (int)
-                var point = _movePoints[_currentPoint];
-                var pointDirection = point.direction;
-                var pointTiles = point.tilesToMove;
-                FindDirection(pointDirection);
-
-                //Reverses move direction if going back through the list
-                if (!_atFirstPoint)
-                {
-                    moveInDirection = -moveInDirection;
-                }
-
-                // For loop repeats enemy moving over a tile in the direction given until either it sees another
-                // object in that direction that isn't the player (will move into players but not walls/enemies).
-                for (; _currentPointIndex < pointTiles; ++_currentPointIndex)
-                {
-                    var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position,
-                        moveInDirection);
-                    var entries = GridBase.Instance.GetCellEntries(move);
-                    bool breakLoop = false;
-                    float movementTime = Mathf.Clamp((_waitTime / pointTiles) / _enemyMovementTime,
-                        _minMoveTime, float.MaxValue);
-
-                    //If the next cell contains an object that is not the player then the loop breaks
-                    //enemy can't move into other enemies, walls, etc.
-                    foreach (var entry in entries)
-                    {
-                        if (entry.EntryObject.CompareTag("Wall") && entry.IsTransparent)
-                        {
-                            _rb.isKinematic = true;
-                            breakLoop = false;
-                            break;
-                        }
-
-                        if (entry.EntryObject == PlayerMovement.Instance.gameObject)
-                        {
-                            _rb.isKinematic = false;
-                            breakLoop = false;
-                            break;
-                        }
-                        else
-                        {
-                            breakLoop = true;
-                            break;
-                        }
-                    }
-
-                    if (breakLoop == true || _isFrozen)
-                    {
-                        break;
-                    }
-
-                    Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveInDirection),
-                        duration: _rotationTime,
-                        ease: _rotationEase);
-
-                    yield return Tween.Position(transform,
-                            move + _positionOffset, duration: movementTime,
-                            ease: _movementEase)
-                        .OnUpdate<EnemyBehavior>(target: this,
-                            (target, tween) => { GridBase.Instance.UpdateEntry(this); })
-                        .ToYieldInstruction();
-
-                    AudioManager.Instance.PlaySound(_enemyMove);
-                    GridBase.Instance.UpdateEntry(this);
-                }
-
-                // If the current point is equal to the length of the list then the if/else statement 
-                // will check the atFirstPoint bool and concurrently reverse through the list
-                if (!_isFrozen && _atFirstPoint == true)
-                {
-                    _currentPointIndex = 0;
-
-                    if (_currentPoint >= _movePoints.Count - 1)
-                    {
-                        if (!_circularMovement)
-                        {
-                            _atFirstPoint = false;
-                        }
-                        else
-                        {
-                            _currentPoint = 0;
-                        }
-                    }
-                    else
-                    {
-                        _currentPoint++;
-                    }
-                }
-                else if (!_isFrozen)
-                {
-                    _currentPointIndex = 0;
-
-                    if (_currentPoint <= 0)
-                    {
-                        _atFirstPoint = true;
-                    }
-                    else
-                    {
-                        _currentPoint--;
-                    }
-                }
-            }
-
-            UpdateDestinationMarker();
-        }
-
-        Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveInDirection),
-            duration: _rotationTime, ease: _rotationEase);
-
-        GridBase.Instance.UpdateEntry(this);
-        RoundManager.Instance.CompleteTurn(this);
-    }
-
-    /// <summary>
     /// This function updates the position of the _destinationMarker object using the
     /// _movePoints list.
     /// </summary>
@@ -474,9 +315,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _vfxLine.SetPosition(1, destPointWorld);
         destPointWorld.y += _destYPos;
         _destinationMarker.transform.position = destPointWorld;
-
-        _tilesToDraw = 0;
-        _currentLinePoint = 0;
     }
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
@@ -490,12 +328,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     }
 
     public TurnState TurnState => TurnState.Enemy;
-
-    //TEMP VARS for rewrite
-    private int _moveIndex = 0;
-    private bool _isReturningToStart = false;
-    private int _indicatorIndex = 0;
-    private bool _indicatorReturningToStart = false;
 
     /// <summary>
     /// Called by RoundManager to start this entity's turn
@@ -514,6 +346,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         StartCoroutine(MovementRoutine());
     }
 
+    /// <summary>
+    /// Coroutine for handling enemy movement. Handles determining pathing,
+    /// Tween movement, and updating the indicator.
+    /// </summary>
+    /// <returns>null</returns>
     private IEnumerator MovementRoutine()
     {
         bool blocked = false;
@@ -524,25 +361,24 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             EvaluateNextMove(ref _moveIndex, ref _isReturningToStart);
             var movePt = _moveDestinations[_moveIndex];
             var currCell = GridBase.Instance.WorldToCell(transform.position);
-            var dist = Vector3Int.Distance(currCell, movePt);
             //cell is only one apart.
             var goalCell = GetLongestPath(GridBase.Instance.CellToWorld(movePt));
-            Debug.Log($"Move Point {movePt}, goal Point {goalCell}");
+            //we were blocked by something, adjust memory
             if (goalCell != movePt)
             {
-                Debug.Log($"Blocked! Altering memory!");
                 blocked = true;
-                //we can still make the move, we just need to try again because we were blocked.
+                //we can still make the move in the future, we just need to try again because we were blocked.
                 _moveIndex = prevMove;
                 _isReturningToStart = prevReturn;
             }
 
             //already at this spot, next turn.
             if (goalCell == currCell) continue;
+            var dist = Vector3Int.Distance(currCell, movePt);
             var rotationDir = (GridBase.Instance.CellToWorld(movePt) - transform.position).normalized;
             var moveWorld = GridBase.Instance.CellToWorld(movePt);
             dist = Mathf.Max(dist, 1f);
-            float movementTime = Mathf.Clamp((_waitTime / dist) / _enemyMovementTime,
+            float movementTime = Mathf.Clamp((_waitTime / _enemyMovementTime) * dist,
                 _minMoveTime, float.MaxValue);
             var tween = Tween
                 .Position(transform, endValue: moveWorld + _positionOffset,
@@ -561,12 +397,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                             //hit a player!
                             SceneController.Instance.ReloadCurrentScene();
                         }
-                    }).ToYieldInstruction();
-            var rotTween = Tween.Rotation(transform, endValue: Quaternion.LookRotation(rotationDir),
+                    });
+            yield return Tween.Rotation(transform, endValue: Quaternion.LookRotation(rotationDir),
                 duration: _rotationTime,
-                ease: _rotationEase).ToYieldInstruction();
-            yield return rotTween;
-            yield return tween;
+                ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).Chain(tween).ToYieldInstruction();
             AudioManager.Instance.PlaySound(_enemyMove);
             GridBase.Instance.UpdateEntry(this);
         }
@@ -575,9 +409,16 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         {
             UpdateDestinationMarker();
         }
+
         RoundManager.Instance.CompleteTurn(this);
     }
 
+    /// <summary>
+    /// Determines the longest path from the enemy's current position
+    /// to its goal. WIll stop if it's blocked by something.
+    /// </summary>
+    /// <param name="goal">The goal position, in world space to get to.</param>
+    /// <returns>The updated goal cell.</returns>
     private Vector3Int GetLongestPath(Vector3 goal)
     {
         var direction = (goal - transform.position);
@@ -585,6 +426,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         bool stop = false;
         var originTilePos = GridBase.Instance.WorldToCell(transform.position);
         var currTilePos = GridBase.Instance.CellToWorld(originTilePos);
+        //loop thru all tiles in the direction of the goal, stopping if blocked or if we're at the goal.
         do
         {
             var nextCell = GridBase.Instance.GetCellPositionInDirection(currTilePos, direction);
@@ -602,6 +444,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         return GridBase.Instance.WorldToCell(currTilePos);
     }
 
+    /// <summary>
+    /// Determines if the enemy can pass through the cell.
+    /// </summary>
+    /// <param name="cell">The cell to check.</param>
+    /// <returns>True if the enemy can pass through.</returns>
     private bool CanPassThroughCell(Vector3Int cell)
     {
         var entries = GridBase.Instance.GetCellEntries(cell);
@@ -625,8 +472,14 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         return true;
     }
 
+    /// <summary>
+    /// Determines the next move index for the enemy.
+    /// </summary>
+    /// <param name="moveIndex"></param>
+    /// <param name="looped"></param>
     private void EvaluateNextMove(ref int moveIndex, ref bool looped)
     {
+        //not at the end of our list of moves.
         if (moveIndex < _moveDestinations.Count - 1)
         {
             if (!looped)
@@ -684,7 +537,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// </summary>
     public void OnLaserHit()
     {
-        if (sonEnemy)
+        if (_isSonEnemy)
         {
             _isFrozen = true;
         }
@@ -700,7 +553,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     public bool HitWrapAround
     {
-        get => sonEnemy;
+        get => _isSonEnemy;
     }
 
     /// <summary>
