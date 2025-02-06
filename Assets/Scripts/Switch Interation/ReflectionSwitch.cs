@@ -54,16 +54,7 @@ public class ReflectionSwitch : MonoBehaviour, IParentSwitch, ITurnListener
     public void SwitchActivation()
     {
         _shouldMoveOnTurn = true;
-        _shouldActivate = true;
-    }
-
-    /// <summary>
-    /// When switch is off, the reflection will face the original direction
-    /// </summary>
-    public void SwitchDeactivation()
-    {
-        _shouldMoveOnTurn = true;
-        _shouldActivate = false;
+        _shouldActivate = !_shouldActivate;
     }
 
     /// <summary>
