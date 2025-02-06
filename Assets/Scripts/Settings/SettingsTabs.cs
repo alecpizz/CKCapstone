@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class SettingsTabs : MonoBehaviour
@@ -55,12 +56,31 @@ public class SettingsTabs : MonoBehaviour
     [SerializeField] private Sprite _ogLevelSelectImage;
 
     [Header("Alternate Button Sprites")]
-    [SerializeField] private Sprite _displayImage;
-    [SerializeField] private Sprite _audioImage;
-    [SerializeField] private Sprite _accessibilityImage;
-    [SerializeField] private Sprite _gameplayImage;
-    [SerializeField] private Sprite _howToPlayImage;
-    [SerializeField] private Sprite _levelSelectImage;
+    [FormerlySerializedAs("_displayImage")]
+    [SerializeField] private Sprite _altDisplayImage;
+
+    [FormerlySerializedAs("_audioImage")]
+    [SerializeField] private Sprite _altAudioImage;
+
+    [FormerlySerializedAs("_accessibilityImage")]
+    [SerializeField] private Sprite _altAccessibilityImage;
+
+    [FormerlySerializedAs("_gameplayImage")]
+    [SerializeField] private Sprite _altGameplayImage;
+
+    [FormerlySerializedAs("_howToPlayImage")]
+    [SerializeField] private Sprite _altHowToPlayImage;
+
+    [FormerlySerializedAs("_levelSelectImage")]
+    [SerializeField] private Sprite _altLevelSelectImage;
+
+    //const strings for the tags
+    const string DISPLAY = "display";
+    const string AUDIO = "audio";
+    const string ACCESSIBILITY = "accessibility";
+    const string GAMEPLAY = "gameplay";
+    const string HOWTOPLAY = "how to";
+    const string LEVELSELECT = "level";
 
     private Dictionary<Tab, GameObject> _panels;
     private Dictionary<Tab, Button> _buttons;
@@ -94,12 +114,12 @@ public class SettingsTabs : MonoBehaviour
         };
 
         //tags for the buttons so the right images will be shown
-        _displayButton.tag = "display";
-        _audioButton.tag = "audio";
-        _accessibilityButton.tag = "accessibility";
-        _gameplayButton.tag = "gameplay";
-        _howToPlayButton.tag = "how to";
-        _levelSelectButton.tag = "level";
+        _displayButton.tag = DISPLAY;
+        _audioButton.tag = AUDIO;
+        _accessibilityButton.tag = ACCESSIBILITY;
+        _gameplayButton.tag = GAMEPLAY;
+        _howToPlayButton.tag = HOWTOPLAY;
+        _levelSelectButton.tag = LEVELSELECT;
 
         // Assign button click events
         //display events
@@ -144,41 +164,30 @@ public class SettingsTabs : MonoBehaviour
     {
         foreach(var buttons in _buttons)
         {
-            //statements to decide which tabs will be shown as small
-            if(buttons.Key != tab && buttons.Value.tag == "display")
+            //statement to decide which tabs will be shown as small
+            if(buttons.Key != tab)
             {
-
-                buttons.Value.GetComponent<Image>().sprite = _displayImage;
-
-            }else if(buttons.Key != tab && buttons.Value.tag == "audio")
-            {
-
-                buttons.Value.GetComponent<Image>().sprite = _audioImage;
-
-            }
-            else if(buttons.Key != tab && buttons.Value.tag == "accessibility")
-            {
-
-                buttons.Value.GetComponent<Image>().sprite = _accessibilityImage;
-
-            }
-            else if(buttons.Key != tab && buttons.Value.tag == "gameplay")
-            {
-
-                buttons.Value.GetComponent<Image>().sprite = _gameplayImage;
-
-            }
-            else if(buttons.Key != tab && buttons.Value.tag == "how to")
-            {
-
-                buttons.Value.GetComponent<Image>().sprite = _howToPlayImage;
-
-            }
-            else if(buttons.Key != tab && buttons.Value.tag == "level")
-            {
-
-                buttons.Value.GetComponent<Image>().sprite = _levelSelectImage;
-
+                switch (buttons.Value.tag)
+                {
+                    case DISPLAY:
+                        buttons.Value.GetComponent<Image>().sprite = _altDisplayImage;
+                        break;
+                    case AUDIO:
+                        buttons.Value.GetComponent<Image>().sprite = _altAudioImage;
+                        break;
+                    case ACCESSIBILITY:
+                        buttons.Value.GetComponent<Image>().sprite = _altAccessibilityImage;
+                        break;
+                    case GAMEPLAY:
+                        buttons.Value.GetComponent<Image>().sprite = _altGameplayImage;
+                        break;
+                    case HOWTOPLAY:
+                        buttons.Value.GetComponent<Image>().sprite = _altHowToPlayImage;
+                        break;
+                    case LEVELSELECT:
+                        buttons.Value.GetComponent<Image>().sprite = _altLevelSelectImage;
+                        break;
+                }
             }
         }
     }
@@ -206,36 +215,27 @@ public class SettingsTabs : MonoBehaviour
     {
         foreach (var button in _buttons)
         {
-            //statements to figure out which button will show full image
-            if(button.Value.tag == "display")
+            //switch to figure out which button will show full image
+            switch (button.Value.tag)
             {
-
-                button.Value.GetComponent<Image>().sprite = _ogDisplayImage;
-
-            }else if(button.Value.tag == "audio")
-            {
-
-                button.Value.GetComponent<Image>().sprite = _ogAudioImage;
-
-            }else if(button.Value.tag == "accessibility")
-            {
-
-                button.Value.GetComponent<Image>().sprite = _ogAccessibilityImage;
-
-            }else if(button.Value.tag == "gameplay")
-            {
-
-                button.Value.GetComponent<Image>().sprite = _ogGameplayImage;
-
-            }else if(button.Value.tag == "how to")
-            {
-
-                button.Value.GetComponent<Image>().sprite = _ogHowToPlayImage;
-
-            }else if(button.Value.tag == "level")
-            {
-
-                button.Value.GetComponent<Image>().sprite = _ogLevelSelectImage;
+                case DISPLAY:
+                    button.Value.GetComponent<Image>().sprite = _ogDisplayImage;
+                    break;
+                case AUDIO:
+                    button.Value.GetComponent<Image>().sprite = _ogAudioImage;
+                    break;
+                case ACCESSIBILITY:
+                    button.Value.GetComponent<Image>().sprite = _ogAccessibilityImage;
+                    break;
+                case GAMEPLAY:
+                    button.Value.GetComponent<Image>().sprite = _ogGameplayImage;
+                    break;
+                case HOWTOPLAY:
+                    button.Value.GetComponent<Image>().sprite = _ogHowToPlayImage;
+                    break;
+                case LEVELSELECT:
+                    button.Value.GetComponent<Image>().sprite = _ogLevelSelectImage;
+                    break;
             }
 
             button.Value.interactable = button.Key != tab;  // Disable the button for the active tab
