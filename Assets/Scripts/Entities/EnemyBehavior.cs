@@ -110,7 +110,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     // Event reference for the enemy movement sound
     [SerializeField] private EventReference _enemyMove = default;
-    [FormerlySerializedAs("sonEnemy")] [SerializeField] private bool _isSonEnemy;
+
+    [FormerlySerializedAs("sonEnemy")] [SerializeField]
+    private bool _isSonEnemy;
 
     private readonly List<Vector3Int> _moveDestinations = new();
 
