@@ -7,6 +7,7 @@
 using FMODUnity;
 using System.Collections;
 using System.Collections.Generic;
+using SaintsField;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -19,12 +20,14 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject _optionsScreen;
     [SerializeField] private GameObject _confirmQuit;
     [SerializeField] private GameObject _mainMenu;
+    [Scene] [SerializeField] private int _firstLevelIndex = 1;
     [SerializeField] private GameObject _mainMenuFirst;
     [SerializeField] private GameObject _settingsMenuFirst;
     [SerializeField] private GameObject _mainMenuStart;
     [SerializeField] private GameObject _mainMenuSettings;
     [SerializeField] private GameObject _mainMenuQuit;
     [SerializeField] private GameObject _restartButton;
+    [SerializeField] private GameObject _enemyPathButton;
 
     [SerializeField] private EventReference _buttonPress;
 
@@ -57,6 +60,7 @@ public class MenuManager : MonoBehaviour
         DebugMenuManager.Instance.PauseMenu = false;
         _pauseScreen.SetActive(false);
         _restartButton.SetActive(true);
+        _enemyPathButton.SetActive(true);
         Time.timeScale = 1f;
     }
 
@@ -109,6 +113,7 @@ public class MenuManager : MonoBehaviour
         DebugMenuManager.Instance.PauseMenu = true;
         _pauseScreen.SetActive(true);
         _restartButton.SetActive(false);
+        _enemyPathButton.SetActive(false);
         EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
         Time.timeScale = 0f;
     }
@@ -147,7 +152,7 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void StartGame()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(_firstLevelIndex);
     }
 
     /// <summary>
