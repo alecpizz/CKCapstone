@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Nick Grinstead
-*    Contributors: David Galmines, Trinity Hutson
+*    Contributors: David Galmines, Trinity Hutson, Mitchell Young
 *    Date Created: 10/28/24
 *    Description: Checks for collisions with the player and then 
 *       calls the TimeSignatureManager to update the time signature.
@@ -46,11 +46,14 @@ public class MetronomeBehavior : MonoBehaviour
     private bool _isSlow = true;
     private static readonly int GoFaster = Animator.StringToHash("GoFaster");
 
+    private PlayerMovement _player;
+
     /// <summary>
     /// Keeps the particle effects from playing right away.
     /// </summary>
     private void Awake()
     {
+        _player = PlayerMovement.Instance;
         _contactIndicator.Pause();
         //_anim = GetComponentInParent<Animator>();
 
@@ -87,7 +90,7 @@ public class MetronomeBehavior : MonoBehaviour
     /// Play's the HUD indicator effect on a delay after the player 
     /// touches the metronome (for tutorial level only).
     /// </summary>
-    private IEnumerator HUDIndicator()
+    private IEnumerator HudIndicator()
     {
         WaitForSeconds wait = new(_flashSpeed);
 
@@ -123,24 +126,34 @@ public class MetronomeBehavior : MonoBehaviour
     /// <param name="other">Data from a collision</param>
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Player"))
+        if (!other.gameObject.CompareTag("Player") && !other.gameObject.CompareTag("Enemy") && !other.gameObject.CompareTag("SonEnemy"))
         {
-            ActivateMetronome();
+            return;
+        }
 
-            if (_isThisTheTutorial)
-            {
-                StopAllCoroutines();
-                StartCoroutine("HUDIndicator");
-            }
+        ActivateMetronome();
 
-            _contactIndicator.Play();
-            _HUDEffect.SetActive(false);
+        if (_isThisTheTutorial)
+        {
+            StopAllCoroutines();
+            StartCoroutine(HudIndicator());
+        }
 
-            PlayerMovement playerMovement;
-            if (other.gameObject.TryGetComponent<PlayerMovement>(out playerMovement))
-            {
-                playerMovement.ForceTurnEnd();
-            }
+        _contactIndicator.Play();
+        _HUDEffect.SetActive(false);
+
+        _player.ForceTurnEnd();
+
+        EnemyBehavior enemyBehavior;
+        if (other.gameObject.TryGetComponent<EnemyBehavior>(out enemyBehavior))
+        {
+            enemyBehavior.ForceTurnEnd();
+        }
+
+        MirrorAndCopyBehavior mirrorAndCopyBehavior;
+        if (other.gameObject.TryGetComponent<MirrorAndCopyBehavior>(out mirrorAndCopyBehavior))
+        {
+            mirrorAndCopyBehavior.ForceTurnEnd();
         }
     }
 }
