@@ -96,7 +96,7 @@ public class ReflectionSwitch : MonoBehaviour, IParentSwitch, ITurnListener
     /// </summary>
     private void ResetOnTweenEnd()
     {
-        _mirror.ToggleBeam(true);
+        _mirror.CheckForBeamPostRotation();
         RoundManager.Instance.CompleteTurn(this);
     }
 
