@@ -69,7 +69,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
     [SerializeField] private Ease _movementEase = Ease.OutBack;
 
-    //List of movePoint structs that contain a direction enum and a tiles to move integer.
+    /// <summary>
+    /// Helper enum for enemy directions.
+    /// </summary>
     public enum Direction
     {
         Up,
@@ -78,12 +80,19 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         Right
     }
 
+    /// <summary>
+    /// Struct to hold an enemy's move. Contains a direction and magnitude.
+    /// </summary>
     [System.Serializable]
     private struct movePoints
     {
         public Direction direction;
         public int tilesToMove;
 
+        /// <summary>
+        /// Grabs the vector3 equivalent of the direction assigned to this struct.
+        /// </summary>
+        /// <returns>A vector3 equivalent of direction.</returns>
         public Vector3 GetDirection()
         {
             return direction switch
@@ -126,9 +135,13 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private int _indicatorIndex = 0;
     private bool _indicatorReturningToStart = false;
 
+    /// <summary>
+    /// Disables a PrimeTween warning.
+    /// </summary>
     private void Awake()
     {
         PrimeTweenConfig.warnEndValueEqualsCurrent = false;
+        PrimeTweenConfig.warnZeroDuration = false;
     }
 
     /// <summary>
@@ -181,6 +194,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         }
     }
 
+    /// <summary>
+    /// Visualizer for enemy pathing in editor.
+    /// </summary>
     private void OnDrawGizmos()
     {
         if (_moveDestinations.Count == 0)
@@ -246,6 +262,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _input.InGame.Disable();
     }
 
+    /// <summary>
+    /// Takes the assigned moves to the enemy and builds a list
+    /// of static points, relative to the enemy's initial position. 
+    /// </summary>
     private void BuildCellList()
     {
         var grid = GridBase.Instance;
@@ -319,6 +339,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _destinationMarker.transform.position = destPointWorld;
     }
 
+    /// <summary>
+    /// Implementation of ITimeListeners time sig method.
+    /// Stores the enemy movement time.
+    /// </summary>
+    /// <param name="newTimeSignature">The new time signature.</param>
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
     {
         _enemyMovementTime = newTimeSignature.y;
@@ -363,7 +388,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             EvaluateNextMove(ref _moveIndex, ref _isReturningToStart);
             var movePt = _moveDestinations[_moveIndex];
             var currCell = GridBase.Instance.WorldToCell(transform.position);
-            //cell is only one apart.
             var goalCell = GetLongestPath(GridBase.Instance.CellToWorld(movePt));
             //we were blocked by something, adjust memory
             if (goalCell != movePt)
@@ -375,7 +399,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             }
 
             //already at this spot, next turn.
-            if (goalCell == currCell) continue;
+            if (goalCell == currCell)
+            {
+                continue;
+            }
             var dist = Vector3Int.Distance(currCell, movePt);
             var rotationDir = (GridBase.Instance.CellToWorld(movePt) - transform.position).normalized;
             var moveWorld = GridBase.Instance.CellToWorld(movePt);
