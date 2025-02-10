@@ -380,6 +380,14 @@ MonoBehaviour:
   _optionsScreen: {fileID: 0}
   _confirmQuit: {fileID: 0}
   _mainMenu: {fileID: 0}
+  _firstLevelIndex: 1
+  _mainMenuFirst: {fileID: 0}
+  _settingsMenuFirst: {fileID: 0}
+  _mainMenuStart: {fileID: 0}
+  _mainMenuSettings: {fileID: 0}
+  _mainMenuQuit: {fileID: 0}
+  _restartButton: {fileID: 0}
+  _enemyPathButton: {fileID: 0}
   _buttonPress:
     Guid:
       Data1: 0
@@ -1159,18 +1167,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77675e769f19c484f8610a28ec7f8fbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _collectedNotesUI: {fileID: 38851467}
+  _collectedNotesUi: {fileID: 38851467}
   _messageWaitTime: 3
   _doorUnlockMessage: {fileID: 623426940}
   _incorrectMessage: {fileID: 759194287}
-  _sequenceUI: {fileID: 230719958}
+  _sequenceUi: {fileID: 230719958}
   _noteImages: []
   _ghostNoteImages: []
   _isIntermission: 0
-  _timeSignatureUIy: {fileID: 0}
-  _timeSignatureUIx: {fileID: 0}
+  _isChallenge: 0
+  _timeSignatureUiY: {fileID: 0}
+  _timeSignatureUiX: {fileID: 0}
   _levelNumber: {fileID: 0}
-  timeSignature: 0
+  _timeSignature: 0
 --- !u!43 &493115261
 Mesh:
   m_ObjectHideFlags: 0
@@ -1484,6 +1493,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Reflective Cube
       objectReference: {fileID: 0}
+    - target: {fileID: 4783140714631010918, guid: 0daea2fb57a519b4a8eb7c79d10e4c7e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4784836867817577750, guid: 0daea2fb57a519b4a8eb7c79d10e4c7e,
         type: 3}
       propertyPath: _reflectLeft
@@ -1567,6 +1581,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mirror: {fileID: 630720224}
+  _rotationDuration: 0.2
+  _beamToggleDelay: 0.6
 --- !u!114 &630720224 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4784836867817577750, guid: 0daea2fb57a519b4a8eb7c79d10e4c7e,
@@ -2136,6 +2152,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mirror: {fileID: 841565686}
+  _rotationDuration: 0.2
+  _beamToggleDelay: 0.6
 --- !u!114 &841565686 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4784836867817577750, guid: 0daea2fb57a519b4a8eb7c79d10e4c7e,
@@ -2654,6 +2672,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Beam Cube (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 47317306802859145, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8997804269895301853, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3052,6 +3075,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Beam Cube
       objectReference: {fileID: 0}
+    - target: {fileID: 47317306802859145, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8997804269895301853, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3124,6 +3152,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: MirrorEnemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 986976119600338824, guid: e601ea21a09c1054586815596235ab9a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2742591932089471870, guid: e601ea21a09c1054586815596235ab9a,
         type: 3}
@@ -3318,6 +3351,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 5428858568231558975, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6145570052579523705, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
         type: 3}
@@ -3833,7 +3871,7 @@ PrefabInstance:
     - target: {fileID: 2406617457571976407, guid: 62a1c1e43ce298e4199ef08e39e09f4f,
         type: 3}
       propertyPath: _affectedReflectors.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2406617457571976407, guid: 62a1c1e43ce298e4199ef08e39e09f4f,
         type: 3}
@@ -3843,7 +3881,7 @@ PrefabInstance:
     - target: {fileID: 4532018780647744608, guid: 62a1c1e43ce298e4199ef08e39e09f4f,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 8.9760895
+      value: 7.01
       objectReference: {fileID: 0}
     - target: {fileID: 4532018780647744608, guid: 62a1c1e43ce298e4199ef08e39e09f4f,
         type: 3}
@@ -3853,7 +3891,7 @@ PrefabInstance:
     - target: {fileID: 4532018780647744608, guid: 62a1c1e43ce298e4199ef08e39e09f4f,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 4.768821
+      value: 2.82
       objectReference: {fileID: 0}
     - target: {fileID: 4532018780647744608, guid: 62a1c1e43ce298e4199ef08e39e09f4f,
         type: 3}
@@ -4143,6 +4181,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Reflective Cube (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 4783140714631010918, guid: 0daea2fb57a519b4a8eb7c79d10e4c7e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8612611213399818067, guid: 0daea2fb57a519b4a8eb7c79d10e4c7e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -4324,6 +4367,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: CopyEnemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 9112844100434834293, guid: f983aa1caa66b2c4890d7a9d3a951a40,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4614,9 +4662,19 @@ PrefabInstance:
       objectReference: {fileID: 841565683}
     - target: {fileID: 2406617457571976407, guid: 62a1c1e43ce298e4199ef08e39e09f4f,
         type: 3}
+      propertyPath: _affectedWalls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2406617457571976407, guid: 62a1c1e43ce298e4199ef08e39e09f4f,
+        type: 3}
       propertyPath: _affectedObjects.Array.size
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2406617457571976407, guid: 62a1c1e43ce298e4199ef08e39e09f4f,
+        type: 3}
+      propertyPath: _affectedWalls.Array.data[0]
+      value: 
+      objectReference: {fileID: 2121075441}
     - target: {fileID: 2406617457571976407, guid: 62a1c1e43ce298e4199ef08e39e09f4f,
         type: 3}
       propertyPath: _affectedObjects.Array.data[0]
@@ -4625,7 +4683,7 @@ PrefabInstance:
     - target: {fileID: 2406617457571976407, guid: 62a1c1e43ce298e4199ef08e39e09f4f,
         type: 3}
       propertyPath: _affectedReflectors.Array.size
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2406617457571976407, guid: 62a1c1e43ce298e4199ef08e39e09f4f,
         type: 3}
