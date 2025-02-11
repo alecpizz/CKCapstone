@@ -102,15 +102,6 @@ public class HarmonySwitch : MonoBehaviour, IParentSwitch, ITurnListener
     public void SwitchActivation()
     {
         _shouldMoveOnTurn = true;
-        _shouldActivate = true;
-    }
-
-    /// <summary>
-    /// Signals the beam that it should return to its original position on its turn
-    /// </summary>
-    public void SwitchDeactivation()
-    {
-        _shouldMoveOnTurn = true;
-        _shouldActivate = false;
+        _shouldActivate = !_shouldActivate;
     }
 }
