@@ -1,2 +1,2 @@
 # CKCapstone
-Repository for Crowded Kitchen's Capsone Project
+Repository for Crowded Kitchen's Captsone Project
