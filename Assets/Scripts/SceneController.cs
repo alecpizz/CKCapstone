@@ -155,6 +155,9 @@ public class SceneController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Reseting material back to default for position and color
+    /// </summary>
     private void OnDisable()
     {
         _currentFadeColor = Color.black;
