@@ -126,6 +126,16 @@ public class SettingsTabs : MonoBehaviour
             {_levelSelectButton, _ogLevelSelectImage }
         };
 
+        _altSprites = new Dictionary<Button, Sprite>
+        {
+            {_displayButton, _altDisplayImage },
+            {_audioButton, _altAudioImage },
+            {_accessibilityButton, _altAccessibilityImage },
+            {_gameplayButton, _altGameplayImage },
+            {_howToPlayButton, _altHowToPlayImage },
+            {_levelSelectButton, _altLevelSelectImage }
+        };
+
         //tags for the buttons so the right images will be shown
         _displayButton.tag = DISPLAY;
         _audioButton.tag = AUDIO;
@@ -178,8 +188,9 @@ public class SettingsTabs : MonoBehaviour
         foreach(var ogImages in _ogSprites)
         {
             //statement to decide which tabs will be shown as small
-            if(ogImages.Key == button)
+            if (ogImages.Key == button)
             {
+                //ogImages.Key.GetComponent<Image>().sprite = ogImages.Value;
                 button.GetComponent<Image>().sprite = ogImages.Value;
             }
         }
@@ -206,10 +217,11 @@ public class SettingsTabs : MonoBehaviour
     /// <param name="tab">The tab to highlight</param>
     private void HighlightButton(Tab tab)
     {
-        foreach (var button in _buttons)
+        foreach (var altImages in _altSprites)
         {
             //switch to figure out which button will show full image
-            switch (button.Value.tag)
+            altImages.Key.GetComponent<Image>().sprite = altImages.Value;
+            /*switch (button.Value.tag)
             {
                 case DISPLAY:
                     button.Value.GetComponent<Image>().sprite = _altDisplayImage;
@@ -229,9 +241,9 @@ public class SettingsTabs : MonoBehaviour
                 case LEVELSELECT:
                     button.Value.GetComponent<Image>().sprite = _altLevelSelectImage;
                     break;
-            }
+            }*/
 
-            button.Value.interactable = button.Key != tab;  // Disable the button for the active tab
+            //altImages.Key.interactable = !_buttons.ContainsKey(tab);  // Disable the button for the active tab
         }
     }
 }
