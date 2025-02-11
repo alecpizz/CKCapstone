@@ -94,7 +94,7 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
         }
     }
 
-    [field: SerializeField, ListDrawerSettings(searchable: true, 2)]
+    [field: SerializeField, ListDrawerSettings(searchable: true, 5)]
     public List<Chapter> Chapters { get; private set; } = new();
     [field: SerializeField, SepTitle("Credits Scene", EColor.Magenta), BelowSeparator(EColor.Magenta)] 
     public SceneAsset CreditsScene { get; private set; }
