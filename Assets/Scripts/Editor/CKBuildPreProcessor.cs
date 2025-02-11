@@ -55,7 +55,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         if (menuManager != null)
         {
             //use reflection to set the menu manager's load value
-            var field = menuManager.GetType().GetField("_firstLevelIndex");
+            var field = menuManager.GetType().GetField("_firstLevelIndex", BindingFlags.Instance | BindingFlags.NonPublic);
             if (field != null)
             {
                 int index = SceneUtility.GetBuildIndexByScenePath(
@@ -104,7 +104,8 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         var cutsceneFrameWork = Object.FindObjectOfType<CutsceneFramework>();
         if (cutsceneFrameWork != null)
         {
-            var field = cutsceneFrameWork.GetType().GetField("_loadingLevelIndex");
+            var field = cutsceneFrameWork.GetType().GetField("_loadingLevelIndex", 
+                BindingFlags.Instance | BindingFlags.NonPublic);
             if (field != null)
             {
                 field.SetValue(cutsceneFrameWork,
@@ -234,14 +235,14 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
     private static void SetDoorExitScene(EndLevelDoor door, int index)
     {
         if (!door.gameObject.activeSelf) return;
-        var field = door.GetType().GetField("_levelIndexToLoad");
+        var field = door.GetType().GetField("_levelIndexToLoad", BindingFlags.Instance | BindingFlags.NonPublic);
         if (field != null)
         {
             field.SetValue(door, index);
         }
         else
         {
-            Debug.Log($"Missing field _levelIndexToLoad");
+            Debug.LogError($"Missing field _levelIndexToLoad");
         }
 
         EditorUtility.SetDirty(door);
@@ -252,6 +253,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
     /// </summary>
     private static void AddScenesToBuild()
     {
+        //TODO: double check levels aren't being included twice lol
         List<EditorBuildSettingsScene> editorBuildSettingsScenes = 
             new List<EditorBuildSettingsScene>();
         var levelData = LevelOrder.instance;
