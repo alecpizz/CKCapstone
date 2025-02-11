@@ -108,11 +108,11 @@ public class SettingsTabs : MonoBehaviour
         _buttons = new Dictionary<Tab, Button>
         {
             { Tab.Display, _displayButton },
-            { Tab.Audio, _audioButton },
-            { Tab.Accessibility, _accessibilityButton },
-            { Tab.Gameplay, _gameplayButton },
-            { Tab.HowToPlay, _howToPlayButton },
-            { Tab.LevelSelect, _levelSelectButton }
+            { Tab.Audio , _audioButton },
+            { Tab.Accessibility , _accessibilityButton },
+            { Tab.Gameplay , _gameplayButton },
+            { Tab.HowToPlay , _howToPlayButton },
+            { Tab.LevelSelect , _levelSelectButton }
         };
 
         // Initialize the alt images dictionary
@@ -177,6 +177,7 @@ public class SettingsTabs : MonoBehaviour
 
         // Open the default tab at start
         OpenTab(Tab.Display);
+        ChangeImage(_displayButton);
     }
 
     /// <summary>
@@ -185,15 +186,7 @@ public class SettingsTabs : MonoBehaviour
     /// <param name="tab"></param>
     private void ChangeImage(Button button)
     {
-        foreach(var ogImages in _ogSprites)
-        {
-            //statement to decide which tabs will be shown as small
-            if (ogImages.Key == button)
-            {
-                //ogImages.Key.GetComponent<Image>().sprite = ogImages.Value;
-                button.GetComponent<Image>().sprite = ogImages.Value;
-            }
-        }
+        button.GetComponent<Image>().sprite = _ogSprites[button];
     }
 
     /// <summary>
@@ -217,33 +210,18 @@ public class SettingsTabs : MonoBehaviour
     /// <param name="tab">The tab to highlight</param>
     private void HighlightButton(Tab tab)
     {
+
         foreach (var altImages in _altSprites)
         {
-            //switch to figure out which button will show full image
+            //figures out which button will show full image
             altImages.Key.GetComponent<Image>().sprite = altImages.Value;
-            /*switch (button.Value.tag)
-            {
-                case DISPLAY:
-                    button.Value.GetComponent<Image>().sprite = _altDisplayImage;
-                    break;
-                case AUDIO:
-                    button.Value.GetComponent<Image>().sprite = _altAudioImage;
-                    break;
-                case ACCESSIBILITY:
-                    button.Value.GetComponent<Image>().sprite = _altAccessibilityImage;
-                    break;
-                case GAMEPLAY:
-                    button.Value.GetComponent<Image>().sprite = _altGameplayImage;
-                    break;
-                case HOWTOPLAY:
-                    button.Value.GetComponent<Image>().sprite = _altHowToPlayImage;
-                    break;
-                case LEVELSELECT:
-                    button.Value.GetComponent<Image>().sprite = _altLevelSelectImage;
-                    break;
-            }*/
 
-            //altImages.Key.interactable = !_buttons.ContainsKey(tab);  // Disable the button for the active tab
+        }
+
+        foreach(var button in _buttons)
+        {
+            button.Value.interactable = button.Key != tab;  // Disable the button for the active tab
         }
     }
 }
+
