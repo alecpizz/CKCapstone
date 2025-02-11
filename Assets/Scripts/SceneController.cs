@@ -7,6 +7,8 @@
 *    Used https://www.youtube.com/watch?v=9d5Pz4SNmqo&t=300s as reference
 *    for the shader graph set-up.
 *******************************************************************/
+
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -37,6 +39,8 @@ public class SceneController : MonoBehaviour
 
     private const float xUvOffset = 0.5f;
     private const float yUvOffset = 0.28f;
+    //Remembers default position of wipe when loading a new scene
+    private Vector2 _defaultOffset = new Vector2();
 
     /// <summary>
     /// Creates instance and starts fade in transition
@@ -62,7 +66,6 @@ public class SceneController : MonoBehaviour
     public void ReloadCurrentScene()
     {
         StopAllCoroutines();
-        _currentFadeColor = Color.black;
         int sceneIndex = SceneManager.GetActiveScene().buildIndex;
         StartCoroutine(CircleWipeTransition(false, _currentFadeColor, sceneIndex));
     }
@@ -86,6 +89,7 @@ public class SceneController : MonoBehaviour
         // Do circle wipe in center of the screen if there's no player
         if (PlayerMovement.Instance == null)
         {
+            _currentFadeColor = Color.black;
             _circleWipeImage.materialForRendering.SetVector(_positionOffsetPropId, new Vector2(0, 0));
             return;
         }
@@ -135,13 +139,13 @@ public class SceneController : MonoBehaviour
             newCircleSize = Mathf.Lerp(startingCircleSize, targetCircleSize, lerpingTime);
             _circleWipeImage.materialForRendering.SetFloat(_circleSizePropId, newCircleSize);
             elapsedTime += Time.unscaledDeltaTime;
+            _circleWipeImage.materialForRendering.SetVector(_positionOffsetPropId, _defaultOffset);
             yield return null;
         }
 
         _circleWipeImage.materialForRendering.SetFloat(_circleSizePropId, targetCircleSize);
 
         yield return new WaitForSecondsRealtime(0.1f);
-
         Time.timeScale = 1f;
 
         // Loads new scene if needed
@@ -149,6 +153,13 @@ public class SceneController : MonoBehaviour
         {
             SceneManager.LoadScene(sceneIndexToLoad);
         }
+    }
+
+    private void OnDisable()
+    {
+        _currentFadeColor = Color.black;
+        _circleWipeImage.materialForRendering.SetVector(_positionOffsetPropId, _defaultOffset);
+        
     }
 
 #if UNITY_EDITOR
