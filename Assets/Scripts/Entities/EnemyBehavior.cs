@@ -316,7 +316,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                             GridBase.Instance.UpdateEntry(this);
                         }).ToYieldInstruction();
 
-                    HarmonyBeam.TriggerHarmonyScan.Invoke();
+                    if (HarmonyBeam.TriggerHarmonyScan != null)
+                    {
+                        HarmonyBeam.TriggerHarmonyScan.Invoke();
+                    }
                     AudioManager.Instance.PlaySound(_enemyMove);
                     GridBase.Instance.UpdateEntry(this);
                 }

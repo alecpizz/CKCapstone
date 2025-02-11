@@ -20,8 +20,9 @@ public enum TurnState
     Player = 0,
     World = 1,
     Enemy = 2,
-    Harmony = 3,
-    None = 4,
+    SecondWorld = 3,
+    Harmony = 4,
+    None = 5,
 }
 
 
@@ -238,9 +239,9 @@ public sealed class RoundManager : MonoBehaviour
             {
                 AudioManager.Instance.PlaySound(_enemyTurnEvent);
             }
-            foreach (var turnListener in _turnListeners[_turnState])
+            for (int i = _turnListeners[_turnState].Count - 1; i >= 0; --i)
             {
-                turnListener.BeginTurn(_lastMovementInput);
+                _turnListeners[_turnState][i].BeginTurn(_lastMovementInput);
             }
         }
     }
@@ -310,9 +311,10 @@ public sealed class RoundManager : MonoBehaviour
     {
         return turnState switch
         {
-            TurnState.Player => TurnState.Enemy,
-            TurnState.Enemy => TurnState.World,
-            TurnState.World => TurnState.Harmony,
+            TurnState.Player => TurnState.World,
+            TurnState.World => TurnState.Enemy,
+            TurnState.Enemy => TurnState.SecondWorld,
+            TurnState.SecondWorld => TurnState.Harmony,
             TurnState.Harmony => TurnState.None,
             _ => null
         };
@@ -328,9 +330,10 @@ public sealed class RoundManager : MonoBehaviour
         return turnState switch
         {
             TurnState.Player => TurnState.None,
-            TurnState.Enemy => TurnState.Player,
-            TurnState.World => TurnState.Enemy,
-            TurnState.Harmony => TurnState.World,
+            TurnState.World => TurnState.Player,
+            TurnState.Enemy => TurnState.World,
+            TurnState.SecondWorld => TurnState.Enemy,
+            TurnState.Harmony => TurnState.SecondWorld,
             _ => null
         };
     }

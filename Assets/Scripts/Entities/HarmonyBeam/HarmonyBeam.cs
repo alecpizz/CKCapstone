@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using FMOD.Studio;
 using FMODUnity;
+using System.Linq;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -255,7 +257,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     /// </summary>
     private void CheckEntityExits()
     {
-        foreach (var harmonyBeamEntity in _prevHitEntities)
+        foreach (var harmonyBeamEntity in _prevHitEntities.ToList<IHarmonyBeamEntity>())
         {
             if (harmonyBeamEntity == null) continue;
             if (_hitEntities.Contains(harmonyBeamEntity)) continue;
