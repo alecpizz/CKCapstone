@@ -47,7 +47,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         var nowOpenScene = EditorSceneManager.GetActiveScene();
         // // Find valid Scene paths and make a list of EditorBuildSettingsScene
         AddScenesToBuild();
-        var levelData = LevelOrder.instance;
+        var levelData = LevelOrderSelection.Instance.SelectedLevelData;
 
         //set the next level from the main menu to load to the first level of the first chapter.
         var menuScene = EditorSceneManager.OpenScene(AssetDatabase.GetAssetPath(levelData.MainMenuScene));
@@ -135,7 +135,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
     /// <param name="chapterIndex">The index of the chapter that is being modified.</param>
     private static void UpdatePuzzleExits(int chapterIndex)
     {
-        var levelData = LevelOrder.instance;
+        var levelData = LevelOrderSelection.Instance.SelectedLevelData;
         var chapter = levelData.Chapters[chapterIndex];
         for (int puzzleIndex = 0; puzzleIndex < chapter.Puzzles.Count; puzzleIndex++)
         {
@@ -260,21 +260,26 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         //TODO: double check levels aren't being included twice lol
         List<EditorBuildSettingsScene> editorBuildSettingsScenes = 
             new List<EditorBuildSettingsScene>();
-        var levelData = LevelOrder.instance;
+        var levelData = LevelOrderSelection.Instance.SelectedLevelData;
+        levelData.PrettyChapterNames.Clear();
+        levelData.PrettySceneNames.Clear();
         //add the main menu scene
         editorBuildSettingsScenes.Add(
             new EditorBuildSettingsScene(AssetDatabase.GetAssetPath(levelData.MainMenuScene),
             true));
-
+        levelData.PrettySceneNames.Add("Main Menu");
         //add each chapter's data
+        int chapterIndex = 0;
         foreach (var chapter in levelData.Chapters)
         {
+            levelData.PrettyChapterNames.Add(chapter.ChapterName);
             //add intro scene
             if (chapter.Intro.Scene != null)
             {
                 editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                     AssetDatabase.GetAssetPath(chapter.Intro.Scene),
                     true));
+                levelData.PrettySceneNames.Add(chapter.Intro.LevelName);
             }
 
             //add all puzzles
@@ -284,6 +289,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                     AssetDatabase.GetAssetPath(level.Scene),
                     true));
+                levelData.PrettySceneNames.Add( level.LevelName);
             }
 
             //add outro scene
@@ -292,6 +298,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                     AssetDatabase.GetAssetPath(chapter.Outro.Scene),
                     true));
+                levelData.PrettySceneNames.Add(chapter.Outro.LevelName);
             }
         }
 
@@ -305,9 +312,11 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                 AssetDatabase.GetAssetPath(levelData.CreditsScene),
                 true));
+            levelData.PrettySceneNames.Add("Credits Scene");
         }
 
         Debug.Log($"Added {editorBuildSettingsScenes.Count} Scenes");
         EditorBuildSettings.scenes = editorBuildSettingsScenes.ToArray();
     }
+    
 }
