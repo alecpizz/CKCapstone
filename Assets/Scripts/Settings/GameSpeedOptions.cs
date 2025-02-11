@@ -11,13 +11,14 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 using UnityEngine.Rendering;
 
 public class GameSpeedOptions : MonoBehaviour
 {
     private PlayerControls _playerControls;
 
-    public bool holdMode;
+    [SerializeField] private bool holdMode;
 
     [Tooltip("What the timescale is changed to when the game is sped up." +
         "The defualt value is 1, so make sure this is higher than 1 to see an actual change.")]
@@ -28,23 +29,60 @@ public class GameSpeedOptions : MonoBehaviour
     /// that default speed is always the norm at the start of a scene
     /// </summary>
     private void Start()
-    { 
+    {
+        holdMode = true;
+
+        _playerControls.InGame.GameSpeed.performed +=
+            ctx =>
+        {
+            if (ctx.interaction is HoldInteraction && holdMode)
+            {
+                SpeedChangeHoldStart();
+            }
+            else if (!holdMode)
+            {
+                SpeedChange();
+            }
+        };
+
+        _playerControls.InGame.GameSpeed.canceled +=
+            ctx =>
+            {
+                if (ctx.interaction is HoldInteraction && holdMode)
+                {
+                    SpeedChangeHoldEnd();
+                }
+            };
+
+
+    }
+
+    private void OnEnable()
+    {
         _playerControls = new PlayerControls();
         _playerControls.InGame.GameSpeed.Enable();
-        _playerControls.InGame.GameSpeedHold.Enable();
+    }
 
-        if(holdMode)
+    private void OnDisable()
+    {
+        _playerControls.InGame.GameSpeed.Disable();
+    }
+
+    public void ToggleChange()
+    {
+        if (holdMode)
         {
-            _playerControls.InGame.GameSpeed.Disable();
+            Debug.Log("Changing to Toggle");
+            //_playerControls = new PlayerControls();
 
-            _playerControls.InGame.GameSpeedHold.started += hold => SpeedChangeHoldStart();
-            _playerControls.InGame.GameSpeedHold.canceled += release => SpeedChangeHoldEnd();
+            holdMode = false;
         }
         else
-        {
-            _playerControls.InGame.GameSpeedHold.Disable();
+        { 
+            Debug.Log("Changing to Hold");
+            ///_playerControls = new PlayerControls();
 
-            _playerControls.InGame.GameSpeed.performed += ctx => SpeedChange();
+            holdMode = true;
         }
     }
 
@@ -55,7 +93,7 @@ public class GameSpeedOptions : MonoBehaviour
     private void SpeedChange()
     {
         // Speed up if the game is at normal speed
-        if(Time.timeScale == 1f)
+        if(Time.timeScale == 1f && !holdMode)
         {
             Debug.Log("Speeding Up (Toggle)");
             Time.timeScale = _speedUpRate;
@@ -70,7 +108,7 @@ public class GameSpeedOptions : MonoBehaviour
 
     private void SpeedChangeHoldStart()
     {
-        if (Time.timeScale == 1f)
+        if (Time.timeScale == 1f && holdMode)
         {
             Debug.Log("Speeding Up (Held)");
             Time.timeScale = _speedUpRate;
@@ -79,7 +117,7 @@ public class GameSpeedOptions : MonoBehaviour
 
     private void SpeedChangeHoldEnd()
     {
-        if (Time.timeScale == _speedUpRate)
+        if (Time.timeScale == _speedUpRate && holdMode)
         {
             Debug.Log("Back to Normal (Released)");
             Time.timeScale = 1f;
