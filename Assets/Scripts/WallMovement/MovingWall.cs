@@ -119,22 +119,12 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListene
 
     /// <summary>
     /// Performs an animation that sinks the wall and raises the ghost wall
-    /// Only works if there is nothing obstucting the transparent wall's tile
+    /// Only works if there is nothing obstructing the transparent wall's tile
     /// </summary>
     public void SwitchActivation()
     {
         _shouldMoveOnTurn = true;
-        _shouldActivate = true;
-    }
-
-    /// <summary>
-    /// Performs an animation that sinks the ghost wall and raises the wall
-    /// Only works if there is nothing obstucting the transparent wall's tile
-    /// </summary>
-    public void SwitchDeactivation()
-    {
-        _shouldMoveOnTurn = true;
-        _shouldActivate = false;
+        _shouldActivate = !_shouldActivate;
     }
 
     /// <summary>
