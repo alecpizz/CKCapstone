@@ -15,6 +15,7 @@ using UnityEngine.InputSystem;
 using PrimeTween;
 using Unity.VisualScripting;
 using FMODUnity;
+using SaintsField;
 using SaintsField.Playa;
 
 public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
@@ -49,7 +50,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     //Destination object values
 
-    public bool CollidingWithRay = false;
+    public bool CollidingWithRay { get; set; }= false;
 
     [SerializeField] private float _destYPos = 1f;
     [SerializeField] private float _lineYPosOffset = 1f;
@@ -110,10 +111,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     //Check true in the inspector if the enemy is moving in
     //a circular pattern (doesn't want to move back and forth)
+    [InfoBox("If the enemy uses circular movement, after reaching the end of its moves, " +
+             "it will go back to its first move, rather than moving backwards through its moves.", EMessageType.Info)]
     [SerializeField] private bool _circularMovement = false;
 
-    [SerializeField] private LineRenderer _vfxLine;
-    [SerializeField] private float _enemyRotateToMovementDelay = 0.0f;
+    private LineRenderer _vfxLine;
+    [SerializeField] private float _enemyRotateToMovementDelay = 0.2f;
 
     private bool _isFrozen = false;
 
