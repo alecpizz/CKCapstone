@@ -84,6 +84,8 @@ public class SettingsTabs : MonoBehaviour
 
     private Dictionary<Tab, GameObject> _panels;
     private Dictionary<Tab, Button> _buttons;
+    private Dictionary<Button, Sprite> _ogSprites;
+    private Dictionary<Button, Sprite> _altSprites;
 
     /// <summary>
     /// Initializes the dictionary for the panels and buttons.
@@ -113,6 +115,17 @@ public class SettingsTabs : MonoBehaviour
             { Tab.LevelSelect, _levelSelectButton }
         };
 
+        // Initialize the alt images dictionary
+        _ogSprites = new Dictionary<Button, Sprite>
+        {
+            {_displayButton, _ogDisplayImage },
+            {_audioButton, _ogAudioImage },
+            {_accessibilityButton, _ogAccessibilityImage },
+            {_gameplayButton, _ogGameplayImage },
+            {_howToPlayButton, _ogHowToPlayImage },
+            {_levelSelectButton, _ogLevelSelectImage }
+        };
+
         //tags for the buttons so the right images will be shown
         _displayButton.tag = DISPLAY;
         _audioButton.tag = AUDIO;
@@ -125,32 +138,32 @@ public class SettingsTabs : MonoBehaviour
         //display events
         _displayButton.onClick.AddListener(() => OpenTab(Tab.Display));
         _displayButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_displayButtonGameObject));
-        _displayButton.onClick.AddListener(() => ChangeImage(Tab.Display));
+        _displayButton.onClick.AddListener(() => ChangeImage(_displayButton));
 
         //audio events
         _audioButton.onClick.AddListener(() => OpenTab(Tab.Audio));
         _audioButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_audioButtonGameObject));
-        _audioButton.onClick.AddListener(() => ChangeImage(Tab.Audio));
+        _audioButton.onClick.AddListener(() => ChangeImage(_audioButton));
 
         //accessibility events
         _accessibilityButton.onClick.AddListener(() => OpenTab(Tab.Accessibility));
         _accessibilityButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_accessibilityButtonGameObject));
-        _accessibilityButton.onClick.AddListener(() => ChangeImage(Tab.Accessibility));
+        _accessibilityButton.onClick.AddListener(() => ChangeImage(_accessibilityButton));
 
         //gameplay events
         _gameplayButton.onClick.AddListener(() => OpenTab(Tab.Gameplay));
         _gameplayButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_gameplayButtonGameObject));
-        _gameplayButton.onClick.AddListener(() => ChangeImage(Tab.Gameplay));
+        _gameplayButton.onClick.AddListener(() => ChangeImage(_gameplayButton));
 
         //how to play events
         _howToPlayButton.onClick.AddListener(() => OpenTab(Tab.HowToPlay));
         _howToPlayButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_howToPlayButtonGameObject));
-        _howToPlayButton.onClick.AddListener(() => ChangeImage(Tab.HowToPlay));
+        _howToPlayButton.onClick.AddListener(() => ChangeImage(_howToPlayButton));
 
         //level select events
         _levelSelectButton.onClick.AddListener(() => OpenTab(Tab.LevelSelect));
         _levelSelectButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_levelSelectButtonGameObject));
-        _levelSelectButton.onClick.AddListener(() => ChangeImage(Tab.LevelSelect));
+        _levelSelectButton.onClick.AddListener(() => ChangeImage(_levelSelectButton));
 
         // Open the default tab at start
         OpenTab(Tab.Display);
@@ -160,34 +173,14 @@ public class SettingsTabs : MonoBehaviour
     /// Changes the images of the other buttons depending on which is selected.
     /// </summary>
     /// <param name="tab"></param>
-    private void ChangeImage(Tab tab)
+    private void ChangeImage(Button button)
     {
-        foreach(var buttons in _buttons)
+        foreach(var ogImages in _ogSprites)
         {
             //statement to decide which tabs will be shown as small
-            if(buttons.Key != tab)
+            if(ogImages.Key == button)
             {
-                switch (buttons.Value.tag)
-                {
-                    case DISPLAY:
-                        buttons.Value.GetComponent<Image>().sprite = _altDisplayImage;
-                        break;
-                    case AUDIO:
-                        buttons.Value.GetComponent<Image>().sprite = _altAudioImage;
-                        break;
-                    case ACCESSIBILITY:
-                        buttons.Value.GetComponent<Image>().sprite = _altAccessibilityImage;
-                        break;
-                    case GAMEPLAY:
-                        buttons.Value.GetComponent<Image>().sprite = _altGameplayImage;
-                        break;
-                    case HOWTOPLAY:
-                        buttons.Value.GetComponent<Image>().sprite = _altHowToPlayImage;
-                        break;
-                    case LEVELSELECT:
-                        buttons.Value.GetComponent<Image>().sprite = _altLevelSelectImage;
-                        break;
-                }
+                button.GetComponent<Image>().sprite = ogImages.Value;
             }
         }
     }
@@ -219,22 +212,22 @@ public class SettingsTabs : MonoBehaviour
             switch (button.Value.tag)
             {
                 case DISPLAY:
-                    button.Value.GetComponent<Image>().sprite = _ogDisplayImage;
+                    button.Value.GetComponent<Image>().sprite = _altDisplayImage;
                     break;
                 case AUDIO:
-                    button.Value.GetComponent<Image>().sprite = _ogAudioImage;
+                    button.Value.GetComponent<Image>().sprite = _altAudioImage;
                     break;
                 case ACCESSIBILITY:
-                    button.Value.GetComponent<Image>().sprite = _ogAccessibilityImage;
+                    button.Value.GetComponent<Image>().sprite = _altAccessibilityImage;
                     break;
                 case GAMEPLAY:
-                    button.Value.GetComponent<Image>().sprite = _ogGameplayImage;
+                    button.Value.GetComponent<Image>().sprite = _altGameplayImage;
                     break;
                 case HOWTOPLAY:
-                    button.Value.GetComponent<Image>().sprite = _ogHowToPlayImage;
+                    button.Value.GetComponent<Image>().sprite = _altHowToPlayImage;
                     break;
                 case LEVELSELECT:
-                    button.Value.GetComponent<Image>().sprite = _ogLevelSelectImage;
+                    button.Value.GetComponent<Image>().sprite = _altLevelSelectImage;
                     break;
             }
 
