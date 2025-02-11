@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: David Henvick
-*    Contributors: Claire Noto, Alec Pizziferro, Mitchell Young
+*    Contributors: Claire Noto, Alec Pizziferro, Mitchell Young, Jamison Parks
 *    Date Created: 09/30/2024
 *    Description: this is the script that is used control an npc 
 *    and their dialogue
@@ -37,6 +37,9 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
             "A value of -5 slows it down while a value of 5 speeds it up", EMessageType.Info)]
         [FormerlySerializedAs("_adjustTypingSpeed")]
         [Range(-5f, 5f)] public float adjustTypingSpeed;
+        [InfoBox("This chooses the emotion animation " +
+            "There is Neutral, Happy, Sad, and Angry", EMessageType.Info)]
+        public EmotionType emotion;
     }
 
     private bool _isTalking;
@@ -59,6 +62,13 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
 
     private int _totalNpcs = 1;
     private bool _loopedOnce;
+
+    private static readonly int Talk = Animator.StringToHash("Talk");
+    private static readonly int Neutral = Animator.StringToHash("Neutral");
+    private static readonly int Happy = Animator.StringToHash("Happy");
+    private static readonly int Sad = Animator.StringToHash("Sad");
+    private static readonly int Angry = Animator.StringToHash("Angry");
+    [SerializeField] private Animator _animator;
 
     /// <summary>
     /// Field to retrieve attached GameObject: from IInteractable
@@ -163,6 +173,25 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
             _background.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
             _occupied = true;
             _isTalking = true;
+            if (_animator != null)
+            {
+                _animator.SetBool(Talk, true);
+                switch (_dialogueEntries[_currentDialogue].emotion)
+                {
+                    case EmotionType.NEUTRAL:
+                        _animator.SetTrigger(Neutral);
+                        break;
+                    case EmotionType.HAPPY:
+                        _animator.SetTrigger(Happy);
+                        break;
+                    case EmotionType.SAD:
+                        _animator.SetTrigger(Sad);
+                        break;
+                    case EmotionType.ANGRY:
+                        _animator.SetTrigger(Angry);
+                        break;
+                }
+            }
         }
         else
         {
@@ -211,6 +240,29 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
 
             // adjusts typing speed on a per-entry basis
             _currentTypingSpeed = Mathf.Clamp(_typingSpeed - _dialogueEntries[_currentDialogue].adjustTypingSpeed, 2f, 15f) / 100f;
+            //adjusts emotion on a per-entry basis
+            if (_animator != null) {
+                _animator.ResetTrigger(Neutral);
+                _animator.ResetTrigger(Happy);
+                _animator.ResetTrigger(Sad);
+                _animator.ResetTrigger(Angry);
+                switch (_dialogueEntries[_currentDialogue].emotion)
+                {
+                    case EmotionType.NEUTRAL:
+                        _animator.SetTrigger(Neutral);
+                        break;
+                    case EmotionType.HAPPY:
+                        _animator.SetTrigger(Happy);
+                        break;
+                    case EmotionType.SAD:
+                        _animator.SetTrigger(Sad);
+                        break;
+                    case EmotionType.ANGRY:
+                        _animator.SetTrigger(Angry);
+                        break;
+                }
+            }
+
             _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue].text));
         }
     }
@@ -246,6 +298,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
             StopCoroutine(_typingCoroutine);
         }
         _isTalking = false;
+        if (_animator != null) _animator.SetBool(Talk, false);
     }
 
     /// <summary>
@@ -373,4 +426,12 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
         }
         return true;
     }
+}
+
+public enum EmotionType
+{ 
+NEUTRAL,
+HAPPY,
+SAD,
+ANGRY
 }

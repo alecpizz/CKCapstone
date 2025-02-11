@@ -1,6 +1,7 @@
 /******************************************************************
 *    Author: Cole Stranczek
 *    Contributors: Cole Stranczek, Mitchell Young, Nick Grinstead, Alec Pizziferro
+*    Jamison Parks,
 *    Date Created: 10/3/24
 *    Description: Script that handles the behavior of the enemy,
 *    from movement to causing a failstate with the player
@@ -113,6 +114,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     private Rigidbody _rb;
 
+    //public static PlayerMovement Instance;
+    private static readonly int Forward = Animator.StringToHash("Forward");
+
+
+    [SerializeField] private Animator _animator;
     private void Awake()
     {
         PrimeTweenConfig.warnEndValueEqualsCurrent = false;
@@ -248,6 +254,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         // and if the enemy is currently frozen by the harmony beam
         if (!EnemyFrozen)
         {
+            _animator.SetTrigger(Forward);
 
             for (int i = 0; i < _enemyMovementTime; ++i)
             {           
