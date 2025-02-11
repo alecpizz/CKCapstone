@@ -13,6 +13,8 @@ public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity
     public Vector3 Position => transform.position;
     private HarmonyBeam _harmonyBeam;
 
+    private bool _isBeingHitByBeam = false;
+
     /// <summary>
     /// Sets up references to harmony beam attached to this object
     /// </summary>
@@ -44,6 +46,7 @@ public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity
     /// </summary>
     public void OnLaserHit()
     {
+        _isBeingHitByBeam = true;
         _harmonyBeam.ToggleBeam(true);
     }
 
@@ -53,6 +56,18 @@ public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity
     /// </summary>
     public void OnLaserExit()
     {
+        _isBeingHitByBeam = false;
         _harmonyBeam.ToggleBeam(false);
+    }
+
+    /// <summary>
+    /// Used to reactivate the beam after the reflector rotates
+    /// </summary>
+    public void CheckForBeamPostRotation()
+    {
+        if (_isBeingHitByBeam)
+        {
+            _harmonyBeam.ToggleBeam(true);
+        }
     }
 }

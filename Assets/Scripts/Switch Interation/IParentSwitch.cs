@@ -19,12 +19,4 @@ public interface IParentSwitch
     {
 
     }
-
-    /// <summary>
-    /// Empty method that will be used for anything affected by the switch turning off
-    /// </summary>
-    public void SwitchDeactivation()
-    {
-
-    }
 }
