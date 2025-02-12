@@ -245,9 +245,9 @@ public sealed class RoundManager : MonoBehaviour
             {
                 AudioManager.Instance.PlaySound(_enemyTurnEvent);
             }
-            for (int i = _turnListeners[_turnState].Count - 1; i >= 0; --i)
+            foreach (var turnListener in _turnListeners[_turnState])
             {
-                _turnListeners[_turnState][i].BeginTurn(_lastMovementInput);
+                turnListener.BeginTurn(_lastMovementInput);
             }
         }
     }

@@ -79,7 +79,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     {
         TriggerHarmonyScan -= ScanForObjects;
 
-        RoundManager.Instance.RegisterListener(this);
+        RoundManager.Instance.UnRegisterListener(this);
     }
 
     /// <summary>
