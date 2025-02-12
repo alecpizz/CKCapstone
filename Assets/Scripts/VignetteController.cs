@@ -18,7 +18,7 @@ public class VignetteController : MonoBehaviour, ITurnListener
     public static Action<bool> InteractionTriggered;
 
     public TurnState TurnState => TurnState.Player;
-    public TurnState SecondaryTurnState => TurnState.Enemy;
+    public TurnState SecondaryTurnState => TurnState.SecondWorld;
 
     private Vignette _vignette;
 
