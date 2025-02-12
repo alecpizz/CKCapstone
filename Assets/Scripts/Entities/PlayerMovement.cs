@@ -213,6 +213,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     }
 
     public TurnState TurnState => TurnState.Player;
+    public TurnState SecondaryTurnState => TurnState.None;
 
     /// <summary>
     /// Invoked by the round manager to start the player's turn

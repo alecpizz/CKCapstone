@@ -22,8 +22,8 @@ public class HarmonySwitch : MonoBehaviour, IParentSwitch, ITurnListener
     [ProgressBar(-270f, 270f, 90f)]
     [SerializeField] private float _rotationDegrees = 180f;
 
-    public TurnState TurnState => _internalState;
-    private TurnState _internalState = TurnState.World;
+    public TurnState TurnState => TurnState.World;
+    public TurnState SecondaryTurnState => TurnState.SecondWorld;
 
     private bool _shouldMoveOnTurn = false;
     private bool _shouldActivate = false;
@@ -86,10 +86,6 @@ public class HarmonySwitch : MonoBehaviour, IParentSwitch, ITurnListener
     {
         _beamScript.ToggleBeam(true);
         RoundManager.Instance.CompleteTurn(this);
-
-        RoundManager.Instance.UnRegisterListener(this);
-        _internalState = _internalState == TurnState.World ? TurnState.SecondWorld : TurnState.World;
-        RoundManager.Instance.RegisterListener(this);
     }
 
     /// <summary>

@@ -191,6 +191,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     }
 
     public TurnState TurnState => TurnState.Enemy;
+    public TurnState SecondaryTurnState => TurnState.None;
 
     /// <summary>
     /// Starts the enemy's movement coroutine

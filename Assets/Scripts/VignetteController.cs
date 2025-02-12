@@ -17,8 +17,8 @@ public class VignetteController : MonoBehaviour, ITurnListener
 {
     public static Action<bool> InteractionTriggered;
 
-    public TurnState TurnState => _internalState;
-    private TurnState _internalState = TurnState.Player;
+    public TurnState TurnState => TurnState.Player;
+    public TurnState SecondaryTurnState => TurnState.Enemy;
 
     private Vignette _vignette;
 
@@ -97,7 +97,7 @@ public class VignetteController : MonoBehaviour, ITurnListener
     /// <param name="direction"></param>
     public void BeginTurn(Vector3 direction)
     {
-        if (_internalState == TurnState.Player)
+        if (RoundManager.Instance.IsPlayerTurn)
         {
             Tween.Custom(_vignette.intensity.value, _vignetteIntensity, _vignetteFadeInTime,
                 newValue => _vignette.intensity.value = newValue,
@@ -124,9 +124,6 @@ public class VignetteController : MonoBehaviour, ITurnListener
             return;
 
         RoundManager.Instance.CompleteTurn(this);
-        RoundManager.Instance.UnRegisterListener(this);
-        _internalState = _internalState == TurnState.Player ? TurnState.Enemy : TurnState.Player;
-        RoundManager.Instance.RegisterListener(this);
     }
 
     /// <summary>

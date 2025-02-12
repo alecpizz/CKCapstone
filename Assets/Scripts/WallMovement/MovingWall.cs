@@ -63,8 +63,8 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListene
 
     public Vector3 Position => transform.position;
 
-    public TurnState TurnState => _internalState;
-    private TurnState _internalState = TurnState.World;
+    public TurnState TurnState => TurnState.World;
+    public TurnState SecondaryTurnState => TurnState.SecondWorld;
 
     private bool _shouldMoveOnTurn = false;
     private bool _shouldActivate = false;
@@ -214,10 +214,6 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListene
     private void ToggleTurnState()
     {
         RoundManager.Instance.CompleteTurn(this);
-
-        RoundManager.Instance.UnRegisterListener(this);
-        _internalState = _internalState == TurnState.World ? TurnState.SecondWorld : TurnState.World;
-        RoundManager.Instance.RegisterListener(this);
     }
 
     /// <summary>

@@ -490,6 +490,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     }
 
     public TurnState TurnState => TurnState.Enemy;
+    public TurnState SecondaryTurnState => TurnState.None;
+
     /// <summary>
     /// Called by RoundManager to start this entity's turn
     /// </summary>

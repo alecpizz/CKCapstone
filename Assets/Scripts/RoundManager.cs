@@ -195,17 +195,23 @@ public sealed class RoundManager : MonoBehaviour
     /// <param name="listener"></param>
     public void CompleteTurn(ITurnListener listener)
     {
-        if (listener.TurnState != _turnState) //don't complete if it's not our turn. this shouldn't happen
+        //don't complete if it's not our turn. this shouldn't happen
+        if (listener.TurnState != _turnState &&
+            (listener.SecondaryTurnState != _turnState ||
+            listener.SecondaryTurnState == TurnState.None))
         {
             Debug.LogError("Tried to complete turn while it wasn't our turn state." +
                            $" Listener {listener.TurnState}, state {_turnState}");
             return;
         }
 
+        TurnState listenerTurnState = listener.TurnState == _turnState ?
+            listener.TurnState : listener.SecondaryTurnState;
+
         //check if all entities in this turn state have completed their turn.
-        _completedTurnCounts[listener.TurnState]++;
-        if (_completedTurnCounts[listener.TurnState] < _turnListeners[listener.TurnState].Count) return;
-        _completedTurnCounts[listener.TurnState] = 0;
+        _completedTurnCounts[listenerTurnState]++;
+        if (_completedTurnCounts[listenerTurnState] < _turnListeners[listenerTurnState].Count) return;
+        _completedTurnCounts[listenerTurnState] = 0;
 
         //find out who's turn is next, if it's nobody's, stop.
         var next = GetNextTurn(_turnState);
@@ -255,13 +261,18 @@ public sealed class RoundManager : MonoBehaviour
         //Stops Held Movement
         _movementRegistered = false;
 
-        if (listener.TurnState != _turnState)
+        if (listener.TurnState != _turnState &&
+            (listener.SecondaryTurnState != _turnState ||
+            listener.SecondaryTurnState == TurnState.None))
         {
             return;
         }
 
-        _completedTurnCounts[listener.TurnState] = 0;
-        var prev = GetPreviousTurn(listener.TurnState);
+        TurnState listenerTurnState = listener.TurnState == _turnState ?
+            listener.TurnState : listener.SecondaryTurnState;
+
+        _completedTurnCounts[listenerTurnState] = 0;
+        var prev = GetPreviousTurn(listenerTurnState);
         if (prev is null or TurnState.None)
         {
             _turnState = TurnState.None;
@@ -284,10 +295,25 @@ public sealed class RoundManager : MonoBehaviour
     public void RegisterListener(ITurnListener listener)
     {
         if (listener == null) return;
-        if (_turnListeners[listener.TurnState].Contains(listener)) return;
-        _turnListeners[listener.TurnState].Add(listener);
+
+        bool addedListener = false;
+        if (!_turnListeners[listener.TurnState].Contains(listener))
+        {
+            _turnListeners[listener.TurnState].Add(listener);
+            addedListener = true;
+        }
+        if (listener.SecondaryTurnState != TurnState.None &&
+            !_turnListeners[listener.SecondaryTurnState].Contains(listener))
+        {
+            _turnListeners[listener.SecondaryTurnState].Add(listener);
+            addedListener = true;
+        }
+        if (!addedListener) { return; }
+
         //we added something during mid turn!
-        if (listener.TurnState != _turnState) return;
+        if (listener.TurnState != _turnState && 
+            (listener.SecondaryTurnState != _turnState || 
+            listener.SecondaryTurnState == TurnState.None)) return;
         listener.BeginTurn(_lastMovementInput);
     }
 
@@ -298,8 +324,15 @@ public sealed class RoundManager : MonoBehaviour
     public void UnRegisterListener(ITurnListener listener)
     {
         if (listener == null) return;
-        if (!_turnListeners[listener.TurnState].Contains(listener)) return;
-        _turnListeners[listener.TurnState].Remove(listener);
+        if (_turnListeners[listener.TurnState].Contains(listener))
+        {
+            _turnListeners[listener.TurnState].Remove(listener);
+        }
+        if (listener.SecondaryTurnState != TurnState.None &&
+            _turnListeners[listener.SecondaryTurnState].Contains(listener))
+        {
+            _turnListeners[listener.SecondaryTurnState].Remove(listener);
+        }
     }
 
     /// <summary>
