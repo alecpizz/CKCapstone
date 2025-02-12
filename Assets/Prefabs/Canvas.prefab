@@ -4457,18 +4457,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _buttonPrefab: {fileID: 2001740824891013468, guid: c15813c5f71956043994a375c2dd44bf,
     type: 3}
-  _numLevels: 10
-  _levels:
+  _lvlsPerChapter: 10
+  _chapters:
   - {fileID: 7364264950343889910}
   - {fileID: 5972247494452995320}
   - {fileID: 8341246254211611605}
   - {fileID: 3922674674890778624}
   - {fileID: 6750200255515104312}
-  _lvl1Button: {fileID: 3499873323129351414}
-  _lvl2Button: {fileID: 91707950266813127}
-  _lvl3Button: {fileID: 5326758330665136524}
-  _lvl4Button: {fileID: 8954105149060116815}
-  _lvl5Button: {fileID: 4332150039145019360}
+  _allChapButtons:
+  - {fileID: 3499873323129351414}
+  - {fileID: 91707950266813127}
+  - {fileID: 5326758330665136524}
+  - {fileID: 8954105149060116815}
+  - {fileID: 4332150039145019360}
+  _lvl1Button: {fileID: 0}
+  _lvl2Button: {fileID: 0}
+  _lvl3Button: {fileID: 0}
+  _lvl4Button: {fileID: 0}
+  _lvl5Button: {fileID: 0}
 --- !u!1 &2642891835233219407
 GameObject:
   m_ObjectHideFlags: 0
