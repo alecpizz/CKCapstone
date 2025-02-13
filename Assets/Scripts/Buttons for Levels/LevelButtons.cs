@@ -72,14 +72,7 @@ public class LevelButtons : MonoBehaviour
     {
         for (int i = 0; i < _chapters.Count; i++)
         {
-            if (_chapters[i] != _chapters[num])
-            {
-                _chapters[i].SetActive(false);
-            }
-            else
-            {
-                _chapters[i].SetActive(true);
-            }
+            _chapters[i].SetActive(i == num);
         }
     }
 
