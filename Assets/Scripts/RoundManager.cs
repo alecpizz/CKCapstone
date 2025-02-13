@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using FMODUnity;
+using NUnit.Framework.Constraints;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -36,6 +37,7 @@ public sealed class RoundManager : MonoBehaviour
     private readonly Dictionary<TurnState, int> _completedTurnCounts = new();
     private PlayerControls _playerControls;
     private Vector3 _lastMovementInput;
+    private Vector2 _input;
     private bool _movementRegistered = false;
     private float _movementRegisteredTime = -1;
     [SerializeField] private float _inputBufferWindow = 0.5f;
@@ -130,14 +132,21 @@ public sealed class RoundManager : MonoBehaviour
             PerformMovement();
         }
         
+        //Input needs to update every frame for certain input to be detected without error
+        _input = _playerControls.InGame.Movement.ReadValue<Vector2>();
+        
         //If a hold input was released take away the last input
-        if (_playerControls.InGame.Movement.WasReleasedThisFrame())
+        if (_input == Vector2.zero|| _input.x > 0 && _input.y > 0 || _input.x < 0 && _input.y < 0 || 
+            _input.x > 0 && _input.x != 1|| _input.x < 0 && _input.x != -1||
+            _input.y < 0 && _input.y != -1|| _input.y > 0 && _input.y != 1)
         {
             _lastMovementInput = Vector2.zero;
             _movementRegistered = false;
         }
     }
 
+    
+    
     /// <summary>
     /// Invoked when a movement input is pressed.
     /// Will attempt to move if possible, but if it's not the player's turn
@@ -149,9 +158,10 @@ public sealed class RoundManager : MonoBehaviour
         if (_turnState != TurnState.None)
         {
             return;
-        }
-        Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>();
-        Vector3 dir = new Vector3(input.x, 0f, input.y);
+        } 
+        //This input needs to be here to update direction
+        _input = _playerControls.InGame.Movement.ReadValue<Vector2>();
+        Vector3 dir = new Vector3(_input.x, 0f, _input.y);
         _lastMovementInput = dir;
         _movementRegistered = true;
         _movementRegisteredTime = Time.unscaledTime;
