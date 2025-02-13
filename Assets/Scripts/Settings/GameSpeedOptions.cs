@@ -19,10 +19,8 @@ public class GameSpeedOptions : MonoBehaviour
 {
     private PlayerControls _playerControls;
 
-    [SerializeField] private bool holdMode;
-
-    public GameObject toggleMenu;
-    public Toggle speedToggle;
+    [SerializeField] private GameObject toggleMenu;
+    private Toggle speedToggle;
 
     [Tooltip("What the timescale is changed to when the game is sped up." +
         "The defualt value is 1, so make sure this is higher than 1 to see an actual change.")]
@@ -35,8 +33,6 @@ public class GameSpeedOptions : MonoBehaviour
     private void Start()
     {
         speedToggle = toggleMenu.GetComponent<Toggle>();
-
-        holdMode = true;
 
         _playerControls.InGame.GameSpeed.performed +=
             ctx =>
@@ -78,7 +74,6 @@ public class GameSpeedOptions : MonoBehaviour
     {
         if(speedToggle == null)
         {
-            Debug.Log("speedToggle is null");
             speedToggle = toggleMenu.GetComponent<Toggle>();
         }
 
