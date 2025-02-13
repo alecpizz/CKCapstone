@@ -13,6 +13,7 @@ public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity, ITurnListener
     public Vector3 Position => transform.position;
 
     public TurnState TurnState => TurnState.Player;
+    public TurnState SecondaryTurnState => TurnState.None;
 
     private HarmonyBeam _harmonyBeam;
 
