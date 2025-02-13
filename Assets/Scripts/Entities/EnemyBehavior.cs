@@ -387,6 +387,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         bool blocked = false;
         for (int i = 0; i < _enemyMovementTime; i++)
         {
+            if (_isFrozen)
+            {
+                blocked = true;
+                break;
+            }
+
             int prevMove = _moveIndex;
             bool prevReturn = _isReturningToStart;
             EvaluateNextMove(ref _moveIndex, ref _isReturningToStart);
@@ -419,6 +425,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                     target: this,
                     (_, _) =>
                     {
+                        HarmonyBeam.TriggerHarmonyScan?.Invoke();
                         GridBase.Instance.UpdateEntry(this);
                         //not a fan of this but it should be more consistent than 
                         //using collisions
