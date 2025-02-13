@@ -62,6 +62,24 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CycleForward"",
+                    ""type"": ""Button"",
+                    ""id"": ""375fce2c-45e0-420c-98a7-dfaa110c00be"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CycleBack"",
+                    ""type"": ""Button"",
+                    ""id"": ""65d85190-1ff6-4824-9ff7-5985f53e0730"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -365,11 +383,33 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""a3406d96-bf36-4ddb-ad89-5fb2690d2416"",
-                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""GameSpeed"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""43620adb-cde8-48b5-961b-8259bf866bd0"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CycleForward"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6fc2320c-bb9c-4bf4-9c1b-72df7d12abc2"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CycleBack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -384,6 +424,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_InGame_Movement = m_InGame.FindAction("Movement", throwIfNotFound: true);
         m_InGame_Toggle = m_InGame.FindAction("Toggle", throwIfNotFound: true);
         m_InGame_GameSpeed = m_InGame.FindAction("GameSpeed", throwIfNotFound: true);
+        m_InGame_CycleForward = m_InGame.FindAction("CycleForward", throwIfNotFound: true);
+        m_InGame_CycleBack = m_InGame.FindAction("CycleBack", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -449,6 +491,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_InGame_Movement;
     private readonly InputAction m_InGame_Toggle;
     private readonly InputAction m_InGame_GameSpeed;
+    private readonly InputAction m_InGame_CycleForward;
+    private readonly InputAction m_InGame_CycleBack;
     public struct InGameActions
     {
         private @PlayerControls m_Wrapper;
@@ -457,6 +501,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @Movement => m_Wrapper.m_InGame_Movement;
         public InputAction @Toggle => m_Wrapper.m_InGame_Toggle;
         public InputAction @GameSpeed => m_Wrapper.m_InGame_GameSpeed;
+        public InputAction @CycleForward => m_Wrapper.m_InGame_CycleForward;
+        public InputAction @CycleBack => m_Wrapper.m_InGame_CycleBack;
         public InputActionMap Get() { return m_Wrapper.m_InGame; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -478,6 +524,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @GameSpeed.started += instance.OnGameSpeed;
             @GameSpeed.performed += instance.OnGameSpeed;
             @GameSpeed.canceled += instance.OnGameSpeed;
+            @CycleForward.started += instance.OnCycleForward;
+            @CycleForward.performed += instance.OnCycleForward;
+            @CycleForward.canceled += instance.OnCycleForward;
+            @CycleBack.started += instance.OnCycleBack;
+            @CycleBack.performed += instance.OnCycleBack;
+            @CycleBack.canceled += instance.OnCycleBack;
         }
 
         private void UnregisterCallbacks(IInGameActions instance)
@@ -494,6 +546,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @GameSpeed.started -= instance.OnGameSpeed;
             @GameSpeed.performed -= instance.OnGameSpeed;
             @GameSpeed.canceled -= instance.OnGameSpeed;
+            @CycleForward.started -= instance.OnCycleForward;
+            @CycleForward.performed -= instance.OnCycleForward;
+            @CycleForward.canceled -= instance.OnCycleForward;
+            @CycleBack.started -= instance.OnCycleBack;
+            @CycleBack.performed -= instance.OnCycleBack;
+            @CycleBack.canceled -= instance.OnCycleBack;
         }
 
         public void RemoveCallbacks(IInGameActions instance)
@@ -517,5 +575,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnMovement(InputAction.CallbackContext context);
         void OnToggle(InputAction.CallbackContext context);
         void OnGameSpeed(InputAction.CallbackContext context);
+        void OnCycleForward(InputAction.CallbackContext context);
+        void OnCycleBack(InputAction.CallbackContext context);
     }
 }
