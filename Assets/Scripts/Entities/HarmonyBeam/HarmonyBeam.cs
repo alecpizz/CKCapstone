@@ -101,6 +101,8 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
             {
                 particleSystem.Play();
             }
+
+            ScanForObjects();
         }
         else
         {
