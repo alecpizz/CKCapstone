@@ -13,12 +13,16 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Interactions;
 using UnityEngine.Rendering;
+using UnityEngine.UI;
 
 public class GameSpeedOptions : MonoBehaviour
 {
     private PlayerControls _playerControls;
 
     [SerializeField] private bool holdMode;
+
+    public GameObject toggleMenu;
+    public Toggle speedToggle;
 
     [Tooltip("What the timescale is changed to when the game is sped up." +
         "The defualt value is 1, so make sure this is higher than 1 to see an actual change.")]
@@ -30,16 +34,18 @@ public class GameSpeedOptions : MonoBehaviour
     /// </summary>
     private void Start()
     {
+        speedToggle = toggleMenu.GetComponent<Toggle>();
+
         holdMode = true;
 
         _playerControls.InGame.GameSpeed.performed +=
             ctx =>
         {
-            if (ctx.interaction is HoldInteraction && holdMode)
+            if (ctx.interaction is HoldInteraction && speedToggle.isOn)
             {
                 SpeedChangeHoldStart();
             }
-            else if (!holdMode)
+            else if (!speedToggle.isOn)
             {
                 SpeedChange();
             }
@@ -48,7 +54,7 @@ public class GameSpeedOptions : MonoBehaviour
         _playerControls.InGame.GameSpeed.canceled +=
             ctx =>
             {
-                if (ctx.interaction is HoldInteraction && holdMode)
+                if (ctx.interaction is HoldInteraction && speedToggle.isOn)
                 {
                     SpeedChangeHoldEnd();
                 }
@@ -70,19 +76,22 @@ public class GameSpeedOptions : MonoBehaviour
 
     public void ToggleChange()
     {
-        if (holdMode)
+        if(speedToggle == null)
+        {
+            Debug.Log("speedToggle is null");
+        }
+
+        if (speedToggle.isOn)
         {
             Debug.Log("Changing to Toggle");
-            //_playerControls = new PlayerControls();
 
-            holdMode = false;
+            speedToggle.isOn = false;
         }
         else
         { 
             Debug.Log("Changing to Hold");
-            ///_playerControls = new PlayerControls();
 
-            holdMode = true;
+            speedToggle.isOn = false;
         }
     }
 
@@ -93,7 +102,7 @@ public class GameSpeedOptions : MonoBehaviour
     private void SpeedChange()
     {
         // Speed up if the game is at normal speed
-        if(Time.timeScale == 1f && !holdMode)
+        if (Time.timeScale == 1f && !speedToggle.isOn)
         {
             Debug.Log("Speeding Up (Toggle)");
             Time.timeScale = _speedUpRate;
@@ -108,7 +117,7 @@ public class GameSpeedOptions : MonoBehaviour
 
     private void SpeedChangeHoldStart()
     {
-        if (Time.timeScale == 1f && holdMode)
+        if (Time.timeScale == 1f && speedToggle.isOn)
         {
             Debug.Log("Speeding Up (Held)");
             Time.timeScale = _speedUpRate;
@@ -117,7 +126,7 @@ public class GameSpeedOptions : MonoBehaviour
 
     private void SpeedChangeHoldEnd()
     {
-        if (Time.timeScale == _speedUpRate && holdMode)
+        if (Time.timeScale == _speedUpRate && speedToggle.isOn)
         {
             Debug.Log("Back to Normal (Released)");
             Time.timeScale = 1f;
