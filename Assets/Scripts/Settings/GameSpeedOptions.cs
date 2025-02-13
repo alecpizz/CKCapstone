@@ -79,6 +79,7 @@ public class GameSpeedOptions : MonoBehaviour
         if(speedToggle == null)
         {
             Debug.Log("speedToggle is null");
+            speedToggle = toggleMenu.GetComponent<Toggle>();
         }
 
         if (speedToggle.isOn)
