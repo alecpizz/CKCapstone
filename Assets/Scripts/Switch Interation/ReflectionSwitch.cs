@@ -26,6 +26,7 @@ public class ReflectionSwitch : MonoBehaviour, IParentSwitch, ITurnListener
     [SerializeField] private float _rotationDegrees = 180f;
 
     public TurnState TurnState => TurnState.World;
+    public TurnState SecondaryTurnState => TurnState.SecondWorld;
 
     private bool _shouldMoveOnTurn = false;
     private bool _shouldActivate = false;
@@ -58,16 +59,7 @@ public class ReflectionSwitch : MonoBehaviour, IParentSwitch, ITurnListener
     public void SwitchActivation()
     {
         _shouldMoveOnTurn = true;
-        _shouldActivate = true;
-    }
-
-    /// <summary>
-    /// When switch is off, the reflection will face the original direction
-    /// </summary>
-    public void SwitchDeactivation()
-    {
-        _shouldMoveOnTurn = true;
-        _shouldActivate = false;
+        _shouldActivate = !_shouldActivate;
     }
 
     /// <summary>

@@ -23,6 +23,7 @@ public class HarmonySwitch : MonoBehaviour, IParentSwitch, ITurnListener
     [SerializeField] private float _rotationDegrees = 180f;
 
     public TurnState TurnState => TurnState.World;
+    public TurnState SecondaryTurnState => TurnState.SecondWorld;
 
     private bool _shouldMoveOnTurn = false;
     private bool _shouldActivate = false;
@@ -102,15 +103,6 @@ public class HarmonySwitch : MonoBehaviour, IParentSwitch, ITurnListener
     public void SwitchActivation()
     {
         _shouldMoveOnTurn = true;
-        _shouldActivate = true;
-    }
-
-    /// <summary>
-    /// Signals the beam that it should return to its original position on its turn
-    /// </summary>
-    public void SwitchDeactivation()
-    {
-        _shouldMoveOnTurn = true;
-        _shouldActivate = false;
+        _shouldActivate = !_shouldActivate;
     }
 }
