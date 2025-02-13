@@ -25,7 +25,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
     [SerializeField] private TMP_Text _dialogueBox;
     [SerializeField] private Image _background;
     [SerializeField] private EndLevelDoor[] _doors;
-    [SerializeField] public Image _e;
+    [SerializeField] public Image _eKey;
     [SerializeField] public Image _nameBox;
     [SerializeField] public TMP_Text _nameText;
 
@@ -132,7 +132,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
         }
         _dialogueBox.CrossFadeAlpha(0f, 0f, true);
         _background.CrossFadeAlpha(0f, 0f, true);
-        _e.CrossFadeAlpha(0f, 0f, true);
+        _eKey.CrossFadeAlpha(0f, 0f, true);
         _nameBox.CrossFadeAlpha(0f, 0f, true);
         _nameText.CrossFadeAlpha(0f, 0f, true);
         _occupied = false;
@@ -167,7 +167,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
             VignetteController.InteractionTriggered.Invoke(true);
             _dialogueBox.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
             _background.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
-            _e.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
+            _eKey.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
             _nameBox.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
             _nameText.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
             _occupied = true;
@@ -248,7 +248,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
         VignetteController.InteractionTriggered.Invoke(false);
         _dialogueBox.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
         _background.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
-        _e.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
+        _eKey.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
         _nameBox.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
         _nameText.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
         _occupied = false;
@@ -278,7 +278,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
             _dialogueBox.SetText(_tutorialHint);
             _dialogueBox.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
             _background.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
-            _e.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
+            _eKey.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
             _nameBox.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
             _nameText.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
         }
