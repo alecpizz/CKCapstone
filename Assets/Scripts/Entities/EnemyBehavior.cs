@@ -391,6 +391,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private IEnumerator MovementRoutine()
     {
         bool blocked = false;
+      
         for (int i = 0; i < _enemyMovementTime; i++)
         {
             int prevMove = _moveIndex;
@@ -420,6 +421,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 continue;
             }
 
+            _animator.SetTrigger(Forward);
             var dist = Vector3Int.Distance(currCell, movePt);
             var rotationDir = (GridBase.Instance.CellToWorld(movePt) - transform.position).normalized;
             var moveWorld = GridBase.Instance.CellToWorld(movePt);
