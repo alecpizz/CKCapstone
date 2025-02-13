@@ -152,10 +152,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                             GridBase.Instance.UpdateEntry(this);
                         }).ToYieldInstruction();
 
-                    if (FindObjectOfType<HarmonyBeam>() != null)
-                    {
-                        HarmonyBeam.TriggerHarmonyScan.Invoke();
-                    }
+                    HarmonyBeam.TriggerHarmonyScan?.Invoke();
                 }
                 else
                 {
