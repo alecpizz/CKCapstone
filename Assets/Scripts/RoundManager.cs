@@ -75,6 +75,11 @@ public sealed class RoundManager : MonoBehaviour
     public bool IsHarmonyTurn => _turnState == TurnState.Harmony;
 
     /// <summary>
+    /// Whether it's the second world turn
+    /// </summary>
+    public bool IsSecondWorldTurn => _turnState == TurnState.SecondWorld;
+
+    /// <summary>
     /// Sets the singleton instance and initializes the dictionaries for
     /// state tracking.
     /// </summary>
@@ -261,6 +266,7 @@ public sealed class RoundManager : MonoBehaviour
         //Stops Held Movement
         _movementRegistered = false;
 
+        // Returns if it's not the listener's turn
         if (listener.TurnState != _turnState &&
             (listener.SecondaryTurnState != _turnState ||
             listener.SecondaryTurnState == TurnState.None))
