@@ -35,6 +35,7 @@ public sealed class RoundManager : MonoBehaviour
     private readonly Dictionary<TurnState, List<ITurnListener>> _turnListeners = new();
     private readonly Dictionary<TurnState, int> _completedTurnCounts = new();
     private PlayerControls _playerControls;
+    private Vector3 dir;
     private Vector3 _lastMovementInput;
     private bool _movementRegistered = false;
     private float _movementRegisteredTime = -1;
@@ -129,6 +130,11 @@ public sealed class RoundManager : MonoBehaviour
         {
             PerformMovement();
         }
+
+        if (_playerControls.InGame.Movement.WasReleasedThisFrame())
+        {
+            _movementRegistered = false;
+        }
     }
 
     /// <summary>
@@ -144,7 +150,7 @@ public sealed class RoundManager : MonoBehaviour
             return;
         }
         Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>();
-        Vector3 dir = new Vector3(input.x, 0f, input.y);
+        dir = new Vector3(input.x, 0f, input.y);
         _lastMovementInput = dir;
         _movementRegistered = true;
         _movementRegisteredTime = Time.unscaledTime;
