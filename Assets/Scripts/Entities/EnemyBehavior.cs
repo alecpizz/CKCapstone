@@ -358,6 +358,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     }
 
     public TurnState TurnState => TurnState.Enemy;
+    public TurnState SecondaryTurnState => TurnState.None;
 
     /// <summary>
     /// Called by RoundManager to start this entity's turn
@@ -406,6 +407,13 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             {
                 continue;
             }
+
+            if (_isFrozen)
+            {
+                blocked = true;
+                continue;
+            }
+
             var dist = Vector3Int.Distance(currCell, movePt);
             var rotationDir = (GridBase.Instance.CellToWorld(movePt) - transform.position).normalized;
             var moveWorld = GridBase.Instance.CellToWorld(movePt);
@@ -418,6 +426,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                     target: this,
                     (_, _) =>
                     {
+                        HarmonyBeam.TriggerHarmonyScan?.Invoke();
                         GridBase.Instance.UpdateEntry(this);
                         //not a fan of this but it should be more consistent than 
                         //using collisions
