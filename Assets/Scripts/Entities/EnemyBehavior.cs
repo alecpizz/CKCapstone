@@ -17,11 +17,12 @@ using Unity.VisualScripting;
 using FMODUnity;
 using SaintsField;
 using SaintsField.Playa;
-using System.Linq;
 
 public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     ITurnListener, IHarmonyBeamEntity
 {
+    public static EnemyBehavior Instance { get; private set; }
+
     public bool IsTransparent
     {
         get => false;
@@ -70,11 +71,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [SerializeField] private float _rotationTime = 0.10f;
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
     [SerializeField] private Ease _movementEase = Ease.OutBack;
-
-    [SerializeField] private GameObject[] _enemyArray;
-    [SerializeField] private GameObject[] _sonEnemyArray;
-    [SerializeField] private GameObject[] _allEnemyArray;
- 
 
     /// <summary>
     /// Helper enum for enemy directions.
@@ -145,18 +141,13 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private bool _indicatorReturningToStart = false;
 
     /// <summary>
-    /// Disables a PrimeTween warning. and sets up arrays for navagating pathing with buttons
+    /// Disables a PrimeTween warning and sets the instance
     /// </summary>
     private void Awake()
     {
         PrimeTweenConfig.warnEndValueEqualsCurrent = false;
         PrimeTweenConfig.warnZeroDuration = false;
-
-        PathingCheck();
-        _enemyArray = GameObject.FindGameObjectsWithTag("Enemy");
-        _sonEnemyArray = GameObject.FindGameObjectsWithTag("SonEnemy");
-        _allEnemyArray = _enemyArray.Concat(_sonEnemyArray).ToArray();
-        PathingCheck();
+        Instance = this;
     }
 
     /// <summary>
@@ -197,8 +188,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _input.InGame.Enable();
 
         _input.InGame.Toggle.performed += PathingToggle;
-        _input.InGame.CycleForward.performed += PathingForward;
-        _input.InGame.CycleBack.performed += PathingBackwards;
     }
 
     /// <summary>
@@ -329,31 +318,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
         _currentToggle = !_currentToggle;
     }
-    private void PathingCheck()
-    {
-        _destPathVFX.SetActive(_currentToggle);
-        _destinationMarker.SetActive(_currentToggle);
 
-        _currentToggle = !_currentToggle;
-    }
-
-    private void PathingForward(InputAction.CallbackContext context)
-    {
-        int temp = 0;
-        _destPathVFX.SetActive(_allEnemyArray[temp]);
-        _destinationMarker.SetActive(_allEnemyArray[temp]);
-
-        _currentToggle = !_currentToggle;
-
-        if (temp > _allEnemyArray.Length)
-        {
-            temp = 0;
-        }
-        temp++;
-        Debug.Log(temp);
-    }
-
-    private void PathingBackwards(InputAction.CallbackContext context)
+    public void SinglePathingToggle(GameObject enemy)
     {
         _destPathVFX.SetActive(_currentToggle);
         _destinationMarker.SetActive(_currentToggle);
