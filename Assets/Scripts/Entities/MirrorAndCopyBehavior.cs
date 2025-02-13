@@ -50,6 +50,11 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
 
     private Rigidbody _rb;
 
+    //public static PlayerMovement Instance;
+    private static readonly int Forward = Animator.StringToHash("Forward");
+
+
+    [SerializeField] private Animator _animator;
     private void Awake()
     {
         PrimeTweenConfig.warnEndValueEqualsCurrent = false;
@@ -96,6 +101,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     {
         if (!EnemyFrozen)
         {
+            _animator.SetTrigger(Forward);
             if (_mirrored)
             {
                 moveDirection = -moveDirection;
