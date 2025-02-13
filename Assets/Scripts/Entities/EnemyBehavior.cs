@@ -387,12 +387,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         bool blocked = false;
         for (int i = 0; i < _enemyMovementTime; i++)
         {
-            if (_isFrozen)
-            {
-                blocked = true;
-                break;
-            }
-
             int prevMove = _moveIndex;
             bool prevReturn = _isReturningToStart;
             EvaluateNextMove(ref _moveIndex, ref _isReturningToStart);
@@ -413,6 +407,13 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             {
                 continue;
             }
+
+            if (_isFrozen)
+            {
+                blocked = true;
+                continue;
+            }
+
             var dist = Vector3Int.Distance(currCell, movePt);
             var rotationDir = (GridBase.Instance.CellToWorld(movePt) - transform.position).normalized;
             var moveWorld = GridBase.Instance.CellToWorld(movePt);
