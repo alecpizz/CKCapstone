@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using FMOD.Studio;
 using FMODUnity;
+using System.Linq;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -23,6 +25,7 @@ using UnityEditor;
 public class HarmonyBeam : MonoBehaviour, ITurnListener
 {
     public TurnState TurnState => TurnState.Harmony;
+    public TurnState SecondaryTurnState => TurnState.None;
     [SerializeField] private EventReference _harmonySound = default;
     [SerializeField] private EventReference _enemyHarmonization = default;
     [Space] [SerializeField] private bool _beamActive = true;
@@ -76,7 +79,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     {
         TriggerHarmonyScan -= ScanForObjects;
 
-        RoundManager.Instance.RegisterListener(this);
+        RoundManager.Instance.UnRegisterListener(this);
     }
 
     /// <summary>
@@ -98,6 +101,8 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
             {
                 particleSystem.Play();
             }
+
+            ScanForObjects();
         }
         else
         {
@@ -255,7 +260,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     /// </summary>
     private void CheckEntityExits()
     {
-        foreach (var harmonyBeamEntity in _prevHitEntities)
+        foreach (var harmonyBeamEntity in _prevHitEntities.ToList<IHarmonyBeamEntity>())
         {
             if (harmonyBeamEntity == null) continue;
             if (_hitEntities.Contains(harmonyBeamEntity)) continue;
