@@ -1,6 +1,6 @@
 /******************************************************************
  *    Author: Alec Pizziferro
- *    Contributors: Nick Grinstead, Trinity Hutson
+ *    Contributors: Nick Grinstead, Trinity Hutson, Mark Hanson
  *    Date Created: 10/22/24
  *    Description: Manager for turn based movement mechanics.
  *******************************************************************/
@@ -35,7 +35,6 @@ public sealed class RoundManager : MonoBehaviour
     private readonly Dictionary<TurnState, List<ITurnListener>> _turnListeners = new();
     private readonly Dictionary<TurnState, int> _completedTurnCounts = new();
     private PlayerControls _playerControls;
-    private Vector3 dir;
     private Vector3 _lastMovementInput;
     private bool _movementRegistered = false;
     private float _movementRegisteredTime = -1;
@@ -83,7 +82,7 @@ public sealed class RoundManager : MonoBehaviour
         }
 
         _playerControls = new PlayerControls();
-
+        
         for (int i = 0; i <= (int)TurnState.None; i++)
         {
             _turnListeners.Add((TurnState)i, new List<ITurnListener>());
@@ -130,9 +129,11 @@ public sealed class RoundManager : MonoBehaviour
         {
             PerformMovement();
         }
-
+        
+        //If a hold input was released take away the last input
         if (_playerControls.InGame.Movement.WasReleasedThisFrame())
         {
+            _lastMovementInput = Vector2.zero;
             _movementRegistered = false;
         }
     }
@@ -150,7 +151,7 @@ public sealed class RoundManager : MonoBehaviour
             return;
         }
         Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>();
-        dir = new Vector3(input.x, 0f, input.y);
+        Vector3 dir = new Vector3(input.x, 0f, input.y);
         _lastMovementInput = dir;
         _movementRegistered = true;
         _movementRegisteredTime = Time.unscaledTime;
