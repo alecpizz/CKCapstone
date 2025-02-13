@@ -23,6 +23,7 @@ public class HarmonySwitch : MonoBehaviour, IParentSwitch, ITurnListener
     [SerializeField] private float _rotationDegrees = 180f;
 
     public TurnState TurnState => TurnState.World;
+    public TurnState SecondaryTurnState => TurnState.SecondWorld;
 
     private bool _shouldMoveOnTurn = false;
     private bool _shouldActivate = false;
