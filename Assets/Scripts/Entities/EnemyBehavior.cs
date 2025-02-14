@@ -46,8 +46,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     }
 
     private PlayerControls _input;
-    [SerializeField] private GameObject _destinationMarker;
-    [SerializeField] private GameObject _destPathVFX;
+    public GameObject DestinationMarker;
+    public GameObject DestPathVFX;
 
 
     //Destination object values
@@ -162,7 +162,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _rb = GetComponent<Rigidbody>();
         _rb.isKinematic = true;
 
-        _destinationMarker.transform.SetParent(null);
+        DestinationMarker.transform.SetParent(null);
 
         // Make sure enemies are always seen at the start
 
@@ -171,11 +171,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             TimeSignatureManager.Instance.RegisterTimeListener(this);
         }
 
-        _vfxLine = _destPathVFX.GetComponent<LineRenderer>();
+        _vfxLine = DestPathVFX.GetComponent<LineRenderer>();
         _vfxLine.positionCount = 2;
 
-        _destPathVFX.SetActive(false);
-        _destinationMarker.SetActive(false);
+        DestPathVFX.SetActive(false);
+        DestinationMarker.SetActive(false);
         for (int i = 0; i < _enemyMovementTime; i++)
         {
             UpdateDestinationMarker();
@@ -293,7 +293,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     /// <summary>
     /// DestinationPath is called whenever the mouse ray collides with the enemy.
-    /// This function turns the _destPathVFX and _destinationMarker objects on/off.
+    /// This function turns the DestPathVFX and DestinationMarker objects on/off.
     /// </summary>
     public void DestinationPath()
     {
@@ -302,8 +302,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             return;
         }
 
-        _destPathVFX.SetActive(CollidingWithRay);
-        _destinationMarker.SetActive(CollidingWithRay);
+        DestPathVFX.SetActive(CollidingWithRay);
+        DestinationMarker.SetActive(CollidingWithRay);
     }
 
     /// <summary>
@@ -313,28 +313,29 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// <param name="context"></param>
     private void PathingToggle(InputAction.CallbackContext context)
     {
-        _destPathVFX.SetActive(_currentToggle);
-        _destinationMarker.SetActive(_currentToggle);
+        if (EnemyPathCycling.Instance.IsCycling)
+        {
+            EnemyPathCycling.Instance.IsCycling = false;
+            DestPathVFX.SetActive(false);
+            DestinationMarker.SetActive(false);
+        }
+        else
+        {
+            DestPathVFX.SetActive(_currentToggle);
+            DestinationMarker.SetActive(_currentToggle);
 
-        _currentToggle = !_currentToggle;
-    }
-
-    public void SinglePathingToggle(GameObject enemy)
-    {
-        _destPathVFX.SetActive(_currentToggle);
-        _destinationMarker.SetActive(_currentToggle);
-
-        _currentToggle = !_currentToggle;
+            _currentToggle = !_currentToggle;
+        }
     }
 
     /// <summary>
-    /// This function updates the position of the _destinationMarker object using the
+    /// This function updates the position of the DestinationMarker object using the
     /// _movePoints list.
     /// </summary>
     private void UpdateDestinationMarker()
     {
-        //Sets the _destinationMarker object to the enemy's current position
-        _destinationMarker.transform.position = transform.position;
+        //Sets the DestinationMarker object to the enemy's current position
+        DestinationMarker.transform.position = transform.position;
         Vector3 linePos = transform.position;
         linePos.y = _lineYPosOffset;
         _vfxLine.SetPosition(0, linePos);
@@ -351,7 +352,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
         _vfxLine.SetPosition(1, destPointWorld);
         destPointWorld.y += _destYPos;
-        _destinationMarker.transform.position = destPointWorld;
+        DestinationMarker.transform.position = destPointWorld;
     }
 
     /// <summary>

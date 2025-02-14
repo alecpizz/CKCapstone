@@ -141,13 +141,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _positionOffset: {x: 0, y: 0, z: 0}
-  _destinationMarker: {fileID: 762634612405200516}
-  _destPathVFX: {fileID: 1536808174056557170}
-  _atFirstPoint: 0
-  _currentPoint: 0
-  _destAtFirstPoint: 0
-  _destCurrentPoint: 0
-  CollidingWithRay: 0
+  DestinationMarker: {fileID: 762634612405200516}
+  DestPathVFX: {fileID: 1536808174056557170}
   _destYPos: 0.2
   _lineYPosOffset: 1
   _waitTime: 0.2
@@ -158,10 +153,7 @@ MonoBehaviour:
   _movementEase: 27
   _movePoints: []
   _circularMovement: 0
-  _linePosCount: 0
-  _tilesToDraw: 0
-  _currentLinePoint: 0
-  _vfxLine: {fileID: 0}
+  _enemyRotateToMovementDelay: 0.2
   _enemyMove:
     Guid:
       Data1: 0
@@ -169,7 +161,7 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
-  sonEnemy: 1
+  _isSonEnemy: 1
 --- !u!1001 &1154611207292708587
 PrefabInstance:
   m_ObjectHideFlags: 0
