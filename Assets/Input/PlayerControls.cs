@@ -71,15 +71,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""CycleBack"",
-                    ""type"": ""Button"",
-                    ""id"": ""65d85190-1ff6-4824-9ff7-5985f53e0730"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -405,33 +396,11 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""9de5774b-a059-45af-ab07-a45f14d1a033"",
-                    ""path"": ""<Keyboard>/p"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""CycleForward"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""6fc2320c-bb9c-4bf4-9c1b-72df7d12abc2"",
                     ""path"": ""<Gamepad>/leftShoulder"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""CycleBack"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""cf1472dd-cb86-4df4-8bcf-6be5530be347"",
-                    ""path"": ""<Keyboard>/o"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""CycleBack"",
+                    ""action"": ""CycleForward"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -447,7 +416,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_InGame_Toggle = m_InGame.FindAction("Toggle", throwIfNotFound: true);
         m_InGame_GameSpeed = m_InGame.FindAction("GameSpeed", throwIfNotFound: true);
         m_InGame_CycleForward = m_InGame.FindAction("CycleForward", throwIfNotFound: true);
-        m_InGame_CycleBack = m_InGame.FindAction("CycleBack", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -514,7 +482,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_InGame_Toggle;
     private readonly InputAction m_InGame_GameSpeed;
     private readonly InputAction m_InGame_CycleForward;
-    private readonly InputAction m_InGame_CycleBack;
     public struct InGameActions
     {
         private @PlayerControls m_Wrapper;
@@ -524,7 +491,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @Toggle => m_Wrapper.m_InGame_Toggle;
         public InputAction @GameSpeed => m_Wrapper.m_InGame_GameSpeed;
         public InputAction @CycleForward => m_Wrapper.m_InGame_CycleForward;
-        public InputAction @CycleBack => m_Wrapper.m_InGame_CycleBack;
         public InputActionMap Get() { return m_Wrapper.m_InGame; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -549,9 +515,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @CycleForward.started += instance.OnCycleForward;
             @CycleForward.performed += instance.OnCycleForward;
             @CycleForward.canceled += instance.OnCycleForward;
-            @CycleBack.started += instance.OnCycleBack;
-            @CycleBack.performed += instance.OnCycleBack;
-            @CycleBack.canceled += instance.OnCycleBack;
         }
 
         private void UnregisterCallbacks(IInGameActions instance)
@@ -571,9 +534,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @CycleForward.started -= instance.OnCycleForward;
             @CycleForward.performed -= instance.OnCycleForward;
             @CycleForward.canceled -= instance.OnCycleForward;
-            @CycleBack.started -= instance.OnCycleBack;
-            @CycleBack.performed -= instance.OnCycleBack;
-            @CycleBack.canceled -= instance.OnCycleBack;
         }
 
         public void RemoveCallbacks(IInGameActions instance)
@@ -598,6 +558,5 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnToggle(InputAction.CallbackContext context);
         void OnGameSpeed(InputAction.CallbackContext context);
         void OnCycleForward(InputAction.CallbackContext context);
-        void OnCycleBack(InputAction.CallbackContext context);
     }
 }

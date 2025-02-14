@@ -21,8 +21,6 @@ using SaintsField.Playa;
 public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     ITurnListener, IHarmonyBeamEntity
 {
-    public static EnemyBehavior Instance { get; private set; }
-
     public bool IsTransparent
     {
         get => false;
@@ -66,7 +64,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [PlayaInfoBox("The floor for how fast the enemy can move.")] [SerializeField]
     private float _minMoveTime = 0.175f;
 
-    [SerializeField] private bool _currentToggle = true;
+    public bool CurrentToggle = true;
 
     [SerializeField] private float _rotationTime = 0.10f;
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
@@ -147,7 +145,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     {
         PrimeTweenConfig.warnEndValueEqualsCurrent = false;
         PrimeTweenConfig.warnZeroDuration = false;
-        Instance = this;
     }
 
     /// <summary>
@@ -297,7 +294,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// </summary>
     public void DestinationPath()
     {
-        if (!_currentToggle)
+        if (!CurrentToggle)
         {
             return;
         }
@@ -313,19 +310,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// <param name="context"></param>
     private void PathingToggle(InputAction.CallbackContext context)
     {
-        if (EnemyPathCycling.Instance.IsCycling)
-        {
-            EnemyPathCycling.Instance.IsCycling = false;
-            DestPathVFX.SetActive(false);
-            DestinationMarker.SetActive(false);
-        }
-        else
-        {
-            DestPathVFX.SetActive(_currentToggle);
-            DestinationMarker.SetActive(_currentToggle);
+        DestPathVFX.SetActive(CurrentToggle);
+        DestinationMarker.SetActive(CurrentToggle);
 
-            _currentToggle = !_currentToggle;
-        }
+        CurrentToggle = !CurrentToggle;
     }
 
     /// <summary>
