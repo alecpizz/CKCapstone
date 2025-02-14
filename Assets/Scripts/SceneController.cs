@@ -22,7 +22,7 @@ public class SceneController : MonoBehaviour
     public static SceneController Instance;
 
     // Remembers previous wipe color when loading a new scene
-    private static Color _currentFadeColor = Color.black;
+    private static Color _currentFadeColor = Color.white;
 
     [Required]
     [SerializeField] private Image _circleWipeImage;
@@ -66,6 +66,7 @@ public class SceneController : MonoBehaviour
     public void ReloadCurrentScene()
     {
         StopAllCoroutines();
+        _currentFadeColor = Color.black;
         int sceneIndex = SceneManager.GetActiveScene().buildIndex;
         StartCoroutine(CircleWipeTransition(false, _currentFadeColor, sceneIndex));
     }
@@ -89,7 +90,6 @@ public class SceneController : MonoBehaviour
         // Do circle wipe in center of the screen if there's no player
         if (PlayerMovement.Instance == null)
         {
-            _currentFadeColor = Color.black;
             _circleWipeImage.materialForRendering.SetVector(_positionOffsetPropId, new Vector2(0, 0));
             return;
         }
@@ -160,7 +160,7 @@ public class SceneController : MonoBehaviour
     /// </summary>
     private void OnDisable()
     {
-        _currentFadeColor = Color.black;
+        _currentFadeColor = Color.white;
         _circleWipeImage.materialForRendering.SetVector(_positionOffsetPropId, _defaultOffset);
         
     }
