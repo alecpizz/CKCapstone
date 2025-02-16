@@ -3796,11 +3796,6 @@ MonoBehaviour:
   _positionOffset: {x: 0, y: 0, z: 0}
   _destinationMarker: {fileID: 2474659038540386944}
   _destPathVFX: {fileID: 4121013918361156318}
-  _atFirstPoint: 1
-  _currentPoint: 0
-  _destAtFirstPoint: 0
-  _destCurrentPoint: 0
-  CollidingWithRay: 0
   _destYPos: 0.2
   _lineYPosOffset: 1
   _waitTime: 0.2
@@ -3811,10 +3806,7 @@ MonoBehaviour:
   _movementEase: 27
   _movePoints: []
   _circularMovement: 0
-  _linePosCount: 0
-  _tilesToDraw: 0
-  _currentLinePoint: 0
-  _vfxLine: {fileID: 0}
+  _enemyRotateToMovementDelay: 0.2
   _enemyMove:
     Guid:
       Data1: 0
@@ -3822,7 +3814,8 @@ MonoBehaviour:
       Data3: 0
       Data4: 0
     Path: 
-  sonEnemy: 0
+  _isSonEnemy: 0
+  _animator: {fileID: 6661647107392560532}
 --- !u!54 &-3665481944566736048
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5269,8 +5262,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4001236069065429145}
+  - component: {fileID: 6661647107392560532}
   m_Layer: 0
-  m_Name: visuals
+  m_Name: Visuals
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5293,6 +5287,27 @@ Transform:
   - {fileID: 5497940126271709613}
   m_Father: {fileID: 1329523222538363487}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &6661647107392560532
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8140400495290654140}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 1b0911ec1ad3f87429c307567130e0b1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &8623356976072595385
 GameObject:
   m_ObjectHideFlags: 0
