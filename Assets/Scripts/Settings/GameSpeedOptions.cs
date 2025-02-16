@@ -8,12 +8,19 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 using UnityEngine.Rendering;
+using UnityEngine.UI;
 
 public class GameSpeedOptions : MonoBehaviour
 {
     private PlayerControls _playerControls;
+
+    [SerializeField] private GameObject _toggleMenu;
+    private Toggle _speedToggle;
 
     [Tooltip("What the timescale is changed to when the game is sped up." +
         "The defualt value is 1, so make sure this is higher than 1 to see an actual change.")]
@@ -24,10 +31,73 @@ public class GameSpeedOptions : MonoBehaviour
     /// that default speed is always the norm at the start of a scene
     /// </summary>
     private void Start()
-    { 
+    {
+        _speedToggle = _toggleMenu.GetComponent<Toggle>();
+
+        _playerControls.InGame.GameSpeed.performed +=
+            ctx =>
+        {
+            if (ctx.interaction is HoldInteraction && _speedToggle.isOn)
+            {
+                SpeedChangeHoldStart();
+            }
+            else if (!_speedToggle.isOn)
+            {
+                SpeedChange();
+            }
+        };
+
+        _playerControls.InGame.GameSpeed.canceled +=
+            ctx =>
+            {
+                if (ctx.interaction is HoldInteraction && _speedToggle.isOn)
+                {
+                    SpeedChangeHoldEnd();
+                }
+            };
+
+
+    }
+    /// <summary>
+    /// Initializes and turns on the controls for the player when the scene loads
+    /// </summary>
+    private void OnEnable()
+    {
         _playerControls = new PlayerControls();
-        _playerControls.Enable();
-        _playerControls.InGame.GameSpeed.performed += ctx => SpeedChange();
+        _playerControls.InGame.GameSpeed.Enable();
+    }
+
+    /// <summary>
+    /// Turns off the controls for the player when the scene is no longer active
+    /// </summary>
+    private void OnDisable()
+    {
+        _playerControls.InGame.GameSpeed.Disable();
+    }
+
+    /// <summary>
+    /// The function called when you click the "Hold to Speed Up" button in the menu.
+    /// Uses the "isOn" feature of the Toggle component to change the controls
+    /// </summary>
+    public void ToggleChange()
+    {
+        if(_speedToggle == null)
+        {
+            _speedToggle = _toggleMenu.GetComponent<Toggle>();
+        }
+
+        if (_speedToggle.isOn)
+        {
+            Debug.Log("Changing to Toggle");
+
+            _speedToggle.isOn = false;
+        }
+        else
+        { 
+            Debug.Log("Changing to Hold");
+
+            _speedToggle.isOn = false;
+        }
     }
 
     /// <summary>
@@ -37,13 +107,39 @@ public class GameSpeedOptions : MonoBehaviour
     private void SpeedChange()
     {
         // Speed up if the game is at normal speed
-        if (Time.timeScale == 1f)
+        if (Time.timeScale == 1f && !_speedToggle.isOn)
         {
+            Debug.Log("Speeding Up (Toggle)");
             Time.timeScale = _speedUpRate;
         }
         // Return to normal speed if the game is sped up
         else
         {
+            Debug.Log("Back to Normal (Toggle)");
+            Time.timeScale = 1f;
+        }
+    }
+
+    /// <summary>
+    /// Increases the speed of the game in repsonse to the player holding down Shift
+    /// </summary>
+    private void SpeedChangeHoldStart()
+    {
+        if (Time.timeScale == 1f && _speedToggle.isOn)
+        {
+            Debug.Log("Speeding Up (Held)");
+            Time.timeScale = _speedUpRate;
+        }
+    }
+
+    /// <summary>
+    /// Reverts the speed of the game back to normal in response to the player letting go of shift
+    /// </summary>
+    private void SpeedChangeHoldEnd()
+    {
+        if (Time.timeScale == _speedUpRate && _speedToggle.isOn)
+        {
+            Debug.Log("Back to Normal (Released)");
             Time.timeScale = 1f;
         }
     }
