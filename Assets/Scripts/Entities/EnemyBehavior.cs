@@ -1,11 +1,10 @@
 /******************************************************************
-*    Author: Cole Stranczek
-*    Contributors: Cole Stranczek, Mitchell Young, Nick Grinstead, Alec Pizziferro
-*    Jamison Parks,
-*    Date Created: 10/3/24
-*    Description: Script that handles the behavior of the enemy,
-*    from movement to causing a failstate with the player
-*******************************************************************/
+ *    Author: Cole Stranczek
+ *    Contributors: Cole Stranczek, Mitchell Young, Nick Grinstead, Alec Pizziferro
+ *    Date Created: 10/3/24
+ *    Description: Script that handles the behavior of the enemy,
+ *    from movement to causing a failstate with the player
+ *******************************************************************/
 
 using System;
 using System.Collections;
@@ -134,11 +133,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     private Rigidbody _rb;
 
-    //public static PlayerMovement Instance;
-    private static readonly int Forward = Animator.StringToHash("Forward");
-
-
-    [SerializeField] private Animator _animator;
     private int _moveIndex = 0;
     private bool _isReturningToStart = false;
     private int _indicatorIndex = 0;
@@ -391,7 +385,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private IEnumerator MovementRoutine()
     {
         bool blocked = false;
-      
         for (int i = 0; i < _enemyMovementTime; i++)
         {
             int prevMove = _moveIndex;
@@ -408,9 +401,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 _moveIndex = prevMove;
                 _isReturningToStart = prevReturn;
             }
-
             //already at this spot, next turn.
-            if (goalCell == currCell)
+            if (goalCell == currCell && !blocked)
             {
                 continue;
             }
@@ -421,10 +413,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 continue;
             }
 
-            _animator.SetTrigger(Forward);
-            var dist = Vector3Int.Distance(currCell, movePt);
-            var rotationDir = (GridBase.Instance.CellToWorld(movePt) - transform.position).normalized;
-            var moveWorld = GridBase.Instance.CellToWorld(movePt);
+            var dist = Vector3Int.Distance(currCell, goalCell);
+            var rotationDir = (GridBase.Instance.CellToWorld(goalCell) - transform.position).normalized;
+            var moveWorld = GridBase.Instance.CellToWorld(goalCell);
+
             dist = Mathf.Max(dist, 1f);
             float movementTime = Mathf.Clamp((_waitTime / _enemyMovementTime) * dist,
                 _minMoveTime, float.MaxValue);
@@ -524,8 +516,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// <summary>
     /// Determines the next move index for the enemy.
     /// </summary>
-    /// <param name="moveIndex"></param>
-    /// <param name="looped"></param>
+    /// <param name="moveIndex">Reference to the evaluated move index.</param>
+    /// <param name="looped">Reference to the evaluated loop state.</param>
     private void EvaluateNextMove(ref int moveIndex, ref bool looped)
     {
         //not at the end of our list of moves.
@@ -560,8 +552,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             }
             else
             {
-                //our moves will start with 0 again.
-                moveIndex = 0;
+                //our moves will start with 1 since we're circularly repeating our movement.
+                moveIndex = 1;
             }
         }
     }
