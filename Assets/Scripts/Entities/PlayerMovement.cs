@@ -26,7 +26,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
     public bool IsTransparent
     {
-        get => true;
+        get => false;
     }
 
     public bool BlocksHarmonyBeam
