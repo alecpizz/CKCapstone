@@ -54,7 +54,7 @@ public class GridBase : MonoBehaviour
     /// </summary>
     private void Awake()
     {
-        if (Instance != null)
+        if (Instance != null && Instance != this)
         {
             Destroy(Instance);
             Instance = this;
@@ -66,6 +66,12 @@ public class GridBase : MonoBehaviour
 
         _grid = GetComponent<Grid>();
         GenerateMesh();
+    }
+
+    
+    private void OnValidate()
+    {
+        Instance = this;
     }
 
     /// <summary>
