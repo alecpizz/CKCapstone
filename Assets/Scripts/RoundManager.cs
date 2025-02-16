@@ -154,6 +154,14 @@ public sealed class RoundManager : MonoBehaviour
     private void RegisterMovementInput(InputAction.CallbackContext obj)
     {
         Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>();
+        if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
+        {
+            input.y = 0;
+        }
+        else
+        {
+            input.x = 0;
+        }
         Vector3 dir = new Vector3(input.x, 0f, input.y);
         _lastMovementInput = dir;
         if (_turnState != TurnState.None)
