@@ -64,6 +64,7 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListene
     public Vector3 Position => transform.position;
 
     public TurnState TurnState => TurnState.World;
+    public TurnState SecondaryTurnState => TurnState.SecondWorld;
 
     private bool _shouldMoveOnTurn = false;
     private bool _shouldActivate = false;
@@ -119,22 +120,12 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListene
 
     /// <summary>
     /// Performs an animation that sinks the wall and raises the ghost wall
-    /// Only works if there is nothing obstucting the transparent wall's tile
+    /// Only works if there is nothing obstructing the transparent wall's tile
     /// </summary>
     public void SwitchActivation()
     {
         _shouldMoveOnTurn = true;
-        _shouldActivate = true;
-    }
-
-    /// <summary>
-    /// Performs an animation that sinks the ghost wall and raises the wall
-    /// Only works if there is nothing obstucting the transparent wall's tile
-    /// </summary>
-    public void SwitchDeactivation()
-    {
-        _shouldMoveOnTurn = true;
-        _shouldActivate = false;
+        _shouldActivate = !_shouldActivate;
     }
 
     /// <summary>
@@ -189,7 +180,7 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListene
                     duration: _duration, ease: _easeType).Group(
                     Tween.PositionY(_wallGhost.transform, endValue: _activatedHeight, 
                     duration: _duration, ease: _easeType)).OnComplete(
-                    () => RoundManager.Instance.CompleteTurn(this));
+                    ToggleTurnState);
             }
             else
             {
@@ -197,7 +188,7 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListene
                     duration: _duration, ease: _easeType).Group(
                     Tween.PositionY(_wallGhost.transform, endValue: _groundHeight, 
                     duration: _duration, ease: _easeType)).OnComplete(
-                    () => RoundManager.Instance.CompleteTurn(this));
+                    ToggleTurnState);
             }
 
             _wallGrid.IsTransparent = _shouldActivate;
@@ -213,8 +204,16 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListene
         {
             _worked = false;
 
-            RoundManager.Instance.CompleteTurn(this);
+            ToggleTurnState();
         }
+    }
+
+    /// <summary>
+    /// Completes this object's turn and swaps it to a new turn
+    /// </summary>
+    private void ToggleTurnState()
+    {
+        RoundManager.Instance.CompleteTurn(this);
     }
 
     /// <summary>
