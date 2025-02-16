@@ -25,6 +25,9 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
     [SerializeField] private TMP_Text _dialogueBox;
     [SerializeField] private Image _background;
     [SerializeField] private EndLevelDoor[] _doors;
+    [SerializeField] public Image _eKey;
+    [SerializeField] public Image _nameBox;
+    [SerializeField] public TMP_Text _nameText;
 
     [Serializable]
     public struct DialogueEntry
@@ -129,6 +132,9 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
         }
         _dialogueBox.CrossFadeAlpha(0f, 0f, true);
         _background.CrossFadeAlpha(0f, 0f, true);
+        _eKey.CrossFadeAlpha(0f, 0f, true);
+        _nameBox.CrossFadeAlpha(0f, 0f, true);
+        _nameText.CrossFadeAlpha(0f, 0f, true);
         _occupied = false;
         _isTalking = false;
         _currentTypingSpeed = Mathf.Clamp(
@@ -158,8 +164,12 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
                 _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue].text));
             }
 
+            VignetteController.InteractionTriggered.Invoke(true);
             _dialogueBox.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
             _background.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
+            _eKey.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
+            _nameBox.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
+            _nameText.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
             _occupied = true;
             _isTalking = true;
         }
@@ -235,8 +245,12 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
     /// </summary>
     public void HideDialogue()
     {
+        VignetteController.InteractionTriggered.Invoke(false);
         _dialogueBox.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
         _background.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
+        _eKey.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
+        _nameBox.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
+        _nameText.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
         _occupied = false;
 
         if (_typingCoroutine != null)
@@ -264,6 +278,9 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
             _dialogueBox.SetText(_tutorialHint);
             _dialogueBox.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
             _background.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
+            _eKey.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
+            _nameBox.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
+            _nameText.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
         }
     }
 

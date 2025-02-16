@@ -6,12 +6,20 @@
 *******************************************************************/
 using UnityEngine;
 
-public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity
+public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity, ITurnListener
 {
     public bool AllowLaserPassThrough => true;
     public bool HitWrapAround => false;
     public Vector3 Position => transform.position;
+
+    public TurnState TurnState => TurnState.Player;
+    public TurnState SecondaryTurnState => TurnState.None;
+
     private HarmonyBeam _harmonyBeam;
+
+    private bool _isBeingHitByBeam = false;
+    private int _scansPerformed = 0;
+    private const int _maxScansPerRound = 3;
 
     /// <summary>
     /// Sets up references to harmony beam attached to this object
@@ -20,6 +28,16 @@ public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity
     {
         _harmonyBeam = GetComponent<HarmonyBeam>();
         _harmonyBeam.ToggleBeam(false);
+
+        RoundManager.Instance.RegisterListener(this);
+    }
+
+    /// <summary>
+    /// Unregisters from the round manager
+    /// </summary>
+    private void OnDisable()
+    {
+        RoundManager.Instance.UnRegisterListener(this);
     }
 
     /// <summary>
@@ -44,7 +62,14 @@ public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity
     /// </summary>
     public void OnLaserHit()
     {
+        _isBeingHitByBeam = true;
         _harmonyBeam.ToggleBeam(true);
+
+        if (_scansPerformed < _maxScansPerRound)
+        {
+            _scansPerformed++;
+            _harmonyBeam.ScanForObjects();
+        }
     }
 
     /// <summary>
@@ -53,6 +78,43 @@ public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity
     /// </summary>
     public void OnLaserExit()
     {
+        _isBeingHitByBeam = false;
         _harmonyBeam.ToggleBeam(false);
+
+        if (_scansPerformed < _maxScansPerRound)
+        {
+            _scansPerformed++;
+            _harmonyBeam.ScanForObjects();
+        }
+    }
+
+    /// <summary>
+    /// Resets this reflector's ability to scan for objects again
+    /// </summary>
+    /// <param name="direction">Direction of the player's movement</param>
+    public void BeginTurn(Vector3 direction)
+    {
+        _scansPerformed = 0;
+        RoundManager.Instance.CompleteTurn(this);
+    }
+
+    /// <summary>
+    /// Resets this reflector's ability to scan for objects again
+    /// </summary>
+    public void ForceTurnEnd()
+    {
+        _scansPerformed = 0;
+        RoundManager.Instance.CompleteTurn(this);
+    }
+
+    /// <summary>
+    /// Used to reactivate the beam after the reflector rotates
+    /// </summary>
+    public void CheckForBeamPostRotation()
+    {
+        if (_isBeingHitByBeam)
+        {
+            _harmonyBeam.ToggleBeam(true);
+        }
     }
 }

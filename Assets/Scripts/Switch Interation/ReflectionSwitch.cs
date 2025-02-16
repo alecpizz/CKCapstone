@@ -6,6 +6,7 @@
 *******************************************************************/
 
 using PrimeTween;
+using SaintsField;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,7 +22,11 @@ public class ReflectionSwitch : MonoBehaviour, IParentSwitch, ITurnListener
     [SerializeField] private float _rotationDuration = 0.2f;
     [SerializeField] private float _beamToggleDelay = 0.6f;
 
+    [ProgressBar(-270f, 270f, 90f)]
+    [SerializeField] private float _rotationDegrees = 180f;
+
     public TurnState TurnState => TurnState.World;
+    public TurnState SecondaryTurnState => TurnState.SecondWorld;
 
     private bool _shouldMoveOnTurn = false;
     private bool _shouldActivate = false;
@@ -54,16 +59,7 @@ public class ReflectionSwitch : MonoBehaviour, IParentSwitch, ITurnListener
     public void SwitchActivation()
     {
         _shouldMoveOnTurn = true;
-        _shouldActivate = true;
-    }
-
-    /// <summary>
-    /// When switch is off, the reflection will face the original direction
-    /// </summary>
-    public void SwitchDeactivation()
-    {
-        _shouldMoveOnTurn = true;
-        _shouldActivate = false;
+        _shouldActivate = !_shouldActivate;
     }
 
     /// <summary>
@@ -83,7 +79,7 @@ public class ReflectionSwitch : MonoBehaviour, IParentSwitch, ITurnListener
         _mirror.ToggleBeam(false);
 
         Vector3 targetRotation = transform.eulerAngles;
-        targetRotation.y += _shouldActivate ? 180 : -180;
+        targetRotation.y += _shouldActivate ? _rotationDegrees : -_rotationDegrees;
 
         Sequence.Create(1).Chain(
             Tween.Delay(_beamToggleDelay)).Chain(
@@ -96,7 +92,7 @@ public class ReflectionSwitch : MonoBehaviour, IParentSwitch, ITurnListener
     /// </summary>
     private void ResetOnTweenEnd()
     {
-        _mirror.ToggleBeam(true);
+        _mirror.CheckForBeamPostRotation();
         RoundManager.Instance.CompleteTurn(this);
     }
 
