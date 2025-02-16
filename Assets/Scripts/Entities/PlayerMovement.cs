@@ -226,7 +226,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         bool isSameDirection = FacingDirection == direction;
 
         FacingDirection = direction; //End of animation section
-        _playerInteraction.SetDirection(direction);
 
         float rotationTime = isSameDirection ? 0 : _rotationTime;
 
