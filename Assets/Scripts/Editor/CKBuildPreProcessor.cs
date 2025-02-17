@@ -215,16 +215,6 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 EditorUtility.SetDirty(endLevelDoor);
             }
 
-            var levelText = GameObject.Find("LevelNumber");
-            if (levelText != null)
-            {
-                levelText.GetComponent<TMPro.TMP_Text>().text = currentLevel.LevelName;
-            }
-            else
-            {
-                Debug.LogError($"No LevelNumber found in {currScene.name}");
-            }
-
             EditorSceneManager.MarkSceneDirty(currScene);
             //save the changes
             EditorSceneManager.SaveScene(currScene);
