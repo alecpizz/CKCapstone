@@ -88,9 +88,16 @@ public class UIManager : MonoBehaviour, ITimeListener
         WinChecker.GotCorrectSequence += DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence += DisplayIncorrectMessage;
 
-        //Note (ALEC): I commented this out assuming that we will set this up in build.
-        if (_levelNumber != null)
+        if (_levelNumber == null) return;
+        if (LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames.Count > 0)
         {
+            int index = SceneManager.GetActiveScene().buildIndex;
+            var prettyName = LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames[index];
+            _levelNumber.text = prettyName;
+        }
+        else
+        {
+            //legacy level ordering
             if (_isChallenge)
                 _levelNumber.text = "Challenge";
             else
