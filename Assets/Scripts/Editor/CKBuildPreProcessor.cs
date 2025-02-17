@@ -181,6 +181,11 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             }
 
             //load in the scene here
+            if (currentLevel.Scene == null)
+            {
+                Debug.LogError($"Missing scene! {currentLevel.LevelName}");
+                continue;
+            }
             var currScene = EditorSceneManager.OpenScene(
                 AssetDatabase.GetAssetPath(currentLevel.Scene));
             var doors = Object.FindObjectsOfType<EndLevelDoor>();
