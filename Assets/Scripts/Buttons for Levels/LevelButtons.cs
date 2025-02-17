@@ -49,7 +49,7 @@ public class LevelButtons : MonoBehaviour
             {
                 //loads scene when button is clicked
                 IndividualButtons obj = Instantiate(_buttonPrefab, _chapters[i-1].transform).GetComponent<IndividualButtons>();
-                var levelName = LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames.Count < 0 ? 
+                var levelName = LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames.Count > 0 ? 
                     LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames[tally] : $"Level {tally}";
                 obj.GetComponentInChildren<TextMeshProUGUI>().text = levelName;
                 obj.SetIndex(tally);
