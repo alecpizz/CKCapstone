@@ -1,11 +1,12 @@
 /******************************************************************
-*    Author: Nick Grinstead
-*    Contributors: 
-*    Date Created: 10/10/24
-*    Description: This script should be attached to the player character,
-*    and handles checking an adjacent square for interactables when
-*    an input is given.
-*******************************************************************/
+ *    Author: Nick Grinstead
+ *    Contributors: Alec Pizziferro
+ *    Date Created: 10/10/24
+ *    Description: This script should be attached to the player character,
+ *    and handles checking an adjacent square for interactables when
+ *    an input is given.
+ *******************************************************************/
+
 using System.Collections.Generic;
 using UnityEngine;
 using SaintsField;
@@ -14,9 +15,7 @@ public class PlayerInteraction : MonoBehaviour
 {
     private GridBase _gridBase;
     private PlayerControls _playerControls;
-    private HashSet<IGridEntry> _gridEntries;
     private IInteractable _currentInteractable;
-    private Vector3 _facingDirection;
 
     /// <summary>
     /// Enabling inputs and getting grid instance
@@ -47,42 +46,34 @@ public class PlayerInteraction : MonoBehaviour
     /// </summary>
     private void Interact()
     {
-        // Finding coordinates of the adjacent square
-        Vector3 cellPositionToCheck = 
-            _gridBase.GetCellPositionInDirection(transform.position, 
-            _facingDirection);
+        //NOTE: this will interact with multiple interactables at once. design should avoid this.
+        Vector3Int fwd =
+            _gridBase.WorldToCell(_gridBase.GetCellPositionInDirection(transform.position, Vector3.forward));
+        Vector3Int back =
+            _gridBase.WorldToCell(_gridBase.GetCellPositionInDirection(transform.position, Vector3.back));
+        Vector3Int right =
+            _gridBase.WorldToCell(_gridBase.GetCellPositionInDirection(transform.position, Vector3.right));
+        Vector3Int left =
+            _gridBase.WorldToCell(_gridBase.GetCellPositionInDirection(transform.position, Vector3.left));
 
-        Vector3Int cellCoordinatesToCheck = _gridBase.WorldToCell(cellPositionToCheck);
-
+        var fwdEntries = _gridBase.GetCellEntries(fwd);
+        var backEntries = _gridBase.GetCellEntries(back);
+        var leftEntries = _gridBase.GetCellEntries(right);
+        var rightEntries = _gridBase.GetCellEntries(left);
         // Checking if there are objects in the adjacent square
-        if (_gridBase.CellIsEmpty(cellCoordinatesToCheck)) { return; }
-
-        // Checking the square's entries for any interactables
-        _gridEntries = _gridBase.GetCellEntries(cellCoordinatesToCheck);
-        foreach (var entry in _gridEntries)
-        {
-            IInteractable interactable;
-            if (entry.EntryObject.TryGetComponent<IInteractable>(out interactable))
-            {
-                _currentInteractable = interactable;
-                interactable.OnInteract();
-            }
-        }
+        InteractWithCell(ref fwdEntries);
+        InteractWithCell(ref backEntries);
+        InteractWithCell(ref leftEntries);
+        InteractWithCell(ref rightEntries);
     }
 
-    /// <summary>
-    /// This is a function built to do two things. 
-    /// first it is built so that this script has access to the current direction that the player is facing, without circular dependencies.
-    /// second is to call the OnLeave function for the current interactable and to clear that very same variable after.
-    /// </summary>
-    /// <param name="direction"></param> a vector that represents the direction the player is currently facing.
-    public void SetDirection(Vector3 direction)
+    private void InteractWithCell(ref HashSet<IGridEntry> entries)
     {
-        if (_currentInteractable != null)
+        foreach (var entry in entries)
         {
-            _currentInteractable.OnLeave();
-            _currentInteractable = null;
+            if (!entry.EntryObject.TryGetComponent<IInteractable>(out var interactable)) continue;
+            _currentInteractable = interactable;
+            interactable.OnInteract();
         }
-        _facingDirection = direction;
     }
 }
