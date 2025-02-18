@@ -21,7 +21,7 @@ public class LevelButtons : MonoBehaviour
 
     //the number of levels that a chapter contains
     [FormerlySerializedAs("_numLevels")]
-    [SerializeField] private int _lvlsPerChapter = 10;
+    [SerializeField] private int[] _chapterLevelCount;
 
     //List of chapters in game
     [FormerlySerializedAs("_levels")]
@@ -37,8 +37,7 @@ public class LevelButtons : MonoBehaviour
     {
         //variables to help keep the for loops on track
         int tally = 1;
-        int lvlIncrease = 10;
-        int range = _lvlsPerChapter + 1;
+        int range = _chapterLevelCount[0] + 1;
 
         //cycles through all chapters and assigns levels (if they exist in build)
         for (int i = 1; i <= _chapters.Count; i++)
@@ -53,7 +52,9 @@ public class LevelButtons : MonoBehaviour
                 obj.GetComponentInChildren<TextMeshProUGUI>().text = "Level " + tally;
                 obj.SetIndex(tally);
             }
-            range += lvlIncrease;
+
+            if(i < _chapterLevelCount.Length)
+                range += _chapterLevelCount[i];
         }
 
         //loops through buttons to change the respective GameObject
