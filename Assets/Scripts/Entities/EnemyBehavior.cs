@@ -349,8 +349,16 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// <param name="newTimeSignature">The new time signature.</param>
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
     {
+        int changeInTimeSig = newTimeSignature.y - _enemyMovementTime;
         _enemyMovementTime = newTimeSignature.y;
 
+        if (changeInTimeSig > 0 && _vfxLine != null)
+        {
+            for (int i = 0; i < changeInTimeSig; ++i)
+            {
+                UpdateDestinationMarker();
+            }
+        }
         if (_enemyMovementTime <= 0)
         {
             _enemyMovementTime = 1;
