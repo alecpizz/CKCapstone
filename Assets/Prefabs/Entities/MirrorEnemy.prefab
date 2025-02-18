@@ -304,7 +304,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6787290985829563572}
-  - component: {fileID: 6566799371957676955}
   m_Layer: 0
   m_Name: Visuals
   m_TagString: Untagged
@@ -322,7 +321,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.314, z: 0.09}
-  m_LocalScale: {x: 9, y: 9, z: 9}
+  m_LocalScale: {x: 1.3, y: 1.3, z: 1.3}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 7039862927947452099}
@@ -330,27 +329,6 @@ Transform:
   - {fileID: 2845532422064492504}
   m_Father: {fileID: 2742591932089471870}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &6566799371957676955
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 567888116453480432}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: f3dc5b4c035d5c74f831806c5c116551, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &585351692283866861
 GameObject:
   m_ObjectHideFlags: 0
@@ -668,7 +646,6 @@ MonoBehaviour:
   _rotationEase: 4
   _movementEase: 27
   sonEnemy: 1
-  _animator: {fileID: 6566799371957676955}
 --- !u!1 &1032712028703714599
 GameObject:
   m_ObjectHideFlags: 0
@@ -1263,8 +1240,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0.06}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 7, y: 7, z: 7}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6787290985829563572}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3519,8 +3496,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 7, y: 7, z: 7}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 377829350071230072}
   - {fileID: 3424179846280963506}
@@ -5212,34 +5189,34 @@ MonoBehaviour:
     selectionData:
       positions:
       - x: -0.023653388
-        y: 0.09311645
-        z: -0.018892348
+        y: 0.09311642
+        z: -0.018892288
       - x: -0.025443822
         y: 0.102417365
-        z: -0.01941657
-      - x: -0.028289944
-        y: 0.107559755
-        z: -0.019259095
+        z: -0.019416511
+      - x: -0.028289974
+        y: 0.107559726
+        z: -0.019259036
       - x: 0.010559976
-        y: 0.08193572
-        z: -0.0298661
-      - x: 0.0115814805
+        y: 0.081935704
+        z: -0.02986607
+      - x: 0.011581451
         y: 0.09032409
-        z: -0.03360033
-      - x: 0.0115814805
-        y: 0.09945114
-        z: -0.03608471
-      - x: 0.0115814805
+        z: -0.03360027
+      - x: 0.011581451
+        y: 0.09945111
+        z: -0.036084652
+      - x: 0.011581451
         y: 0.10483329
-        z: -0.038714617
-      - x: -0.00007021427
+        z: -0.038714588
+      - x: -0.000070244074
         y: 0.110249385
-        z: -0.00870353
-      - x: -0.00007021427
-        y: 0.123852804
+        z: -0.00870347
+      - x: -0.000070244074
+        y: 0.123852775
         z: -0.009028435
       - x: -0.000046521425
-        y: 0.1363853
+        y: 0.13638525
         z: -0.009798944
       attributes:
       - Value: 1
@@ -6184,8 +6161,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3.2867918, y: 3.2867918, z: 3.2867918}
-  m_ConstrainProportionsScale: 1
+  m_LocalScale: {x: 23.00754, y: 23.00754, z: 23.00754}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8721567551525312396}
   - {fileID: 4765222575376395090}
