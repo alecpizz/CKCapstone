@@ -26,7 +26,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
     public bool IsTransparent
     {
-        get => true;
+        get => false;
     }
 
     public bool BlocksHarmonyBeam
@@ -213,6 +213,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     }
 
     public TurnState TurnState => TurnState.Player;
+    public TurnState SecondaryTurnState => TurnState.None;
 
     /// <summary>
     /// Invoked by the round manager to start the player's turn
@@ -225,7 +226,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         bool isSameDirection = FacingDirection == direction;
 
         FacingDirection = direction; //End of animation section
-        _playerInteraction.SetDirection(direction);
 
         float rotationTime = isSameDirection ? 0 : _rotationTime;
 

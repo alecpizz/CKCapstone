@@ -358,6 +358,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     }
 
     public TurnState TurnState => TurnState.Enemy;
+    public TurnState SecondaryTurnState => TurnState.None;
 
     /// <summary>
     /// Called by RoundManager to start this entity's turn
@@ -400,15 +401,22 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 _moveIndex = prevMove;
                 _isReturningToStart = prevReturn;
             }
-
             //already at this spot, next turn.
-            if (goalCell == currCell)
+            if (goalCell == currCell && !blocked)
             {
                 continue;
             }
-            var dist = Vector3Int.Distance(currCell, movePt);
-            var rotationDir = (GridBase.Instance.CellToWorld(movePt) - transform.position).normalized;
-            var moveWorld = GridBase.Instance.CellToWorld(movePt);
+
+            if (_isFrozen)
+            {
+                blocked = true;
+                continue;
+            }
+
+            var dist = Vector3Int.Distance(currCell, goalCell);
+            var rotationDir = (GridBase.Instance.CellToWorld(goalCell) - transform.position).normalized;
+            var moveWorld = GridBase.Instance.CellToWorld(goalCell);
+
             dist = Mathf.Max(dist, 1f);
             float movementTime = Mathf.Clamp((_waitTime / _enemyMovementTime) * dist,
                 _minMoveTime, float.MaxValue);
@@ -418,6 +426,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                     target: this,
                     (_, _) =>
                     {
+                        HarmonyBeam.TriggerHarmonyScan?.Invoke();
                         GridBase.Instance.UpdateEntry(this);
                         //not a fan of this but it should be more consistent than 
                         //using collisions
@@ -507,8 +516,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// <summary>
     /// Determines the next move index for the enemy.
     /// </summary>
-    /// <param name="moveIndex"></param>
-    /// <param name="looped"></param>
+    /// <param name="moveIndex">Reference to the evaluated move index.</param>
+    /// <param name="looped">Reference to the evaluated loop state.</param>
     private void EvaluateNextMove(ref int moveIndex, ref bool looped)
     {
         //not at the end of our list of moves.
@@ -543,8 +552,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             }
             else
             {
-                //our moves will start with 0 again.
-                moveIndex = 0;
+                //our moves will start with 1 since we're circularly repeating our movement.
+                moveIndex = 1;
             }
         }
     }

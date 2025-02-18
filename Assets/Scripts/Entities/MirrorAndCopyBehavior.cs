@@ -152,7 +152,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                             GridBase.Instance.UpdateEntry(this);
                         }).ToYieldInstruction();
 
-                    HarmonyBeam.TriggerHarmonyScan.Invoke();
+                    HarmonyBeam.TriggerHarmonyScan?.Invoke();
                 }
                 else
                 {
@@ -191,6 +191,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     }
 
     public TurnState TurnState => TurnState.Enemy;
+    public TurnState SecondaryTurnState => TurnState.None;
 
     /// <summary>
     /// Starts the enemy's movement coroutine
