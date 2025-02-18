@@ -16,6 +16,7 @@ using UnityEngine.UI;
 using SaintsField;
 using SaintsField.Playa;
 using FMODUnity;
+using UnityEditor;
 
 public class SceneController : MonoBehaviour
 {
@@ -78,7 +79,6 @@ public class SceneController : MonoBehaviour
     public void LoadNewScene(int sceneBuildIndex)
     {
         StopAllCoroutines();
-        _currentFadeColor = Color.white;
         StartCoroutine(CircleWipeTransition(false, _currentFadeColor, sceneBuildIndex));
     }
 
@@ -122,6 +122,8 @@ public class SceneController : MonoBehaviour
         float startingCircleSize = isFadingIn ? 0f : 1f;
         float targetCircleSize = isFadingIn ? 1f : 0f;
 
+        StartCoroutine(DelayMaterialSwapBack());
+        
         _circleWipeImage.materialForRendering.SetFloat(_circleSizePropId, startingCircleSize);
         _circleWipeImage.materialForRendering.SetColor(_backgroundColorPropId, fadeColor);
 
@@ -147,7 +149,7 @@ public class SceneController : MonoBehaviour
 
         yield return new WaitForSecondsRealtime(0.1f);
         Time.timeScale = 1f;
-
+        
         // Loads new scene if needed
         if (!isFadingIn && sceneIndexToLoad != -1)
         {
@@ -155,16 +157,13 @@ public class SceneController : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Reseting material back to default for position and color
-    /// </summary>
-    private void OnDisable()
+    private IEnumerator DelayMaterialSwapBack()
     {
+        yield return new WaitForSeconds(_timeForScreenWipe);
+        Debug.Log("Material Swap Back");
         _currentFadeColor = Color.white;
-        _circleWipeImage.materialForRendering.SetVector(_positionOffsetPropId, _defaultOffset);
-        
     }
-
+    
 #if UNITY_EDITOR
     /// <summary>
     /// Can be used for testing in editor
