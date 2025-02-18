@@ -206,7 +206,7 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
             ""id"": ""477fc084-a286-487e-8bf3-faa3289a8126"",
             ""actions"": [
                 {
-                    ""name"": ""New action"",
+                    ""name"": ""SkipCutscene"",
                     ""type"": ""Button"",
                     ""id"": ""82cde62f-baa8-458c-89ca-14a6d584bdf6"",
                     ""expectedControlType"": ""Button"",
@@ -219,11 +219,11 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""4f72a434-42ca-4a2b-8688-8adc4b71f0a1"",
-                    ""path"": """",
+                    ""path"": ""<Keyboard>/escape"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""New action"",
+                    ""action"": ""SkipCutscene"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -239,7 +239,7 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
         m_Player_Quit = m_Player.FindAction("Quit", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
-        m_UI_Newaction = m_UI.FindAction("New action", throwIfNotFound: true);
+        m_UI_SkipCutscene = m_UI.FindAction("SkipCutscene", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -363,12 +363,12 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
     // UI
     private readonly InputActionMap m_UI;
     private List<IUIActions> m_UIActionsCallbackInterfaces = new List<IUIActions>();
-    private readonly InputAction m_UI_Newaction;
+    private readonly InputAction m_UI_SkipCutscene;
     public struct UIActions
     {
         private @DebugInputActions m_Wrapper;
         public UIActions(@DebugInputActions wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Newaction => m_Wrapper.m_UI_Newaction;
+        public InputAction @SkipCutscene => m_Wrapper.m_UI_SkipCutscene;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -378,16 +378,16 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
         {
             if (instance == null || m_Wrapper.m_UIActionsCallbackInterfaces.Contains(instance)) return;
             m_Wrapper.m_UIActionsCallbackInterfaces.Add(instance);
-            @Newaction.started += instance.OnNewaction;
-            @Newaction.performed += instance.OnNewaction;
-            @Newaction.canceled += instance.OnNewaction;
+            @SkipCutscene.started += instance.OnSkipCutscene;
+            @SkipCutscene.performed += instance.OnSkipCutscene;
+            @SkipCutscene.canceled += instance.OnSkipCutscene;
         }
 
         private void UnregisterCallbacks(IUIActions instance)
         {
-            @Newaction.started -= instance.OnNewaction;
-            @Newaction.performed -= instance.OnNewaction;
-            @Newaction.canceled -= instance.OnNewaction;
+            @SkipCutscene.started -= instance.OnSkipCutscene;
+            @SkipCutscene.performed -= instance.OnSkipCutscene;
+            @SkipCutscene.canceled -= instance.OnSkipCutscene;
         }
 
         public void RemoveCallbacks(IUIActions instance)
@@ -413,6 +413,6 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
     }
     public interface IUIActions
     {
-        void OnNewaction(InputAction.CallbackContext context);
+        void OnSkipCutscene(InputAction.CallbackContext context);
     }
 }
