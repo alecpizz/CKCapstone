@@ -448,7 +448,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
         if (!blocked)
         {
-            UpdateDestinationMarker();
+            for (int i = 0; i < _enemyMovementTime; i++)
+            {
+                UpdateDestinationMarker();
+            }
         }
 
         RoundManager.Instance.CompleteTurn(this);
