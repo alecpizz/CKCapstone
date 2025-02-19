@@ -39,7 +39,6 @@ public sealed class RoundManager : MonoBehaviour
     private PlayerControls _playerControls;
     private Vector3 _lastMovementInput;
     private bool _movementRegistered = false;
-    private bool _movementPressedThisFrame;
     private float _movementRegisteredTime = -1;
     [SerializeField] private float _inputBufferWindow = 0.5f;
     [SerializeField] private EventReference _playerTurnEvent;
@@ -140,8 +139,7 @@ public sealed class RoundManager : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        _movementPressedThisFrame = _playerControls.InGame.Movement.IsPressed();
-        if (_movementPressedThisFrame && !TurnInProgress)
+        if (_playerControls.InGame.Movement.IsPressed() && !TurnInProgress)
         {
             PerformMovement();
         }
@@ -185,9 +183,10 @@ public sealed class RoundManager : MonoBehaviour
     {
         if (!_movementRegistered) return;
 
-        if (!_movementPressedThisFrame)
+        if (!_playerControls.InGame.Movement.IsPressed())
         {
             _movementRegistered = false;
+            return;
         }
 
         _turnState = TurnState.Player;
