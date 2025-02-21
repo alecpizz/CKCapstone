@@ -57,7 +57,8 @@ public class SceneController : MonoBehaviour
 
         if (_shouldFadeInOnLoad)
         {
-            StartCoroutine(CircleWipeTransition(true, _currentFadeColor));
+            StartCoroutine(CircleWipeTransition(true, _currentFadeColor)); 
+            StartCoroutine(DelayMaterialOrigin());
         }
     }
 
@@ -121,8 +122,7 @@ public class SceneController : MonoBehaviour
         float newCircleSize;
         float startingCircleSize = isFadingIn ? 0f : 1f;
         float targetCircleSize = isFadingIn ? 1f : 0f;
-
-        StartCoroutine(DelayMaterialSwapBack());
+        
         
         _circleWipeImage.materialForRendering.SetFloat(_circleSizePropId, startingCircleSize);
         _circleWipeImage.materialForRendering.SetColor(_backgroundColorPropId, fadeColor);
@@ -137,6 +137,14 @@ public class SceneController : MonoBehaviour
         // Animates circle wipe until the end time is reached
         while (elapsedTime < _timeForScreenWipe)
         {
+            // if canceled return to default preset
+            if (!EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                _currentFadeColor = Color.white;
+                _circleWipeImage.materialForRendering.SetColor(_backgroundColorPropId, _currentFadeColor);
+                _circleWipeImage.materialForRendering.SetFloat(_circleSizePropId, 1f);
+                Debug.Log("canceled");
+            }
             lerpingTime = elapsedTime / _timeForScreenWipe;
             newCircleSize = Mathf.Lerp(startingCircleSize, targetCircleSize, lerpingTime);
             _circleWipeImage.materialForRendering.SetFloat(_circleSizePropId, newCircleSize);
@@ -157,11 +165,17 @@ public class SceneController : MonoBehaviour
         }
     }
 
-    private IEnumerator DelayMaterialSwapBack()
+    /// <summary>
+    ///  Material goes back to default after fade out
+    /// </summary>
+    /// <returns></returns>
+    private IEnumerator DelayMaterialOrigin()
     {
         yield return new WaitForSeconds(_timeForScreenWipe);
-        Debug.Log("Material Swap Back");
         _currentFadeColor = Color.white;
+        _circleWipeImage.materialForRendering.SetColor(_backgroundColorPropId, _currentFadeColor);
+        _circleWipeImage.materialForRendering.SetFloat(_circleSizePropId, 1f);
+        Debug.Log("Fade In");
     }
     
 #if UNITY_EDITOR
