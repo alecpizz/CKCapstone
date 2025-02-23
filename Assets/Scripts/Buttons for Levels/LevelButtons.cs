@@ -47,12 +47,30 @@ public class LevelButtons : MonoBehaviour
 
             for (; tally < range; tally++)
             {
+                string name = LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames[tally].PrettyName;
+                bool shown = LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames[tally].showUp;
+
                 //loads scene when button is clicked
+                if (!shown)
+                {
+                    continue;
+                }
+                
                 IndividualButtons obj = Instantiate(_buttonPrefab, _chapters[i-1].transform).GetComponent<IndividualButtons>();
-                var levelName = LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames.Count > 0 ? 
-                    LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames[tally] : $"Level {tally}";
-                obj.GetComponentInChildren<TextMeshProUGUI>().text = levelName;
-                obj.SetIndex(tally);
+
+                Debug.Log(SceneManager.GetSceneByBuildIndex(tally).name);
+
+                if (SceneManager.GetSceneByBuildIndex(tally).name[0] == 'I')
+                {
+                    obj.GetComponentInChildren<TextMeshProUGUI>().text = name;
+                    obj.SetIndex(tally);
+                }
+                else
+                {
+                    obj.GetComponentInChildren<TextMeshProUGUI>().text = "Level: " + tally.ToString();
+                    obj.SetIndex(tally);
+                }      
+                
             }
 
             if(i < _chapterLevelCount.Length)
