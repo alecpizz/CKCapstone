@@ -57,9 +57,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     /// <summary>
     /// Prime tween configuration
     /// </summary>
-
     private void Awake()
-
     {
         PrimeTweenConfig.warnEndValueEqualsCurrent = false;
     }
@@ -111,7 +109,10 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
         if (!EnemyFrozen)
         {
 
-            if (_animator != null) _animator.SetTrigger(Forward);
+            if (_animator != null)
+            {
+                _animator.SetTrigger(Forward);
+            }
 
             if (_mirrored)
             {

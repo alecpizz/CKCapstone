@@ -420,7 +420,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 continue;
             }
 
-            if (_animator != null) _animator.SetTrigger(Forward);
+            if (_animator != null)
+            {
+                _animator.SetTrigger(Forward);
+            }
             var dist = Vector3Int.Distance(currCell, goalCell);
             var rotationDir = (GridBase.Instance.CellToWorld(goalCell) - transform.position).normalized;
             var moveWorld = GridBase.Instance.CellToWorld(goalCell);

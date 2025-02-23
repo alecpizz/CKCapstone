@@ -311,7 +311,10 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
             StopCoroutine(_typingCoroutine);
         }
         _isTalking = false;
-        if (_animator != null) _animator.SetBool(Talk, false);
+        if (_animator != null)
+        {
+            _animator.SetBool(Talk, false);
+        }
     }
 
     /// <summary>
