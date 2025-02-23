@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Mitchell Young
-*    Contributors: Mitchell Young, Nick Grinstead
+*    Contributors: Mitchell Young, Nick Grinstead, Jamison Parks
 *    Date Created: 10/27/24
 *    Description: Script that handles the behavior of the mirror and
 *    copy enemy that mirrors or copies player movement.
@@ -49,6 +49,10 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     [SerializeField] private bool sonEnemy;
 
     private Rigidbody _rb;
+ 
+    //public static PlayerMovement Instance;
+    private static readonly int Forward = Animator.StringToHash("Forward");
+    [SerializeField] private Animator _animator;
 
     /// <summary>
     /// Prime tween configuration
@@ -104,6 +108,12 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     {
         if (!EnemyFrozen)
         {
+
+            if (_animator != null)
+            {
+                _animator.SetTrigger(Forward);
+            }
+
             if (_mirrored)
             {
                 moveDirection = -moveDirection;
