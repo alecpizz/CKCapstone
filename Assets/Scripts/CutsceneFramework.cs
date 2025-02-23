@@ -59,6 +59,7 @@ public class CutsceneFramework : MonoBehaviour
         _inputActions = new DebugInputActions();
         _inputActions.UI.Enable();
         _inputActions.UI.SkipCutscene.performed += ctx => SkipCutscene();
+        _endChapterCutsceneVideo.loopPointReached += CheckEnd;
 
         // Plays the Challenge Cutscene, provided that only the corresponding boolean
         // (_isChallengeCutscene) is true
@@ -92,6 +93,11 @@ public class CutsceneFramework : MonoBehaviour
         StopAllCoroutines();
         SceneController.Instance.LoadNewScene(_loadingLevelIndex);
     }
+
+    private void CheckEnd(UnityEngine.Video.VideoPlayer vp)
+    {
+        SceneController.Instance.LoadNewScene(_loadingLevelIndex);
+    }
     
     /// <summary>
     /// Plays the Challenge Cutscene
@@ -111,7 +117,7 @@ public class CutsceneFramework : MonoBehaviour
         // Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement the
         // functionality for playing a video, particularly for the End Chapter Cutscene)
         // Plays the Challenge Cutscene for a specified amount of time before loading the next level
-        StartCoroutine(CutsceneDuration());
+        //StartCoroutine(CutsceneDuration());
     }
 
     /// <summary>
@@ -131,7 +137,7 @@ public class CutsceneFramework : MonoBehaviour
         // Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement the
         // functionality for playing a video, particularly for the End Chapter Cutscene)
         // Plays the End Chapter Cutscene for a specified amount of time before loading the next level
-        StartCoroutine(CutsceneDuration());
+        //StartCoroutine(CutsceneDuration());
     }
 
     /// <summary>
@@ -140,7 +146,7 @@ public class CutsceneFramework : MonoBehaviour
     /// The cutscene plays for a specified amount of time, before loading the next scene
     /// </summary>
     /// <returns></returns> Amount of time the cutscene should play
-    private IEnumerator CutsceneDuration()
+    /*private IEnumerator CutsceneDuration()
     {
         // Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement the
         // functionality for playing a video, particularly for the End Chapter Cutscene)
@@ -149,5 +155,5 @@ public class CutsceneFramework : MonoBehaviour
 
         // Loads the next level, marked by a specified index
         SceneController.Instance.LoadNewScene(_loadingLevelIndex);
-    }
+    }*/
 }
