@@ -307,7 +307,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                 AssetDatabase.GetAssetPath(levelData.CreditsScene),
                 true));
-            levelData.PrettySceneNames.Add("Credits Scene");
+            levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = "Credits Scene", showUp = false });
         }
 
         Debug.Log($"Added {editorBuildSettingsScenes.Count} Scenes");
