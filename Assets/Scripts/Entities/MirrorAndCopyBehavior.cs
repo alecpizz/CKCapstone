@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Mitchell Young
-*    Contributors: Mitchell Young, Nick Grinstead
+*    Contributors: Mitchell Young, Nick Grinstead, Jamison Parks
 *    Date Created: 10/27/24
 *    Description: Script that handles the behavior of the mirror and
 *    copy enemy that mirrors or copies player movement.

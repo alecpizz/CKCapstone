@@ -1,6 +1,7 @@
 /******************************************************************
  *    Author: Cole Stranczek
  *    Contributors: Cole Stranczek, Mitchell Young, Nick Grinstead, Alec Pizziferro
+ *    Jamison Parks
  *    Date Created: 10/3/24
  *    Description: Script that handles the behavior of the enemy,
  *    from movement to causing a failstate with the player
