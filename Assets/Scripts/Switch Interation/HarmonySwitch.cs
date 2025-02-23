@@ -14,16 +14,13 @@ using SaintsField;
 /// <summary>
 /// Inherits methods from IParentSwitch
 /// </summary>
-public class HarmonySwitch : MonoBehaviour, IParentSwitch, ITurnListener
+public class HarmonySwitch : MonoBehaviour, IParentSwitch
 {
     [SerializeField] private float _rotationDuration = 0.2f;
     [SerializeField] private float _beamToggleDelay = 0.6f;
 
     [ProgressBar(-270f, 270f, 90f)]
     [SerializeField] private float _rotationDegrees = 180f;
-
-    public TurnState TurnState => TurnState.World;
-    public TurnState SecondaryTurnState => TurnState.SecondWorld;
 
     private bool _shouldMoveOnTurn = false;
     private bool _shouldActivate = false;
@@ -35,23 +32,7 @@ public class HarmonySwitch : MonoBehaviour, IParentSwitch, ITurnListener
     /// </summary>
     private void OnEnable()
     {
-        if (RoundManager.Instance != null)
-        {
-            RoundManager.Instance.RegisterListener(this);
-        }
-
         _beamScript = GetComponent<HarmonyBeam>();
-    }
-
-    /// <summary>
-    /// Unregistering from RoundManager
-    /// </summary>
-    private void OnDisable()
-    {
-        if (RoundManager.Instance != null)
-        {
-            RoundManager.Instance.UnRegisterListener(this);
-        }
     }
 
     /// <summary>
@@ -59,14 +40,8 @@ public class HarmonySwitch : MonoBehaviour, IParentSwitch, ITurnListener
     /// inactive position
     /// </summary>
     /// <param name="direction">The direction the player moved</param>
-    public void BeginTurn(Vector3 direction)
+    public void MoveObject()
     {
-        if (!_shouldMoveOnTurn)
-        {
-            RoundManager.Instance.CompleteTurn(this);
-            return;
-        }
-
         _shouldMoveOnTurn = false;
         _beamScript.ToggleBeam(false);
 
@@ -85,16 +60,6 @@ public class HarmonySwitch : MonoBehaviour, IParentSwitch, ITurnListener
     private void ResetOnTweenEnd()
     {
         _beamScript.ToggleBeam(true);
-        RoundManager.Instance.CompleteTurn(this);
-    }
-
-    /// <summary>
-    /// Forcibly ends the object's turn
-    /// </summary>
-    public void ForceTurnEnd()
-    {
-        _shouldMoveOnTurn = false;
-        RoundManager.Instance.CompleteTurn(this);
     }
 
     /// <summary>
@@ -102,7 +67,7 @@ public class HarmonySwitch : MonoBehaviour, IParentSwitch, ITurnListener
     /// </summary>
     public void SwitchActivation()
     {
-        _shouldMoveOnTurn = true;
+        MoveObject();
         _shouldActivate = !_shouldActivate;
     }
 }

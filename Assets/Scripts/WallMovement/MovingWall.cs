@@ -17,7 +17,7 @@ using SaintsField.Playa;
 /// Class that determines how the walls and ghost walls move
 /// Inherits from IParentSwitch and IGridEntry
 /// </summary>
-public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListener
+public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
 {
     //original position of wall and ghost
     private Vector3 _originWall;
@@ -63,9 +63,6 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListene
 
     public Vector3 Position => transform.position;
 
-    public TurnState TurnState => TurnState.World;
-    public TurnState SecondaryTurnState => TurnState.SecondWorld;
-
     private bool _shouldMoveOnTurn = false;
     private bool _shouldActivate = false;
 
@@ -96,27 +93,6 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListene
         _originGhost.y = transform.position.y;
     }
 
-    /// <summary>
-    /// Registers instance to the RoundManager
-    /// </summary>
-    private void OnEnable()
-    {
-        if (RoundManager.Instance != null)
-        {
-            RoundManager.Instance.RegisterListener(this);
-        }
-    }
-
-    /// <summary>
-    /// Unregistering from RoundManager
-    /// </summary>
-    private void OnDisable()
-    {
-        if (RoundManager.Instance != null)
-        {
-            RoundManager.Instance.UnRegisterListener(this);
-        }
-    }
 
     /// <summary>
     /// Performs an animation that sinks the wall and raises the ghost wall
@@ -124,7 +100,7 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListene
     /// </summary>
     public void SwitchActivation()
     {
-        _shouldMoveOnTurn = true;
+        MoveObject();
         _shouldActivate = !_shouldActivate;
     }
 
@@ -151,14 +127,8 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListene
     /// Invoked to start the wall's turn. Will only move if it's switch was pressed.
     /// </summary>
     /// <param name="direction">Direction of player movement</param>
-    public void BeginTurn(Vector3 direction)
+    public void MoveObject()
     {
-        if (_shouldMoveOnTurn == false)
-        {
-            RoundManager.Instance.CompleteTurn(this);
-            return;
-        }
-
         _shouldMoveOnTurn = false;
         MoveWall();
     }
@@ -179,16 +149,14 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListene
                 Tween.PositionY(transform, endValue: _groundHeight, 
                     duration: _duration, ease: _easeType).Group(
                     Tween.PositionY(_wallGhost.transform, endValue: _activatedHeight, 
-                    duration: _duration, ease: _easeType)).OnComplete(
-                    ToggleTurnState);
+                    duration: _duration, ease: _easeType));
             }
             else
             {
                 Tween.PositionY(transform, endValue: _activatedHeight, 
                     duration: _duration, ease: _easeType).Group(
                     Tween.PositionY(_wallGhost.transform, endValue: _groundHeight, 
-                    duration: _duration, ease: _easeType)).OnComplete(
-                    ToggleTurnState);
+                    duration: _duration, ease: _easeType));
             }
 
             _wallGrid.IsTransparent = _shouldActivate;
@@ -203,25 +171,6 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListene
         else
         {
             _worked = false;
-
-            ToggleTurnState();
         }
-    }
-
-    /// <summary>
-    /// Completes this object's turn and swaps it to a new turn
-    /// </summary>
-    private void ToggleTurnState()
-    {
-        RoundManager.Instance.CompleteTurn(this);
-    }
-
-    /// <summary>
-    /// Forcibly stops the wall's turn
-    /// </summary>
-    public void ForceTurnEnd()
-    {
-        _shouldMoveOnTurn = false;
-        RoundManager.Instance.CompleteTurn(this);
     }
 }
