@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using FMOD.Studio;
 using FMODUnity;
+using System.Linq;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -22,7 +24,8 @@ using UnityEditor;
 /// </summary>
 public class HarmonyBeam : MonoBehaviour, ITurnListener
 {
-    public TurnState TurnState => TurnState.World;
+    public TurnState TurnState => TurnState.Harmony;
+    public TurnState SecondaryTurnState => TurnState.None;
     [SerializeField] private EventReference _harmonySound = default;
     [SerializeField] private EventReference _enemyHarmonization = default;
     [Space] [SerializeField] private bool _beamActive = true;
@@ -31,6 +34,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     // Array for managing the multiple child particle systems
     [Header("Particles")] [SerializeField] private ParticleSystem[] _beamParticleSystems;
     [SerializeField] private GameObject _enemyHitEffectPrefab;
+    [SerializeField] private Vector3 _enemyHitOffset;
     [SerializeField] private GameObject _wallCollisionEffectPrefab;
 
     private GameObject _activeWallEffect; // Instance of the active wall collision effect
@@ -41,12 +45,15 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     private EventInstance _beamInstance;
     private EventInstance _enemyGrabbedInstance;
 
+    public static Action TriggerHarmonyScan;
 
     /// <summary>
     /// Starts sound playback and instantiates a wall effect if possible.
     /// </summary>
     private void Start()
     {
+        TriggerHarmonyScan += ScanForObjects;
+
         _beamInstance = AudioManager.Instance.PlaySound(_harmonySound);
         if (_wallCollisionEffectPrefab != null)
         {
@@ -70,15 +77,9 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     /// </summary>
     private void OnDisable()
     {
-        RoundManager.Instance.RegisterListener(this);
-    }
+        TriggerHarmonyScan -= ScanForObjects;
 
-    /// <summary>
-    /// Periodically scans for objects in order to detect moving enemies
-    /// </summary>
-    private void FixedUpdate()
-    {
-        ScanForObjects();
+        RoundManager.Instance.UnRegisterListener(this);
     }
 
     /// <summary>
@@ -101,7 +102,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
                 particleSystem.Play();
             }
 
-            _prevHitEntities.Clear();
+            ScanForObjects();
         }
         else
         {
@@ -120,7 +121,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     /// <param name="direction">Keyboard input direction.</param>
     public void BeginTurn(Vector3 direction)
     {
-        StartCoroutine(WaitForPotentialBlockers());
+        ScanForObjects();
     }
 
     /// <summary>
@@ -151,7 +152,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
                 {
                     if (gridEntry == null) continue;
                     //the entry has a harmony beam type :)
-                    if (gridEntry.GetGameObject.TryGetComponent(out IHarmonyBeamEntity entity))
+                    if (gridEntry.EntryObject.TryGetComponent(out IHarmonyBeamEntity entity))
                     {
                         //we haven't seen this one before, hit it!
                         if (!_prevHitEntities.Contains(entity))
@@ -170,10 +171,12 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
                         {
                             if (!_wrappedEnemyFX.ContainsKey(entity))
                             {
-                                GameObject enemyFX = Instantiate(_enemyHitEffectPrefab, entity.Position, Quaternion.identity);
+                                GameObject enemyFX = Instantiate(_enemyHitEffectPrefab, entity.Position
+                                    + _enemyHitOffset, Quaternion.identity);
                                 _wrappedEnemyFX.TryAdd(entity, enemyFX);
                                 _wrappedEnemyFX[entity] = enemyFX;
-                                _enemyGrabbedInstance = AudioManager.Instance.PlaySound(_enemyHarmonization);
+                                _enemyGrabbedInstance = 
+                                    AudioManager.Instance.PlaySound(_enemyHarmonization);
                             }
 
                             enemyHit = true;
@@ -194,6 +197,11 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
         UpdateWallEffect(hitPoint.HasValue, hitPoint);
         _prevHitEntities.Clear();
         _hitEntities.ForEach(entity => _prevHitEntities.Add(entity));
+
+        if (RoundManager.Instance.IsHarmonyTurn)
+        {
+            RoundManager.Instance.CompleteTurn(this);
+        }
     }
 
     /// <summary>
@@ -206,21 +214,6 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     }
 
     /// <summary>
-    /// Stinky coroutine to wait for anything else to move just in case.
-    /// TODO: Remove this!
-    /// </summary>
-    /// <returns>null</returns>
-    private IEnumerator WaitForPotentialBlockers()
-    {
-        //gross! we shouldn't have to wait, but the moving walls/platforms aren't turn based currently... 
-        yield return new WaitForSeconds(_beamDetectionWaitTime);
-        ScanForObjects();
-
-        RoundManager.Instance.CompleteTurn(this);
-    }
-
-
-    /// <summary>
     /// Handles the visual effect when the beam hits a wall.
     /// </summary>
     /// <param name="active">Whether or not the wall effect should be visible.</param>
@@ -228,7 +221,8 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     private void UpdateWallEffect(bool active, Vector3? hitPosition = null)
     {
         if (_activeWallEffect == null) return;
-        // Offset the hit position slightly in the direction of the normal to ensure the effect is on the surface
+        // Offset the hit position slightly in the direction of
+        // the normal to ensure the effect is on the surface
         if (hitPosition.HasValue)
         {
             Vector3 surfacePosition = hitPosition.Value;
@@ -266,7 +260,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     /// </summary>
     private void CheckEntityExits()
     {
-        foreach (var harmonyBeamEntity in _prevHitEntities)
+        foreach (var harmonyBeamEntity in _prevHitEntities.ToList<IHarmonyBeamEntity>())
         {
             if (harmonyBeamEntity == null) continue;
             if (_hitEntities.Contains(harmonyBeamEntity)) continue;

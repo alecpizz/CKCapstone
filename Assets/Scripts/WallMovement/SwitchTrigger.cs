@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Josephine Qualls
-*    Contributors: Josh Eddy, Alec Pizziferro
+*    Contributors: Josh Eddy, Alec Pizziferro, Nick Grinstead
 *    Date Created: 10/10/2024
 *    Description: Switch that moves mechanics.
 *    Only moves registered mechanics.
@@ -21,9 +21,6 @@ using FMOD.Studio;
 /// </summary>
 public class SwitchTrigger : MonoBehaviour
 {
-    // on/off variable for switch
-    private bool _isTriggered = false;
-
     // for registering mechanics to a switch
     [SerializeReference] private List<MovingWall> _affectedWalls = new List<MovingWall>();
     [SerializeReference] private List<ReflectionSwitch> _affectedReflectors = new List<ReflectionSwitch>();
@@ -47,7 +44,7 @@ public class SwitchTrigger : MonoBehaviour
     }
 
     /// <summary>
-    /// Turns the switch on/off everytime the Player steps on it
+    /// Turns the switch on/off every time the Player steps on it
     /// Moves walls when switch is on and back when it's off
     /// </summary>
     /// <param name="other"></param>
@@ -55,35 +52,10 @@ public class SwitchTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player") || other.CompareTag("SonEnemy") || other.CompareTag("Enemy"))
         {
-            PlayerMovement playerMovement;
-            if (other.gameObject.TryGetComponent<PlayerMovement>(out playerMovement))
-            {
-                playerMovement.ForceTurnEnd();
-            }
-
-            _isTriggered = !_isTriggered;
-
             //changes the walls and plays a sound
             for (int i = 0; i < _affectedWalls.Count; i++)
             {
-                if (_isTriggered)
-                {
-                    _affectedWalls[i].SwitchActivation();
-
-                    if (!_affectedWalls[i].GetWorked())
-                    {
-                        _isTriggered = false;
-                    }
-                }
-                else
-                {
-                    _affectedWalls[i].SwitchDeactivation();
-
-                    if (!_affectedWalls[i].GetWorked())
-                    {
-                        _isTriggered = true;
-                    }
-                }
+                _affectedWalls[i].SwitchActivation();
 
                 AudioManager.Instance.PlaySound(_switchSound);
             }
@@ -91,14 +63,7 @@ public class SwitchTrigger : MonoBehaviour
             //changes the reflection cubes and plays a sound
             for (int i = 0; i < _affectedReflectors.Count; i++)
             {
-                if (_isTriggered)
-                {
-                    _affectedReflectors[i].SwitchActivation();
-                }
-                else
-                {
-                    _affectedReflectors[i].SwitchDeactivation();
-                }
+                _affectedReflectors[i].SwitchActivation();
 
                 AudioManager.Instance.PlaySound(_switchSound);
             }
@@ -106,14 +71,7 @@ public class SwitchTrigger : MonoBehaviour
             //changes the harmony beams and plays a sound
             for (int i = 0; i < _affectedBeams.Count; i++)
             {
-                if (_isTriggered)
-                {
-                    _affectedBeams[i].SwitchActivation();
-                }
-                else
-                {
-                    _affectedBeams[i].SwitchDeactivation();
-                }
+                _affectedBeams[i].SwitchActivation();
 
                 AudioManager.Instance.PlaySound(_switchSound);
             }
@@ -121,6 +79,12 @@ public class SwitchTrigger : MonoBehaviour
             if (_animator != null)
             {
                 _animator.SetTrigger("Pressed");
+            }
+
+            PlayerMovement playerMovement;
+            if (other.gameObject.TryGetComponent<PlayerMovement>(out playerMovement))
+            {
+                playerMovement.ForceTurnEnd();
             }
         }
     }

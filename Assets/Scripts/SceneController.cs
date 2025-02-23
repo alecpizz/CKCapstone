@@ -20,7 +20,7 @@ public class SceneController : MonoBehaviour
     public static SceneController Instance;
 
     // Remembers previous wipe color when loading a new scene
-    private static Color CurrentFadeColor = Color.black;
+    private static Color _currentFadeColor = Color.black;
 
     [Required]
     [SerializeField] private Image _circleWipeImage;
@@ -30,6 +30,7 @@ public class SceneController : MonoBehaviour
     [SerializeField] private float _timeForScreenWipe;
     [SerializeField] private bool _shouldFadeInOnLoad;
     [SerializeField] private EventReference _endSound;
+    [SerializeField] private bool _playSoundOnSceneChange = true;
 
     private readonly int _circleSizePropId = Shader.PropertyToID("_CircleSize");
     private readonly int _backgroundColorPropId = Shader.PropertyToID("_BackgroundColor");
@@ -52,7 +53,7 @@ public class SceneController : MonoBehaviour
 
         if (_shouldFadeInOnLoad)
         {
-            StartCoroutine(CircleWipeTransition(true, CurrentFadeColor));
+            StartCoroutine(CircleWipeTransition(true, _currentFadeColor));
         }
     }
 
@@ -62,9 +63,9 @@ public class SceneController : MonoBehaviour
     public void ReloadCurrentScene()
     {
         StopAllCoroutines();
-        CurrentFadeColor = Color.black;
+        _currentFadeColor = Color.black;
         int sceneIndex = SceneManager.GetActiveScene().buildIndex;
-        StartCoroutine(CircleWipeTransition(false, CurrentFadeColor, sceneIndex));
+        StartCoroutine(CircleWipeTransition(false, _currentFadeColor, sceneIndex));
     }
 
     /// <summary>
@@ -74,8 +75,8 @@ public class SceneController : MonoBehaviour
     public void LoadNewScene(int sceneBuildIndex)
     {
         StopAllCoroutines();
-        CurrentFadeColor = Color.white;
-        StartCoroutine(CircleWipeTransition(false, CurrentFadeColor, sceneBuildIndex));
+        _currentFadeColor = Color.white;
+        StartCoroutine(CircleWipeTransition(false, _currentFadeColor, sceneBuildIndex));
     }
 
     /// <summary>
@@ -122,7 +123,7 @@ public class SceneController : MonoBehaviour
         _circleWipeImage.materialForRendering.SetColor(_backgroundColorPropId, fadeColor);
 
         RepositionCircleWipe();
-        if (AudioManager.Instance != null)
+        if (AudioManager.Instance != null && _playSoundOnSceneChange)
         {
             AudioManager.Instance.PlaySound(_endSound);
         }
@@ -146,7 +147,9 @@ public class SceneController : MonoBehaviour
 
         // Loads new scene if needed
         if (!isFadingIn && sceneIndexToLoad != -1)
+        {
             SceneManager.LoadScene(sceneIndexToLoad);
+        }
     }
 
 #if UNITY_EDITOR

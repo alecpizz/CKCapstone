@@ -1,6 +1,7 @@
 /******************************************************************
  *    Author: Cole Stranczek
- *    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, Trinity Hutson, Alec Pizziferro, Josephine Qualls, Jamison Parks
+ *    Contributors: Cole Stranczek, Nick Grinstead, Alex Laubenstein, 
+ *    Trinity Hutson, Alec Pizziferro, Josephine Qualls, Jamison Parks
  *    Date Created: 9/22/24
  *    Description: Script that handles the player's movement along
  *    the grid
@@ -14,14 +15,18 @@ using UnityEngine.InputSystem;
 using UnityEngine.Events;
 using FMODUnity;
 using FMOD.Studio;
+using SaintsField.Playa;
 
 public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
 {
-    public Vector3 FacingDirection { get; private set; }
+    public Vector3 FacingDirection 
+    { 
+        get; private set; 
+    }
 
     public bool IsTransparent
     {
-        get => true;
+        get => false;
     }
 
     public bool BlocksHarmonyBeam
@@ -34,7 +39,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         get => transform.position;
     }
 
-    public GameObject GetGameObject
+    public GameObject EntryObject
     {
         get => gameObject;
     }
@@ -44,16 +49,20 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
     [SerializeField] private float _delayTime = 0.1f;
 
-    [SerializeField] private float _rotationDelay = 0.1f;
     [Space]
+    [PlayaInfoBox("Time to move one tile based on if there are enemies or not. " +
+        "\n This will be divided by the number of tiles they will move.")]
     [SerializeField] private float _noEnemiesMovementTime = 0.25f;
     [SerializeField] private float _withEnemiesMovementTime = 0.25f;
+    [PlayaInfoBox("The floor for how fast the player can move.")]
+    [SerializeField] private float _minMovementTime = 0.175f;
     [Space]
     [SerializeField] private float _rotationTime = 0.05f;
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
     [SerializeField] private Ease _movementEase = Ease.OutBack;
 
     private float _movementTime;
+    // Timing from metronome
     private int _playerMovementTiming = 1;
     private WaitForSeconds _waitForSeconds;
 
@@ -70,21 +79,22 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     private static readonly int Left = Animator.StringToHash("Left");
     private static readonly int Backward = Animator.StringToHash("Backward");
 
-    private const float MinMovementTime = 0.175f;
-
     [SerializeField] private Animator _animator;
-    public bool playerMoved { get; private set; }
 
+    /// <summary>
+    /// Sets instance upon awake.
+    /// </summary>
     private void Awake()
     {
         Instance = this;
         PrimeTweenConfig.warnEndValueEqualsCurrent = false;
     }
 
-    // Start is called before the first frame update
-    void Start()
+    /// <summary>
+    ///  Start is called before the first frame update
+    /// </summary>
+    private void Start()
     {
-        playerMoved = false;
         FacingDirection = new Vector3(0, 0, 0);
         if (RoundManager.Instance.EnemiesPresent)
         {
@@ -99,9 +109,13 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
         _waitForSeconds = new WaitForSeconds(_delayTime);
 
-        _movementTime = RoundManager.Instance.EnemiesPresent ? _withEnemiesMovementTime : _noEnemiesMovementTime;
+        _movementTime = RoundManager.Instance.EnemiesPresent ? 
+            _withEnemiesMovementTime : _noEnemiesMovementTime;
     }
 
+    /// <summary>
+    /// Registers instance to the RoundManager
+    /// </summary>
     private void OnEnable()
     {
         if (RoundManager.Instance != null)
@@ -129,16 +143,18 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     {
         yield return new WaitForSeconds(_rotationTime);
         float modifiedMovementTime = Mathf.Clamp(_movementTime / _playerMovementTiming,
-            MinMovementTime, float.MaxValue);
+            _minMovementTime, float.MaxValue);
 
         for (int i = 0; i < _playerMovementTiming; i++)
         {
             // Move if there is no wall below the player or if ghost mode is enabled
-            var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
+            var move = GridBase.Instance.GetCellPositionInDirection
+                (gameObject.transform.position, moveDirection);
             var readPos = move;
             readPos.y = gameObject.transform.position.y;
             
-            if ((GridBase.Instance.CellIsTransparent(move) && gameObject.transform.position != readPos) ||
+            if ((GridBase.Instance.CellIsTransparent(move) 
+                && gameObject.transform.position != readPos) ||
                 (DebugMenuManager.Instance.GhostMode))
             {
                 _animator.SetTrigger(Forward);
@@ -146,11 +162,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                     move + _positionOffset, duration: modifiedMovementTime, 
                     _movementEase).ToYieldInstruction();
                 GridBase.Instance.UpdateEntry(this);
-                playerMoved = true;
-            }
-            else
-            {
-                playerMoved = false;
             }
 
             if (_playerMovementTiming > 1)
@@ -168,8 +179,10 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// <param name="collision">Data from collision</param>
     private void OnCollisionEnter(Collision collision)
     {
-        if (!DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("Enemy") ||
-            !DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("SonEnemy"))
+        if (!DebugMenuManager.Instance.Invincibility 
+            && collision.gameObject.CompareTag("Enemy") ||
+            !DebugMenuManager.Instance.Invincibility 
+            && collision.gameObject.CompareTag("SonEnemy"))
         {
             // Checks if the enemy is frozen; if they are, doesn't reload the scene
             EnemyBehavior enemy = collision.collider.GetComponent<EnemyBehavior>();
@@ -200,6 +213,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     }
 
     public TurnState TurnState => TurnState.Player;
+    public TurnState SecondaryTurnState => TurnState.None;
 
     /// <summary>
     /// Invoked by the round manager to start the player's turn
@@ -212,7 +226,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         bool isSameDirection = FacingDirection == direction;
 
         FacingDirection = direction; //End of animation section
-        _playerInteraction.SetDirection(direction);
 
         float rotationTime = isSameDirection ? 0 : _rotationTime;
 

@@ -54,7 +54,7 @@ public class GridBase : MonoBehaviour
     /// </summary>
     private void Awake()
     {
-        if (Instance != null)
+        if (Instance != null && Instance != this)
         {
             Destroy(Instance);
             Instance = this;
@@ -66,6 +66,12 @@ public class GridBase : MonoBehaviour
 
         _grid = GetComponent<Grid>();
         GenerateMesh();
+    }
+
+    
+    private void OnValidate()
+    {
+        Instance = this;
     }
 
     /// <summary>
@@ -160,30 +166,15 @@ public class GridBase : MonoBehaviour
         return GetCellEntries(WorldToCell(worldSpacePos));
     }
 
-    /// <summary>
-    /// Checks if the cell contains any objects.
-    /// </summary>
-    /// <param name="cellID">The ID of the cell.</param>
-    /// <returns>True if the cell is empty.</returns>
-    public bool CellIsEmpty(Vector3Int cellID)
-    {
-        var set = GetCellEntries(cellID);
-        if (set == null)
-        {
-            return false;
-        }
-
-        return set.Count == 0;
-    }
 
     /// <summary>
     /// Checks if the cell contains all transparent entries.
     /// </summary>
-    /// <param name="cellID">The id of the cell being searched.</param>
+    /// <param name="cellId">The id of the cell being searched.</param>
     /// <returns>True if all the elements in the cell are transparent.</returns>
-    public bool CellIsTransparent(Vector3Int cellID)
+    public bool CellIsTransparent(Vector3Int cellId)
     {
-        var set = GetCellEntries(cellID);
+        var set = GetCellEntries(cellId);
         if (set == null)
         {
             return false;
@@ -207,23 +198,25 @@ public class GridBase : MonoBehaviour
     /// <returns>True if all the elements in the cell are transparent.</returns>
     public bool CellIsTransparent(Vector3 position)
     {
-        var set = GetCellEntries(position);
+        return CellIsTransparent(WorldToCell(position));
+    }
+
+    /// <summary>
+    /// Checks if the cell contains any objects.
+    /// </summary>
+    /// <param name="cellId">The ID of the cell.</param>
+    /// <returns>True if the cell is empty.</returns>
+    public bool CellIsEmpty(Vector3Int cellId)
+    {
+        var set = GetCellEntries(cellId);
         if (set == null)
         {
             return false;
         }
 
-        foreach (var entry in set)
-        {
-            if (!entry.IsTransparent)
-            {
-                return false;
-            }
-        }
-
-        return true;
+        return set.Count == 0;
     }
-
+    
     /// <summary>
     /// Checks if the cell contains any objects.
     /// </summary>
@@ -231,13 +224,7 @@ public class GridBase : MonoBehaviour
     /// <returns>True if the cell is empty.</returns>
     public bool CellIsEmpty(Vector3 position)
     {
-        var set = GetCellEntries(position);
-        if (set == null)
-        {
-            return false;
-        }
-
-        return set.Count == 0;
+        return CellIsEmpty(WorldToCell(position));
     }
 
     /// <summary>
@@ -248,12 +235,14 @@ public class GridBase : MonoBehaviour
     /// <returns>A cell index for the grid.</returns>
     public Vector3Int WorldToCell(Vector3 worldSpacePos)
     {
+        //convert the world space position to the space of this grid
         worldSpacePos.y = transform.position.y;
         Vector3 local = transform.InverseTransformPoint(worldSpacePos);
 
         Vector3 cellSize = _grid.cellSize;
         Vector3 cellGap = _grid.cellGap;
 
+        //floor of a coord will give us a whole number coordinate.
         int x = Mathf.Clamp(Mathf.FloorToInt(local.x / (cellSize.x + cellGap.x)), 0, _gridSize - 1);
         int y = Mathf.Clamp(Mathf.FloorToInt(local.y / (cellSize.y + cellGap.y)), 0, _gridSize - 1);
         int z = Mathf.Clamp(Mathf.FloorToInt(local.z / (cellSize.z + cellGap.z)), 0, _gridSize - 1);
@@ -268,6 +257,7 @@ public class GridBase : MonoBehaviour
     /// <returns>A world space, centered position of a cell.</returns>
     public Vector3 CellToWorld(Vector3Int cellPos)
     {
+        //just clamps the position within the grid's boundaries
         Vector3Int pos = cellPos;
         pos.x = Mathf.Clamp(cellPos.x, 0, _gridSize - 1);
         pos.y = Mathf.Clamp(cellPos.y, 0, _gridSize - 1);
@@ -336,6 +326,7 @@ public class GridBase : MonoBehaviour
     [Button]
     private void GenerateMesh()
     {
+        //if there's no grid object, or we cannot use the grid, exit early.
         if (_grid == null)
         {
             return;
@@ -346,8 +337,10 @@ public class GridBase : MonoBehaviour
             return;
         }
 
+        //clean-up any old grids
         DestroyMesh();
 
+        //make a new holder object to hold all of the cell tiles
         _gridMeshHolder = new GameObject(GridMeshName)
         {
             transform =
@@ -358,23 +351,18 @@ public class GridBase : MonoBehaviour
         _gridMeshHolder.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
         _gridObjects.Clear();
         
+        //for each square in the grid, instantiate the prefab for the tile
         for (int i = 0; i < _gridSize; i++)
         {
             for (int j = 0; j < _gridSize; j++)
             {
+                //get its cell position and spawn it there.
                 Vector3Int index = new Vector3Int(i, 0, j);
                 var pos = CellToWorld(new Vector3Int(i, 0, j));
-                var plane = Instantiate(_gridPrefab);
-                //var plane = GameObject.CreatePrimitive(PrimitiveType.Quad);
+                var plane = Instantiate(_gridPrefab, _gridMeshHolder.transform, true);
                 plane.transform.position = pos;
-                //plane.transform.SetPositionAndRotation(pos, Quaternion.Euler(90f, 0f, 0f));
                 var scale = plane.transform.localScale;
-                //scale.x = (_grid.cellSize.x);
-                //scale.y = (_grid.cellSize.z);
                 plane.transform.localScale = scale;
-                plane.transform.SetParent(_gridMeshHolder.transform, true);
-                //plane.GetComponent<MeshRenderer>().material =
-                //    i % 2 == 1 ^ j % 2 == 0 ? _primaryGridMat : _secondaryGridMat;
                 _gridObjects.Add(index, plane);
             }
         }
@@ -386,6 +374,7 @@ public class GridBase : MonoBehaviour
     /// </summary>
     private void DestroyMesh()
     {
+        //destroy the grid if we have it, in editor don't wait.
         var gameObj = _gridMeshHolder == null ?
             transform.Find(GridMeshName).gameObject : _gridMeshHolder;
         if (Application.isPlaying)

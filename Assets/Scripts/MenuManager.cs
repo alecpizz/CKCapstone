@@ -7,8 +7,10 @@
 using FMODUnity;
 using System.Collections;
 using System.Collections.Generic;
+using SaintsField;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
@@ -18,14 +20,22 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject _optionsScreen;
     [SerializeField] private GameObject _confirmQuit;
     [SerializeField] private GameObject _mainMenu;
-
+    [Scene] [SerializeField] private int _firstLevelIndex = 1;
+    [SerializeField] private GameObject _mainMenuFirst;
+    [SerializeField] private GameObject _settingsMenuFirst;
+    [SerializeField] private GameObject _mainMenuStart;
+    [SerializeField] private GameObject _mainMenuSettings;
+    [SerializeField] private GameObject _mainMenuQuit;
+    [SerializeField] private GameObject _restartButton;
+    [SerializeField] private GameObject _enemyPathButton;
 
     [SerializeField] private EventReference _buttonPress;
 
     private DebugInputActions _inputActions;
 
-
-
+    /// <summary>
+    /// Enables player input for opening the pause menu
+    /// </summary>
     private void Awake()
     {
         _inputActions = new DebugInputActions();
@@ -33,6 +43,9 @@ public class MenuManager : MonoBehaviour
         _inputActions.Player.Quit.performed += ctx => Pause();
     }
 
+    /// <summary>
+    /// Disables player input for opening the pause menu
+    /// </summary>
     private void OnDisable()
     {
         _inputActions.Disable();
@@ -46,6 +59,8 @@ public class MenuManager : MonoBehaviour
     {
         DebugMenuManager.Instance.PauseMenu = false;
         _pauseScreen.SetActive(false);
+        _restartButton.SetActive(true);
+        _enemyPathButton.SetActive(true);
         Time.timeScale = 1f;
     }
 
@@ -58,6 +73,10 @@ public class MenuManager : MonoBehaviour
         PrimeTween.Tween.Delay(0.2f).OnComplete(() =>
         {
             _optionsScreen.SetActive(true);
+            _mainMenuStart.SetActive(false);
+            _mainMenuSettings.SetActive(false);
+            _mainMenuQuit.SetActive(false);
+            EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
         });
     }
 
@@ -67,6 +86,10 @@ public class MenuManager : MonoBehaviour
     public void Options()
     {
         _optionsScreen.SetActive(true);
+        _mainMenuStart.SetActive(false);
+        _mainMenuSettings.SetActive(false);
+        _mainMenuQuit.SetActive(false);
+        EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
     }
 
 
@@ -76,6 +99,10 @@ public class MenuManager : MonoBehaviour
     public void OptionsClose()
     {
         _optionsScreen.SetActive(false);
+        _mainMenuFirst.SetActive(true);
+        _mainMenuSettings.SetActive(true);
+        _mainMenuQuit.SetActive(true);
+        EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
     }
 
     /// <summary>
@@ -85,6 +112,9 @@ public class MenuManager : MonoBehaviour
     {
         DebugMenuManager.Instance.PauseMenu = true;
         _pauseScreen.SetActive(true);
+        _restartButton.SetActive(false);
+        _enemyPathButton.SetActive(false);
+        EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
         Time.timeScale = 0f;
     }
 
@@ -122,7 +152,7 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void StartGame()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(_firstLevelIndex);
     }
 
     /// <summary>
@@ -143,7 +173,6 @@ public class MenuManager : MonoBehaviour
     public void QuitDecline()
     {
         _confirmQuit.SetActive(false);
-
     }
 
     /// <summary>

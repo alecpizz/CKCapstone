@@ -6,6 +6,10 @@ on:
         branches:
             - main
 
+env:
+  UNITY_VERSION: 2022.3.46f1
+  TARGET_PLATFORM: StandaloneWindows64
+
 jobs:
   buildForAllSupportedPlatforms:
     name: Build for ${{ matrix.targetPlatform }}
@@ -16,6 +20,8 @@ jobs:
         targetPlatform:
           - StandaloneWindows64 # Build a Windows 64-bit standalone.
     steps:
+      - run: |
+          docker pull unityci/editor:ubuntu-2022.3.46f1-windows-mono-3.1.0 &
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0

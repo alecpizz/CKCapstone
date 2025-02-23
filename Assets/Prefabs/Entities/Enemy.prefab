@@ -3796,16 +3796,19 @@ MonoBehaviour:
   _positionOffset: {x: 0, y: 0, z: 0}
   _destinationMarker: {fileID: 2474659038540386944}
   _destPathVFX: {fileID: 4121013918361156318}
-  _atStart: 1
+  _atFirstPoint: 1
   _currentPoint: 0
-  _destAtStart: 0
+  _destAtFirstPoint: 0
   _destCurrentPoint: 0
   CollidingWithRay: 0
   _destYPos: 0.2
   _lineYPosOffset: 1
-  _waitTime: 0.4
-  _rotationTime: 0.1
+  _waitTime: 0.2
+  _minMoveTime: 0.2
+  _currentToggle: 1
+  _rotationTime: 0.15
   _rotationEase: 4
+  _movementEase: 27
   _movePoints: []
   _circularMovement: 0
   _linePosCount: 0
@@ -6201,17 +6204,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 26cfad19293d45c45a9dae4a0d6ed1aa,
         type: 3}
       propertyPath: m_LocalScale.x
-      value: 18
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 26cfad19293d45c45a9dae4a0d6ed1aa,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 18
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 26cfad19293d45c45a9dae4a0d6ed1aa,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 18
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 26cfad19293d45c45a9dae4a0d6ed1aa,
         type: 3}
@@ -6262,6 +6265,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 26cfad19293d45c45a9dae4a0d6ed1aa,
+        type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -7329296602084526306, guid: 26cfad19293d45c45a9dae4a0d6ed1aa,
         type: 3}
