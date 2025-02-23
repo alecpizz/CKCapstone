@@ -124,8 +124,19 @@ public class LevelOrder : ScriptableObject
     private LevelData _inputLevelData;
 #endif
 
-    [field: SerializeField, ReadOnly] public List<string> PrettySceneNames { get; set; } = new();
+    [field: SerializeField, ReadOnly] public List<PrettyData> PrettySceneNames { get; set; } = new();
     [field: SerializeField, ReadOnly] public List<string> PrettyChapterNames { get; set; } = new();
+
+    /// <summary>
+    /// Structure to keep track of what kind of scene is what.
+    /// </summary>
+    [Serializable]
+    public struct PrettyData
+    {
+        public string PrettyName;
+        public bool showUp;
+
+    }
 
 #if UNITY_EDITOR
     /// <summary>
