@@ -204,27 +204,27 @@ PrefabInstance:
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Path
-      value: event:/Chapter 2 End Cutscene
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Guid.Data1
-      value: -129330510
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Guid.Data2
-      value: 1196642327
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Guid.Data3
-      value: -1739112038
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Guid.Data4
-      value: 592403969
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2295975639014996387, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
@@ -265,6 +265,11 @@ PrefabInstance:
         type: 3}
       propertyPath: _shouldFadeInOnLoad
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5598251421030866082, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: _playSoundOnSceneChange
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6311636952621972159, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
@@ -1537,15 +1542,15 @@ MonoBehaviour:
   _challengeCutsceneImages:
   - {fileID: 987237890}
   _endChapterCutsceneVideo: {fileID: 1571041920}
-  _cutsceneDuration: 26
+  _cutsceneDuration: 40
   _cutsceneAudio:
     Guid:
-      Data1: -696882822
-      Data2: 1104010296
-      Data3: 1958491800
-      Data4: -1193433071
-    Path: event:/Chapter 1 Music Controller
-  _loadingLevelIndex: 0
+      Data1: 988537092
+      Data2: 1100017216
+      Data3: 1600132527
+      Data4: -334552092
+    Path: event:/Chapter 1 End Cutscene
+  _loadingLevelIndex: 15
   _audioVolumeOverride: 1
 --- !u!4 &1312136891
 Transform:
@@ -1739,7 +1744,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1571041919}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 95be340f3fb619346bac3d77380eaed1, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: 1b8d39bc79e592a48b97129f972986d9, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 381800725}
