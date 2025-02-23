@@ -92,7 +92,7 @@ public class UIManager : MonoBehaviour, ITimeListener
         if (LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames.Count > 0)
         {
             int index = SceneManager.GetActiveScene().buildIndex;
-            var prettyName = LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames[index].PrettyName;
+            var prettyName = LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames[index];
             _levelNumber.text = prettyName;
         }
         else
