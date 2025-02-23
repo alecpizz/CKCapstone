@@ -146,7 +146,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [SerializeField] private Animator _animator;
 
     /// <summary>
-
     /// Disables a PrimeTween warning.
     /// </summary>
     private void Awake()
