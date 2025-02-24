@@ -21,8 +21,7 @@ public enum TurnState
     World = 1,
     Enemy = 2,
     SecondWorld = 3,
-    Harmony = 4,
-    None = 5,
+    None = 4,
 }
 
 
@@ -68,11 +67,6 @@ public sealed class RoundManager : MonoBehaviour
     /// Whether it's the enemy's turn.
     /// </summary>
     public bool IsEnemyTurn => _turnState == TurnState.Enemy;
-
-    /// <summary>
-    /// Whether it's the harmony's turn
-    /// </summary>
-    public bool IsHarmonyTurn => _turnState == TurnState.Harmony;
 
     /// <summary>
     /// Whether it's the second world turn
@@ -362,8 +356,7 @@ public sealed class RoundManager : MonoBehaviour
             TurnState.Player => TurnState.World,
             TurnState.World => TurnState.Enemy,
             TurnState.Enemy => TurnState.SecondWorld,
-            TurnState.SecondWorld => TurnState.Harmony,
-            TurnState.Harmony => TurnState.None,
+            TurnState.SecondWorld => TurnState.None,
             _ => null
         };
     }
@@ -381,7 +374,6 @@ public sealed class RoundManager : MonoBehaviour
             TurnState.World => TurnState.Player,
             TurnState.Enemy => TurnState.World,
             TurnState.SecondWorld => TurnState.Enemy,
-            TurnState.Harmony => TurnState.SecondWorld,
             _ => null
         };
     }
