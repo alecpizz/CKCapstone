@@ -56,6 +56,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [SerializeField] private float _destYPos = 1f;
     [SerializeField] private float _lineYPosOffset = 1f;
 
+    [PlayaInfoBox("Time delay from when an enemy starts their turn and actually begins moving." +
+        "\n This is meant to prevent enemies from moving before the player starts to move.")]
+    [SerializeField]
+    private float _timeBeforeTurn = 0.1f;
+
     //Wait time between enemy moving each individual tile while on path to next destination
     [PlayaInfoBox("Time for the enemy to move between each tile. " +
                   "\n This will be divided by the number of spaces it will move.")]
@@ -391,6 +396,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// <returns>null</returns>
     private IEnumerator MovementRoutine()
     {
+        yield return new WaitForSeconds(_timeBeforeTurn);
+
         bool blocked = false;
         for (int i = 0; i < _enemyMovementTime; i++)
         {
