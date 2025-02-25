@@ -143,7 +143,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// </summary>
     /// <param name="moveDirection">Direction of player movement</param>
     /// <returns>Waits for short delay while moving</returns>
-    private IEnumerator MovementDelay(Vector3 moveDirection)
+    private IEnumerator MovePlayer(Vector3 moveDirection)
     {
         yield return new WaitForSeconds(_rotationTime);
         float modifiedMovementTime = Mathf.Clamp(_movementTime / _playerMovementTiming,
@@ -250,7 +250,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                     if ((GridBase.Instance.CellIsTransparent(move) || DebugMenuManager.Instance.GhostMode))
                     {
                         AudioManager.Instance.PlaySound(_playerMove);
-                        StartCoroutine(MovementDelay(direction));
+                        StartCoroutine(MovePlayer(direction));
                         OnPlayerMoveComplete?.Invoke(); //keeps track of movement completion
                     }
                     else
