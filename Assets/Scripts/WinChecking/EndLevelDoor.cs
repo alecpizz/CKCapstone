@@ -74,8 +74,9 @@ public class EndLevelDoor : MonoBehaviour
             //make the door open
             _anim.Play("ANIM_DoorOpen");
 
-            //light the lantern
-            _lanternScript.TurnLightOn();
+            //light the lantern (null check for cutscene skip)
+            if(_lanternScript != null)
+                _lanternScript.TurnLightOn();
         }
     }
 
