@@ -471,6 +471,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         }
 
         RoundManager.Instance.CompleteTurn(this);
+
     }
 
     /// <summary>

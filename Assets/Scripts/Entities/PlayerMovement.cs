@@ -170,7 +170,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             }
         }
 
-        RoundManager.Instance.CompleteTurn(this);
+        //RoundManager.Instance.CompleteTurn(this);
     }
 
     /// <summary>
@@ -221,6 +221,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// <param name="direction">The direction the player should move</param>
     public void BeginTurn(Vector3 direction)
     {
+        RoundManager.Instance.CompleteTurn(this);
+
         Vector3Int dir = new Vector3Int((int) direction.x, (int) direction.y, (int) direction.z);
 
         bool isSameDirection = FacingDirection == direction;
@@ -234,6 +236,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             () =>
             {
                 var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
+
                 if ((GridBase.Instance.CellIsTransparent(move) || DebugMenuManager.Instance.GhostMode))
                 {
                     AudioManager.Instance.PlaySound(_playerMove);
@@ -246,7 +249,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                     RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
                 }
             });
-        
+
     }
 
     /// <summary>
