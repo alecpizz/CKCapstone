@@ -337,7 +337,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         //Looks at the time signature for the enemy so it can place multiple moves in advance
 
         EvaluateNextMove(ref _indicatorIndex, ref _indicatorReturningToStart);
-        _vfxLine.positionCount = _indicatorIndex + 1;
+        _vfxLine.positionCount = _enemyMovementTime + 1;
 
         //Finds the direction and tiles to move based on its own current point index value
         var destPoint = _moveDestinations[_indicatorIndex];
@@ -355,6 +355,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             }
         }
 
+        //Sets each point in the _vfx line along the tile path in the _moveDestinations list
+        //starting from the enemy's current position
         for (int i = 0; i < _vfxLine.positionCount; i++)
         {
             if (vfxPointCount + i >= _moveDestinations.Count) 
