@@ -623,6 +623,11 @@ PrefabInstance:
       propertyPath: _isTransparent
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3444983967883238341, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: _blocksHarmonyBeam
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -970,7 +975,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3444983967883238341, guid: 481ef263620677f4da33125bd7de384d,
         type: 3}
+      propertyPath: _offset.y
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444983967883238341, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
       propertyPath: _isTransparent
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444983967883238341, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: _blocksHarmonyBeam
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
@@ -1182,25 +1197,19 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 255374254}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &256671179 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 47317306802859145, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
-    type: 3}
-  m_PrefabInstance: {fileID: 1120774595}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &256671180 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8997804269895301853, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
     type: 3}
   m_PrefabInstance: {fileID: 1120774595}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &256671181
+--- !u!114 &256671181 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 2179937955725682169, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1120774595}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 256671179}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c0640cc4e3ba172479b84befa667aa2c, type: 3}
@@ -1568,6 +1577,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Disable Tile Wall (19)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444983967883238341, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: _blocksHarmonyBeam
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
         type: 3}
@@ -2700,25 +2714,19 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 850566776}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &889648141 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 47317306802859145, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
-    type: 3}
-  m_PrefabInstance: {fileID: 1566847318}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &889648142 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8997804269895301853, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
     type: 3}
   m_PrefabInstance: {fileID: 1566847318}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &889648143
+--- !u!114 &889648143 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 2179937955725682169, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1566847318}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 889648141}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c0640cc4e3ba172479b84befa667aa2c, type: 3}
@@ -3088,11 +3096,7 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 682303088}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 47317306802859145, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 256671181}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a5c0f4e94bc8d984bbfcbcf006755d9a, type: 3}
 --- !u!1001 &1145634929
 PrefabInstance:
@@ -3794,25 +3798,19 @@ Mesh:
     offset: 0
     size: 0
     path: 
---- !u!1 &1254159827 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 47317306802859145, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
-    type: 3}
-  m_PrefabInstance: {fileID: 1875734213}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1254159828 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8997804269895301853, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
     type: 3}
   m_PrefabInstance: {fileID: 1875734213}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1254159829
+--- !u!114 &1254159829 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 2179937955725682169, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1875734213}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1254159827}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c0640cc4e3ba172479b84befa667aa2c, type: 3}
@@ -4147,6 +4145,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Disable Tile Wall (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 3444983967883238341, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: _blocksHarmonyBeam
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -4347,7 +4350,7 @@ PrefabInstance:
     - target: {fileID: 2136362874793484460, guid: dda7842c0387e794a8c66ddc56220932,
         type: 3}
       propertyPath: _levelIndexToLoad
-      value: 9
+      value: 23
       objectReference: {fileID: 0}
     - target: {fileID: 3725983269745070237, guid: dda7842c0387e794a8c66ddc56220932,
         type: 3}
@@ -4482,11 +4485,7 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 25014038}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 47317306802859145, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 889648143}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a5c0f4e94bc8d984bbfcbcf006755d9a, type: 3}
 --- !u!4 &1587116811 stripped
 Transform:
@@ -4763,6 +4762,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Disable Tile Wall (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444983967883238341, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: _blocksHarmonyBeam
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
         type: 3}
@@ -5215,11 +5219,7 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 488069560}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 47317306802859145, guid: a5c0f4e94bc8d984bbfcbcf006755d9a,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1254159829}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a5c0f4e94bc8d984bbfcbcf006755d9a, type: 3}
 --- !u!1001 &1879157841
 PrefabInstance:
@@ -5729,6 +5729,11 @@ PrefabInstance:
       propertyPath: _isTransparent
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3444983967883238341, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: _blocksHarmonyBeam
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -6117,6 +6122,11 @@ PrefabInstance:
     - target: {fileID: 3444983967883238341, guid: 481ef263620677f4da33125bd7de384d,
         type: 3}
       propertyPath: _isTransparent
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3444983967883238341, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: _blocksHarmonyBeam
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
