@@ -99,8 +99,8 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     /// </summary>
     public void SwitchActivation()
     {
-        MoveObject();
         _shouldActivate = !_shouldActivate;
+        MoveObject();
     }
 
     /// <summary>

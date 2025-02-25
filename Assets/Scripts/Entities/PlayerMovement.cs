@@ -221,8 +221,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// <param name="direction">The direction the player should move</param>
     public void BeginTurn(Vector3 direction)
     {
-        RoundManager.Instance.CompleteTurn(this);
-
         Vector3Int dir = new Vector3Int((int) direction.x, (int) direction.y, (int) direction.z);
 
         bool isSameDirection = FacingDirection == direction;
@@ -241,6 +239,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                 {
                     AudioManager.Instance.PlaySound(_playerMove);
                     StartCoroutine(MovementDelay(direction));
+                    RoundManager.Instance.CompleteTurn(this);
                     OnPlayerMoveComplete?.Invoke(); //keeps track of movement completion
                 }
                 else
@@ -249,7 +248,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                     RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
                 }
             });
-
     }
 
     /// <summary>
