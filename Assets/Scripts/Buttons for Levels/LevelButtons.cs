@@ -58,16 +58,18 @@ public class LevelButtons : MonoBehaviour
 
                 IndividualButtons obj = Instantiate(_buttonPrefab, _chapters[i - 1].transform).GetComponent<IndividualButtons>();
 
-                Debug.Log(SceneManager.GetSceneByBuildIndex(tally).name);
+                //getting the scene name through its path
+                string path = SceneUtility.GetScenePathByBuildIndex(tally);
+                string sceneName = System.IO.Path.GetFileNameWithoutExtension(path);
 
-                if (SceneManager.GetSceneByBuildIndex(tally).name[0] == 'I')
+                if (sceneName[0] == 'I')
                 {
                     obj.GetComponentInChildren<TextMeshProUGUI>().text = name;
                     obj.SetIndex(tally);
                 }
                 else
                 {
-                    obj.GetComponentInChildren<TextMeshProUGUI>().text = "Level: " + tally.ToString();
+                    obj.GetComponentInChildren<TextMeshProUGUI>().text = "Level: " + (tally-1).ToString();
                     obj.SetIndex(tally);
                 }
 

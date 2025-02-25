@@ -1,6 +1,6 @@
 /******************************************************************
  *    Author: Alec Pizziferro
- *    Contributors:  nullptr
+ *    Contributors:  Josephine Qualls
  *    Date Created: 1/30/2025
  *    Description: A scriptable object for handling level ordering.
  *    contains tools to add scenes quicker. This is a EDITOR ONLY
