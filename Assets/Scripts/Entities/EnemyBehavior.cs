@@ -310,10 +310,17 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// <param name="context"></param>
     private void PathingToggle(InputAction.CallbackContext context)
     {
-        DestPathVFX.SetActive(CurrentToggle);
-        DestinationMarker.SetActive(CurrentToggle);
+        if (EnemyPathCycling.Instance.IsCycling)
+        {
+            EnemyPathCycling.Instance.CycleUnset = true;
+        }
+        else
+        {
+            DestPathVFX.SetActive(CurrentToggle);
+            DestinationMarker.SetActive(CurrentToggle);
 
-        CurrentToggle = !CurrentToggle;
+            CurrentToggle = !CurrentToggle;
+        }
     }
 
     /// <summary>

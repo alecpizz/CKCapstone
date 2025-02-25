@@ -22,7 +22,9 @@ public class EnemyPathCycling : MonoBehaviour
     private int _cycleNumber = -1;
 
     public bool IsCycling = false;
+    public bool CycleUnset = false;
     private bool _singleEnemy = false;
+    private bool _singleEnemyPathOn = false;
 
     //Arrays to gather the enemy game objects for cycling
     [SerializeField] private GameObject[] _enemyArray;
@@ -38,6 +40,10 @@ public class EnemyPathCycling : MonoBehaviour
         _enemyArray = GameObject.FindGameObjectsWithTag("Enemy");
         _sonEnemyArray = GameObject.FindGameObjectsWithTag("SonEnemy");
         _allEnemyArray = _enemyArray.Concat(_sonEnemyArray).ToArray();
+        if (_allEnemyArray.Length == 1)
+        {
+            _singleEnemy = true;
+        }
     }
 
     // Start is called before the first frame update
@@ -54,6 +60,24 @@ public class EnemyPathCycling : MonoBehaviour
     }
 
     /// <summary>
+    /// Stops the enemy cycling when the toggle button is pressed
+    /// </summary>
+    private void Update()
+    {
+        if (CycleUnset)
+        {
+            for (int i = 0; i < _allEnemyArray.Length; i++)
+            {
+                _allEnemyArray[i].GetComponent<EnemyBehavior>().DestPathVFX.SetActive(false);
+                _allEnemyArray[i].GetComponent<EnemyBehavior>().DestinationMarker.SetActive(false);
+            }
+            CycleUnset = false;
+            IsCycling = false;
+            _cycleNumber = -1;
+        }
+    }
+
+    /// <summary>
     /// 
     /// Allows someone with a controller to cycle through the enemy paths in the order of the array
     /// </summary>
@@ -65,21 +89,13 @@ public class EnemyPathCycling : MonoBehaviour
         {
             //do nothing
         }
-        else if (_allEnemyArray.Length == 1)
+        else if (_singleEnemy)
         {
-            if (_singleEnemy == false)
-            {
-                Debug.Log(_allEnemyArray[_cycleNumber]);
-                _allEnemyArray[_cycleNumber].GetComponent<EnemyBehavior>().DestPathVFX.SetActive(true);
-                _allEnemyArray[_cycleNumber].GetComponent<EnemyBehavior>().DestinationMarker.SetActive(true);
-                _singleEnemy = true;
-            }
-            else
-            {
-                _allEnemyArray[_cycleNumber].GetComponent<EnemyBehavior>().DestPathVFX.SetActive(false);
-                _allEnemyArray[_cycleNumber].GetComponent<EnemyBehavior>().DestinationMarker.SetActive(false);
-                _singleEnemy = false;
-            }
+            IsCycling = true;
+            _cycleNumber = 0;
+            _singleEnemyPathOn = !_singleEnemyPathOn;
+            _allEnemyArray[_cycleNumber].GetComponent<EnemyBehavior>().DestPathVFX.SetActive(_singleEnemyPathOn);
+            _allEnemyArray[_cycleNumber].GetComponent<EnemyBehavior>().DestinationMarker.SetActive(_singleEnemyPathOn);
         }
         else
         {
@@ -125,63 +141,4 @@ public class EnemyPathCycling : MonoBehaviour
             }
         }
     }
-
-    /// <summary>
-    /// Allows someone with a controller to cycle through the enemy paths backwards
-    /// </summary>
-    /// <param name="context"></param>
-    /*private void PathingBackwards(InputAction.CallbackContext context)
-    {
-        if (_allEnemyArray.Length == 0)
-        {
-            //do nothing
-        }
-        else if (_allEnemyArray.Length == 1)
-        {
-            if (_singleEnemy == false)
-            {
-                Debug.Log(_allEnemyArray[_cycleNumber]);
-                _allEnemyArray[_cycleNumber].GetComponent<EnemyBehavior>().DestPathVFX.SetActive(true);
-                _allEnemyArray[_cycleNumber].GetComponent<EnemyBehavior>().DestinationMarker.SetActive(true);
-                _singleEnemy = true;
-            }
-            else
-            {
-                _allEnemyArray[_cycleNumber].GetComponent<EnemyBehavior>().DestPathVFX.SetActive(false);
-                _allEnemyArray[_cycleNumber].GetComponent<EnemyBehavior>().DestinationMarker.SetActive(false);
-                _singleEnemy = false;
-            }
-        }
-        else
-        {
-            IsCycling = true;
-            if (_cycleNumber > 0)
-            {
-                Debug.Log(_allEnemyArray[_cycleNumber]);
-                _allEnemyArray[_cycleNumber].GetComponent<EnemyBehavior>().DestPathVFX.SetActive(true);
-                _allEnemyArray[_cycleNumber].GetComponent<EnemyBehavior>().DestinationMarker.SetActive(true);
-
-                if (_cycleNumber == _allEnemyArray.Length - 1)
-                {
-                    _allEnemyArray[0].GetComponent<EnemyBehavior>().DestPathVFX.SetActive(false);
-                    _allEnemyArray[0].GetComponent<EnemyBehavior>().DestinationMarker.SetActive(false);
-                }
-                else
-                {
-                    _allEnemyArray[_cycleNumber + 1].GetComponent<EnemyBehavior>().DestPathVFX.SetActive(false);
-                    _allEnemyArray[_cycleNumber + 1].GetComponent<EnemyBehavior>().DestinationMarker.SetActive(false);
-                    _cycleNumber--;
-                }
-            }
-            else
-            {
-                _allEnemyArray[_allEnemyArray.Length + 1].GetComponent<EnemyBehavior>().DestPathVFX.SetActive(false);
-                _allEnemyArray[_allEnemyArray.Length + 1].GetComponent<EnemyBehavior>().DestinationMarker.SetActive(false);
-                Debug.Log(_allEnemyArray[_cycleNumber]);
-                _allEnemyArray[_cycleNumber].GetComponent<EnemyBehavior>().DestPathVFX.SetActive(true);
-                _allEnemyArray[_cycleNumber].GetComponent<EnemyBehavior>().DestinationMarker.SetActive(true);
-                _cycleNumber = _allEnemyArray.Length - 1;
-            }
-        }
-    }*/
 }
