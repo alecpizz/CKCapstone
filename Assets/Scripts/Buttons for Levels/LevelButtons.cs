@@ -50,19 +50,31 @@ public class LevelButtons : MonoBehaviour
                 string name = LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames[tally].PrettyName;
                 bool shown = LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames[tally].showUp;
 
+                //getting the scene name through its path
+                string path = SceneUtility.GetScenePathByBuildIndex(tally);
+                string sceneName = System.IO.Path.GetFileNameWithoutExtension(path);
+
                 //loads scene when button is clicked
                 if (!shown)
                 {
                     continue;
                 }
 
-                IndividualButtons obj = Instantiate(_buttonPrefab, _chapters[i - 1].transform).GetComponent<IndividualButtons>();
+                //initiate obj variable
+                IndividualButtons obj;
 
-                //getting the scene name through its path
-                string path = SceneUtility.GetScenePathByBuildIndex(tally);
-                string sceneName = System.IO.Path.GetFileNameWithoutExtension(path);
-
-                if (sceneName[0] == 'I')
+                //places buttons in appropriate tab
+                if (sceneName.Contains("Cutscene"))
+                {
+                    obj = Instantiate(_buttonPrefab, _chapters[_chapters.Count-1].transform).GetComponent<IndividualButtons>();
+                }
+                else
+                {
+                    obj = Instantiate(_buttonPrefab, _chapters[i - 1].transform).GetComponent<IndividualButtons>();
+                }
+                
+                //renames NPC room if needed
+                if (sceneName[0] == 'I' || sceneName.Contains("Cutscene"))
                 {
                     obj.GetComponentInChildren<TextMeshProUGUI>().text = name;
                     obj.SetIndex(tally);

@@ -293,7 +293,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                     AssetDatabase.GetAssetPath(chapter.Outro.Scene),
                     true));
-                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = chapter.Outro.LevelName, showUp = false });
+                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = chapter.Outro.LevelName, showUp = true });
             }
         }
 
@@ -309,7 +309,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 true));
             levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = "Credits Scene", showUp = false });
         }
-
+        EditorUtility.SetDirty(levelData);
         Debug.Log($"Added {editorBuildSettingsScenes.Count} Scenes");
         EditorBuildSettings.scenes = editorBuildSettingsScenes.ToArray();
     }
