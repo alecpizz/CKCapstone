@@ -147,14 +147,14 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
                 Tween.PositionY(transform, endValue: _groundHeight, 
                     duration: _duration, ease: _easeType).Group(
                     Tween.PositionY(_wallGhost.transform, endValue: _activatedHeight, 
-                    duration: _duration, ease: _easeType)).OnComplete(TriggerHarmonyScan());
+                    duration: _duration, ease: _easeType)).OnComplete(TriggerHarmonyScan);
             }
             else
             {
                 Tween.PositionY(transform, endValue: _activatedHeight, 
                     duration: _duration, ease: _easeType).Group(
                     Tween.PositionY(_wallGhost.transform, endValue: _groundHeight, 
-                    duration: _duration, ease: _easeType)).OnComplete(TriggerHarmonyScan());
+                    duration: _duration, ease: _easeType)).OnComplete(TriggerHarmonyScan);
             }
 
             _wallGrid.IsTransparent = _shouldActivate;
