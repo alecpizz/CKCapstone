@@ -147,14 +147,14 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
                 Tween.PositionY(transform, endValue: _groundHeight, 
                     duration: _duration, ease: _easeType).Group(
                     Tween.PositionY(_wallGhost.transform, endValue: _activatedHeight, 
-                    duration: _duration, ease: _easeType));
+                    duration: _duration, ease: _easeType)).OnComplete(TriggerHarmonyScan());
             }
             else
             {
                 Tween.PositionY(transform, endValue: _activatedHeight, 
                     duration: _duration, ease: _easeType).Group(
                     Tween.PositionY(_wallGhost.transform, endValue: _groundHeight, 
-                    duration: _duration, ease: _easeType));
+                    duration: _duration, ease: _easeType)).OnComplete(TriggerHarmonyScan());
             }
 
             _wallGrid.IsTransparent = _shouldActivate;
@@ -168,7 +168,16 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
         }
         else
         {
+            TriggerHarmonyScan();
             _worked = false;
         }
+    }
+
+    /// <summary>
+    /// Completes this object's turn and swaps it to a new turn
+    /// </summary>
+    private void TriggerHarmonyScan()
+    {
+        HarmonyBeam.TriggerHarmonyScan?.Invoke();
     }
 }

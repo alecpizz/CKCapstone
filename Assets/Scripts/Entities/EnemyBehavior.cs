@@ -1,6 +1,7 @@
 /******************************************************************
  *    Author: Cole Stranczek
  *    Contributors: Cole Stranczek, Mitchell Young, Nick Grinstead, Alec Pizziferro
+ *    Jamison Parks
  *    Date Created: 10/3/24
  *    Description: Script that handles the behavior of the enemy,
  *    from movement to causing a failstate with the player
@@ -137,6 +138,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private bool _isReturningToStart = false;
     private int _indicatorIndex = 0;
     private bool _indicatorReturningToStart = false;
+
+    //public static PlayerMovement Instance;
+    private static readonly int Forward = Animator.StringToHash("Forward");
+
+
+    [SerializeField] private Animator _animator;
 
     /// <summary>
     /// Disables a PrimeTween warning.
@@ -413,6 +420,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 continue;
             }
 
+            if (_animator != null)
+            {
+                _animator.SetTrigger(Forward);
+            }
             var dist = Vector3Int.Distance(currCell, goalCell);
             var rotationDir = (GridBase.Instance.CellToWorld(goalCell) - transform.position).normalized;
             var moveWorld = GridBase.Instance.CellToWorld(goalCell);

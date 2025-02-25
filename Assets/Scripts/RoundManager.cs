@@ -18,11 +18,8 @@ using UnityEngine.InputSystem;
 public enum TurnState
 {
     Player = 0,
-    //World = 1,
-    Enemy = 2,
-    //SecondWorld = 3,
-    Harmony = 4,
-    None = 5,
+    Enemy = 1,
+    None = 2,
 }
 
 
@@ -64,11 +61,6 @@ public sealed class RoundManager : MonoBehaviour
     /// Whether it's the enemy's turn.
     /// </summary>
     public bool IsEnemyTurn => _turnState == TurnState.Enemy;
-
-    /// <summary>
-    /// Whether it's the harmony's turn
-    /// </summary>
-    public bool IsHarmonyTurn => _turnState == TurnState.Harmony;
 
     /// <summary>
     /// Sets the singleton instance and initializes the dictionaries for
