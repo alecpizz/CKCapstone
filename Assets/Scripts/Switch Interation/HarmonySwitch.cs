@@ -22,7 +22,6 @@ public class HarmonySwitch : MonoBehaviour, IParentSwitch
     [ProgressBar(-270f, 270f, 90f)]
     [SerializeField] private float _rotationDegrees = 180f;
 
-    private bool _shouldMoveOnTurn = false;
     private bool _shouldActivate = false;
 
     private HarmonyBeam _beamScript;
@@ -42,7 +41,6 @@ public class HarmonySwitch : MonoBehaviour, IParentSwitch
     /// <param name="direction">The direction the player moved</param>
     public void MoveObject()
     {
-        _shouldMoveOnTurn = false;
         _beamScript.ToggleBeam(false);
 
         Vector3 targetRotation = transform.eulerAngles;

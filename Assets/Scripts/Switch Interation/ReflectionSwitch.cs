@@ -25,7 +25,6 @@ public class ReflectionSwitch : MonoBehaviour, IParentSwitch
     [ProgressBar(-270f, 270f, 90f)]
     [SerializeField] private float _rotationDegrees = 180f;
 
-    private bool _shouldMoveOnTurn = false;
     private bool _shouldActivate = false;
 
     /// <summary>
@@ -44,7 +43,6 @@ public class ReflectionSwitch : MonoBehaviour, IParentSwitch
     /// <param name="direction">The direction the player moved</param>
     public void MoveObject()
     {
-        _shouldMoveOnTurn = false;
         _mirror.ToggleBeam(false);
 
         Vector3 targetRotation = transform.eulerAngles;
@@ -62,13 +60,5 @@ public class ReflectionSwitch : MonoBehaviour, IParentSwitch
     private void ResetOnTweenEnd()
     {
         _mirror.CheckForBeamPostRotation();
-    }
-
-    /// <summary>
-    /// Forcibly ends this object's turn
-    /// </summary>
-    public void ForceTurnEnd()
-    {
-        _shouldMoveOnTurn = false;
     }
 }

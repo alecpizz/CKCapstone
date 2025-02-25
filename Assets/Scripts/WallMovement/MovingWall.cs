@@ -63,7 +63,6 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
 
     public Vector3 Position => transform.position;
 
-    private bool _shouldMoveOnTurn = false;
     private bool _shouldActivate = false;
 
     /// <summary>
@@ -129,7 +128,6 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     /// <param name="direction">Direction of player movement</param>
     public void MoveObject()
     {
-        _shouldMoveOnTurn = false;
         MoveWall();
     }
 

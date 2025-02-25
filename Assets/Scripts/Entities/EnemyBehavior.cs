@@ -384,8 +384,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// <returns>null</returns>
     private IEnumerator MovementRoutine()
     {
-        RoundManager.Instance.CompleteTurn(this);
-
         bool blocked = false;
         for (int i = 0; i < _enemyMovementTime; i++)
         {
@@ -452,6 +450,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         {
             UpdateDestinationMarker();
         }
+
+        RoundManager.Instance.CompleteTurn(this);
+
     }
 
     /// <summary>
