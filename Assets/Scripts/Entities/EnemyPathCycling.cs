@@ -19,7 +19,7 @@ public class EnemyPathCycling : MonoBehaviour
 
     private PlayerControls _input;
 
-    private int _cycleNumber = 0;
+    private int _cycleNumber = -1;
 
     public bool IsCycling = false;
     private bool _singleEnemy = false;
@@ -50,6 +50,7 @@ public class EnemyPathCycling : MonoBehaviour
         _input.InGame.Enable();
 
         _input.InGame.CycleForward.performed += PathingForward;
+        Debug.Log(_cycleNumber);
     }
 
     /// <summary>
@@ -89,7 +90,7 @@ public class EnemyPathCycling : MonoBehaviour
                 {
                     _allEnemyArray[_allEnemyArray.Length - 1].GetComponent<EnemyBehavior>().DestPathVFX.SetActive(false);
                     _allEnemyArray[_allEnemyArray.Length - 1].GetComponent<EnemyBehavior>().DestinationMarker.SetActive(false);
-                    _cycleNumber = 0;
+                    _cycleNumber = -1;
                 }
                 else
                 {
@@ -100,8 +101,22 @@ public class EnemyPathCycling : MonoBehaviour
                     _cycleNumber++;
                 }
             }
+            else if (_cycleNumber < 0)
+            {
+                for (int i = 0; i < _allEnemyArray.Length; i++)
+                {
+                    _allEnemyArray[i].GetComponent<EnemyBehavior>().DestPathVFX.SetActive(true);
+                    _allEnemyArray[i].GetComponent<EnemyBehavior>().DestinationMarker.SetActive(true);
+                }
+                _cycleNumber++;
+            }
             else
             {
+                for (int i = 0; i < _allEnemyArray.Length; i++)
+                {
+                    _allEnemyArray[i].GetComponent<EnemyBehavior>().DestPathVFX.SetActive(false);
+                    _allEnemyArray[i].GetComponent<EnemyBehavior>().DestinationMarker.SetActive(false);
+                }
                 _allEnemyArray[_allEnemyArray.Length - 1].GetComponent<EnemyBehavior>().DestPathVFX.SetActive(false);
                 _allEnemyArray[_allEnemyArray.Length - 1].GetComponent<EnemyBehavior>().DestinationMarker.SetActive(false);
                 _allEnemyArray[_cycleNumber].GetComponent<EnemyBehavior>().DestPathVFX.SetActive(true);
