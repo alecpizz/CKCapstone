@@ -27,7 +27,6 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject _mainMenuSettings;
     [SerializeField] private GameObject _mainMenuQuit;
     [SerializeField] private GameObject _restartButton;
-    [SerializeField] private GameObject _enemyPathButton;
 
     [SerializeField] private EventReference _buttonPress;
 
@@ -60,7 +59,6 @@ public class MenuManager : MonoBehaviour
         DebugMenuManager.Instance.PauseMenu = false;
         _pauseScreen.SetActive(false);
         _restartButton.SetActive(true);
-        _enemyPathButton.SetActive(true);
         Time.timeScale = 1f;
     }
 
@@ -113,7 +111,6 @@ public class MenuManager : MonoBehaviour
         DebugMenuManager.Instance.PauseMenu = true;
         _pauseScreen.SetActive(true);
         _restartButton.SetActive(false);
-        _enemyPathButton.SetActive(false);
         EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
         Time.timeScale = 0f;
     }
