@@ -332,19 +332,23 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _destinationMarker.transform.position = transform.position;
         Vector3 linePos = transform.position;
         linePos.y = _lineYPosOffset;
-        _vfxLine.SetPosition(0, linePos);
         //Looks at the time signature for the enemy so it can place multiple moves in advance
 
         EvaluateNextMove(ref _indicatorIndex, ref _indicatorReturningToStart);
+        _vfxLine.positionCount = _indicatorIndex + 1;
 
         //Finds the direction and tiles to move based on its own current point index value
         var destPoint = _moveDestinations[_indicatorIndex];
         var destPointWorld = GridBase.Instance.CellToWorld(destPoint);
 
-        linePos = destPointWorld;
-        linePos.y = _lineYPosOffset;
+        for (int i = 0; i < _vfxLine.positionCount; i++)
+        {
+            Vector3 _vfxPos = GridBase.Instance.CellToWorld(_moveDestinations[i]);
+            _vfxPos.y = _lineYPosOffset;
 
-        _vfxLine.SetPosition(1, destPointWorld);
+            _vfxLine.SetPosition(i, _vfxPos);
+        }
+
         destPointWorld.y += _destYPos;
         _destinationMarker.transform.position = destPointWorld;
     }
