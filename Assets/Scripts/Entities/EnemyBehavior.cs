@@ -71,6 +71,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
     [SerializeField] private Ease _movementEase = Ease.OutBack;
 
+    private int vfxPointCount = 0;
+
     /// <summary>
     /// Helper enum for enemy directions.
     /// </summary>
@@ -341,9 +343,25 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         var destPoint = _moveDestinations[_indicatorIndex];
         var destPointWorld = GridBase.Instance.CellToWorld(destPoint);
 
+        //Sets current position for line vfx renderer relative to enemy position
+        for (int k = 0; k < _moveDestinations.Count; k++)
+        {
+            Vector3 _moveDestPos = GridBase.Instance.CellToWorld(_moveDestinations[k]);
+            _moveDestPos.y = transform.position.y;
+
+            if (transform.position == _moveDestPos)
+            {
+                vfxPointCount = k;
+            }
+        }
+
         for (int i = 0; i < _vfxLine.positionCount; i++)
         {
-            Vector3 _vfxPos = GridBase.Instance.CellToWorld(_moveDestinations[i]);
+            if (vfxPointCount + i >= _moveDestinations.Count) 
+            {
+                break;
+            }
+            Vector3 _vfxPos = GridBase.Instance.CellToWorld(_moveDestinations[vfxPointCount + i]);
             _vfxPos.y = _lineYPosOffset;
 
             _vfxLine.SetPosition(i, _vfxPos);
