@@ -215,8 +215,8 @@ public sealed class RoundManager : MonoBehaviour
         {
             _turnState = TurnState.None;
             // Attempts to move player if they buffered an input
-            if(Time.unscaledTime - _movementRegisteredTime <= _inputBufferWindow)
-                PerformMovement();
+            //if(Time.unscaledTime - _movementRegisteredTime <= _inputBufferWindow)
+            //    PerformMovement();
 
             return;
         }
