@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Claire Noto
-*    Contributors: Claire Noto
+*    Contributors: Claire Noto, Alec Pizziferro
 *    Date Created: 11/10/2024
 *    Description: Color Accesibility Settings.
 *******************************************************************/
@@ -20,7 +20,9 @@ public class ColorSettings : MonoBehaviour
     private ColorBlindMode _selection;
     private ChannelMixer _channelMixer;
 
-    private const string ColorMode = "colorMode";
+    private const string ColorMode = "Colorblind Mode";
+    private const string Settings = "Settings";
+    private const string Accessibility = "Accessibility";
 
     private void Start()
     {
@@ -36,7 +38,8 @@ public class ColorSettings : MonoBehaviour
             _channelMixer.blueOutBlueIn.overrideState = true;
 
         // Load saved color mode or set to Normal (0) by default
-        int savedMode = PlayerPrefs.GetInt(ColorMode, 0);
+        int savedMode = SaveDataManager.MainSaveData.GetData<IntType>(Settings, 
+            Accessibility, ColorMode).Value;
         _selection = (ColorBlindMode)savedMode;
 
         // Populate dropdown and set the initial selection
@@ -51,15 +54,13 @@ public class ColorSettings : MonoBehaviour
     /// <summary>
     /// Whenever the dropdown is changed, this function is called automatically.
     /// </summary>
-    /// <param name="value">Used to save the setting to PlayerPrefs</param>
+    /// <param name="value">Used to save the setting to data.</param>
     private void DropdownValueChanged(int value)
     {
         _selection = (ColorBlindMode)value;
         ChangeColorMode(_selection);
 
-        // Save the selection to PlayerPrefs
-        PlayerPrefs.SetInt(ColorMode, value);
-        PlayerPrefs.Save();
+        SaveDataManager.MainSaveData.AddData(Settings, Accessibility, ColorMode, new IntType(value));
     }
 
     /// <summary>

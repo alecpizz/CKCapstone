@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Claire Noto
-*    Contributors: Claire Noto
+*    Contributors: Claire Noto, Alec Pizziferro
 *    Date Created: 11/13/2024
 *    Description: Settings Menu for adjusting graphics and accessibility options.
 *******************************************************************/
@@ -21,10 +21,14 @@ public class SettingsMenu : MonoBehaviour
 
     private Resolution[] _resolutions;
 
-    public const string Fullscreen = "Fullscreen";
-    public const string Resolution = "Resolution";
-    public const string Tooltips = "Tooltips";
-    public const string Subtitles = "Subtitles";
+    private const string Settings = "Settings";
+    private const string ScreenName = "Screen";
+    private const string Volume = "Volume";
+    private const string Accessibility = "Accessibility";
+    private const string Fullscreen = "Fullscreen";
+    private const string Resolution = "Resolution";
+    private const string Tooltips = "Tooltips";
+    private const string Subtitles = "Subtitles";
 
     private void Start()
     {
@@ -61,7 +65,8 @@ public class SettingsMenu : MonoBehaviour
         }
 
         _resolutionDropdown.AddOptions(options);
-        _resolutionDropdown.value = PlayerPrefs.GetInt(Resolution, currentResolutionIndex);
+        _resolutionDropdown.value = SaveDataManager.MainSaveData.GetData<IntType>
+            (Settings, ScreenName, Resolution).Value;
         _resolutionDropdown.RefreshShownValue();
     }
 
@@ -73,8 +78,8 @@ public class SettingsMenu : MonoBehaviour
     {
         Resolution resolution = _resolutions[resolutionIndex];
         Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
-        PlayerPrefs.SetInt(Resolution, resolutionIndex);
-        PlayerPrefs.Save();
+        SaveDataManager.MainSaveData.AddData(Settings, ScreenName, 
+            Resolution, new IntType(resolutionIndex));
     }
 
     /// <summary>
@@ -84,8 +89,8 @@ public class SettingsMenu : MonoBehaviour
     public void SetFullscreen(bool isFullscreen)
     {
         Screen.fullScreen = isFullscreen;
-        PlayerPrefs.SetInt(Fullscreen, isFullscreen ? 1 : 0);
-        PlayerPrefs.Save();
+        SaveDataManager.MainSaveData.AddData(Settings, ScreenName,
+            Fullscreen, new BoolType(isFullscreen));
     }
 
     /// <summary>
@@ -94,8 +99,8 @@ public class SettingsMenu : MonoBehaviour
     /// <param name="tooltips">True if tooltips are enabled</param>
     public void SetTooltips(bool tooltips)
     {
-        PlayerPrefs.SetInt(Tooltips, tooltips ? 1 : 0);
-        PlayerPrefs.Save();
+        SaveDataManager.MainSaveData.AddData(Settings, Accessibility, 
+            Tooltips, new BoolType(tooltips));
     }
 
     /// <summary>
@@ -104,8 +109,8 @@ public class SettingsMenu : MonoBehaviour
     /// <param name="subtitles">True if subtitles are enabled</param>
     public void SetSubtitles(bool subtitles)
     {
-        PlayerPrefs.SetInt(Subtitles, subtitles ? 1 : 0);
-        PlayerPrefs.Save();
+        SaveDataManager.MainSaveData.AddData(Settings, Accessibility, 
+            Subtitles, new BoolType(subtitles));
     }
 
     /// <summary>
@@ -113,9 +118,15 @@ public class SettingsMenu : MonoBehaviour
     /// </summary>
     public void LoadSettings()
     {
-        _resolutionDropdown.value = PlayerPrefs.GetInt(Resolution, 0);
-        _fullscreenToggle.isOn = PlayerPrefs.GetInt(Fullscreen, 1) == 1;
-        _tooltipsToggle.isOn = PlayerPrefs.GetInt(Tooltips, 1) == 1;
-        _subtitlesToggle.isOn = PlayerPrefs.GetInt(Subtitles, 1) == 1;
+        Debug.Log(SaveDataManager.MainSaveData);
+        _resolutionDropdown.value =
+            SaveDataManager.MainSaveData.GetData<IntType>(Settings, ScreenName, Resolution).Value;
+        _fullscreenToggle.isOn = SaveDataManager.MainSaveData.GetData<BoolType>(Settings,
+            ScreenName, Fullscreen).Value;
+        _tooltipsToggle.isOn = SaveDataManager.MainSaveData.GetData<BoolType>(Settings,
+            Accessibility, Tooltips).Value;
+        _subtitlesToggle.isOn =
+            SaveDataManager.MainSaveData.GetData<BoolType>(Settings,
+                Accessibility, Subtitles).Value;
     }
 }

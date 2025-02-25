@@ -11,17 +11,21 @@ using System.Collections.Generic;
 using Databox;
 using UnityEngine;
 
-public class SaveDataManager : MonoBehaviour
+public static class SaveDataManager
 {
-   [SerializeField] private DataboxObject _dataObject;
-   private static SaveDataManager _instance;
-   public static Databox.DataboxObject MainSaveData => _instance._dataObject;
+    private static DataboxObject _saveInstance = null;
+    private const string AssetPath = "Resources/CKSaveData";
+    public static Databox.DataboxObject MainSaveData
+    {
+        get
+        {
+            if (_saveInstance == null)
+            {
+                _saveInstance = Resources.FindObjectsOfTypeAll<DataboxObject>()[0];
+                Debug.Log($"Save instance {_saveInstance}");
+            }
 
-   /// <summary>
-   /// Initialize the singleton.
-   /// </summary>
-   private void Awake()
-   {
-      _instance = this;
-   }
+            return _saveInstance;
+        }
+    }
 }
