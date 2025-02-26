@@ -270,6 +270,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// </summary>
     public void ForceTurnEnd()
     {
+        if (!RoundManager.Instance.IsPlayerTurn) {  return; }
+
         StopAllCoroutines();
         GridBase.Instance.UpdateEntry(this);
         RoundManager.Instance.CompleteTurn(this);
