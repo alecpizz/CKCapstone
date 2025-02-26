@@ -43,6 +43,9 @@ public sealed class RoundManager : MonoBehaviour
     [SerializeField] private EventReference _playerTurnEvent;
     [SerializeField] private EventReference _enemyTurnEvent;
 
+    [Header("Autocomplete Mechanic")]
+    [SerializeField] private float _autocompleteSpeed = 3;
+
     /// <summary>
     /// Whether someone is having their turn.
     /// </summary>
@@ -133,6 +136,7 @@ public sealed class RoundManager : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        // Not being called unless movement is blocked
         if (_playerControls.InGame.Movement.IsPressed() && !TurnInProgress)
         {
             PerformMovement();
@@ -147,26 +151,22 @@ public sealed class RoundManager : MonoBehaviour
     /// <param name="obj"></param>
     private void RegisterMovementInput(InputAction.CallbackContext obj)
     {
-        Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>();
-        if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
+        var dir = GetNormalizedInput();
+
+        if(_turnState != TurnState.None && _lastMovementInput == dir)
         {
-            input.y = 0;
+            EnableAutocomplete();
         }
-        else
-        {
-            input.x = 0;
-        }
-        Vector3 dir = new Vector3(input.x, 0f, input.y);
+
         _lastMovementInput = dir;
-        if (_turnState != TurnState.None)
-        {
-            return;
-        }
+
         _movementRegistered = true;
         _movementRegisteredTime = Time.unscaledTime;
 
-        if (_turnState != TurnState.None) return;
+        if (_turnState != TurnState.None)
+            return;
 
+        print("Normal Movement");
         PerformMovement();
     }
 
@@ -227,8 +227,21 @@ public sealed class RoundManager : MonoBehaviour
         {
             _turnState = TurnState.None;
             // Attempts to move player if they buffered an input
+            bool doAutocomplete = false;
             if(Time.unscaledTime - _movementRegisteredTime <= _inputBufferWindow)
+            {
+                if (_lastMovementInput == GetNormalizedInput())
+                {
+                    doAutocomplete = true;
+                    EnableAutocomplete();
+                }
+                    
+
                 PerformMovement();
+            }
+                
+            if(!doAutocomplete)
+                DisableAutocomplete();
 
             return;
         }
@@ -342,6 +355,30 @@ public sealed class RoundManager : MonoBehaviour
         {
             _turnListeners[listener.SecondaryTurnState].Remove(listener);
         }
+    }
+
+    private void EnableAutocomplete()
+    {
+        Time.timeScale = _autocompleteSpeed;
+    }
+
+    private void DisableAutocomplete()
+    {
+        Time.timeScale = 1;
+    }
+
+    private Vector3 GetNormalizedInput()
+    {
+        Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>();
+        if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
+        {
+            input.y = 0;
+        }
+        else
+        {
+            input.x = 0;
+        }
+        return new Vector3(input.x, 0f, input.y);
     }
 
     /// <summary>
