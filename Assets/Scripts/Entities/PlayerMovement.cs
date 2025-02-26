@@ -253,6 +253,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                     }
                     else
                     {
+                        _canMove = true;
                         AudioManager.Instance.PlaySound(_playerCantMove);
                         RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
                     }
