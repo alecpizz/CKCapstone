@@ -6,7 +6,7 @@ AnimatorStateTransition:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 
+  m_Name: Idle To Right
   m_Conditions:
   - m_ConditionMode: 1
     m_ConditionEvent: Left
@@ -31,11 +31,8 @@ AnimatorStateTransition:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_Conditions:
-  - m_ConditionMode: 2
-    m_ConditionEvent: Enemies
-    m_EventTreshold: 0
+  m_Name: Move To Idle
+  m_Conditions: []
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1629234735945579728}
   m_Solo: 0
@@ -57,7 +54,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Right Turn
+  m_Name: Right Turn (Unused)
   m_Speed: 2
   m_CycleOffset: 0
   m_Transitions:
@@ -113,7 +110,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Left Turn
+  m_Name: Left Turn (Unused)
   m_Speed: 2
   m_CycleOffset: 0
   m_Transitions:
@@ -140,7 +137,7 @@ AnimatorStateTransition:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 
+  m_Name: Turn Around To Idle
   m_Conditions: []
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1629234735945579728}
@@ -163,7 +160,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Enemy Look Around
+  m_Name: Enemy Look Around (Unused)
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -193,7 +190,7 @@ AnimatorStateTransition:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 
+  m_Name: Move Then Look Around
   m_Conditions:
   - m_ConditionMode: 1
     m_ConditionEvent: Enemies
@@ -201,7 +198,7 @@ AnimatorStateTransition:
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -2444786844663471054}
   m_Solo: 0
-  m_Mute: 0
+  m_Mute: 1
   m_IsExit: 0
   serializedVersion: 3
   m_TransitionDuration: 0
@@ -218,7 +215,7 @@ AnimatorStateTransition:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 
+  m_Name: Left To Idle
   m_Conditions: []
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1629234735945579728}
@@ -240,7 +237,7 @@ AnimatorStateTransition:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 
+  m_Name: Turn Around To Move
   m_Conditions:
   - m_ConditionMode: 1
     m_ConditionEvent: Forward
@@ -317,7 +314,7 @@ AnimatorStateTransition:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 
+  m_Name: Look Around To Move
   m_Conditions:
   - m_ConditionMode: 1
     m_ConditionEvent: Forward
@@ -325,7 +322,7 @@ AnimatorStateTransition:
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -6023226969832657303}
   m_Solo: 0
-  m_Mute: 0
+  m_Mute: 1
   m_IsExit: 0
   serializedVersion: 3
   m_TransitionDuration: 0.25
@@ -350,27 +347,27 @@ AnimatorStateMachine:
     m_Position: {x: 200, y: 60, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -6023226969832657303}
-    m_Position: {x: 480, y: 250, z: 0}
+    m_Position: {x: 510, y: -80, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -3743463935163998565}
-    m_Position: {x: 620, y: 130, z: 0}
+    m_Position: {x: 960, y: 30, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 1284134760120953224}
-    m_Position: {x: 600, y: 30, z: 0}
+    m_Position: {x: 500, y: -200, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -6668705065272745847}
-    m_Position: {x: 350, y: -90, z: 0}
+    m_Position: {x: 840, y: -130, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -2444786844663471054}
-    m_Position: {x: 210, y: 190, z: 0}
+    m_Position: {x: 650, y: 640, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
-  m_AnyStatePosition: {x: 20, y: 20, z: 0}
-  m_EntryPosition: {x: 10, y: 110, z: 0}
-  m_ExitPosition: {x: 840, y: -200, z: 0}
+  m_AnyStatePosition: {x: -80, y: 0, z: 0}
+  m_EntryPosition: {x: -100, y: 120, z: 0}
+  m_ExitPosition: {x: -90, y: -80, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: 1629234735945579728}
 --- !u!1101 &1091039276171471635
@@ -379,7 +376,7 @@ AnimatorStateTransition:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 
+  m_Name: Left To Move
   m_Conditions:
   - m_ConditionMode: 1
     m_ConditionEvent: Forward
@@ -405,7 +402,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Turn Around
+  m_Name: Turn Around (Unused)
   m_Speed: 2
   m_CycleOffset: 0
   m_Transitions:
@@ -463,7 +460,7 @@ AnimatorStateTransition:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 
+  m_Name: Right To Idle
   m_Conditions: []
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1629234735945579728}
@@ -485,7 +482,7 @@ AnimatorStateTransition:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 
+  m_Name: Look Around To Right
   m_Conditions:
   - m_ConditionMode: 1
     m_ConditionEvent: Left
@@ -493,7 +490,7 @@ AnimatorStateTransition:
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -6668705065272745847}
   m_Solo: 0
-  m_Mute: 0
+  m_Mute: 1
   m_IsExit: 0
   serializedVersion: 3
   m_TransitionDuration: 0.25
@@ -510,7 +507,7 @@ AnimatorStateTransition:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 
+  m_Name: Idle To Left
   m_Conditions:
   - m_ConditionMode: 1
     m_ConditionEvent: Right
@@ -535,7 +532,7 @@ AnimatorStateTransition:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 
+  m_Name: Right To Move
   m_Conditions:
   - m_ConditionMode: 1
     m_ConditionEvent: Forward
@@ -560,7 +557,7 @@ AnimatorStateTransition:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 
+  m_Name: Idle To Move
   m_Conditions:
   - m_ConditionMode: 1
     m_ConditionEvent: Forward
@@ -585,7 +582,7 @@ AnimatorStateTransition:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 
+  m_Name: Idle To Turn Around
   m_Conditions:
   - m_ConditionMode: 1
     m_ConditionEvent: Backward
@@ -610,7 +607,7 @@ AnimatorStateTransition:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 
+  m_Name: Look Around To Left
   m_Conditions:
   - m_ConditionMode: 1
     m_ConditionEvent: Right
@@ -618,7 +615,7 @@ AnimatorStateTransition:
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -3743463935163998565}
   m_Solo: 0
-  m_Mute: 0
+  m_Mute: 1
   m_IsExit: 0
   serializedVersion: 3
   m_TransitionDuration: 0.25
@@ -635,12 +632,12 @@ AnimatorStateTransition:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 
+  m_Name: Look Around To Idle
   m_Conditions: []
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1629234735945579728}
   m_Solo: 0
-  m_Mute: 0
+  m_Mute: 1
   m_IsExit: 0
   serializedVersion: 3
   m_TransitionDuration: 0
@@ -657,7 +654,7 @@ AnimatorStateTransition:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 
+  m_Name: Look Around To Turn Around
   m_Conditions:
   - m_ConditionMode: 1
     m_ConditionEvent: Backward
@@ -665,7 +662,7 @@ AnimatorStateTransition:
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1284134760120953224}
   m_Solo: 0
-  m_Mute: 0
+  m_Mute: 1
   m_IsExit: 0
   serializedVersion: 3
   m_TransitionDuration: 0.25
