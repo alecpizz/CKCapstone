@@ -141,7 +141,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// <returns>Waits for short delay while moving</returns>
     private IEnumerator MovementDelay(Vector3 moveDirection)
     {
-        yield return new WaitForSeconds(_rotationTime);
         float modifiedMovementTime = Mathf.Clamp(_movementTime / _playerMovementTiming,
             _minMovementTime, float.MaxValue);
 

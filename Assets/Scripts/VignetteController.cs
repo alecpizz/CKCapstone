@@ -1,6 +1,6 @@
 /******************************************************************
  *    Author: Nick Grinstead
- *    Contributors: 
+ *    Contributors: Trinity Hutson
  *    Date Created: 11/19/24
  *    Description: Script for playing the vignette fade in and out effect.
  *      Assumes it's on the same object as a volume object.
@@ -35,6 +35,8 @@ public class VignetteController : MonoBehaviour, ITurnListener
 
     [SerializeField] private float _vignetteIntensity = 0.4f;
     [SerializeField] private float _vignetteSmoothness = 0.1f;
+
+    [SerializeField] private float _vignetteEndDelay = 0.2f;
 
     [Space]
 
@@ -102,16 +104,16 @@ public class VignetteController : MonoBehaviour, ITurnListener
             Tween.Custom(_vignette.intensity.value, _vignetteIntensity, _vignetteFadeInTime,
                 newValue => _vignette.intensity.value = newValue,
                 _vignetteStartEasing, 1, CycleMode.Restart,
-                0.0f, 0.2f)
+                0.0f, _vignetteEndDelay)
                 .OnComplete(() => ToggleTurnState());
         }
         else
         {
+            ToggleTurnState();
             Tween.Custom(_vignette.intensity.value, 0f, _vignetteFadeOutTime, 
                 newValue => _vignette.intensity.value = newValue,
                 _vignetteEndEasing, 1, CycleMode.Restart,
-                0.2f, 0.0f)
-                .OnComplete(() => ToggleTurnState());
+                _vignetteEndDelay, 0.0f);
         }
     }
 
