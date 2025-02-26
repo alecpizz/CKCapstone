@@ -61,6 +61,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
     [SerializeField] private Ease _movementEase = Ease.OutBack;
 
+    private bool _canMove = true;
+
     private float _movementTime;
     // Timing from metronome
     private int _playerMovementTiming = 1;
@@ -95,6 +97,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// </summary>
     private void Start()
     {
+        _canMove = true;
+
         FacingDirection = new Vector3(0, 0, 0);
         if (RoundManager.Instance.EnemiesPresent)
         {
@@ -139,7 +143,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// </summary>
     /// <param name="moveDirection">Direction of player movement</param>
     /// <returns>Waits for short delay while moving</returns>
-    private IEnumerator MovementDelay(Vector3 moveDirection)
+    private IEnumerator MovePlayer(Vector3 moveDirection)
     {
         yield return new WaitForSeconds(_rotationTime);
         float modifiedMovementTime = Mathf.Clamp(_movementTime / _playerMovementTiming,
@@ -170,6 +174,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             }
         }
 
+        _canMove = true;
         //RoundManager.Instance.CompleteTurn(this);
     }
 
@@ -220,34 +225,44 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// </summary>
     /// <param name="direction">The direction the player should move</param>
     public void BeginTurn(Vector3 direction)
-    {
-        Vector3Int dir = new Vector3Int((int) direction.x, (int) direction.y, (int) direction.z);
+    { 
+        if (_canMove)
+        {
+            _canMove = false;
 
-        bool isSameDirection = FacingDirection == direction;
+            Vector3Int dir = new Vector3Int((int)direction.x, (int)direction.y, (int)direction.z);
 
-        FacingDirection = direction; //End of animation section
+            bool isSameDirection = FacingDirection == direction;
 
-        float rotationTime = isSameDirection ? 0 : _rotationTime;
+            FacingDirection = direction; //End of animation section
 
-        Tween.Rotation(transform, endValue: Quaternion.LookRotation(direction), duration: rotationTime,
-            ease: _rotationEase).OnComplete(
-            () =>
-            {
-                var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
+            float rotationTime = isSameDirection ? 0 : _rotationTime;
 
-                if ((GridBase.Instance.CellIsTransparent(move) || DebugMenuManager.Instance.GhostMode))
+            Tween.Rotation(transform, endValue: Quaternion.LookRotation(direction), duration: rotationTime,
+                ease: _rotationEase).OnComplete(
+                () =>
                 {
-                    AudioManager.Instance.PlaySound(_playerMove);
-                    StartCoroutine(MovementDelay(direction));
-                    RoundManager.Instance.CompleteTurn(this);
-                    OnPlayerMoveComplete?.Invoke(); //keeps track of movement completion
-                }
-                else
-                {
-                    AudioManager.Instance.PlaySound(_playerCantMove);
-                    RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
-                }
-            });
+                    var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
+
+                    if ((GridBase.Instance.CellIsTransparent(move) || DebugMenuManager.Instance.GhostMode))
+                    {
+                        AudioManager.Instance.PlaySound(_playerMove);
+                        StartCoroutine(MovePlayer(direction));
+                        RoundManager.Instance.CompleteTurn(this);
+                        OnPlayerMoveComplete?.Invoke(); //keeps track of movement completion
+                    }
+                    else
+                    {
+                        _canMove = true;
+                        AudioManager.Instance.PlaySound(_playerCantMove);
+                        RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
+                    }
+                });
+        }
+        else
+        {
+            RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
+        }
     }
 
     /// <summary>
@@ -258,6 +273,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         StopAllCoroutines();
         GridBase.Instance.UpdateEntry(this);
         RoundManager.Instance.CompleteTurn(this);
+        _canMove = true;
     }
 
     /// <summary>
