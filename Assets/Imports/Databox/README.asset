@@ -1,0 +1,121 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6fe258cc5c054564086a6feeeec9b42a, type: 3}
+  m_Name: README
+  m_EditorClassIdentifier: 
+  version: version 1.2.1p3
+  text: "Thank you for purchasing Databox and supporting a small indie game studio!\n\n<b>Demo
+    scenes</b> \nSimply unpack the unity package located in the folder: \n<i>Databox
+    / Demo </i> \n\n"
+  documentationLink: http://databox.doorfortyfour.com/documentation
+  websiteLink: http://databox.doorfortyfour.com
+  assetStoreLink: https://assetstore.unity.com/packages/tools/utilities/databox-data-editor-save-solution-155189
+  emailLink: mailto:mail@doorfortyfour.com
+  flowreactorLink: https://assetstore.unity.com/packages/tools/visual-scripting/flowreactor-high-level-visual-scripting-167519
+  tileWorldCreatorLink: https://u3d.as/2Dz4
+  changelog: 'version 1.2.1p3
+
+    ----------------
+
+    - Improved: Huge editor performance improvements!
+
+    - Fixed issue were data value would be replaced if it had the same name (id)
+
+    - Fixed issue were assigned types in a data scheme would be wrong due to adding
+    new types (wrong index).
+
+
+
+    version 1.2.1p2
+
+    --------------
+
+    - Fixed odin serialization issue on AOT platform when using DataboxType: Vector3
+
+    - Fixed Download & Append issue when importing data (Google/CSV). Existing entries
+    didn''t update if they have been changed.
+
+
+
+    version 1.2.1p1
+
+    --------------
+
+    - Fixed Databox data schemes not being serialized
+
+
+
+    version 1.2.1
+
+    --------------
+
+    - NEW: New Databox schemes feature. You can now define data entry schemes. Instead
+    of adding each value separately you can now build a scheme which contains different
+    types. This allows you to quickly "build" new entries based on a scheme.
+
+    - Fixed KeyNotFoundException when debug mode is enabled
+
+
+
+
+    version 1.2.0p2
+
+    --------------
+
+    - Fixed issue when importing google sheets with ResourceType
+
+    - Fixed issue when importing google sheets with FloatType
+
+    - Fixed editor bug: values don''t show up until showing the sidebar
+
+
+
+    version 1.2.0p1
+
+    --------------
+
+    - Add PlayMaker actions DownloadFromCloud + UploadToCloud
+
+    - Fixed loading issue from streaming assets folder on android when using odin
+    serializer
+
+
+
+
+    version 1.2
+
+    --------------
+
+    - New: Added offline PDF documentation
+
+    - New: Possible to save sync changelog to a text file
+
+
+    - Improved: GUI layout for better spacing
+
+    - Improved: CSV Parser to support more special use cases and multi line text support.
+
+    - Improved: Addressable type. You can now simply drag n drop an addressable asset
+    to the field and the addressable path from the asset will be assigned.
+
+    - Improved: Better addressables support with automatic assembly definition creation.
+    (include addressables reference to databox asmdef)
+
+
+    - Fixed: Removed obsolete warning messages for Unity 2020
+
+    - Fixed: Fixed build error when using PlayMaker
+
+    - Fixed: Fixed bug when using custom types in custom assembly definition and trying
+    to import CSV file, which resulted in custom type not found error.
+
+    - Changed: Minor code changes for upcoming addon.'
