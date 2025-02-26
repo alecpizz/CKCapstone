@@ -46,6 +46,8 @@ public sealed class RoundManager : MonoBehaviour
     [Header("Autocomplete Mechanic")]
     [SerializeField] private float _autocompleteSpeed = 3;
 
+    public event Action<bool> AutocompleteToggled;
+
     /// <summary>
     /// Whether someone is having their turn.
     /// </summary>
@@ -166,7 +168,6 @@ public sealed class RoundManager : MonoBehaviour
         if (_turnState != TurnState.None)
             return;
 
-        print("Normal Movement");
         PerformMovement();
     }
 
@@ -360,11 +361,13 @@ public sealed class RoundManager : MonoBehaviour
     private void EnableAutocomplete()
     {
         Time.timeScale = _autocompleteSpeed;
+        AutocompleteToggled?.Invoke(true);
     }
 
     private void DisableAutocomplete()
     {
         Time.timeScale = 1;
+        AutocompleteToggled?.Invoke(false);
     }
 
     private Vector3 GetNormalizedInput()

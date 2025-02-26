@@ -81,6 +81,9 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
     [SerializeField] private Animator _animator;
 
+    [Header("Dash")]
+    [SerializeField] private ParticleSystem dashParticles;
+
     /// <summary>
     /// Sets instance upon awake.
     /// </summary>
@@ -111,6 +114,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
         _movementTime = RoundManager.Instance.EnemiesPresent ? 
             _withEnemiesMovementTime : _noEnemiesMovementTime;
+
+        RoundManager.Instance.AutocompleteToggled += OnAutocompleteToggledEvent;
     }
 
     /// <summary>
@@ -119,7 +124,10 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     private void OnEnable()
     {
         if (RoundManager.Instance != null)
+        {
             RoundManager.Instance.RegisterListener(this);
+            RoundManager.Instance.AutocompleteToggled += OnAutocompleteToggledEvent;
+        }
     }
 
     /// <summary>
@@ -128,7 +136,11 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     private void OnDisable()
     {
         if (RoundManager.Instance != null)
+        {
             RoundManager.Instance.UnRegisterListener(this);
+            RoundManager.Instance.AutocompleteToggled -= OnAutocompleteToggledEvent;
+        }
+            
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.UnregisterTimeListener(this);
     }
@@ -266,5 +278,13 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
         Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos);
         transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z);
+    }
+
+    private void OnAutocompleteToggledEvent(bool isActive)
+    {
+        if (isActive)
+            dashParticles.Play();
+        else
+            dashParticles.Stop();
     }
 }
