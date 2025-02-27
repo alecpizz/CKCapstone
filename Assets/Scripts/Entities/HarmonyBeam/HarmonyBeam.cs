@@ -22,10 +22,8 @@ using UnityEditor;
 /// A script that handles a harmony beam, and invoking
 /// exiting and entering for the harmony beam.
 /// </summary>
-public class HarmonyBeam : MonoBehaviour, ITurnListener
+public class HarmonyBeam : MonoBehaviour
 {
-    public TurnState TurnState => TurnState.Harmony;
-    public TurnState SecondaryTurnState => TurnState.None;
     [SerializeField] private EventReference _harmonySound = default;
     [SerializeField] private EventReference _enemyHarmonization = default;
     [Space] [SerializeField] private bool _beamActive = true;
@@ -65,21 +63,11 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     }
 
     /// <summary>
-    /// Registers this object with the round manager.
-    /// </summary>
-    private void OnEnable()
-    {
-        RoundManager.Instance.RegisterListener(this);
-    }
-
-    /// <summary>
-    /// Unregisters this object with the round manager.
+    /// Unregisters event callback
     /// </summary>
     private void OnDisable()
     {
         TriggerHarmonyScan -= ScanForObjects;
-
-        RoundManager.Instance.UnRegisterListener(this);
     }
 
     /// <summary>
@@ -113,15 +101,6 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
         }
 
         AudioManager.Instance.PauseSound(_beamInstance, _beamActive);
-    }
-    
-    /// <summary>
-    /// Entry point for turning on the beam. Will detect objects. 
-    /// </summary>
-    /// <param name="direction">Keyboard input direction.</param>
-    public void BeginTurn(Vector3 direction)
-    {
-        ScanForObjects();
     }
 
     /// <summary>
@@ -197,20 +176,6 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
         UpdateWallEffect(hitPoint.HasValue, hitPoint);
         _prevHitEntities.Clear();
         _hitEntities.ForEach(entity => _prevHitEntities.Add(entity));
-
-        if (RoundManager.Instance.IsHarmonyTurn)
-        {
-            RoundManager.Instance.CompleteTurn(this);
-        }
-    }
-
-    /// <summary>
-    /// Forces the turn to end. Will detect objects an additional time.
-    /// </summary>
-    public void ForceTurnEnd()
-    {
-        ScanForObjects();
-        RoundManager.Instance.CompleteTurn(this);
     }
 
     /// <summary>
