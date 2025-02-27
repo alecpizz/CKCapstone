@@ -19,6 +19,7 @@ using UnityEngine.SceneManagement;
 using SaintsField.Playa;
 using Debug = UnityEngine.Debug;
 using UnityEngine.Serialization;
+using EventInstance = FMOD.Studio.EventInstance;
 
 public class NpcDialogueController : MonoBehaviour, IInteractable
 {
