@@ -213,6 +213,7 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry, ITurnListene
     /// </summary>
     private void ToggleTurnState()
     {
+        HarmonyBeam.TriggerHarmonyScan?.Invoke();
         RoundManager.Instance.CompleteTurn(this);
     }
 

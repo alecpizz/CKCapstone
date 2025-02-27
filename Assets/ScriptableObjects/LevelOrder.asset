@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4878cea2c054dab8a2841cebff270eb, type: 3}
   m_Name: LevelOrder
   m_EditorClassIdentifier: 
-  <MainMenuScene>k__BackingField: {fileID: 102900000, guid: 308b9b37ce5531346a99fe640a0c323a,
+  <MainMenuScene>k__BackingField: {fileID: 102900000, guid: 7d179184d1553f04eb02186313b19f0f,
     type: 3}
   <Chapters>k__BackingField:
   - <ChapterName>k__BackingField: Chapter 1
@@ -96,15 +96,7 @@ MonoBehaviour:
     - <LevelName>k__BackingField: Tricky Wall
       <Scene>k__BackingField: {fileID: 102900000, guid: ccaafdbf39bdd3e4d9b2e003942c8183,
         type: 3}
-      <UseNextLevelInListAsExit>k__BackingField: 0
-      <ExitScene>k__BackingField: {fileID: 102900000, guid: e6dc04e696407c344a078f2249e35586,
-        type: 3}
-      <HasChallengeExit>k__BackingField: 0
-      <ChallengeScene>k__BackingField: {fileID: 0}
-    - <LevelName>k__BackingField: Challenge Cutscene 2
-      <Scene>k__BackingField: {fileID: 102900000, guid: a27f678317c681c4eb5a07cc97991be1,
-        type: 3}
-      <UseNextLevelInListAsExit>k__BackingField: 0
+      <UseNextLevelInListAsExit>k__BackingField: 1
       <ExitScene>k__BackingField: {fileID: 102900000, guid: e6dc04e696407c344a078f2249e35586,
         type: 3}
       <HasChallengeExit>k__BackingField: 0
@@ -112,11 +104,20 @@ MonoBehaviour:
     - <LevelName>k__BackingField: Act 1 NPC Room 2
       <Scene>k__BackingField: {fileID: 102900000, guid: e6dc04e696407c344a078f2249e35586,
         type: 3}
-      <UseNextLevelInListAsExit>k__BackingField: 1
-      <ExitScene>k__BackingField: {fileID: 0}
+      <UseNextLevelInListAsExit>k__BackingField: 0
+      <ExitScene>k__BackingField: {fileID: 102900000, guid: ac9180746a582ac438a1d0bee072cc86,
+        type: 3}
       <HasChallengeExit>k__BackingField: 1
       <ChallengeScene>k__BackingField: {fileID: 102900000, guid: a27f678317c681c4eb5a07cc97991be1,
         type: 3}
+    - <LevelName>k__BackingField: Challenge Cutscene 2
+      <Scene>k__BackingField: {fileID: 102900000, guid: a27f678317c681c4eb5a07cc97991be1,
+        type: 3}
+      <UseNextLevelInListAsExit>k__BackingField: 1
+      <ExitScene>k__BackingField: {fileID: 102900000, guid: e6dc04e696407c344a078f2249e35586,
+        type: 3}
+      <HasChallengeExit>k__BackingField: 0
+      <ChallengeScene>k__BackingField: {fileID: 0}
     <Outro>k__BackingField:
       <LevelName>k__BackingField: End Cutscene
       <Scene>k__BackingField: {fileID: 102900000, guid: ac9180746a582ac438a1d0bee072cc86,
@@ -196,15 +197,6 @@ MonoBehaviour:
         type: 3}
     - <LevelName>k__BackingField: Enemy Variant Tutorial
       <Scene>k__BackingField: {fileID: 102900000, guid: 4ddcb25a881f3b5488119db8e2d603d1,
-        type: 3}
-      <UseNextLevelInListAsExit>k__BackingField: 1
-      <ExitScene>k__BackingField: {fileID: 102900000, guid: e2317c04d6fb6d5419c9fafc9e2ec89f,
-        type: 3}
-      <HasChallengeExit>k__BackingField: 0
-      <ChallengeScene>k__BackingField: {fileID: 102900000, guid: e2317c04d6fb6d5419c9fafc9e2ec89f,
-        type: 3}
-    - <LevelName>k__BackingField: Enemy Path Variant
-      <Scene>k__BackingField: {fileID: 102900000, guid: 385017e809963284abea163ef01296fd,
         type: 3}
       <UseNextLevelInListAsExit>k__BackingField: 1
       <ExitScene>k__BackingField: {fileID: 102900000, guid: e2317c04d6fb6d5419c9fafc9e2ec89f,
@@ -316,7 +308,7 @@ MonoBehaviour:
         type: 3}
     <Outro>k__BackingField:
       <LevelName>k__BackingField: End Cutscene
-      <Scene>k__BackingField: {fileID: 102900000, guid: ac9180746a582ac438a1d0bee072cc86,
+      <Scene>k__BackingField: {fileID: 102900000, guid: 41585533f1f47b248ab77f157fc229ff,
         type: 3}
       <UseNextLevelInListAsExit>k__BackingField: 1
       <ExitScene>k__BackingField: {fileID: 102900000, guid: 9450462aeb9372145a505f859068e3cf,
@@ -391,6 +383,15 @@ MonoBehaviour:
       <HasChallengeExit>k__BackingField: 0
       <ChallengeScene>k__BackingField: {fileID: 102900000, guid: e2317c04d6fb6d5419c9fafc9e2ec89f,
         type: 3}
+    - <LevelName>k__BackingField: Enemy Path Variant
+      <Scene>k__BackingField: {fileID: 102900000, guid: 385017e809963284abea163ef01296fd,
+        type: 3}
+      <UseNextLevelInListAsExit>k__BackingField: 1
+      <ExitScene>k__BackingField: {fileID: 102900000, guid: e2317c04d6fb6d5419c9fafc9e2ec89f,
+        type: 3}
+      <HasChallengeExit>k__BackingField: 0
+      <ChallengeScene>k__BackingField: {fileID: 102900000, guid: e2317c04d6fb6d5419c9fafc9e2ec89f,
+        type: 3}
     - <LevelName>k__BackingField: Act 4 NPC Room 2
       <Scene>k__BackingField: {fileID: 102900000, guid: 9faaa08b47fab8141a86843b2cb6c01d,
         type: 3}
@@ -402,7 +403,7 @@ MonoBehaviour:
         type: 3}
     <Outro>k__BackingField:
       <LevelName>k__BackingField: End Cutscene
-      <Scene>k__BackingField: {fileID: 102900000, guid: ac9180746a582ac438a1d0bee072cc86,
+      <Scene>k__BackingField: {fileID: 102900000, guid: c041a53be2f29cc4eb15ff97c08b4047,
         type: 3}
       <UseNextLevelInListAsExit>k__BackingField: 1
       <ExitScene>k__BackingField: {fileID: 102900000, guid: 9450462aeb9372145a505f859068e3cf,
@@ -488,7 +489,7 @@ MonoBehaviour:
         type: 3}
     <Outro>k__BackingField:
       <LevelName>k__BackingField: End Cutscene
-      <Scene>k__BackingField: {fileID: 102900000, guid: ac9180746a582ac438a1d0bee072cc86,
+      <Scene>k__BackingField: {fileID: 102900000, guid: 85e0286e9d32f9a47ae0efcb175f427d,
         type: 3}
       <UseNextLevelInListAsExit>k__BackingField: 1
       <ExitScene>k__BackingField: {fileID: 102900000, guid: 9450462aeb9372145a505f859068e3cf,
@@ -496,7 +497,7 @@ MonoBehaviour:
       <HasChallengeExit>k__BackingField: 0
       <ChallengeScene>k__BackingField: {fileID: 102900000, guid: 9450462aeb9372145a505f859068e3cf,
         type: 3}
-  <CreditsScene>k__BackingField: {fileID: 102900000, guid: 308b9b37ce5531346a99fe640a0c323a,
+  <CreditsScene>k__BackingField: {fileID: 102900000, guid: 7d179184d1553f04eb02186313b19f0f,
     type: 3}
   _chapterName: Chapter 1
   _inputLevelData:
