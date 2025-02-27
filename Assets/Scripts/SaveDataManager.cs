@@ -61,7 +61,8 @@ public static class SaveDataManager
 
     public static void ResetSave()
     {
-        _persistentDataObject.ResetToInitValues(SettingsTableName);
-        _persistentDataObject.ResetToInitValues(ProgressionTableName);
+        var referenceDataJson = Resources.Load<TextAsset>("CKSave");
+        File.WriteAllText(Path.Combine(Application.persistentDataPath, "CKSave.json"), 
+            referenceDataJson.text);
     }
 }
