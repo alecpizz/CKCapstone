@@ -30,6 +30,7 @@ public class SceneController : MonoBehaviour
     [SerializeField] private float _timeForScreenWipe;
     [SerializeField] private bool _shouldFadeInOnLoad;
     [SerializeField] private EventReference _endSound;
+    [SerializeField] private bool _playSoundOnSceneChange = true;
 
     private readonly int _circleSizePropId = Shader.PropertyToID("_CircleSize");
     private readonly int _backgroundColorPropId = Shader.PropertyToID("_BackgroundColor");
@@ -122,7 +123,7 @@ public class SceneController : MonoBehaviour
         _circleWipeImage.materialForRendering.SetColor(_backgroundColorPropId, fadeColor);
 
         RepositionCircleWipe();
-        if (AudioManager.Instance != null)
+        if (AudioManager.Instance != null && _playSoundOnSceneChange)
         {
             AudioManager.Instance.PlaySound(_endSound);
         }

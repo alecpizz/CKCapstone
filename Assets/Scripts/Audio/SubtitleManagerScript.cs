@@ -14,6 +14,7 @@ using UnityEngine;
 using TMPro;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using EventInstance = FMOD.Studio.EventInstance;
 
 public class SubtitleManager : MonoBehaviour
 {

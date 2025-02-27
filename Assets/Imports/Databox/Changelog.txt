@@ -1,0 +1,88 @@
+version 1.4
+---------------
+
+- Fixed issue where cloud upload/download would not use selected serializer. 
+- Fixed issue where cloud upload/download would fail due to special characters not being parsed correctly. (in this case it is recommended to use odin serializer)
+
+
+version 1.3.0p3
+---------------
+- Fixed: NullReferenceException in OdinSerializer (UnitySerializationUtility.cs)
+
+version 1.3.0p2
+---------------
+
+- Fixed: Fixed savePath not returning path relative to build.
+- Fixed: Fixed LoadDatabase not executing OnDatabaseLoaded event in editor
+
+version 1.3.0p1
+---------------
+
+- Fixed: AmbiguousMatchException error. Updated Odin Serializer
+
+version 1.3
+---------------
+- New global editor window to manage all available Databox objects in the project. (Tools / Databox / Editor)
+- Improved: Smaller UI improvements for a more compact view of the Databox object.
+
+version 1.2.2p2
+---------------
+- Fixed issue with Databox - Localization not displaying the languages type correctly.
+
+version 1.2.2p1
+---------------
+- Fixed issue with string types not displaying correctly with large texts.
+
+version 1.2.2
+----------------
+- Improved: Huge editor performance improvements!
+- Fixed issue where data value would be replaced if it had the same name (id)
+- Fixed issue where assigned types in a data scheme would be wrong due to adding new types (wrong index).
+- Fixed issue when using only .Net 2.0 API level.
+
+version 1.2.1p2
+--------------
+- Fixed odin serialization issue on AOT platform when using DataboxType: Vector3
+- Fixed Download & Append issue when importing data (Google/CSV). Existing entries didn't update if they have been changed.
+
+
+version 1.2.1p1
+--------------
+- Fixed Databox data schemes not being serialized
+
+
+version 1.2.1
+--------------
+- NEW: New Databox schemes feature. You can now define data entry schemes. Instead of adding each value separately you can now build a scheme which contains different types. This allows you to quickly "build" new entries based on a scheme.
+- Fixed KeyNotFoundException when debug mode is enabled
+
+
+
+version 1.2.0p2
+--------------
+- Fixed issue when importing google sheets with ResourceType
+- Fixed issue when importing google sheets with FloatType
+- Fixed editor bug: values don't show up until showing the sidebar
+
+
+version 1.2.0p1
+--------------
+- Add PlayMaker actions DownloadFromCloud + UploadToCloud
+- Fixed loading issue from streaming assets folder on android when using odin serializer
+
+
+
+version 1.2
+--------------
+- New: Added offline PDF documentation
+- New: Possible to save sync changelog to a text file
+
+- Improved: GUI layout for better spacing
+- Improved: CSV Parser to support more special use cases and multi line text support.
+- Improved: Addressable type. You can now simply drag n drop an addressable asset to the field and the addressable path from the asset will be assigned.
+- Improved: Better addressables support with automatic assembly definition creation. (include addressables reference to databox asmdef)
+
+- Fixed: Removed obsolete warning messages for Unity 2020
+- Fixed: Fixed build error when using PlayMaker
+- Fixed: Fixed bug when using custom types in custom assembly definition and trying to import CSV file, which resulted in custom type not found error.
+- Changed: Minor code changes for upcoming addon.
