@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using FMOD.Studio;
 using FMODUnity;
+using System.Linq;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -20,9 +22,8 @@ using UnityEditor;
 /// A script that handles a harmony beam, and invoking
 /// exiting and entering for the harmony beam.
 /// </summary>
-public class HarmonyBeam : MonoBehaviour, ITurnListener
+public class HarmonyBeam : MonoBehaviour
 {
-    public TurnState TurnState => TurnState.World;
     [SerializeField] private EventReference _harmonySound = default;
     [SerializeField] private EventReference _enemyHarmonization = default;
     [Space] [SerializeField] private bool _beamActive = true;
@@ -42,12 +43,15 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     private EventInstance _beamInstance;
     private EventInstance _enemyGrabbedInstance;
 
+    public static Action TriggerHarmonyScan;
 
     /// <summary>
     /// Starts sound playback and instantiates a wall effect if possible.
     /// </summary>
     private void Start()
     {
+        TriggerHarmonyScan += ScanForObjects;
+
         _beamInstance = AudioManager.Instance.PlaySound(_harmonySound);
         if (_wallCollisionEffectPrefab != null)
         {
@@ -59,27 +63,11 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     }
 
     /// <summary>
-    /// Registers this object with the round manager.
-    /// </summary>
-    private void OnEnable()
-    {
-        RoundManager.Instance.RegisterListener(this);
-    }
-
-    /// <summary>
-    /// Unregisters this object with the round manager.
+    /// Unregisters event callback
     /// </summary>
     private void OnDisable()
     {
-        RoundManager.Instance.RegisterListener(this);
-    }
-
-    /// <summary>
-    /// Periodically scans for objects in order to detect moving enemies
-    /// </summary>
-    private void FixedUpdate()
-    {
-        ScanForObjects();
+        TriggerHarmonyScan -= ScanForObjects;
     }
 
     /// <summary>
@@ -102,7 +90,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
                 particleSystem.Play();
             }
 
-            _prevHitEntities.Clear();
+            ScanForObjects();
         }
         else
         {
@@ -113,15 +101,6 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
         }
 
         AudioManager.Instance.PauseSound(_beamInstance, _beamActive);
-    }
-    
-    /// <summary>
-    /// Entry point for turning on the beam. Will detect objects. 
-    /// </summary>
-    /// <param name="direction">Keyboard input direction.</param>
-    public void BeginTurn(Vector3 direction)
-    {
-        StartCoroutine(WaitForPotentialBlockers());
     }
 
     /// <summary>
@@ -200,30 +179,6 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     }
 
     /// <summary>
-    /// Forces the turn to end. Will detect objects an additional time.
-    /// </summary>
-    public void ForceTurnEnd()
-    {
-        ScanForObjects();
-        RoundManager.Instance.CompleteTurn(this);
-    }
-
-    /// <summary>
-    /// Stinky coroutine to wait for anything else to move just in case.
-    /// TODO: Remove this!
-    /// </summary>
-    /// <returns>null</returns>
-    private IEnumerator WaitForPotentialBlockers()
-    {
-        // we shouldn't have to wait, but the moving walls/platforms aren't turn based currently 
-        yield return new WaitForSeconds(_beamDetectionWaitTime);
-        ScanForObjects();
-
-        RoundManager.Instance.CompleteTurn(this);
-    }
-
-
-    /// <summary>
     /// Handles the visual effect when the beam hits a wall.
     /// </summary>
     /// <param name="active">Whether or not the wall effect should be visible.</param>
@@ -270,7 +225,7 @@ public class HarmonyBeam : MonoBehaviour, ITurnListener
     /// </summary>
     private void CheckEntityExits()
     {
-        foreach (var harmonyBeamEntity in _prevHitEntities)
+        foreach (var harmonyBeamEntity in _prevHitEntities.ToList<IHarmonyBeamEntity>())
         {
             if (harmonyBeamEntity == null) continue;
             if (_hitEntities.Contains(harmonyBeamEntity)) continue;
