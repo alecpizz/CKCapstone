@@ -18,7 +18,7 @@ using UnityEngine.UI;
 public class GameSpeedOptions : MonoBehaviour
 {
     private PlayerControls _playerControls;
-    [SerializeField] public GameObject _speedUI;
+    [SerializeField] private GameObject _speedUI;
 
     //[SerializeField] private GameObject _toggleMenu;
     //private Toggle _speedToggle;
