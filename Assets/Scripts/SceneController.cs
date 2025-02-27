@@ -38,9 +38,9 @@ public class SceneController : MonoBehaviour
 
     private const float xUvOffset = 0.5f;
     private const float yUvOffset = 0.28f;
-
+    
     [SerializeField] private GameObject _pauseMenu;
-    [SerializeField] private GameObject _restartButton;
+    private GameObject _restartButton;
     
     /// <summary>
     /// Creates instance and starts fade in transition
@@ -58,6 +58,9 @@ public class SceneController : MonoBehaviour
         {
             StartCoroutine(CircleWipeTransition(true, _currentFadeColor));
         }
+        
+        _restartButton = GameObject.FindWithTag("Restart");
+        
     }
 
     /// <summary>
@@ -137,7 +140,7 @@ public class SceneController : MonoBehaviour
         // Animates circle wipe until the end time is reached
         while (elapsedTime < _timeForScreenWipe)
         {
-            if (DebugMenuManager.Instance.PauseMenu == true)
+            if (_pauseMenu.activeInHierarchy)
             {
                 Time.timeScale = 1f;
                 _pauseMenu.SetActive(false);
