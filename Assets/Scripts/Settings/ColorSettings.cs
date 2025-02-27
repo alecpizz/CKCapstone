@@ -60,7 +60,9 @@ public class ColorSettings : MonoBehaviour
         _selection = (ColorBlindMode)value;
         ChangeColorMode(_selection);
 
-        SaveDataManager.MainSaveData.AddData(Settings, Accessibility, ColorMode, new IntType(value));
+        SaveDataManager.MainSaveData.SetData<IntType>(Settings, Accessibility, 
+            ColorMode, new IntType(value));
+        SaveDataManager.SetDirty();
     }
 
     /// <summary>
