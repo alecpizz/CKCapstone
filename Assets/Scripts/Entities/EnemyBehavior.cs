@@ -71,7 +71,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
     [SerializeField] private Ease _movementEase = Ease.OutBack;
 
-    private int vfxPointCount = 0;
+    private int currentCount = 0;
+    private int targetCount = 0;
 
     /// <summary>
     /// Helper enum for enemy directions.
@@ -337,33 +338,17 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         //Looks at the time signature for the enemy so it can place multiple moves in advance
 
         EvaluateNextMove(ref _indicatorIndex, ref _indicatorReturningToStart);
-        _vfxLine.positionCount = _enemyMovementTime + 1;
+        _vfxLine.positionCount = _moveDestinations.Count;
 
         //Finds the direction and tiles to move based on its own current point index value
         var destPoint = _moveDestinations[_indicatorIndex];
         var destPointWorld = GridBase.Instance.CellToWorld(destPoint);
 
-        //Sets current position for line vfx renderer relative to enemy position
-        for (int k = 0; k < _moveDestinations.Count; k++)
-        {
-            Vector3 _moveDestPos = GridBase.Instance.CellToWorld(_moveDestinations[k]);
-            _moveDestPos.y = transform.position.y;
-
-            if (transform.position == _moveDestPos)
-            {
-                vfxPointCount = k;
-            }
-        }
-
         //Sets each point in the _vfx line along the tile path in the _moveDestinations list
         //starting from the enemy's current position
-        for (int i = 0; i < _vfxLine.positionCount; i++)
+        for (int i = 0; i < _moveDestinations.Count; i++)
         {
-            if (vfxPointCount + i >= _moveDestinations.Count) 
-            {
-                break;
-            }
-            Vector3 _vfxPos = GridBase.Instance.CellToWorld(_moveDestinations[vfxPointCount + i]);
+            Vector3 _vfxPos = GridBase.Instance.CellToWorld(_moveDestinations[i]);
             _vfxPos.y = _lineYPosOffset;
 
             _vfxLine.SetPosition(i, _vfxPos);
