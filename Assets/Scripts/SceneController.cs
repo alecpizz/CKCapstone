@@ -39,6 +39,9 @@ public class SceneController : MonoBehaviour
     private const float xUvOffset = 0.5f;
     private const float yUvOffset = 0.28f;
 
+    [SerializeField] private GameObject _pauseMenu;
+    [SerializeField] private GameObject _restartButton;
+    
     /// <summary>
     /// Creates instance and starts fade in transition
     /// </summary>
@@ -128,10 +131,18 @@ public class SceneController : MonoBehaviour
             AudioManager.Instance.PlaySound(_endSound);
         }
         yield return new WaitForEndOfFrame();
-
+        
+        
+        
         // Animates circle wipe until the end time is reached
         while (elapsedTime < _timeForScreenWipe)
         {
+            if (DebugMenuManager.Instance.PauseMenu == true)
+            {
+                Time.timeScale = 1f;
+                _pauseMenu.SetActive(false);
+                _restartButton.SetActive(true);
+            }
             lerpingTime = elapsedTime / _timeForScreenWipe;
             newCircleSize = Mathf.Lerp(startingCircleSize, targetCircleSize, lerpingTime);
             _circleWipeImage.materialForRendering.SetFloat(_circleSizePropId, newCircleSize);
