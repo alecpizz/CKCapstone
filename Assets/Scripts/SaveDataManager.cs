@@ -68,35 +68,35 @@ public static class SaveDataManager
 
     public static float GetSettingFloat(string entryId, string valueId)
     {
-        var dataFound = _persistentDataObject.TryGetData(CKSaveData_KEYS.Settings.TableName, 
+        var dataFound = _persistentDataObject.TryGetData(CKSaveData_KEYS.Settings.TableName,
             entryId, valueId, false, out FloatType data);
         return dataFound ? data.Value : 0f;
     }
-    
+
     public static void SetSettingInt(string entryId, string valueId, int newValue)
     {
         _persistentDataObject.SetData<IntType>(CKSaveData_KEYS.Settings.TableName,
             entryId, valueId, new IntType(newValue));
         SaveData();
     }
-    
+
     public static int GetSettingInt(string entryId, string valueId)
     {
-        var dataFound = _persistentDataObject.TryGetData(CKSaveData_KEYS.Settings.TableName, 
+        var dataFound = _persistentDataObject.TryGetData(CKSaveData_KEYS.Settings.TableName,
             entryId, valueId, false, out IntType data);
         return dataFound ? data.Value : 0;
     }
-    
+
     public static void SetSettingBool(string entryId, string valueId, bool newValue)
     {
         _persistentDataObject.SetData<BoolType>(CKSaveData_KEYS.Settings.TableName,
             entryId, valueId, new BoolType(newValue));
         SaveData();
     }
-    
+
     public static bool GetSettingBool(string entryId, string valueId)
     {
-        var dataFound = _persistentDataObject.TryGetData(CKSaveData_KEYS.Settings.TableName, 
+        var dataFound = _persistentDataObject.TryGetData(CKSaveData_KEYS.Settings.TableName,
             entryId, valueId, false, out BoolType data);
         return dataFound && data.Value;
     }
@@ -112,7 +112,7 @@ public static class SaveDataManager
         SaveData();
     }
 
-    public static int GetNpcProgressionCurrentScene() => GetNpcProgression(SceneManager.GetActiveScene().name); 
+    public static int GetNpcProgressionCurrentScene() => GetNpcProgression(SceneManager.GetActiveScene().name);
 
     public static int GetNpcProgression(string sceneName)
     {
@@ -120,5 +120,42 @@ public static class SaveDataManager
             CKSaveData_KEYS.Progression.NPC_Dialogue.EntryName,
             GetNpcProgressString(sceneName), true, out IntType progress);
         return dataFound ? progress.Value : 0;
+    }
+
+    public static void SetLevelCompleted(string sceneName)
+    {
+        if (!_persistentDataObject.SetData<BoolType>(CKSaveData_KEYS.Progression.TableName,
+                CKSaveData_KEYS.Progression.Completed_Levels.EntryName,
+                sceneName, new BoolType(true)))
+        {
+            _persistentDataObject.AddData(CKSaveData_KEYS.Progression.TableName,
+                CKSaveData_KEYS.Progression.Completed_Levels.EntryName,
+                sceneName, new BoolType(true));
+        }
+        SaveData();
+    }
+
+    public static bool GetLevelCompleted(string sceneName)
+    {
+        var foundData = _persistentDataObject.TryGetData(CKSaveData_KEYS.Progression.TableName,
+            CKSaveData_KEYS.Progression.Completed_Levels.EntryName,
+            sceneName, false, out BoolType data);
+        return foundData && data.Value;
+    }
+
+    public static void SetLastFinishedLevel(string sceneName)
+    {
+        _persistentDataObject.SetData<StringType>(CKSaveData_KEYS.Progression.TableName,
+            CKSaveData_KEYS.Progression.Last_Level_Completed.EntryName,
+            CKSaveData_KEYS.Progression.Last_Level_Completed._Scene_Name, new StringType(sceneName));
+        SaveData();
+    }
+
+    public static string GetLastFinishedLevel()
+    {
+        bool foundData =_persistentDataObject.TryGetData(CKSaveData_KEYS.Progression.TableName,
+            CKSaveData_KEYS.Progression.Last_Level_Completed.EntryName,
+            CKSaveData_KEYS.Progression.Last_Level_Completed._Scene_Name, out StringType data);
+        return foundData ? data.Value : string.Empty;
     }
 }
