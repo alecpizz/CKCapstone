@@ -47,7 +47,7 @@ public class AudioSettings : MonoBehaviour
         _master.setVolume(_masterSlider.value);
         SaveDataManager.MainSaveData.SetData<FloatType>(Settings, Volume, MasterVolume, 
             new FloatType(_masterSlider.value));
-        SaveDataManager.SetDirty();
+        SaveDataManager.SaveData();
     }
 
     /// <summary>
@@ -58,7 +58,7 @@ public class AudioSettings : MonoBehaviour
         _bgMusic.setVolume(_bgMusicSlider.value);
         SaveDataManager.MainSaveData.SetData<FloatType>(Settings, Volume, MusicVolume, 
             new FloatType(_bgMusicSlider.value));
-        SaveDataManager.SetDirty();
+        SaveDataManager.SaveData();
     }
 
     /// <summary>
@@ -69,7 +69,7 @@ public class AudioSettings : MonoBehaviour
         _SFX.setVolume(_SFXSlider.value);
         SaveDataManager.MainSaveData.SetData<FloatType>(Settings, Volume, SFXVolume, 
             new FloatType(_SFXSlider.value));
-        SaveDataManager.SetDirty();
+        SaveDataManager.SaveData();
     }
 
     /// <summary>

@@ -87,7 +87,7 @@ public class SettingsMenu : MonoBehaviour
         Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
         SaveDataManager.MainSaveData.SetData<IntType>(Settings, ScreenName, 
             Resolution, new IntType(resolutionIndex));
-        SaveDataManager.SetDirty();
+        SaveDataManager.SaveData();
     }
 
     /// <summary>
@@ -99,7 +99,7 @@ public class SettingsMenu : MonoBehaviour
         Screen.fullScreen = isFullscreen;
         SaveDataManager.MainSaveData.SetData<BoolType>(Settings, ScreenName,
             Fullscreen, new BoolType(isFullscreen));
-        SaveDataManager.SetDirty();
+        SaveDataManager.SaveData();
     }
 
     /// <summary>
@@ -110,7 +110,7 @@ public class SettingsMenu : MonoBehaviour
     {
         SaveDataManager.MainSaveData.SetData<BoolType>(Settings, Accessibility, 
             Tooltips, new BoolType(tooltips));
-        SaveDataManager.SetDirty();
+        SaveDataManager.SaveData();
     }
 
     /// <summary>
@@ -121,7 +121,7 @@ public class SettingsMenu : MonoBehaviour
     {
         SaveDataManager.MainSaveData.SetData<BoolType>(Settings, Accessibility, 
             Subtitles, new BoolType(subtitles));
-        SaveDataManager.SetDirty();
+        SaveDataManager.SaveData();
     }
 
     /// <summary>

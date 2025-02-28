@@ -62,7 +62,7 @@ public class ColorSettings : MonoBehaviour
 
         SaveDataManager.MainSaveData.SetData<IntType>(Settings, Accessibility, 
             ColorMode, new IntType(value));
-        SaveDataManager.SetDirty();
+        SaveDataManager.SaveData();
     }
 
     /// <summary>
