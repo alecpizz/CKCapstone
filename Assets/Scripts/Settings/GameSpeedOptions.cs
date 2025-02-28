@@ -1,6 +1,6 @@
 /******************************************************************
  *    Author: Cole Stranczek
- *    Contributors: Rider Hagen
+ *    Contributors: 
  *    Date Created: 1/26/25
  *    Description: Attachment script to allow players to adjust the
  *    speed of the game
@@ -18,7 +18,6 @@ using UnityEngine.UI;
 public class GameSpeedOptions : MonoBehaviour
 {
     private PlayerControls _playerControls;
-    [SerializeField] private GameObject _speedUI;
 
     //[SerializeField] private GameObject _toggleMenu;
     //private Toggle _speedToggle;
@@ -108,19 +107,17 @@ public class GameSpeedOptions : MonoBehaviour
     /// </summary>
     private void SpeedChange()
     {
-        // Speed up if the game is at normal speed. Activates the speed ui
+        // Speed up if the game is at normal speed
         if (Mathf.Approximately(Time.timeScale, 1f)) //&& !_speedToggle/*.isOn*/)
         {
             Debug.Log("Speeding Up (Toggle)");
             Time.timeScale = _speedUpRate;
-            _speedUI.SetActive(true);
         }
-        // Return to normal speed if the game is sped up. Deactivates the speed ui
+        // Return to normal speed if the game is sped up
         else
         {
             Debug.Log("Back to Normal (Toggle)");
             Time.timeScale = 1f;
-            _speedUI.SetActive(false);
         }
     }
 
