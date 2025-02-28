@@ -412,7 +412,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             var currCell = GridBase.Instance.WorldToCell(transform.position);
             var goalCell = GetLongestPath(GridBase.Instance.CellToWorld(movePt));
 
-            if (_moveIndex == _moveDestinations.Count - 1)
+            if (_moveIndex == _moveDestinations.Count - 1 && !_circularMovement)
             {
                 _endRotate = true;
             }
