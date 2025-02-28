@@ -21,7 +21,6 @@ public class AudioSettings : MonoBehaviour
     private Bus _bgMusic;
     private Bus _SFX;
     
-    private const string Settings = "Settings";
     private const string Volume = "Volume";
     private const string MasterVolume = "Master";
     private const string MusicVolume = "Music";
@@ -45,9 +44,7 @@ public class AudioSettings : MonoBehaviour
     public void SetMasterVolume()
     {
         _master.setVolume(_masterSlider.value);
-        SaveDataManager.MainSaveData.SetData<FloatType>(Settings, Volume, MasterVolume, 
-            new FloatType(_masterSlider.value));
-        SaveDataManager.SaveData();
+        SaveDataManager.SetSettingFloat(Volume, MasterVolume, _masterSlider.value);
     }
 
     /// <summary>
@@ -56,9 +53,7 @@ public class AudioSettings : MonoBehaviour
     public void SetMusicVolume()
     {
         _bgMusic.setVolume(_bgMusicSlider.value);
-        SaveDataManager.MainSaveData.SetData<FloatType>(Settings, Volume, MusicVolume, 
-            new FloatType(_bgMusicSlider.value));
-        SaveDataManager.SaveData();
+        SaveDataManager.SetSettingFloat(Volume, MusicVolume, _bgMusicSlider.value);
     }
 
     /// <summary>
@@ -67,9 +62,7 @@ public class AudioSettings : MonoBehaviour
     public void SetSFXVolume()
     {
         _SFX.setVolume(_SFXSlider.value);
-        SaveDataManager.MainSaveData.SetData<FloatType>(Settings, Volume, SFXVolume, 
-            new FloatType(_SFXSlider.value));
-        SaveDataManager.SaveData();
+        SaveDataManager.SetSettingFloat(Volume, SFXVolume, _SFXSlider.value);
     }
 
     /// <summary>
@@ -77,14 +70,11 @@ public class AudioSettings : MonoBehaviour
     /// </summary>
     private void Load()
     {
-        _bgMusicSlider.value = SaveDataManager.MainSaveData.GetData<FloatType>(Settings, Volume,
-            MusicVolume).Value;
+        _bgMusicSlider.value = SaveDataManager.GetSettingFloat(Volume, MusicVolume);
         _bgMusic.setVolume(_bgMusicSlider.value);
-        _SFXSlider.value = SaveDataManager.MainSaveData.GetData<FloatType>(Settings, Volume,
-            SFXVolume).Value;;
+        _SFXSlider.value = SaveDataManager.GetSettingFloat(Volume, SFXVolume);
         _SFX.setVolume(_SFXSlider.value);
-        _masterSlider.value = SaveDataManager.MainSaveData.GetData<FloatType>(Settings, Volume,
-            MasterVolume).Value;;
+        _masterSlider.value = SaveDataManager.GetSettingFloat(Volume, MasterVolume);
         _master.setVolume(_masterSlider.value);
     }
 }

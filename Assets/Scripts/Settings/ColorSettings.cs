@@ -38,8 +38,7 @@ public class ColorSettings : MonoBehaviour
             _channelMixer.blueOutBlueIn.overrideState = true;
 
         // Load saved color mode or set to Normal (0) by default
-        int savedMode = SaveDataManager.MainSaveData.GetData<IntType>(Settings, 
-            Accessibility, ColorMode).Value;
+        int savedMode = SaveDataManager.GetSettingInt(Accessibility, ColorMode);
         _selection = (ColorBlindMode)savedMode;
 
         // Populate dropdown and set the initial selection
@@ -59,10 +58,7 @@ public class ColorSettings : MonoBehaviour
     {
         _selection = (ColorBlindMode)value;
         ChangeColorMode(_selection);
-
-        SaveDataManager.MainSaveData.SetData<IntType>(Settings, Accessibility, 
-            ColorMode, new IntType(value));
-        SaveDataManager.SaveData();
+        SaveDataManager.SetSettingInt(Accessibility, ColorMode, value);
     }
 
     /// <summary>

@@ -65,13 +65,11 @@ public class SettingsMenu : MonoBehaviour
         }
 
         _resolutionDropdown.AddOptions(options);
-        var resolutionIdx = SaveDataManager.MainSaveData.GetData<IntType>(Settings,
-            ScreenName, Resolution).Value;
+        var resolutionIdx = SaveDataManager.GetSettingInt(ScreenName, Resolution);
         if (resolutionIdx == -1)
         {
             resolutionIdx = currentResolutionIndex;
-            SaveDataManager.MainSaveData.SetData<IntType>(Settings, ScreenName, 
-                Resolution, new IntType(resolutionIdx));
+            SaveDataManager.SetSettingInt(ScreenName, Resolution, resolutionIdx);
         }
         _resolutionDropdown.value = resolutionIdx;
         _resolutionDropdown.RefreshShownValue();
@@ -85,9 +83,7 @@ public class SettingsMenu : MonoBehaviour
     {
         Resolution resolution = _resolutions[resolutionIndex];
         Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
-        SaveDataManager.MainSaveData.SetData<IntType>(Settings, ScreenName, 
-            Resolution, new IntType(resolutionIndex));
-        SaveDataManager.SaveData();
+        SaveDataManager.SetSettingInt(ScreenName, Resolution, resolutionIndex);        
     }
 
     /// <summary>
@@ -97,9 +93,7 @@ public class SettingsMenu : MonoBehaviour
     public void SetFullscreen(bool isFullscreen)
     {
         Screen.fullScreen = isFullscreen;
-        SaveDataManager.MainSaveData.SetData<BoolType>(Settings, ScreenName,
-            Fullscreen, new BoolType(isFullscreen));
-        SaveDataManager.SaveData();
+        SaveDataManager.SetSettingBool(ScreenName, Fullscreen, isFullscreen); 
     }
 
     /// <summary>
@@ -108,9 +102,7 @@ public class SettingsMenu : MonoBehaviour
     /// <param name="tooltips">True if tooltips are enabled</param>
     public void SetTooltips(bool tooltips)
     {
-        SaveDataManager.MainSaveData.SetData<BoolType>(Settings, Accessibility, 
-            Tooltips, new BoolType(tooltips));
-        SaveDataManager.SaveData();
+        SaveDataManager.SetSettingBool(Accessibility, Tooltips, tooltips);
     }
 
     /// <summary>
@@ -119,9 +111,7 @@ public class SettingsMenu : MonoBehaviour
     /// <param name="subtitles">True if subtitles are enabled</param>
     public void SetSubtitles(bool subtitles)
     {
-        SaveDataManager.MainSaveData.SetData<BoolType>(Settings, Accessibility, 
-            Subtitles, new BoolType(subtitles));
-        SaveDataManager.SaveData();
+        SaveDataManager.SetSettingBool(Accessibility, Subtitles, subtitles);
     }
 
     /// <summary>
@@ -129,15 +119,9 @@ public class SettingsMenu : MonoBehaviour
     /// </summary>
     public void LoadSettings()
     {
-        Debug.Log(SaveDataManager.MainSaveData);
-        _resolutionDropdown.value =
-            SaveDataManager.MainSaveData.GetData<IntType>(Settings, ScreenName, Resolution).Value;
-        _fullscreenToggle.isOn = SaveDataManager.MainSaveData.GetData<BoolType>(Settings,
-            ScreenName, Fullscreen).Value;
-        _tooltipsToggle.isOn = SaveDataManager.MainSaveData.GetData<BoolType>(Settings,
-            Accessibility, Tooltips).Value;
-        _subtitlesToggle.isOn =
-            SaveDataManager.MainSaveData.GetData<BoolType>(Settings,
-                Accessibility, Subtitles).Value;
+        _resolutionDropdown.value = SaveDataManager.GetSettingInt(ScreenName, Resolution);
+        _fullscreenToggle.isOn = SaveDataManager.GetSettingBool(ScreenName, Fullscreen);
+        _tooltipsToggle.isOn = SaveDataManager.GetSettingBool(Accessibility, Tooltips);
+        _subtitlesToggle.isOn = SaveDataManager.GetSettingBool(Accessibility, Subtitles);
     }
 }

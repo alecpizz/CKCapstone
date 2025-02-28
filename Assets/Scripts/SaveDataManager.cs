@@ -6,21 +6,10 @@
  *    DataBox save data.
  *******************************************************************/
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using Databox;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
-public enum DataType
-{
-    Float,
-    String,
-    Int,
-    Bool
-}
 
 public static class SaveDataManager
 {
@@ -49,8 +38,6 @@ public static class SaveDataManager
         }
     }
 
-    public static Databox.DataboxObject MainSaveData => _persistentDataObject;
-
     public static void SaveSetting(DataboxType dataBoxType, string entry, string value)
     {
         var type = dataBoxType.ToString();
@@ -70,6 +57,48 @@ public static class SaveDataManager
         var referenceDataJson = Resources.Load<TextAsset>("CKSave");
         File.WriteAllText(Path.Combine(Application.persistentDataPath, "CKSave.json"),
             referenceDataJson.text);
+    }
+
+    public static void SetSettingFloat(string entryId, string valueId, float newValue)
+    {
+        _persistentDataObject.SetData<FloatType>(CKSaveData_KEYS.Settings.TableName,
+            entryId, valueId, new FloatType(newValue));
+        SaveData();
+    }
+
+    public static float GetSettingFloat(string entryId, string valueId)
+    {
+        var dataFound = _persistentDataObject.TryGetData(CKSaveData_KEYS.Settings.TableName, 
+            entryId, valueId, false, out FloatType data);
+        return dataFound ? data.Value : 0f;
+    }
+    
+    public static void SetSettingInt(string entryId, string valueId, int newValue)
+    {
+        _persistentDataObject.SetData<IntType>(CKSaveData_KEYS.Settings.TableName,
+            entryId, valueId, new IntType(newValue));
+        SaveData();
+    }
+    
+    public static int GetSettingInt(string entryId, string valueId)
+    {
+        var dataFound = _persistentDataObject.TryGetData(CKSaveData_KEYS.Settings.TableName, 
+            entryId, valueId, false, out IntType data);
+        return dataFound ? data.Value : 0;
+    }
+    
+    public static void SetSettingBool(string entryId, string valueId, bool newValue)
+    {
+        _persistentDataObject.SetData<BoolType>(CKSaveData_KEYS.Settings.TableName,
+            entryId, valueId, new BoolType(newValue));
+        SaveData();
+    }
+    
+    public static bool GetSettingBool(string entryId, string valueId)
+    {
+        var dataFound = _persistentDataObject.TryGetData(CKSaveData_KEYS.Settings.TableName, 
+            entryId, valueId, false, out BoolType data);
+        return dataFound && data.Value;
     }
 
     public static void SetNpcProgressionCurrentScene(int progress) =>
