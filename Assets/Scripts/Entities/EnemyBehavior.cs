@@ -70,11 +70,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [SerializeField] private float _rotationTime = 0.10f;
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
     [SerializeField] private Ease _movementEase = Ease.OutBack;
-    [SerializeField] private bool _endRotate = false;
+    private bool _endRotate = false;
 
     private int _offsetDestCount = 0;
-    [SerializeField] private bool _signatureChanged = false;
-    [SerializeField] private bool _firstTurnBack = false;
+    private bool _signatureIsChanged = false;
+    private bool _firstTurnBack = false;
 
     /// <summary>
     /// Helper enum for enemy directions.
@@ -142,7 +142,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     private int _moveIndex = 0;
     private bool _isReturningToStart = false;
-    [SerializeField] private int _indicatorIndex = 0;
+    private int _indicatorIndex = 0;
     private bool _indicatorReturningToStart = false;
 
     //public static PlayerMovement Instance;
@@ -605,9 +605,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     {
         //if the time signature changes the destination marker position changes
         //based on current enemy position
-        if (_enemyMovementTime != _originalEnemyMovementTime && !_signatureChanged || _enemyMovementTime == _originalEnemyMovementTime && _signatureChanged)
+        if (_enemyMovementTime != _originalEnemyMovementTime && !_signatureIsChanged || _enemyMovementTime == _originalEnemyMovementTime && _signatureIsChanged)
         {
-            _signatureChanged = !_signatureChanged;
+            _signatureIsChanged = !_signatureIsChanged;
             if (!looped)
             {
                 moveIndex = _moveDestinations.Count - 1;
@@ -617,7 +617,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 moveIndex = 0;
             }
 
-            if (!_signatureChanged)
+            if (!_signatureIsChanged)
             {
                 _firstTurnBack = true;
             }
@@ -651,7 +651,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 //we've returned to the start, so reset everything to be back as normal
                 if (moveIndex <= 0)
                 {
-                    if (_signatureChanged)
+                    if (_signatureIsChanged)
                     {
                         moveIndex = _moveDestinations.Count - 1;
                     }
