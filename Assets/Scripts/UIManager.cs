@@ -1,6 +1,6 @@
 /******************************************************************
  *    Author: Nick Grinstead
- *    Contributors:  Rider Hagen, Alec Pizziferro
+ *    Contributors:  Rider Hagen, Alec Pizziferro, Josephine Qualls
  *    Date Created: 9/28/24
  *    Description: Script designed to handle all realtime
  *    UI related functionality.
@@ -88,17 +88,22 @@ public class UIManager : MonoBehaviour, ITimeListener
         WinChecker.GotCorrectSequence += DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence += DisplayIncorrectMessage;
 
-        //make more thorough comments
+        //Assigns the name of scenes to the time signature in a level
         if (_levelNumber == null) return;
         if(_isChallenge)
         {
+            //Challenges are currently Challenge + their level number
             int index = SceneManager.GetActiveScene().buildIndex;
             _levelNumber.text = "Challenge: " + (index-1);
         }
         else
         {
+            //Levels are Level + lvl number
             _levelNumber.text = $"{LevelText} {SceneManager.GetActiveScene().buildIndex-1}";
         }
+
+        //Currently saving old if statement to potentially use/repurpose for Trinity's revisions
+
         /*if (LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames.Count > 0)
         {
             int index = SceneManager.GetActiveScene().buildIndex;
