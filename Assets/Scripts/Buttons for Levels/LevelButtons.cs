@@ -47,6 +47,7 @@ public class LevelButtons : MonoBehaviour
 
             for (; tally < range; tally++)
             {
+                //Make more thorough comments
                 string name = LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames[tally].PrettyName;
                 bool shown = LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames[tally].showUp;
 
@@ -84,7 +85,7 @@ public class LevelButtons : MonoBehaviour
                     obj.GetComponentInChildren<TextMeshProUGUI>().text = "Level: " + (tally-1).ToString();
                     obj.SetIndex(tally);
                 }
-
+                //make more thorough comments
             }
 
             if (i < _chapterLevelCount.Length)
