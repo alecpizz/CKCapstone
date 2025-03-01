@@ -616,7 +616,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         //based on current enemy position
         if (_metronomeTriggered)
         {
-            Debug.Log("Called!");
             _signatureIsChanged = !_signatureIsChanged;
             if (!looped)
             {
