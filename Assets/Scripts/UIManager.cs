@@ -89,20 +89,36 @@ public class UIManager : MonoBehaviour, ITimeListener
         WinChecker.GotWrongSequence += DisplayIncorrectMessage;
 
         if (_levelNumber == null) return;
-        if (LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames.Count > 0)
+        if(_isChallenge)
+        {
+            int index = SceneManager.GetActiveScene().buildIndex;
+            _levelNumber.text = "Challenge: " + (index-1);
+        }
+        else
+        {
+            _levelNumber.text = $"{LevelText} {SceneManager.GetActiveScene().buildIndex-1}";
+        }
+        /*if (LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames.Count > 0)
         {
             int index = SceneManager.GetActiveScene().buildIndex;
             var prettyName = LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames[index].PrettyName;
-            _levelNumber.text = "Level " + index; //Change to reflect what Trinity wants
+            _levelNumber.text = prettyName; //Change to reflect what Trinity wants
         }
         else
         {
             //legacy level ordering
             if (_isChallenge)
+            {
                 _levelNumber.text = "Challenge";
+                Debug.Log("it's challenging");
+            }
             else
+            {
                 _levelNumber.text = $"{LevelText} {SceneManager.GetActiveScene().buildIndex}";
-        }
+                Debug.Log("it's a level");
+            }
+                
+        }*/
     }
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
