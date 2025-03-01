@@ -16,6 +16,7 @@ using UnityEngine.Events;
 using FMODUnity;
 using FMOD.Studio;
 using SaintsField.Playa;
+using JetBrains.Annotations;
 
 public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
 {
@@ -44,6 +45,11 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         get => gameObject;
     }
 
+    public bool CanMove
+    {
+        get => _canMove;
+    }
+
     [SerializeField] private Vector3 _positionOffset;
     [SerializeField] private PlayerInteraction _playerInteraction;
 
@@ -61,7 +67,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
     [SerializeField] private Ease _movementEase = Ease.OutBack;
 
-    private bool _canMove = true;
+    private bool _canMove;
 
     private float _movementTime;
     // Timing from metronome
