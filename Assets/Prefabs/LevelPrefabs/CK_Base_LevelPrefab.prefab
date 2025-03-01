@@ -76,6 +76,7 @@ Transform:
   - {fileID: 2847843138469851440}
   - {fileID: 2899967879648720470}
   - {fileID: 3390212648505983337}
+  - {fileID: 5792554352911199524}
   m_Father: {fileID: 7757164700761813088}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &60416241635667619
@@ -403,6 +404,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7679393244411939135, guid: 6a8517eb504a3dc4f90bc546f81eaf46,
+        type: 3}
+      propertyPath: _minimumTurns
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 7909984034791231927, guid: 6a8517eb504a3dc4f90bc546f81eaf46,
         type: 3}
@@ -739,6 +745,80 @@ Camera:
   m_CorrespondingSourceObject: {fileID: 4683610404614779068, guid: a05909e896e090c42bd385f5536bbee7,
     type: 3}
   m_PrefabInstance: {fileID: 3072825376653527934}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &4143610745063566606
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 6409311488171112465}
+    m_Modifications:
+    - target: {fileID: 7629759102199742506, guid: b1d20e911406ccf43a4e7774100101d0,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7629759102199742506, guid: b1d20e911406ccf43a4e7774100101d0,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7629759102199742506, guid: b1d20e911406ccf43a4e7774100101d0,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7629759102199742506, guid: b1d20e911406ccf43a4e7774100101d0,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7629759102199742506, guid: b1d20e911406ccf43a4e7774100101d0,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7629759102199742506, guid: b1d20e911406ccf43a4e7774100101d0,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7629759102199742506, guid: b1d20e911406ccf43a4e7774100101d0,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7629759102199742506, guid: b1d20e911406ccf43a4e7774100101d0,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7629759102199742506, guid: b1d20e911406ccf43a4e7774100101d0,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7629759102199742506, guid: b1d20e911406ccf43a4e7774100101d0,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9213165834202153968, guid: b1d20e911406ccf43a4e7774100101d0,
+        type: 3}
+      propertyPath: m_Name
+      value: SaveDataManager
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b1d20e911406ccf43a4e7774100101d0, type: 3}
+--- !u!4 &5792554352911199524 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7629759102199742506, guid: b1d20e911406ccf43a4e7774100101d0,
+    type: 3}
+  m_PrefabInstance: {fileID: 4143610745063566606}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4523127398049366506
 PrefabInstance:
@@ -1081,6 +1161,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Vignette
+      objectReference: {fileID: 0}
+    - target: {fileID: 7092156318909829935, guid: 4639ae9dc354ca344b22bfaa9de2f6fa,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

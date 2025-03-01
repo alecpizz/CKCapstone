@@ -18,10 +18,8 @@ using UnityEngine.InputSystem;
 public enum TurnState
 {
     Player = 0,
-    World = 1,
-    Enemy = 2,
-    SecondWorld = 3,
-    None = 4,
+    Enemy = 1,
+    None = 2,
 }
 
 
@@ -59,11 +57,6 @@ public sealed class RoundManager : MonoBehaviour
     public bool IsPlayerTurn => _turnState == TurnState.Player;
 
     /// <summary>
-    /// Whether it's the world's turn.
-    /// </summary>
-    public bool IsWorldTurn => _turnState == TurnState.World;
-
-    /// <summary>
     /// Whether enemies exist in the given scene.
     /// </summary>
     public bool EnemiesPresent => _turnListeners[TurnState.Enemy].Count > 0;
@@ -72,11 +65,6 @@ public sealed class RoundManager : MonoBehaviour
     /// Whether it's the enemy's turn.
     /// </summary>
     public bool IsEnemyTurn => _turnState == TurnState.Enemy;
-
-    /// <summary>
-    /// Whether it's the second world turn
-    /// </summary>
-    public bool IsSecondWorldTurn => _turnState == TurnState.SecondWorld;
 
     /// <summary>
     /// Sets the singleton instance and initializes the dictionaries for
@@ -243,6 +231,8 @@ public sealed class RoundManager : MonoBehaviour
                 
             if(!doAutocomplete)
                 DisableAutocomplete();
+            //if(Time.unscaledTime - _movementRegisteredTime <= _inputBufferWindow)
+            //    PerformMovement();
 
             return;
         }
@@ -393,10 +383,8 @@ public sealed class RoundManager : MonoBehaviour
     {
         return turnState switch
         {
-            TurnState.Player => TurnState.World,
-            TurnState.World => TurnState.Enemy,
-            TurnState.Enemy => TurnState.SecondWorld,
-            TurnState.SecondWorld => TurnState.None,
+            TurnState.Player => TurnState.Enemy,
+            TurnState.Enemy => TurnState.None,
             _ => null
         };
     }
@@ -411,9 +399,7 @@ public sealed class RoundManager : MonoBehaviour
         return turnState switch
         {
             TurnState.Player => TurnState.None,
-            TurnState.World => TurnState.Player,
-            TurnState.Enemy => TurnState.World,
-            TurnState.SecondWorld => TurnState.Enemy,
+            TurnState.Enemy => TurnState.Player,
             _ => null
         };
     }
