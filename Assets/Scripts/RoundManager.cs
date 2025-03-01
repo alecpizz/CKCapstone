@@ -129,7 +129,10 @@ public sealed class RoundManager : MonoBehaviour
         // Not being called unless movement is blocked
         if (_playerControls.InGame.Movement.IsPressed() && !TurnInProgress)
         {
-            PerformMovement();
+            if(PlayerMovement.Instance.CanMove)
+            {
+                PerformMovement();
+            }
         }
     }
 
