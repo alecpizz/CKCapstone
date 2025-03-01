@@ -75,6 +75,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private int _offsetDestCount = 0;
     private bool _signatureIsChanged = false;
     private bool _firstTurnBack = false;
+    private bool _metronomeTriggered = false;
+    private bool _notFirstCheck = false;
 
     /// <summary>
     /// Helper enum for enemy directions.
@@ -136,7 +138,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     // Timing from metronome
     private int _enemyMovementTime = 1;
-    private int _originalEnemyMovementTime = 1;
 
     private Rigidbody _rb;
 
@@ -186,8 +187,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
         _destPathVFX.SetActive(false);
         _destinationMarker.SetActive(false);
-
-        _originalEnemyMovementTime = _enemyMovementTime;
 
         UpdateDestinationMarker();
         DestinationPath();
@@ -367,6 +366,16 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// <param name="newTimeSignature">The new time signature.</param>
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
     {
+        if (_enemyMovementTime != newTimeSignature.y && _notFirstCheck)
+        {
+            _metronomeTriggered = true;
+        }
+        
+        if (!_notFirstCheck)
+        {
+            _notFirstCheck = true;
+        }
+
         _enemyMovementTime = newTimeSignature.y;
 
         if (_enemyMovementTime <= 0)
@@ -605,8 +614,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     {
         //if the time signature changes the destination marker position changes
         //based on current enemy position
-        if (_enemyMovementTime != _originalEnemyMovementTime && !_signatureIsChanged || _enemyMovementTime == _originalEnemyMovementTime && _signatureIsChanged)
+        if (_metronomeTriggered)
         {
+            Debug.Log("Called!");
             _signatureIsChanged = !_signatureIsChanged;
             if (!looped)
             {
@@ -621,6 +631,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             {
                 _firstTurnBack = true;
             }
+            _metronomeTriggered = false;
         }
 
         //not at the end of our list of moves.
