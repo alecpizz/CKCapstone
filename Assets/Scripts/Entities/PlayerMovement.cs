@@ -157,7 +157,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// <returns>Waits for short delay while moving</returns>
     private IEnumerator MovePlayer(Vector3 moveDirection)
     {
-        float modifiedMovementTime = Mathf.Clamp(_movementTime / _playerMovementTiming,
+        float modifiedMovementTime = Mathf.Clamp(_movementTime / (_playerMovementTiming + 1),
             _minMovementTime, float.MaxValue);
 
         for (int i = 0; i < _playerMovementTiming; i++)
@@ -297,6 +297,10 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z);
     }
 
+    /// <summary>
+    /// Toggles dash particles when the autocomplete is toggled on/off
+    /// </summary>
+    /// <param name="isActive"></param>
     private void OnAutocompleteToggledEvent(bool isActive)
     {
         if (isActive)

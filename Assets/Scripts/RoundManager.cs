@@ -42,7 +42,7 @@ public sealed class RoundManager : MonoBehaviour
     [SerializeField] private EventReference _enemyTurnEvent;
 
     [Header("Autocomplete Mechanic")]
-    [SerializeField] private float _autocompleteSpeed = 3;
+    [SerializeField, Tooltip("Timescale during autocomplete dash")] private float _autocompleteSpeed = 3;
 
     public event Action<bool> AutocompleteToggled;
 
@@ -216,7 +216,7 @@ public sealed class RoundManager : MonoBehaviour
         {
             _turnState = TurnState.None;
             // Attempts to move player if they buffered an input
-            bool doAutocomplete = false;
+            /*bool doAutocomplete = false;
             if(Time.unscaledTime - _movementRegisteredTime <= _inputBufferWindow)
             {
                 if (_lastMovementInput == GetNormalizedInput())
@@ -231,9 +231,8 @@ public sealed class RoundManager : MonoBehaviour
                 
             if(!doAutocomplete)
                 DisableAutocomplete();
-            //if(Time.unscaledTime - _movementRegisteredTime <= _inputBufferWindow)
-            //    PerformMovement();
-
+            */
+            DisableAutocomplete();
             return;
         }
 
@@ -348,18 +347,28 @@ public sealed class RoundManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Speeds up timescale for a short duration. Call DisableAutocomplete() to toggle off
+    /// </summary>
     private void EnableAutocomplete()
     {
         Time.timeScale = _autocompleteSpeed;
         AutocompleteToggled?.Invoke(true);
     }
 
+    /// <summary>
+    /// Returns timescale to default
+    /// </summary>
     private void DisableAutocomplete()
     {
         Time.timeScale = 1;
         AutocompleteToggled?.Invoke(false);
     }
 
+    /// <summary>
+    /// Fetches and normalizes the input of the player
+    /// </summary>
+    /// <returns>Normalized input vector</returns>
     private Vector3 GetNormalizedInput()
     {
         Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>();
