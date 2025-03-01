@@ -642,18 +642,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 moveIndex += _enemyMovementTime;
 
                 //if time signature exceeds enemy position count start reversing
-                if (moveIndex > _moveDestinations.Count - 1)
-                {
-                    _offsetDestCount = -moveIndex;
-                    moveIndex = _moveDestinations.Count - 1;
-                    moveIndex += _offsetDestCount;
-                }
-                if (moveIndex < 0)
-                {
-                    _offsetDestCount = -moveIndex;
-                    moveIndex = 0;
-                    moveIndex += _offsetDestCount;
-                }
+                HandleOverflow(ref _indicatorIndex, ref looped);
             }
             else
             {
@@ -693,18 +682,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 }
 
                 //if time signature exceeds enemy position count start reversing
-                if (moveIndex < 0)
-                {
-                    _offsetDestCount = -moveIndex;
-                    moveIndex = 0;
-                    moveIndex += _offsetDestCount;
-                }
-                if (moveIndex > _moveDestinations.Count - 1)
-                {
-                    _offsetDestCount = -moveIndex;
-                    moveIndex = _moveDestinations.Count - 1;
-                    moveIndex += _offsetDestCount;
-                }
+                HandleOverflow(ref _indicatorIndex, ref looped);
             }
             else
             {
@@ -715,9 +693,51 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     }
 
     /// <summary>
-    /// Can force enemy turn to end early
+    /// Handles moveIndex for the NextMarkerDestination function if the
+    /// time signature movement exceeds the boundaries of 0 or the
+    /// _moveDestinations list count.
     /// </summary>
-    public void ForceTurnEnd()
+    /// <param name="moveIndex">Reference to the evaluated move index.</param>
+    /// <param name="looped">Reference to the evaluated loop state.</param>
+    private void HandleOverflow(ref int moveIndex, ref bool looped)
+    {
+        if (looped)
+        {
+            if (moveIndex < 0)
+            {
+                _offsetDestCount = -moveIndex;
+                moveIndex = 0;
+                moveIndex += _offsetDestCount;
+            }
+            if (moveIndex > _moveDestinations.Count - 1)
+            {
+                _offsetDestCount = -moveIndex;
+                moveIndex = _moveDestinations.Count - 1;
+                moveIndex += _offsetDestCount;
+            }
+        }
+        else
+        {
+            if (moveIndex > _moveDestinations.Count - 1)
+            {
+                _offsetDestCount = -moveIndex;
+                moveIndex = _moveDestinations.Count - 1;
+                moveIndex += _offsetDestCount;
+            }
+            if (moveIndex < 0)
+            {
+                _offsetDestCount = -moveIndex;
+                moveIndex = 0;
+                moveIndex += _offsetDestCount;
+            }
+        }
+    }
+
+
+        /// <summary>
+        /// Can force enemy turn to end early
+        /// </summary>
+        public void ForceTurnEnd()
     {
         StopAllCoroutines();
         GridBase.Instance.UpdateEntry(this);
