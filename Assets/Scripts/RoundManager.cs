@@ -123,7 +123,7 @@ public sealed class RoundManager : MonoBehaviour
     {
         if (_playerControls.InGame.Movement.IsPressed() && !TurnInProgress)
         {
-            if(PlayerMovement.Instance._canMove == true)
+            if(PlayerMovement.Instance.CanMove)
             {
                 PerformMovement();
             }
