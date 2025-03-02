@@ -1,22 +1,26 @@
 /******************************************************************
  *    Author: Alec Pizziferro
- *    Contributors:  nullptr
+ *    Contributors:  Josephine Qualls
  *    Date Created: 1/30/2025
  *    Description: A scriptable object for handling level ordering.
  *    contains tools to add scenes quicker. This is a EDITOR ONLY
  *    class. It is also a singleton.
  *******************************************************************/
+
 using System;
 using System.Collections.Generic;
 using SaintsField;
 using SaintsField.Playa;
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.SceneManagement;
+#endif
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "LevelOrder", menuName = "ScriptableObjects/Level Order", order = 0)]
-public class LevelOrder : ScriptableSingleton<LevelOrder>
+public class LevelOrder : ScriptableObject
 {
+#if UNITY_EDITOR
     [field: SerializeField, SepTitle("Main Menu", EColor.Aqua), BelowSeparator(EColor.Aqua)]
     public SceneAsset MainMenuScene { get; private set; }
 
@@ -41,6 +45,7 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
 
         [field: SerializeField, SepTitle("Outro Level", EColor.Red), SaintsRow(inline: true)]
         public LevelData Outro { get; internal set; } = new();
+
         public LevelData GetStartingLevel => Intro.Scene ? Intro : Puzzles[0];
     }
 
@@ -94,9 +99,10 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
         }
     }
 
-    [field: SerializeField, ListDrawerSettings(searchable: true, 2)]
+    [field: SerializeField, ListDrawerSettings(searchable: true, 5)]
     public List<Chapter> Chapters { get; private set; } = new();
-    [field: SerializeField, SepTitle("Credits Scene", EColor.Magenta), BelowSeparator(EColor.Magenta)] 
+
+    [field: SerializeField, SepTitle("Credits Scene", EColor.Magenta), BelowSeparator(EColor.Magenta)]
     public SceneAsset CreditsScene { get; private set; }
 
     [PlayaInfoBox("Chapter Creation", EMessageType.Info)] [SerializeField]
@@ -114,10 +120,25 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
     [BelowButton(nameof(ClearLevels), groupBy: "Chapter2")]
     [BelowButton(nameof(ClearIntro), groupBy: "Chapter2")]
     [BelowButton(nameof(ClearOutro), groupBy: "Chapter2")]
-    [BelowButton(nameof(RunBuildPreProcess), groupBy: "Build")]
+    // [BelowButton(nameof(RunBuildPreProcess), groupBy: "Build")]
     private LevelData _inputLevelData;
+#endif
 
+    [field: SerializeField] public List<PrettyData> PrettySceneNames { get; set; } = new();
+    [field: SerializeField] public List<string> PrettyChapterNames { get; set; } = new();
 
+    /// <summary>
+    /// Structure to keep track of what kind of scene is what.
+    /// </summary>
+    [Serializable]
+    public struct PrettyData
+    {
+        public string PrettyName;
+        public bool showUp;
+
+    }
+
+#if UNITY_EDITOR
     /// <summary>
     /// Add a level to the current chapter.
     /// Editor only
@@ -129,7 +150,7 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
         EditorUtility.SetDirty(this);
         Undo.RecordObject(this, "Add Level");
     }
-    
+
     /// <summary>
     /// Clears the levels in a chapter.
     /// </summary>
@@ -185,19 +206,20 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
         Undo.RecordObject(this, "Clear Intro");
     }
 
-    /// <summary>
-    /// Runs the build linking step manually.
-    /// </summary>
-    private void RunBuildPreProcess()
-    {
-        if (EditorUtility.DisplayDialog("Build Pre-Process Warning",
-                "This may take a moment, are you sure you wish to run the build pre-process?", "Yes",
-                "No, take me back!"))
-        {
-            CKBuildPreProcessor.BuildSceneIndex();
-        }
-    }
-    
+    // /// <summary>
+    // /// Runs the build linking step manually.
+    // /// </summary>
+    // private void RunBuildPreProcess()
+    // {
+    //     EditorUtility.RequestScriptReload();
+    //     if (EditorUtility.DisplayDialog("Build Pre-Process Warning",
+    //             "This may take a moment, are you sure you wish to run the build pre-process?", "Yes",
+    //             "No, take me back!"))
+    //     {
+    //         CKBuildPreProcessor.BuildSceneIndex();
+    //     }
+    // }
+
     /// <summary>
     /// Will grab or add the chapter by name.
     /// </summary>
@@ -220,4 +242,5 @@ public class LevelOrder : ScriptableSingleton<LevelOrder>
 
         return chapter;
     }
+#endif
 }

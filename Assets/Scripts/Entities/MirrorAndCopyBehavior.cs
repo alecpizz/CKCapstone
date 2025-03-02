@@ -8,6 +8,7 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using FMODUnity;
 using PrimeTween;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -61,6 +62,9 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     //public static PlayerMovement Instance;
     private static readonly int Forward = Animator.StringToHash("Forward");
     [SerializeField] private Animator _animator;
+    
+    //
+    [SerializeField] private EventReference _walkSound;
 
     /// <summary>
     /// Prime tween configuration
@@ -166,6 +170,11 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                     Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
                     ease: _rotationEase);
 
+                    if (AudioManager.Instance != null && _mirrored)
+                    {
+                        AudioManager.Instance.PlaySound(_walkSound);
+                    }
+                    
                     yield return Tween.Position(transform,
                         move + _positionOffset, modifiedMovementTime, ease: _movementEase).OnUpdate<MirrorAndCopyBehavior>(target: this, (target, tween) =>
                         {
