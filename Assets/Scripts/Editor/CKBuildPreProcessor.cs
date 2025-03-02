@@ -7,9 +7,11 @@
  *******************************************************************/
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEditor.Build;
+using UnityEditor.Build.Player;
 using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -34,6 +36,32 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             //apply build scenes
             BuildSceneIndex();
         }
+
+        //TODO: other platform support
+        List<string> symbols = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.Standalone).Split(';').ToList();
+        bool hasOverride = symbols.Any(symbol => symbol.ToUpper() == "OVERRIDE_LEVEL");
+        if (EditorUtility.DisplayDialog("Build Pre-Process Question",
+                "Do you wish to build with all levels in level select unlocked?", "yes", "no"))
+        {
+            if (!hasOverride)
+            {
+                symbols.Add("OVERRIDE_LEVEL");
+            }
+        }
+        else
+        {
+            if (hasOverride)
+            {
+                symbols.Remove("OVERRIDE_LEVEL");
+            }
+        }
+        PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.Standalone, symbols.ToArray());
+    }
+
+    [MenuItem("Tools/Crowded Kitchen/Script Defines")]
+    public static void CheckScriptingDefines()
+    {
+        string symbols = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.Standalone);
     }
 
     /// <summary>
