@@ -20,7 +20,7 @@ public static class SaveDataManager
     private static DataboxObject _saveDataReference = null;
     private static DataboxObject _persistentDataObject = null;
     private static readonly string PersistentDataPath = Path.Combine(Application.persistentDataPath, "CKSave.json");
-
+    private const string SaveDataResourcesPath = "CKSaveData";
     /// <summary>
     /// Initializes the manager. This will run before scene load.
     /// Creates the save data in persistent data and copies it over. 
@@ -31,7 +31,7 @@ public static class SaveDataManager
         //already initialized, return.
         if (_saveDataReference != null && _persistentDataObject != null) return;
         //grab save data reference from resources
-        _saveDataReference = Resources.Load<DataboxObject>("CKSaveData");
+        _saveDataReference = Resources.Load<DataboxObject>(SaveDataResourcesPath);
         if (_saveDataReference == null)
         {
             throw new Exception("Save data reference not found in resources!");
