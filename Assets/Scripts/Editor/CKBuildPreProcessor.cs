@@ -37,6 +37,12 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             BuildSceneIndex();
         }
 
+        CheckScriptingDefines();
+    }
+
+    [MenuItem("Tools/Crowded Kitchen/Script Defines")]
+    public static void CheckScriptingDefines()
+    {
         var buildTarget = NamedBuildTarget.FromBuildTargetGroup(
             BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget));
         List<string> symbols = PlayerSettings.GetScriptingDefineSymbols(buildTarget).Split(';').ToList();
@@ -58,12 +64,6 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         }
 
         PlayerSettings.SetScriptingDefineSymbols(buildTarget, symbols.ToArray());
-    }
-
-    [MenuItem("Tools/Crowded Kitchen/Script Defines")]
-    public static void CheckScriptingDefines()
-    {
-        string symbols = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.Standalone);
     }
 
     /// <summary>
