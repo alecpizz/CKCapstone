@@ -1,6 +1,6 @@
 /******************************************************************
  *    Author: Nick Grinstead
- *    Contributors:  Rider Hagen, Alec Pizziferro
+ *    Contributors:  Rider Hagen, Alec Pizziferro, Josephine Qualls
  *    Date Created: 9/28/24
  *    Description: Script designed to handle all realtime
  *    UI related functionality.
@@ -88,14 +88,43 @@ public class UIManager : MonoBehaviour, ITimeListener
         WinChecker.GotCorrectSequence += DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence += DisplayIncorrectMessage;
 
-        //Note (ALEC): I commented this out assuming that we will set this up in build.
-        if (_levelNumber != null)
+        //Assigns the name of scenes to the time signature in a level
+        if (_levelNumber == null) return;
+        if(_isChallenge)
         {
-            if (_isChallenge)
-                _levelNumber.text = "Challenge";
-            else
-                _levelNumber.text = $"{LevelText} {SceneManager.GetActiveScene().buildIndex}";
+            //Challenges are currently Challenge + their level number
+            int index = SceneManager.GetActiveScene().buildIndex;
+            _levelNumber.text = "Challenge: " + (index-1);
         }
+        else
+        {
+            //Levels are Level + lvl number
+            _levelNumber.text = $"{LevelText} {SceneManager.GetActiveScene().buildIndex-1}";
+        }
+
+        //Currently saving old if statement to potentially use/repurpose for Trinity's revisions
+
+        /*if (LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames.Count > 0)
+        {
+            int index = SceneManager.GetActiveScene().buildIndex;
+            var prettyName = LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames[index].PrettyName;
+            _levelNumber.text = prettyName; //Change to reflect what Trinity wants
+        }
+        else
+        {
+            //legacy level ordering
+            if (_isChallenge)
+            {
+                _levelNumber.text = "Challenge";
+                Debug.Log("it's challenging");
+            }
+            else
+            {
+                _levelNumber.text = $"{LevelText} {SceneManager.GetActiveScene().buildIndex}";
+                Debug.Log("it's a level");
+            }
+                
+        }*/
     }
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
