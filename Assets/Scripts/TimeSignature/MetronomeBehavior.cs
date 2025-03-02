@@ -81,9 +81,6 @@ public class MetronomeBehavior : MonoBehaviour
         _isSlow = !_isSlow;
         
         _anim.speed = _isSlow ? _slowSpeed : _fastSpeed;
-       // print("Updated Speed: " + _anim.speed);
-
-        //_anim.SetBool("WeightUp", isSlow);
     }
 
     /// <summary>
@@ -142,7 +139,11 @@ public class MetronomeBehavior : MonoBehaviour
         _contactIndicator.Play();
         _HUDEffect.SetActive(false);
 
-        _player.ForceTurnEnd();
+        PlayerMovement playerMovement;
+        if (other.gameObject.TryGetComponent<PlayerMovement>(out  playerMovement))
+        {
+            playerMovement.ForceTurnEnd();
+        }
 
         EnemyBehavior enemyBehavior;
         if (other.gameObject.TryGetComponent<EnemyBehavior>(out enemyBehavior))
