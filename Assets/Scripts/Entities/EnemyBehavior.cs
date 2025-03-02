@@ -154,6 +154,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     //public static PlayerMovement Instance;
     private static readonly int Forward = Animator.StringToHash("Forward");
+    private static readonly int Turn = Animator.StringToHash("Turn");
 
 
     [SerializeField] private Animator _animator;
@@ -491,6 +492,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
             if (_endRotate)
             {
+                if (_animator != null)
+                {
+                    _animator.SetTrigger(Turn);
+                }
                 yield return Tween.Rotation(transform, endValue: Quaternion.LookRotation(-rotationDir),
                 duration: _rotationTime,
                 ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).ToYieldInstruction();
