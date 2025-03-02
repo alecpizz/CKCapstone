@@ -118,13 +118,4 @@ public class LevelButtons : MonoBehaviour
             _chapters[i].SetActive(i == num);
         }
     }
-
-    /// <summary>
-    /// Gives the number of scenes in the build.
-    /// </summary>
-    /// <returns></returns>
-    private int SceneNum()
-    {
-        return SceneManager.sceneCountInBuildSettings;
-    }
 }
