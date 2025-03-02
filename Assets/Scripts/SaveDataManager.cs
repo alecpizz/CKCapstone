@@ -31,7 +31,7 @@ public static class SaveDataManager
         //already initialized, return.
         if (_saveDataReference != null && _persistentDataObject != null) return;
         //grab save data reference from resources
-        _saveDataReference = Resources.FindObjectsOfTypeAll<DataboxObject>()[0];
+        _saveDataReference = Resources.Load<DataboxObject>("CKSaveData");
         if (_saveDataReference == null)
         {
             throw new Exception("Save data reference not found in resources!");
