@@ -37,8 +37,9 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             BuildSceneIndex();
         }
 
-        //TODO: other platform support
-        List<string> symbols = PlayerSettings.GetScriptingDefineSymbols(NamedBuildTarget.Standalone).Split(';').ToList();
+        var buildTarget = NamedBuildTarget.FromBuildTargetGroup(
+            BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget));
+        List<string> symbols = PlayerSettings.GetScriptingDefineSymbols(buildTarget).Split(';').ToList();
         bool hasOverride = symbols.Any(symbol => symbol.ToUpper() == "OVERRIDE_LEVEL");
         if (EditorUtility.DisplayDialog("Build Pre-Process Question",
                 "Do you wish to build with all levels in level select unlocked?", "yes", "no"))
@@ -55,7 +56,8 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 symbols.Remove("OVERRIDE_LEVEL");
             }
         }
-        PlayerSettings.SetScriptingDefineSymbols(NamedBuildTarget.Standalone, symbols.ToArray());
+
+        PlayerSettings.SetScriptingDefineSymbols(buildTarget, symbols.ToArray());
     }
 
     [MenuItem("Tools/Crowded Kitchen/Script Defines")]
@@ -83,7 +85,8 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         if (menuManager != null)
         {
             //use reflection to set the menu manager's load value
-            var field = menuManager.GetType().GetField("_firstLevelIndex", BindingFlags.Instance | BindingFlags.NonPublic);
+            var field = menuManager.GetType()
+                .GetField("_firstLevelIndex", BindingFlags.Instance | BindingFlags.NonPublic);
             if (field != null)
             {
                 int index = SceneUtility.GetBuildIndexByScenePath(
@@ -132,7 +135,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         var cutsceneFrameWork = Object.FindObjectOfType<CutsceneFramework>();
         if (cutsceneFrameWork != null)
         {
-            var field = cutsceneFrameWork.GetType().GetField("_loadingLevelIndex", 
+            var field = cutsceneFrameWork.GetType().GetField("_loadingLevelIndex",
                 BindingFlags.Instance | BindingFlags.NonPublic);
             if (field != null)
             {
@@ -214,6 +217,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 Debug.LogError($"Missing scene! {currentLevel.LevelName}");
                 continue;
             }
+
             var currScene = EditorSceneManager.OpenScene(
                 AssetDatabase.GetAssetPath(currentLevel.Scene));
             var doors = Object.FindObjectsOfType<EndLevelDoor>();
@@ -222,7 +226,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             if (doors.Length > 2)
             {
                 Debug.LogWarning("There are more than 2 doors in this scene. " +
-                    "There may be duplicate exits...");
+                                 "There may be duplicate exits...");
             }
 
             foreach (var endLevelDoor in doors)
@@ -281,7 +285,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
     private static void AddScenesToBuild()
     {
         //TODO: double check levels aren't being included twice lol
-        List<EditorBuildSettingsScene> editorBuildSettingsScenes = 
+        List<EditorBuildSettingsScene> editorBuildSettingsScenes =
             new List<EditorBuildSettingsScene>();
         var levelData = LevelOrderSelection.Instance.SelectedLevelData;
         levelData.PrettyChapterNames.Clear();
@@ -289,8 +293,8 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         //add the main menu scene
         editorBuildSettingsScenes.Add(
             new EditorBuildSettingsScene(AssetDatabase.GetAssetPath(levelData.MainMenuScene),
-            true));
-        levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = "Main Menu", showUp = false });
+                true));
+        levelData.PrettySceneNames.Add(new LevelOrder.PrettyData {PrettyName = "Main Menu", showUp = false});
         //add each chapter's data
         int chapterIndex = 0;
         foreach (var chapter in levelData.Chapters)
@@ -302,7 +306,8 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                     AssetDatabase.GetAssetPath(chapter.Intro.Scene),
                     true));
-                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = chapter.Intro.LevelName, showUp = false });
+                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData
+                    {PrettyName = chapter.Intro.LevelName, showUp = false});
             }
 
             //add all puzzles
@@ -312,7 +317,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                     AssetDatabase.GetAssetPath(level.Scene),
                     true));
-                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = level.LevelName, showUp = true });
+                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData {PrettyName = level.LevelName, showUp = true});
             }
 
             //add outro scene
@@ -321,7 +326,8 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                     AssetDatabase.GetAssetPath(chapter.Outro.Scene),
                     true));
-                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = chapter.Outro.LevelName, showUp = true });
+                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData
+                    {PrettyName = chapter.Outro.LevelName, showUp = true});
             }
         }
 
@@ -335,11 +341,11 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                 AssetDatabase.GetAssetPath(levelData.CreditsScene),
                 true));
-            levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = "Credits Scene", showUp = false });
+            levelData.PrettySceneNames.Add(new LevelOrder.PrettyData {PrettyName = "Credits Scene", showUp = false});
         }
+
         EditorUtility.SetDirty(levelData);
         Debug.Log($"Added {editorBuildSettingsScenes.Count} Scenes");
         EditorBuildSettings.scenes = editorBuildSettingsScenes.ToArray();
     }
-    
 }
