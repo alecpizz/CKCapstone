@@ -56,8 +56,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     [SerializeField] private Animator _animator;
     
     //
-    [SerializeField] private EventReference _mirrorWalkSound;
-    [SerializeField] private EventReference _copyWalkSound;
+    [SerializeField] private EventReference _walkSound;
 
     /// <summary>
     /// Prime tween configuration
@@ -161,16 +160,9 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                     Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
                     ease: _rotationEase);
 
-                    //For Son walk sound
                     if (AudioManager.Instance != null && _mirrored)
                     {
-                        AudioManager.Instance.PlaySound(_copyWalkSound);
-                        Debug.Log("playing once");
-                    }
-                    //For Mother walk sound
-                    if (AudioManager.Instance != null && !_mirrored)
-                    {
-                        AudioManager.Instance.PlaySound(_mirrorWalkSound);
+                        AudioManager.Instance.PlaySound(_walkSound);
                     }
                     
                     yield return Tween.Position(transform,

@@ -451,7 +451,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                         }
                     });
             AudioManager.Instance.PlaySound(_enemyMove);
-            Debug.Log("sound");
             yield return Tween.Rotation(transform, endValue: Quaternion.LookRotation(rotationDir),
                 duration: _rotationTime,
                 ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).Chain(tween).ToYieldInstruction();
