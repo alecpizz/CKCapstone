@@ -475,10 +475,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                             SceneController.Instance.ReloadCurrentScene();
                         }
                     });
+            AudioManager.Instance.PlaySound(_enemyMove);
             yield return Tween.Rotation(transform, endValue: Quaternion.LookRotation(rotationDir),
                 duration: _rotationTime,
                 ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).Chain(tween).ToYieldInstruction();
-            AudioManager.Instance.PlaySound(_enemyMove);
             GridBase.Instance.UpdateEntry(this);
 
             if (_endRotate)
@@ -489,12 +489,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 _endRotate = false;
             }
         }
-
         if (!blocked)
         {
             UpdateDestinationMarker();
         }
-
+        
         RoundManager.Instance.CompleteTurn(this);
     }
 
