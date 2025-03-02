@@ -701,14 +701,18 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// <param name="looped">Reference to the evaluated loop state.</param>
     private void HandleOverflow(ref int moveIndex, ref bool looped)
     {
+        //If going back through the list check for less than before
+        //greater than.
         if (looped)
         {
+            //Increases if below 0
             if (moveIndex < 0)
             {
                 _offsetDestCount = -moveIndex;
                 moveIndex = 0;
                 moveIndex += _offsetDestCount;
             }
+            //Decreases if over _moveDestinations count
             if (moveIndex > _moveDestinations.Count - 1)
             {
                 _offsetDestCount = -moveIndex;
@@ -716,14 +720,18 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 moveIndex += _offsetDestCount;
             }
         }
+        //If going normally through the list check for greater than before
+        //less than.
         else
         {
+            //Decreases if over _moveDestinations count
             if (moveIndex > _moveDestinations.Count - 1)
             {
                 _offsetDestCount = -moveIndex;
                 moveIndex = _moveDestinations.Count - 1;
                 moveIndex += _offsetDestCount;
             }
+            //Increases if below 0
             if (moveIndex < 0)
             {
                 _offsetDestCount = -moveIndex;
