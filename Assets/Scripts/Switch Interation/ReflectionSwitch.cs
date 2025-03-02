@@ -14,7 +14,7 @@ using UnityEngine;
 /// <summary>
 /// Inherits methods from IParentSwitch
 /// </summary>
-public class ReflectionSwitch : MonoBehaviour, IParentSwitch, ITurnListener
+public class ReflectionSwitch : MonoBehaviour, IParentSwitch
 {
     //Assign relevant reflection cube
     [SerializeField] ReflectiveObject _mirror;
@@ -25,40 +25,14 @@ public class ReflectionSwitch : MonoBehaviour, IParentSwitch, ITurnListener
     [ProgressBar(-270f, 270f, 90f)]
     [SerializeField] private float _rotationDegrees = 180f;
 
-    public TurnState TurnState => TurnState.World;
-    public TurnState SecondaryTurnState => TurnState.SecondWorld;
-
-    private bool _shouldMoveOnTurn = false;
     private bool _shouldActivate = false;
-
-    /// <summary>
-    /// Registers instance to the RoundManager
-    /// </summary>
-    private void OnEnable()
-    {
-        if (RoundManager.Instance != null)
-        {
-            RoundManager.Instance.RegisterListener(this);
-        }
-    }
-
-    /// <summary>
-    /// Unregistering from RoundManager
-    /// </summary>
-    private void OnDisable()
-    {
-        if (RoundManager.Instance != null)
-        {
-            RoundManager.Instance.UnRegisterListener(this);
-        }
-    }
 
     /// <summary>
     /// When switch is on, the reflection will face the opposite direction
     /// </summary>
     public void SwitchActivation()
     {
-        _shouldMoveOnTurn = true;
+        MoveObject();
         _shouldActivate = !_shouldActivate;
     }
 
@@ -67,15 +41,8 @@ public class ReflectionSwitch : MonoBehaviour, IParentSwitch, ITurnListener
     /// of its attached mirror
     /// </summary>
     /// <param name="direction">The direction the player moved</param>
-    public void BeginTurn(Vector3 direction)
+    public void MoveObject()
     {
-        if (!_shouldMoveOnTurn)
-        {
-            RoundManager.Instance.CompleteTurn(this);
-            return;
-        }
-
-        _shouldMoveOnTurn = false;
         _mirror.ToggleBeam(false);
 
         Vector3 targetRotation = transform.eulerAngles;
@@ -93,15 +60,5 @@ public class ReflectionSwitch : MonoBehaviour, IParentSwitch, ITurnListener
     private void ResetOnTweenEnd()
     {
         _mirror.CheckForBeamPostRotation();
-        RoundManager.Instance.CompleteTurn(this);
-    }
-
-    /// <summary>
-    /// Forcibly ends this object's turn
-    /// </summary>
-    public void ForceTurnEnd()
-    {
-        _shouldMoveOnTurn = false;
-        RoundManager.Instance.CompleteTurn(this);
     }
 }
