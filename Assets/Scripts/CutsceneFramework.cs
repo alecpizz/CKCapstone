@@ -17,8 +17,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-// Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement
-// the functionality for playing a video, particularly for the End Chapter Cutscene)
+// Referenced the linked FMOD documentation to help make video cutscenes function
 using UnityEngine.Experimental.Audio;
 using UnityEngine.Experimental.Video;
 using UnityEngine.Video;
