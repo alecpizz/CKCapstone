@@ -59,30 +59,31 @@ public class CutsceneFramework : MonoBehaviour
 
     private DebugInputActions _inputActions;
 
+    //variables referenced from FMOD documentation for help with video plpayback
     private const int LATENCY_MS = 50; /* Some devices will require higher latency to avoid glitches */
     private const int DRIFT_MS = 1;
     private const float DRIFT_CORRECTION_PERCENTAGE = 0.5f;
 
     private VideoPlayer _endChapterCutsceneVideo;
-    private AudioSampleProvider mProvider;
+    private AudioSampleProvider _mProvider;
 
-    private FMOD.CREATESOUNDEXINFO mExinfo;
-    private FMOD.Channel mChannel;
+    private FMOD.CREATESOUNDEXINFO _mExinfo;
+    private FMOD.Channel _mChannel;
     private FMOD.Sound mSound;
 
-    private List<float> mBuffer = new List<float>();
+    private List<float> _mBuffer = new List<float>();
 
-    private int mSampleRate;
-    private uint mDriftThresholdSamples;
-    private uint mTargetLatencySamples;
-    private uint mAdjustedLatencySamples;
-    private int mActualLatencySamples;
+    private int _mSampleRate;
+    private uint _mDriftThresholdSamples;
+    private uint _mTargetLatencySamples;
+    private uint _mAdjustedLatencySamples;
+    private int _mActualLatencySamples;
 
-    private uint mTotalSamplesWritten;
-    private uint mMinimumSamplesWritten = uint.MaxValue;
-    private uint mTotalSamplesRead;
+    private uint _mTotalSamplesWritten;
+    private uint _mMinimumSamplesWritten = uint.MaxValue;
+    private uint _mTotalSamplesRead;
 
-    private uint mLastReadPositionBytes;
+    private uint _mLastReadPositionBytes;
 
     /// <summary>
     /// Determines whether to play the Challenge or End Chapter Cutscene
@@ -105,7 +106,7 @@ public class CutsceneFramework : MonoBehaviour
         // (_isEndChapterCutscene) is true
         if (_isEndChapterCutscene && !_isChallengeCutscene)
         {
-            //PlayEndChapterCutscene();
+            //checks for a video player on the game object if the cutscene is supposed to be a end chapter cutscene
             _endChapterCutsceneVideo = GetComponent<VideoPlayer>();
             if (_endChapterCutsceneVideo == null)
             {
@@ -115,14 +116,15 @@ public class CutsceneFramework : MonoBehaviour
                 return;
             }
 
+            //Sets up the video to play it in the scenw
             _endChapterCutsceneVideo.audioOutputMode = VideoAudioOutputMode.APIOnly;
             _endChapterCutsceneVideo.prepareCompleted += Prepared;
             _endChapterCutsceneVideo.loopPointReached += VideoEnded;
             _endChapterCutsceneVideo.Prepare();
 
-#if UNITY_EDITOR
+            #if UNITY_EDITOR
             EditorApplication.pauseStateChanged += EditorStateChange;
-#endif
+            #endif
         }
     }
 
@@ -141,11 +143,6 @@ public class CutsceneFramework : MonoBehaviour
     private void SkipCutscene()
     {
         StopAllCoroutines();
-        SceneController.Instance.LoadNewScene(_loadingLevelIndex);
-    }
-
-    private void CheckEnd(UnityEngine.Video.VideoPlayer vp)
-    {
         SceneController.Instance.LoadNewScene(_loadingLevelIndex);
     }
     
@@ -167,186 +164,7 @@ public class CutsceneFramework : MonoBehaviour
         // Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement the
         // functionality for playing a video, particularly for the End Chapter Cutscene)
         // Plays the Challenge Cutscene for a specified amount of time before loading the next level
-        //StartCoroutine(CutsceneDuration());
-    }
-
-#if UNITY_EDITOR
-    private void EditorStateChange(PauseState state)
-    {
-        if (mChannel.hasHandle())
-        {
-            mChannel.setPaused(state == PauseState.Paused);
-        }
-    }
-#endif
-
-    private void OnDestroy()
-    {
-        mChannel.stop();
-        mSound.release();
-
-#if UNITY_EDITOR
-        EditorApplication.pauseStateChanged -= EditorStateChange;
-#endif
-    }
-
-    private void VideoEnded(VideoPlayer vp)
-    {
-        if (!vp.isLooping)
-        {
-            mChannel.setPaused(true);
-        }
-    }
-
-    private void Prepared(VideoPlayer vp)
-    {
-        mProvider = vp.GetAudioSampleProvider(0);
-        mSampleRate = (int)(mProvider.sampleRate * _endChapterCutsceneVideo.playbackSpeed);
-
-        mDriftThresholdSamples = (uint)(mSampleRate * DRIFT_MS) / 1000;
-        mTargetLatencySamples = (uint)(mSampleRate * LATENCY_MS) / 1000;
-        mAdjustedLatencySamples = mTargetLatencySamples;
-        mActualLatencySamples = (int)mTargetLatencySamples;
-
-        mExinfo.cbsize = Marshal.SizeOf(typeof(FMOD.CREATESOUNDEXINFO));
-        mExinfo.numchannels = mProvider.channelCount;
-        mExinfo.defaultfrequency = mSampleRate;
-        mExinfo.length = mTargetLatencySamples * (uint)mExinfo.numchannels * sizeof(float);
-        mExinfo.format = FMOD.SOUND_FORMAT.PCMFLOAT;
-
-        FMODUnity.RuntimeManager.CoreSystem.createSound("", FMOD.MODE.LOOP_NORMAL | FMOD.MODE.OPENUSER, ref mExinfo, out mSound);
-
-        mProvider.sampleFramesAvailable += SampleFramesAvailable;
-        mProvider.enableSampleFramesAvailableEvents = true;
-        mProvider.freeSampleFrameCountLowThreshold = mProvider.maxSampleFrameCount - mTargetLatencySamples;
-
-        vp.Play();
-    }
-
-    private void SampleFramesAvailable(AudioSampleProvider provider, uint sampleFrameCount)
-    {
-        using (NativeArray<float> buffer = new NativeArray<float>((int)sampleFrameCount * provider.channelCount, Allocator.Temp))
-        {
-            uint samplesWritten = provider.ConsumeSampleFrames(buffer);
-            mBuffer.AddRange(buffer);
-
-            /*
-             * Drift compensation
-             * If we are behind our latency target, play a little faster
-             * If we are ahead of our latency target, play a little slower
-             */
-            mTotalSamplesWritten += samplesWritten;
-
-            if (samplesWritten != 0 && (samplesWritten < mMinimumSamplesWritten))
-            {
-                mMinimumSamplesWritten = samplesWritten;
-                mAdjustedLatencySamples = Math.Max(samplesWritten, mTargetLatencySamples);
-            }
-
-            int latency = (int)mTotalSamplesWritten - (int)mTotalSamplesRead;
-            mActualLatencySamples = (int)((0.93f * mActualLatencySamples) + (0.03f * latency));
-
-            int playbackRate = mSampleRate;
-            if (mActualLatencySamples < (int)(mAdjustedLatencySamples - mDriftThresholdSamples))
-            {
-                playbackRate = mSampleRate - (int)(mSampleRate * (DRIFT_CORRECTION_PERCENTAGE / 100.0f));
-            }
-            else if (mActualLatencySamples > (int)(mAdjustedLatencySamples + mDriftThresholdSamples))
-            {
-                playbackRate = mSampleRate + (int)(mSampleRate * (DRIFT_CORRECTION_PERCENTAGE / 100.0f));
-            }
-            mChannel.setFrequency(playbackRate);
-        }
-    }
-
-    private void Update()
-    {
-        if (!_endChapterCutsceneVideo.isPrepared)
-        {
-            return;
-        }
-
-        /*
-         * Need to wait before playing to provide adequate space between read and write positions
-         */
-        if (!mChannel.hasHandle() && mTotalSamplesWritten > mAdjustedLatencySamples)
-        {
-            FMOD.ChannelGroup mMasterChannelGroup;
-            FMODUnity.RuntimeManager.CoreSystem.getMasterChannelGroup(out mMasterChannelGroup);
-            FMODUnity.RuntimeManager.CoreSystem.playSound(mSound, mMasterChannelGroup, false, out mChannel);
-        }
-
-        if (mBuffer.Count > 0 && mChannel.hasHandle())
-        {
-            uint readPositionBytes;
-            mChannel.getPosition(out readPositionBytes, FMOD.TIMEUNIT.PCMBYTES);
-
-            /*
-             * Account for wrapping
-             */
-            uint bytesRead = readPositionBytes - mLastReadPositionBytes;
-            if (readPositionBytes < mLastReadPositionBytes)
-            {
-                bytesRead += mExinfo.length;
-            }
-
-            if (bytesRead > 0 && mBuffer.Count >= bytesRead)
-            {
-                /*
-                 * Fill previously read data with fresh samples
-                 */
-                IntPtr ptr1, ptr2;
-                uint lenBytes1, lenBytes2;
-                var res = mSound.@lock(mLastReadPositionBytes, bytesRead, out ptr1, out ptr2, out lenBytes1, out lenBytes2);
-                if (res != FMOD.RESULT.OK) Debug.LogError(res);
-
-                /*
-                 * Though exinfo.format is float, data retrieved from Sound::lock is in bytes,
-                 * therefore we only copy (len1+len2)/sizeof(float) full float values across
-                 */
-                int lenFloats1 = (int)(lenBytes1 / sizeof(float));
-                int lenFloats2 = (int)(lenBytes2 / sizeof(float));
-                int totalFloatsRead = lenFloats1 + lenFloats2;
-                float[] tmpBufferFloats = new float[totalFloatsRead];
-
-                mBuffer.CopyTo(0, tmpBufferFloats, 0, tmpBufferFloats.Length);
-                mBuffer.RemoveRange(0, tmpBufferFloats.Length);
-
-                if (lenBytes1 > 0)
-                {
-                    Marshal.Copy(tmpBufferFloats, 0, ptr1, lenFloats1);
-                }
-                if (lenBytes2 > 0)
-                {
-                    Marshal.Copy(tmpBufferFloats, lenFloats1, ptr2, lenFloats2);
-                }
-
-                res = mSound.unlock(ptr1, ptr2, lenBytes1, lenBytes2);
-                if (res != FMOD.RESULT.OK) Debug.LogError(res);
-                mLastReadPositionBytes = readPositionBytes;
-                mTotalSamplesRead += (uint)(totalFloatsRead / mExinfo.numchannels);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Plays the End Chapter Cutscene
-    /// </summary>
-    private void PlayEndChapterCutscene()
-    {
-        // Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement the
-        // functionality for playing a video, particularly for the End Chapter Cutscene)
-        // Displays the video to be played during the End Chapter Cutscene
-        _endChapterCutsceneVideo.Play();
-
-        // Plays the audio accompanying the End Chapter Cutscene
-        var instance = AudioManager.Instance.PlaySound(_cutsceneAudio);
-        AudioManager.Instance.AdjustVolume(instance, _audioVolumeOverride);
-
-        // Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement the
-        // functionality for playing a video, particularly for the End Chapter Cutscene)
-        // Plays the End Chapter Cutscene for a specified amount of time before loading the next level
-        //StartCoroutine(CutsceneDuration());
+        StartCoroutine(CutsceneDuration());
     }
 
     /// <summary>
@@ -355,7 +173,7 @@ public class CutsceneFramework : MonoBehaviour
     /// The cutscene plays for a specified amount of time, before loading the next scene
     /// </summary>
     /// <returns></returns> Amount of time the cutscene should play
-    /*private IEnumerator CutsceneDuration()
+    private IEnumerator CutsceneDuration()
     {
         // Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement the
         // functionality for playing a video, particularly for the End Chapter Cutscene)
@@ -364,5 +182,185 @@ public class CutsceneFramework : MonoBehaviour
 
         // Loads the next level, marked by a specified index
         SceneController.Instance.LoadNewScene(_loadingLevelIndex);
-    }*/
+    }
+
+    /// <summary>
+    /// All code from this point on references the FMOD documentation linked at the top of the script
+    /// makes sure that the video pauses when the editor is paused
+    /// </summary>
+    /// <param name="state"></param>
+#if UNITY_EDITOR
+    private void EditorStateChange(PauseState state)
+    {
+        if (_mChannel.hasHandle())
+        {
+            _mChannel.setPaused(state == PauseState.Paused);
+        }
+    }
+    #endif
+
+    /// <summary>
+    /// If the video player is destroyed stop trying to play the video
+    /// </summary>
+    private void OnDestroy()
+    {
+        _mChannel.stop();
+        mSound.release();
+
+        #if UNITY_EDITOR
+        EditorApplication.pauseStateChanged -= EditorStateChange;
+        #endif
+    }
+
+    /// <summary>
+    /// Checks for the end of a video file and brings you to the next level
+    /// </summary>
+    /// <param name="vp"></param>
+    private void VideoEnded(VideoPlayer vp)
+    {
+        SceneController.Instance.LoadNewScene(_loadingLevelIndex);
+        //if video isn't looping pause the video
+        if (!vp.isLooping)
+        {
+            _mChannel.setPaused(true);
+        }
+    }
+
+    /// <summary>
+    /// Sets up the video for playback based off of all of the set variables at the start of the script
+    /// </summary>
+    /// <param name="vp"></param>
+    private void Prepared(VideoPlayer vp)
+    {
+        _mProvider = vp.GetAudioSampleProvider(0);
+        _mSampleRate = (int)(_mProvider.sampleRate * _endChapterCutsceneVideo.playbackSpeed);
+
+        _mDriftThresholdSamples = (uint)(_mSampleRate * DRIFT_MS) / 1000;
+        _mTargetLatencySamples = (uint)(_mSampleRate * LATENCY_MS) / 1000;
+        _mAdjustedLatencySamples = _mTargetLatencySamples;
+        _mActualLatencySamples = (int)_mTargetLatencySamples;
+
+        _mExinfo.cbsize = Marshal.SizeOf(typeof(FMOD.CREATESOUNDEXINFO));
+        _mExinfo.numchannels = _mProvider.channelCount;
+        _mExinfo.defaultfrequency = _mSampleRate;
+        _mExinfo.length = _mTargetLatencySamples * (uint)_mExinfo.numchannels * sizeof(float);
+        _mExinfo.format = FMOD.SOUND_FORMAT.PCMFLOAT;
+
+        FMODUnity.RuntimeManager.CoreSystem.createSound("", FMOD.MODE.LOOP_NORMAL | FMOD.MODE.OPENUSER, ref _mExinfo, out mSound);
+
+        _mProvider.sampleFramesAvailable += SampleFramesAvailable;
+        _mProvider.enableSampleFramesAvailableEvents = true;
+        _mProvider.freeSampleFrameCountLowThreshold = _mProvider.maxSampleFrameCount - _mTargetLatencySamples;
+
+        vp.Play();
+    }
+
+    /// <summary>
+    /// Samples available frames to compensate for lag and speed up
+    /// </summary>
+    /// <param name="provider"></param>
+    /// <param name="sampleFrameCount"></param>
+    private void SampleFramesAvailable(AudioSampleProvider provider, uint sampleFrameCount)
+    {
+        using (NativeArray<float> buffer = new NativeArray<float>((int)sampleFrameCount * provider.channelCount, Allocator.Temp))
+        {
+            uint samplesWritten = provider.ConsumeSampleFrames(buffer);
+            _mBuffer.AddRange(buffer);
+            
+            // Drift compensation
+            // If we are behind our latency target, play a little faster
+            // If we are ahead of our latency target, play a little slower            
+            _mTotalSamplesWritten += samplesWritten;
+
+            if (samplesWritten != 0 && (samplesWritten < _mMinimumSamplesWritten))
+            {
+                _mMinimumSamplesWritten = samplesWritten;
+                _mAdjustedLatencySamples = Math.Max(samplesWritten, _mTargetLatencySamples);
+            }
+
+            int latency = (int)_mTotalSamplesWritten - (int)_mTotalSamplesRead;
+            _mActualLatencySamples = (int)((0.93f * _mActualLatencySamples) + (0.03f * latency));
+
+            int playbackRate = _mSampleRate;
+            if (_mActualLatencySamples < (int)(_mAdjustedLatencySamples - _mDriftThresholdSamples))
+            {
+                playbackRate = _mSampleRate - (int)(_mSampleRate * (DRIFT_CORRECTION_PERCENTAGE / 100.0f));
+            }
+            else if (_mActualLatencySamples > (int)(_mAdjustedLatencySamples + _mDriftThresholdSamples))
+            {
+                playbackRate = _mSampleRate + (int)(_mSampleRate * (DRIFT_CORRECTION_PERCENTAGE / 100.0f));
+            }
+            _mChannel.setFrequency(playbackRate);
+        }
+    }
+
+    /// <summary>
+    /// If there is an End Chapter Cutscene being played make sure the video is being played smoothly
+    /// </summary>
+    private void Update()
+    {
+        if (_isEndChapterCutscene)
+        {
+            //Checks for an availale cutscene
+            if (!_endChapterCutsceneVideo.isPrepared)
+            {
+                return;
+            }
+
+            // Need to wait before playing to provide adequate space between read and write positions   
+            if (!_mChannel.hasHandle() && _mTotalSamplesWritten > _mAdjustedLatencySamples)
+            {
+                FMOD.ChannelGroup mMasterChannelGroup;
+                FMODUnity.RuntimeManager.CoreSystem.getMasterChannelGroup(out mMasterChannelGroup);
+                FMODUnity.RuntimeManager.CoreSystem.playSound(mSound, mMasterChannelGroup, false, out _mChannel);
+            }
+
+            if (_mBuffer.Count > 0 && _mChannel.hasHandle())
+            {
+                uint readPositionBytes;
+                _mChannel.getPosition(out readPositionBytes, FMOD.TIMEUNIT.PCMBYTES);
+
+
+                //Account for wrapping             
+                uint bytesRead = readPositionBytes - _mLastReadPositionBytes;
+                if (readPositionBytes < _mLastReadPositionBytes)
+                {
+                    bytesRead += _mExinfo.length;
+                }
+
+                if (bytesRead > 0 && _mBuffer.Count >= bytesRead)
+                {
+                    // Fill previously read data with fresh samples                
+                    IntPtr ptr1, ptr2;
+                    uint lenBytes1, lenBytes2;
+                    var res = mSound.@lock(_mLastReadPositionBytes, bytesRead, out ptr1, out ptr2, out lenBytes1, out lenBytes2);
+                    if (res != FMOD.RESULT.OK) Debug.LogError(res);
+
+                    // Though exinfo.format is float, data retrieved from Sound::lock is in bytes,
+                    // therefore we only copy (len1+len2)/sizeof(float) full float values across                
+                    int lenFloats1 = (int)(lenBytes1 / sizeof(float));
+                    int lenFloats2 = (int)(lenBytes2 / sizeof(float));
+                    int totalFloatsRead = lenFloats1 + lenFloats2;
+                    float[] tmpBufferFloats = new float[totalFloatsRead];
+
+                    _mBuffer.CopyTo(0, tmpBufferFloats, 0, tmpBufferFloats.Length);
+                    _mBuffer.RemoveRange(0, tmpBufferFloats.Length);
+
+                    if (lenBytes1 > 0)
+                    {
+                        Marshal.Copy(tmpBufferFloats, 0, ptr1, lenFloats1);
+                    }
+                    if (lenBytes2 > 0)
+                    {
+                        Marshal.Copy(tmpBufferFloats, lenFloats1, ptr2, lenFloats2);
+                    }
+
+                    res = mSound.unlock(ptr1, ptr2, lenBytes1, lenBytes2);
+                    if (res != FMOD.RESULT.OK) Debug.LogError(res);
+                    _mLastReadPositionBytes = readPositionBytes;
+                    _mTotalSamplesRead += (uint)(totalFloatsRead / _mExinfo.numchannels);
+                }
+            }
+        }
+    }
 }
