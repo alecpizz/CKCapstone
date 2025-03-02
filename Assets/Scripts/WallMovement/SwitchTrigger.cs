@@ -80,12 +80,6 @@ public class SwitchTrigger : MonoBehaviour
             {
                 _animator.SetTrigger("Pressed");
             }
-
-            PlayerMovement playerMovement;
-            if (other.gameObject.TryGetComponent<PlayerMovement>(out playerMovement))
-            {
-                playerMovement.ForceTurnEnd();
-            }
         }
     }
 
