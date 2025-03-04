@@ -32,6 +32,8 @@ public class MenuManager : MonoBehaviour
 
     private DebugInputActions _inputActions;
 
+    [SerializeField] private SceneController _sceneController;
+
     /// <summary>
     /// Enables player input for opening the pause menu
     /// </summary>
@@ -108,11 +110,14 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void Pause()
     {
-        DebugMenuManager.Instance.PauseMenu = true;
-        _pauseScreen.SetActive(true);
-        _restartButton.SetActive(false);
-        EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
-        Time.timeScale = 0f;
+        if (!_sceneController.Transitioning)
+        {
+            DebugMenuManager.Instance.PauseMenu = true;
+            _pauseScreen.SetActive(true);
+            _restartButton.SetActive(false);
+            EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+            Time.timeScale = 0f;
+        }
     }
 
     /// <summary>

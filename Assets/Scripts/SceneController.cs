@@ -38,9 +38,8 @@ public class SceneController : MonoBehaviour
 
     private const float xUvOffset = 0.5f;
     private const float yUvOffset = 0.28f;
-    
-    [SerializeField] private GameObject _pauseMenu;
-    private GameObject _restartButton;
+
+    public bool Transitioning {get; private set;}
     
     /// <summary>
     /// Creates instance and starts fade in transition
@@ -59,8 +58,7 @@ public class SceneController : MonoBehaviour
             StartCoroutine(CircleWipeTransition(true, _currentFadeColor));
         }
         
-        _restartButton = GameObject.FindWithTag("Restart");
-        
+        Transitioning = false;
     }
 
     /// <summary>
@@ -128,6 +126,8 @@ public class SceneController : MonoBehaviour
         _circleWipeImage.materialForRendering.SetFloat(_circleSizePropId, startingCircleSize);
         _circleWipeImage.materialForRendering.SetColor(_backgroundColorPropId, fadeColor);
 
+        Transitioning = true;
+        
         RepositionCircleWipe();
         if (AudioManager.Instance != null && _playSoundOnSceneChange)
         {
@@ -140,12 +140,6 @@ public class SceneController : MonoBehaviour
         // Animates circle wipe until the end time is reached
         while (elapsedTime < _timeForScreenWipe)
         {
-            if (_pauseMenu.activeInHierarchy)
-            {
-                Time.timeScale = 1f;
-                _pauseMenu.SetActive(false);
-                _restartButton.SetActive(true);
-            }
             lerpingTime = elapsedTime / _timeForScreenWipe;
             newCircleSize = Mathf.Lerp(startingCircleSize, targetCircleSize, lerpingTime);
             _circleWipeImage.materialForRendering.SetFloat(_circleSizePropId, newCircleSize);
@@ -156,8 +150,8 @@ public class SceneController : MonoBehaviour
         _circleWipeImage.materialForRendering.SetFloat(_circleSizePropId, targetCircleSize);
 
         yield return new WaitForSecondsRealtime(0.1f);
-
-        Time.timeScale = 1f;
+        
+        Transitioning = false;
 
         // Loads new scene if needed
         if (!isFadingIn && sceneIndexToLoad != -1)
