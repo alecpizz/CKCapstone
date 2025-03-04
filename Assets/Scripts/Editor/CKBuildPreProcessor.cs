@@ -55,7 +55,8 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         if (menuManager != null)
         {
             //use reflection to set the menu manager's load value
-            var field = menuManager.GetType().GetField("_firstLevelIndex", BindingFlags.Instance | BindingFlags.NonPublic);
+            var field = menuManager.GetType()
+                .GetField("_firstLevelIndex", BindingFlags.Instance | BindingFlags.NonPublic);
             if (field != null)
             {
                 int index = SceneUtility.GetBuildIndexByScenePath(
@@ -86,6 +87,90 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         }
     }
 
+    [MenuItem("Tools/Crowded Kitchen/Light Level/Chapter 1 Lighting")]
+    public static void ApplyChapter1Lighting()
+    {
+        //testing chapter 1 here
+        Material skybox = AssetDatabase.LoadAssetAtPath<Material>(
+            "Assets/Materials/Lighting/MAT_Skybox_1.mat");
+        if (skybox == null)
+        {
+            Debug.LogError("Couldn't find skybox!");
+            return;
+        }
+
+        RenderSettings.skybox = skybox;
+
+        RenderSettings.ambientIntensity = 0.5f;
+        TryDestroyEnvironmentArt();
+        var fxPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+            "Assets/Prefabs/VFX/Environment/EnvFX_Chapter1.prefab");
+        var fx = Object.Instantiate(fxPrefab);
+        var godRays = fx.transform.Find("GodRays");
+        var godParticles = godRays.GetComponent<ParticleSystem>();
+        //set the alpha of the particle
+        const float newGodRayAlpha = 1.0f;
+        var main = godParticles.main;
+        var startColor = main.startColor;
+        var startColorColor = startColor.color;
+        startColorColor.a = newGodRayAlpha;
+        startColor.color = startColorColor;
+        main.startColor = startColor;
+        //set mote size
+
+
+        var grid = GridBase.Instance;
+        if (grid != null)
+        {
+            Dictionary<Vector3Int, Collider> colliderMap = new();
+            var gridEntries = GameObject.FindObjectsOfType<GridPlacer>();
+            foreach (var gridPlacer in gridEntries)
+            {
+                if (gridPlacer.gameObject.name.Contains("Disable"))
+                {
+                    colliderMap.Add(
+                        grid.WorldToCell(gridPlacer.transform.position), gridPlacer.GetComponent<Collider>());
+                }
+            }
+
+            var bounds = new Bounds();
+            for (int i = 0; i < grid.Size; i++)
+            {
+                for (int j = 0; j < grid.Size; j++)
+                {
+                    var gridIdx = new Vector3Int(i, 0, j);
+                    if (!colliderMap.ContainsKey(gridIdx))
+                    {
+                        //this is a grid cell
+                        bounds.Encapsulate(grid.CellToWorld(gridIdx));
+                    }
+                }
+            }
+
+            var motes = fx.transform.Find("Motes");
+            motes.transform.position = bounds.center;
+            var moteParticles = motes.GetComponent<ParticleSystem>();
+            Vector3 moteSize = new Vector3(bounds.size.x + 0.5f, bounds.size.z + 0.5f, 4f);
+            var shape = moteParticles.shape;
+            shape.scale = moteSize;
+        }
+        //need to adjust god ray position
+    }
+
+    private static void TryDestroyEnvironmentArt()
+    {
+        var ch1 = GameObject.Find("EnvFX_Chapter1(Clone)");
+        var ch2 = GameObject.Find("EnvFX_Chapter2(Clone)");
+        var ch3 = GameObject.Find("EnvFX_Chapter3(Clone)");
+        var ch4 = GameObject.Find("EnvFX_Chapter4(Clone)");
+        var ch5 = GameObject.Find("EnvFX_Chapter5(Clone)");
+        if (ch1) Object.DestroyImmediate(ch1);
+        if (ch2) Object.DestroyImmediate(ch2);
+        if (ch3) Object.DestroyImmediate(ch3);
+        if (ch4) Object.DestroyImmediate(ch4);
+        if (ch5) Object.DestroyImmediate(ch5);
+    }
+
     /// <summary>
     /// Sets the scene links for scenes that are a opener/closer.
     /// Typically these will have a cutscene framework object in the scene
@@ -104,7 +189,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         var cutsceneFrameWork = Object.FindObjectOfType<CutsceneFramework>();
         if (cutsceneFrameWork != null)
         {
-            var field = cutsceneFrameWork.GetType().GetField("_loadingLevelIndex", 
+            var field = cutsceneFrameWork.GetType().GetField("_loadingLevelIndex",
                 BindingFlags.Instance | BindingFlags.NonPublic);
             if (field != null)
             {
@@ -186,6 +271,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 Debug.LogError($"Missing scene! {currentLevel.LevelName}");
                 continue;
             }
+
             var currScene = EditorSceneManager.OpenScene(
                 AssetDatabase.GetAssetPath(currentLevel.Scene));
             var doors = Object.FindObjectsOfType<EndLevelDoor>();
@@ -194,7 +280,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             if (doors.Length > 2)
             {
                 Debug.LogWarning("There are more than 2 doors in this scene. " +
-                    "There may be duplicate exits...");
+                                 "There may be duplicate exits...");
             }
 
             foreach (var endLevelDoor in doors)
@@ -253,7 +339,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
     private static void AddScenesToBuild()
     {
         //TODO: double check levels aren't being included twice lol
-        List<EditorBuildSettingsScene> editorBuildSettingsScenes = 
+        List<EditorBuildSettingsScene> editorBuildSettingsScenes =
             new List<EditorBuildSettingsScene>();
         var levelData = LevelOrderSelection.Instance.SelectedLevelData;
         levelData.PrettyChapterNames.Clear();
@@ -261,8 +347,8 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         //add the main menu scene
         editorBuildSettingsScenes.Add(
             new EditorBuildSettingsScene(AssetDatabase.GetAssetPath(levelData.MainMenuScene),
-            true));
-        levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = "Main Menu", showUp = false });
+                true));
+        levelData.PrettySceneNames.Add(new LevelOrder.PrettyData {PrettyName = "Main Menu", showUp = false});
         //add each chapter's data
         int chapterIndex = 0;
         foreach (var chapter in levelData.Chapters)
@@ -274,7 +360,8 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                     AssetDatabase.GetAssetPath(chapter.Intro.Scene),
                     true));
-                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = chapter.Intro.LevelName, showUp = false });
+                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData
+                    {PrettyName = chapter.Intro.LevelName, showUp = false});
             }
 
             //add all puzzles
@@ -284,7 +371,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                     AssetDatabase.GetAssetPath(level.Scene),
                     true));
-                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = level.LevelName, showUp = true });
+                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData {PrettyName = level.LevelName, showUp = true});
             }
 
             //add outro scene
@@ -293,7 +380,8 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                     AssetDatabase.GetAssetPath(chapter.Outro.Scene),
                     true));
-                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = chapter.Outro.LevelName, showUp = true });
+                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData
+                    {PrettyName = chapter.Outro.LevelName, showUp = true});
             }
         }
 
@@ -307,11 +395,11 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                 AssetDatabase.GetAssetPath(levelData.CreditsScene),
                 true));
-            levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = "Credits Scene", showUp = false });
+            levelData.PrettySceneNames.Add(new LevelOrder.PrettyData {PrettyName = "Credits Scene", showUp = false});
         }
+
         EditorUtility.SetDirty(levelData);
         Debug.Log($"Added {editorBuildSettingsScenes.Count} Scenes");
         EditorBuildSettings.scenes = editorBuildSettingsScenes.ToArray();
     }
-    
 }
