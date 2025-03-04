@@ -140,7 +140,7 @@ PrefabInstance:
         type: 3}
       propertyPath: _gridMeshHolder
       value: 
-      objectReference: {fileID: 381800724}
+      objectReference: {fileID: 0}
     - target: {fileID: 436011373386010899, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: m_IsActive
@@ -204,27 +204,27 @@ PrefabInstance:
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Path
-      value: event:/Chapter 2 End Cutscene
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Guid.Data1
-      value: -129330510
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Guid.Data2
-      value: 1196642327
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Guid.Data3
-      value: -1739112038
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Guid.Data4
-      value: 592403969
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2295975639014996387, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
@@ -265,6 +265,11 @@ PrefabInstance:
         type: 3}
       propertyPath: _shouldFadeInOnLoad
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5598251421030866082, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: _playSoundOnSceneChange
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6311636952621972159, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
@@ -375,12 +380,6 @@ PrefabInstance:
       addedObject: {fileID: 1310912737}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dbb0dd27c6fab3344aab4441094b0849, type: 3}
---- !u!1 &381800724 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 138618493934716620, guid: dbb0dd27c6fab3344aab4441094b0849,
-    type: 3}
-  m_PrefabInstance: {fileID: 381800723}
-  m_PrefabAsset: {fileID: 0}
 --- !u!20 &381800725 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 7663816770030828482, guid: dbb0dd27c6fab3344aab4441094b0849,
@@ -1513,6 +1512,7 @@ GameObject:
   - component: {fileID: 1312136891}
   - component: {fileID: 1312136890}
   - component: {fileID: 1312136892}
+  - component: {fileID: 1312136893}
   m_Layer: 0
   m_Name: CutsceneManager
   m_TagString: Untagged
@@ -1536,16 +1536,15 @@ MonoBehaviour:
   _isEndChapterCutscene: 1
   _challengeCutsceneImages:
   - {fileID: 987237890}
-  _endChapterCutsceneVideo: {fileID: 1571041920}
-  _cutsceneDuration: 26
+  _cutsceneDuration: 40
   _cutsceneAudio:
     Guid:
-      Data1: -696882822
-      Data2: 1104010296
-      Data3: 1958491800
-      Data4: -1193433071
-    Path: event:/Chapter 1 Music Controller
-  _loadingLevelIndex: 0
+      Data1: 988537092
+      Data2: 1100017216
+      Data3: 1600132527
+      Data4: -334552092
+    Path: event:/Chapter 1 End Cutscene
+  _loadingLevelIndex: 15
   _audioVolumeOverride: 1
 --- !u!4 &1312136891
 Transform:
@@ -1588,6 +1587,42 @@ MonoBehaviour:
     and want to give them props or bring up concerns. Thank you.
   _sentences: 6
   _subtitleObject: {fileID: 1310912738}
+--- !u!328 &1312136893
+VideoPlayer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1312136889}
+  m_Enabled: 1
+  m_VideoClip: {fileID: 32900000, guid: 89bb685034deada49befbcd7460995ba, type: 3}
+  m_TargetCameraAlpha: 1
+  m_TargetCamera3DLayout: 0
+  m_TargetCamera: {fileID: 381800725}
+  m_TargetTexture: {fileID: 8400000, guid: 8a1fd988bcf3c304ca12e83cb9f70882, type: 2}
+  m_TimeReference: 0
+  m_TargetMaterialRenderer: {fileID: 0}
+  m_TargetMaterialProperty: <noninit>
+  m_RenderMode: 0
+  m_AspectRatio: 3
+  m_DataSource: 0
+  m_TimeUpdateMode: 1
+  m_PlaybackSpeed: 1
+  m_AudioOutputMode: 0
+  m_TargetAudioSources:
+  - {fileID: 0}
+  m_DirectAudioVolumes:
+  - 1
+  m_Url: 
+  m_EnabledAudioTracks: 01
+  m_DirectAudioMutes: 00
+  m_ControlledAudioTrackCount: 1
+  m_PlayOnAwake: 0
+  m_SkipOnDrop: 0
+  m_Looping: 0
+  m_WaitForFirstFrame: 1
+  m_FrameReadyEventEnabled: 0
+  m_VideoShaders: []
 --- !u!1001 &1534550047
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1714,74 +1749,6 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
---- !u!1 &1571041919
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1571041921}
-  - component: {fileID: 1571041920}
-  m_Layer: 0
-  m_Name: Video Player
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!328 &1571041920
-VideoPlayer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1571041919}
-  m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 95be340f3fb619346bac3d77380eaed1, type: 3}
-  m_TargetCameraAlpha: 1
-  m_TargetCamera3DLayout: 0
-  m_TargetCamera: {fileID: 381800725}
-  m_TargetTexture: {fileID: 0}
-  m_TimeReference: 0
-  m_TargetMaterialRenderer: {fileID: 0}
-  m_TargetMaterialProperty: <noninit>
-  m_RenderMode: 1
-  m_AspectRatio: 3
-  m_DataSource: 0
-  m_TimeUpdateMode: 2
-  m_PlaybackSpeed: 1
-  m_AudioOutputMode: 0
-  m_TargetAudioSources:
-  - {fileID: 0}
-  m_DirectAudioVolumes:
-  - 1
-  m_Url: 
-  m_EnabledAudioTracks: 01
-  m_DirectAudioMutes: 00
-  m_ControlledAudioTrackCount: 1
-  m_PlayOnAwake: 0
-  m_SkipOnDrop: 0
-  m_Looping: 0
-  m_WaitForFirstFrame: 1
-  m_FrameReadyEventEnabled: 0
-  m_VideoShaders: []
---- !u!4 &1571041921
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1571041919}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 15.045567, y: 0.5462441, z: 14.867503}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1582450840
 GameObject:
   m_ObjectHideFlags: 0
@@ -1984,4 +1951,3 @@ SceneRoots:
   - {fileID: 1922030914}
   - {fileID: 1312136891}
   - {fileID: 1273226983}
-  - {fileID: 1571041921}

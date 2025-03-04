@@ -1,6 +1,7 @@
 /******************************************************************
  *    Author: Cole Stranczek
- *    Contributors: Cole Stranczek, Mitchell Young, Nick Grinstead, Alec Pizziferro, Alex Laubenstein
+ *    Contributors: Cole Stranczek, Mitchell Young, Nick Grinstead, Alec Pizziferro
+ *    Jamison Parks
  *    Date Created: 10/3/24
  *    Description: Script that handles the behavior of the enemy,
  *    from movement to causing a failstate with the player
@@ -44,8 +45,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     }
 
     private PlayerControls _input;
-    public GameObject DestinationMarker;
-    public GameObject DestPathVFX;
+    [SerializeField] private GameObject _destinationMarker;
+    [SerializeField] private GameObject _destPathVFX;
 
 
     //Destination object values
@@ -54,6 +55,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     [SerializeField] private float _destYPos = 1f;
     [SerializeField] private float _lineYPosOffset = 1f;
+
+    [PlayaInfoBox("Time delay from when an enemy starts their turn and actually begins moving." +
+        "\n This is meant to prevent enemies from moving before the player starts to move.")]
+    [PropRange(0f, 0.5f)]
+    [SerializeField]
+    private float _timeBeforeTurn = 0.1f;
 
     //Wait time between enemy moving each individual tile while on path to next destination
     [PlayaInfoBox("Time for the enemy to move between each tile. " +
@@ -64,11 +71,18 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [PlayaInfoBox("The floor for how fast the enemy can move.")] [SerializeField]
     private float _minMoveTime = 0.175f;
 
-    public bool CurrentToggle = true;
+    [SerializeField] private bool _currentToggle = true;
 
     [SerializeField] private float _rotationTime = 0.10f;
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
     [SerializeField] private Ease _movementEase = Ease.OutBack;
+    private bool _endRotate = false;
+
+    private int _offsetDestCount = 0;
+    private bool _signatureIsChanged = false;
+    private bool _firstTurnBack = false;
+    private bool _metronomeTriggered = false;
+    private bool _notFirstCheck = false;
 
     /// <summary>
     /// Helper enum for enemy directions.
@@ -138,8 +152,14 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private int _indicatorIndex = 0;
     private bool _indicatorReturningToStart = false;
 
+    //public static PlayerMovement Instance;
+    private static readonly int Forward = Animator.StringToHash("Forward");
+
+
+    [SerializeField] private Animator _animator;
+
     /// <summary>
-    /// Disables a PrimeTween warning and sets the instance
+    /// Disables a PrimeTween warning.
     /// </summary>
     private void Awake()
     {
@@ -159,7 +179,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _rb = GetComponent<Rigidbody>();
         _rb.isKinematic = true;
 
-        DestinationMarker.transform.SetParent(null);
+        _destinationMarker.transform.SetParent(null);
 
         // Make sure enemies are always seen at the start
 
@@ -168,19 +188,15 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             TimeSignatureManager.Instance.RegisterTimeListener(this);
         }
 
-        _vfxLine = DestPathVFX.GetComponent<LineRenderer>();
+        _vfxLine = _destPathVFX.GetComponent<LineRenderer>();
         _vfxLine.positionCount = 2;
 
-        DestPathVFX.SetActive(false);
-        DestinationMarker.SetActive(false);
-        for (int i = 0; i < _enemyMovementTime; i++)
-        {
-            UpdateDestinationMarker();
-        }
+        _destPathVFX.SetActive(false);
+        _destinationMarker.SetActive(false);
 
+        UpdateDestinationMarker();
         DestinationPath();
 
-        //enables neccesary inputs needed for the enemies
         _input = new PlayerControls();
         _input.InGame.Enable();
 
@@ -290,17 +306,17 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     /// <summary>
     /// DestinationPath is called whenever the mouse ray collides with the enemy.
-    /// This function turns the DestPathVFX and DestinationMarker objects on/off.
+    /// This function turns the _destPathVFX and _destinationMarker objects on/off.
     /// </summary>
     public void DestinationPath()
     {
-        if (!CurrentToggle)
+        if (!_currentToggle)
         {
             return;
         }
 
-        DestPathVFX.SetActive(CollidingWithRay);
-        DestinationMarker.SetActive(CollidingWithRay);
+        _destPathVFX.SetActive(CollidingWithRay);
+        _destinationMarker.SetActive(CollidingWithRay);
     }
 
     /// <summary>
@@ -310,44 +326,43 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// <param name="context"></param>
     private void PathingToggle(InputAction.CallbackContext context)
     {
-        if (EnemyPathCycling.Instance.IsCycling)
-        {
-            EnemyPathCycling.Instance.CycleUnset = true;
-        }
-        else
-        {
-            DestPathVFX.SetActive(CurrentToggle);
-            DestinationMarker.SetActive(CurrentToggle);
+        _destPathVFX.SetActive(_currentToggle);
+        _destinationMarker.SetActive(_currentToggle);
 
-            CurrentToggle = !CurrentToggle;
-        }
+        _currentToggle = !_currentToggle;
     }
 
     /// <summary>
-    /// This function updates the position of the DestinationMarker object using the
+    /// This function updates the position of the _destinationMarker object using the
     /// _movePoints list.
     /// </summary>
     private void UpdateDestinationMarker()
     {
-        //Sets the DestinationMarker object to the enemy's current position
-        DestinationMarker.transform.position = transform.position;
+        //Sets the _destinationMarker object to the enemy's current position
+        _destinationMarker.transform.position = transform.position;
         Vector3 linePos = transform.position;
         linePos.y = _lineYPosOffset;
-        _vfxLine.SetPosition(0, linePos);
         //Looks at the time signature for the enemy so it can place multiple moves in advance
 
-        EvaluateNextMove(ref _indicatorIndex, ref _indicatorReturningToStart);
+        NextMarkerDestination(ref _indicatorIndex, ref _indicatorReturningToStart);
+        _vfxLine.positionCount = _moveDestinations.Count;
 
         //Finds the direction and tiles to move based on its own current point index value
         var destPoint = _moveDestinations[_indicatorIndex];
         var destPointWorld = GridBase.Instance.CellToWorld(destPoint);
 
-        linePos = destPointWorld;
-        linePos.y = _lineYPosOffset;
+        //Sets each point in the _vfx line along the tile path in the _moveDestinations list
+        //starting from the enemy's current position
+        for (int i = 0; i < _moveDestinations.Count; i++)
+        {
+            Vector3 _vfxPos = GridBase.Instance.CellToWorld(_moveDestinations[i]);
+            _vfxPos.y = _lineYPosOffset;
 
-        _vfxLine.SetPosition(1, destPointWorld);
+            _vfxLine.SetPosition(i, _vfxPos);
+        }
+
         destPointWorld.y += _destYPos;
-        DestinationMarker.transform.position = destPointWorld;
+        _destinationMarker.transform.position = destPointWorld;
     }
 
     /// <summary>
@@ -357,6 +372,16 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// <param name="newTimeSignature">The new time signature.</param>
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
     {
+        if (_enemyMovementTime != newTimeSignature.y && _notFirstCheck)
+        {
+            _metronomeTriggered = true;
+        }
+        
+        if (!_notFirstCheck)
+        {
+            _notFirstCheck = true;
+        }
+
         _enemyMovementTime = newTimeSignature.y;
 
         if (_enemyMovementTime <= 0)
@@ -366,6 +391,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     }
 
     public TurnState TurnState => TurnState.Enemy;
+    public TurnState SecondaryTurnState => TurnState.None;
 
     /// <summary>
     /// Called by RoundManager to start this entity's turn
@@ -391,6 +417,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// <returns>null</returns>
     private IEnumerator MovementRoutine()
     {
+        yield return new WaitForSeconds(_timeBeforeTurn);
+
         bool blocked = false;
         for (int i = 0; i < _enemyMovementTime; i++)
         {
@@ -400,6 +428,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             var movePt = _moveDestinations[_moveIndex];
             var currCell = GridBase.Instance.WorldToCell(transform.position);
             var goalCell = GetLongestPath(GridBase.Instance.CellToWorld(movePt));
+
+            if (_moveIndex == _moveDestinations.Count - 1 && !_circularMovement)
+            {
+                _endRotate = true;
+            }
             //we were blocked by something, adjust memory
             if (goalCell != movePt)
             {
@@ -408,15 +441,26 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 _moveIndex = prevMove;
                 _isReturningToStart = prevReturn;
             }
-
             //already at this spot, next turn.
-            if (goalCell == currCell)
+            if (goalCell == currCell && !blocked)
             {
                 continue;
             }
-            var dist = Vector3Int.Distance(currCell, movePt);
-            var rotationDir = (GridBase.Instance.CellToWorld(movePt) - transform.position).normalized;
-            var moveWorld = GridBase.Instance.CellToWorld(movePt);
+
+            if (_isFrozen)
+            {
+                blocked = true;
+                continue;
+            }
+
+            if (_animator != null)
+            {
+                _animator.SetTrigger(Forward);
+            }
+            var dist = Vector3Int.Distance(currCell, goalCell);
+            var rotationDir = (GridBase.Instance.CellToWorld(goalCell) - transform.position).normalized;
+            var moveWorld = GridBase.Instance.CellToWorld(goalCell);
+
             dist = Mathf.Max(dist, 1f);
             float movementTime = Mathf.Clamp((_waitTime / _enemyMovementTime) * dist,
                 _minMoveTime, float.MaxValue);
@@ -426,6 +470,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                     target: this,
                     (_, _) =>
                     {
+                        HarmonyBeam.TriggerHarmonyScan?.Invoke();
                         GridBase.Instance.UpdateEntry(this);
                         //not a fan of this but it should be more consistent than 
                         //using collisions
@@ -435,22 +480,31 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                             !DebugMenuManager.Instance.Invincibility)
                         {
                             //hit a player!
+                            PlayerMovement.Instance.OnDeath();
                             SceneController.Instance.ReloadCurrentScene();
                         }
                     });
+            AudioManager.Instance.PlaySound(_enemyMove);
             yield return Tween.Rotation(transform, endValue: Quaternion.LookRotation(rotationDir),
                 duration: _rotationTime,
                 ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).Chain(tween).ToYieldInstruction();
-            AudioManager.Instance.PlaySound(_enemyMove);
             GridBase.Instance.UpdateEntry(this);
-        }
 
+            if (_endRotate)
+            {
+                yield return Tween.Rotation(transform, endValue: Quaternion.LookRotation(-rotationDir),
+                duration: _rotationTime,
+                ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).ToYieldInstruction();
+                _endRotate = false;
+            }
+        }
         if (!blocked)
         {
             UpdateDestinationMarker();
         }
-
+        
         RoundManager.Instance.CompleteTurn(this);
+
     }
 
     /// <summary>
@@ -515,8 +569,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// <summary>
     /// Determines the next move index for the enemy.
     /// </summary>
-    /// <param name="moveIndex"></param>
-    /// <param name="looped"></param>
+    /// <param name="moveIndex">Reference to the evaluated move index.</param>
+    /// <param name="looped">Reference to the evaluated loop state.</param>
     private void EvaluateNextMove(ref int moveIndex, ref bool looped)
     {
         //not at the end of our list of moves.
@@ -535,6 +589,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 {
                     moveIndex = 0;
                     looped = false;
+                    _endRotate = true;
                 }
             }
         }
@@ -551,16 +606,155 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             }
             else
             {
-                //our moves will start with 0 again.
+                //our moves will start with 1 since we're circularly repeating our movement.
+                moveIndex = 1;
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// Determines the next move index for the enemy's pathing indicator
+    /// using the current time signature.
+    /// </summary>
+    /// <param name="moveIndex">Reference to the evaluated move index.</param>
+    /// <param name="looped">Reference to the evaluated loop state.</param>
+    private void NextMarkerDestination(ref int moveIndex, ref bool looped)
+    {
+        //if the time signature changes the destination marker position changes
+        //based on current enemy position
+        if (_metronomeTriggered)
+        {
+            _signatureIsChanged = !_signatureIsChanged;
+            if (!looped)
+            {
+                moveIndex = _moveDestinations.Count - 1;
+            }
+            else
+            {
                 moveIndex = 0;
+            }
+
+            if (!_signatureIsChanged)
+            {
+                _firstTurnBack = true;
+            }
+            _metronomeTriggered = false;
+        }
+
+        //not at the end of our list of moves.
+        if (moveIndex < _moveDestinations.Count - 1)
+        {
+            if (!looped)
+            {
+                //move forward according to time signature
+                moveIndex += _enemyMovementTime;
+
+                //if time signature exceeds enemy position count start reversing
+                HandleOverflow(ref _indicatorIndex, ref looped);
+            }
+            else
+            {
+                moveIndex-=_enemyMovementTime;
+                //we've returned to the start, so reset everything to be back as normal
+                if (moveIndex <= 0)
+                {
+                    if (_signatureIsChanged)
+                    {
+                        moveIndex = _moveDestinations.Count - 1;
+                    }
+                    else
+                    {
+                        moveIndex = 0;
+                    }
+                    looped = false;
+                }
+            }
+        }
+        else
+        {
+            //we're at the end of our potential moves, so let's determine how we're gonna get back.
+
+            if (!_circularMovement)
+            {
+                //we're not using circular movement, so for future turns we need to move backwards until we reach 
+                // the start again.
+                moveIndex -= _enemyMovementTime;
+                if (!_firstTurnBack)
+                {
+                    looped = true;
+                }
+                else
+                {
+                    moveIndex += _enemyMovementTime;
+                    _firstTurnBack = false;
+                }
+
+                //if time signature exceeds enemy position count start reversing
+                HandleOverflow(ref _indicatorIndex, ref looped);
+            }
+            else
+            {
+                //our moves will start with the enemy time signature since we're circularly repeating our movement.
+                moveIndex = _enemyMovementTime;
             }
         }
     }
 
     /// <summary>
-    /// Can force enemy turn to end early
+    /// Handles moveIndex for the NextMarkerDestination function if the
+    /// time signature movement exceeds the boundaries of 0 or the
+    /// _moveDestinations list count.
     /// </summary>
-    public void ForceTurnEnd()
+    /// <param name="moveIndex">Reference to the evaluated move index.</param>
+    /// <param name="looped">Reference to the evaluated loop state.</param>
+    private void HandleOverflow(ref int moveIndex, ref bool looped)
+    {
+        //If going back through the list check for less than before
+        //greater than.
+        if (looped)
+        {
+            //Increases if below 0
+            if (moveIndex < 0)
+            {
+                _offsetDestCount = -moveIndex;
+                moveIndex = 0;
+                moveIndex += _offsetDestCount;
+            }
+            //Decreases if over _moveDestinations count
+            if (moveIndex > _moveDestinations.Count - 1)
+            {
+                _offsetDestCount = -moveIndex;
+                moveIndex = _moveDestinations.Count - 1;
+                moveIndex += _offsetDestCount;
+            }
+        }
+        //If going normally through the list check for greater than before
+        //less than.
+        else
+        {
+            //Decreases if over _moveDestinations count
+            if (moveIndex > _moveDestinations.Count - 1)
+            {
+                _offsetDestCount = -moveIndex;
+                moveIndex = _moveDestinations.Count - 1;
+                moveIndex += _offsetDestCount;
+            }
+            //Increases if below 0
+            if (moveIndex < 0)
+            {
+                _offsetDestCount = -moveIndex;
+                moveIndex = 0;
+                moveIndex += _offsetDestCount;
+            }
+        }
+    }
+
+
+        /// <summary>
+        /// Can force enemy turn to end early
+        /// </summary>
+        public void ForceTurnEnd()
     {
         StopAllCoroutines();
         GridBase.Instance.UpdateEntry(this);

@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: David Henvick
-*    Contributors: Claire Noto, Alec Pizziferro, Mitchell Young
+*    Contributors: Claire Noto, Alec Pizziferro, Mitchell Young, Jamison Parks
 *    Date Created: 09/30/2024
 *    Description: this is the script that is used control an npc 
 *    and their dialogue
@@ -19,12 +19,16 @@ using UnityEngine.SceneManagement;
 using SaintsField.Playa;
 using Debug = UnityEngine.Debug;
 using UnityEngine.Serialization;
+using EventInstance = FMOD.Studio.EventInstance;
 
 public class NpcDialogueController : MonoBehaviour, IInteractable
 {
     [SerializeField] private TMP_Text _dialogueBox;
     [SerializeField] private Image _background;
     [SerializeField] private EndLevelDoor[] _doors;
+    [SerializeField] public Image _eKey;
+    [SerializeField] public Image _nameBox;
+    [SerializeField] public TMP_Text _nameText;
 
     [Serializable]
     public struct DialogueEntry
@@ -37,6 +41,9 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
             "A value of -5 slows it down while a value of 5 speeds it up", EMessageType.Info)]
         [FormerlySerializedAs("_adjustTypingSpeed")]
         [Range(-5f, 5f)] public float adjustTypingSpeed;
+        [InfoBox("This chooses the emotion animation " +
+            "There is Neutral, Happy, Sad, and Angry", EMessageType.Info)]
+        public EmotionType emotion;
     }
 
     private bool _isTalking;
@@ -59,6 +66,13 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
 
     private int _totalNpcs = 1;
     private bool _loopedOnce;
+
+    private static readonly int Talk = Animator.StringToHash("Talk");
+    private static readonly int Neutral = Animator.StringToHash("Neutral");
+    private static readonly int Happy = Animator.StringToHash("Happy");
+    private static readonly int Sad = Animator.StringToHash("Sad");
+    private static readonly int Angry = Animator.StringToHash("Angry");
+    [SerializeField] private Animator _animator;
 
     /// <summary>
     /// Field to retrieve attached GameObject: from IInteractable
@@ -105,8 +119,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
     [Button] 
     public void ResetMemory()
     {
-        PlayerPrefs.SetInt(SceneManager.GetActiveScene().name, 0);
-        PlayerPrefs.Save();
+        SaveDataManager.SetNpcProgressionCurrentScene(0);
     }
 
     /// <summary>
@@ -129,16 +142,18 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
         }
         _dialogueBox.CrossFadeAlpha(0f, 0f, true);
         _background.CrossFadeAlpha(0f, 0f, true);
+        _eKey.CrossFadeAlpha(0f, 0f, true);
+        _nameBox.CrossFadeAlpha(0f, 0f, true);
+        _nameText.CrossFadeAlpha(0f, 0f, true);
         _occupied = false;
         _isTalking = false;
         _currentTypingSpeed = Mathf.Clamp(
             _typingSpeed - _dialogueEntries[_currentDialogue].adjustTypingSpeed, 2f, 15f) / 100f;
 
-        if (PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) >= _totalNpcs)
+        if (SaveDataManager.GetNpcProgressionCurrentScene() >=  _totalNpcs)
         {
             UnlockDoors();
         }
-        Debug.Log("Door Progress: (" + PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) + "/" + _totalNpcs + ")");
     }
 
     /// <summary>
@@ -149,6 +164,26 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
     {
         if (!_isTalking)
         {
+            if (_animator != null)
+            {
+                _animator.SetBool(Talk, true);
+                switch (_dialogueEntries[_currentDialogue].emotion)
+                {
+                    case EmotionType.NEUTRAL:
+                        _animator.SetTrigger(Neutral);
+                        break;
+                    case EmotionType.HAPPY:
+                        _animator.SetTrigger(Happy);
+                        break;
+                    case EmotionType.SAD:
+                        _animator.SetTrigger(Sad);
+                        break;
+                    case EmotionType.ANGRY:
+                        _animator.SetTrigger(Angry);
+                        break;
+                }
+            }
+
             if (CheckForEntries())
             {
                 if (_typingCoroutine != null)
@@ -161,6 +196,9 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
             VignetteController.InteractionTriggered.Invoke(true);
             _dialogueBox.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
             _background.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
+            _eKey.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
+            _nameBox.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
+            _nameText.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
             _occupied = true;
             _isTalking = true;
         }
@@ -189,10 +227,9 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
 
                 if (!_loopedOnce && _currentDialogue == (_dialogueEntries.Count - 1))
                 {
-                    PlayerPrefs.SetInt(SceneManager.GetActiveScene().name, PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) + 1);
-                    PlayerPrefs.Save();
-                    Debug.Log("Door Progress: (" + PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) + "/" + _totalNpcs + ")");
-                    if (PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) == _totalNpcs)
+                    int progress = SaveDataManager.GetNpcProgressionCurrentScene() + 1;
+                    SaveDataManager.SetNpcProgressionCurrentScene(progress);
+                    if (progress >= _totalNpcs)
                     {
                         UnlockDoors();
                     }
@@ -211,6 +248,29 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
 
             // adjusts typing speed on a per-entry basis
             _currentTypingSpeed = Mathf.Clamp(_typingSpeed - _dialogueEntries[_currentDialogue].adjustTypingSpeed, 2f, 15f) / 100f;
+            //adjusts emotion on a per-entry basis
+            if (_animator != null)
+            {
+                _animator.ResetTrigger(Neutral);
+                _animator.ResetTrigger(Happy);
+                _animator.ResetTrigger(Sad);
+                _animator.ResetTrigger(Angry);
+                switch (_dialogueEntries[_currentDialogue].emotion)
+                {
+                    case EmotionType.NEUTRAL:
+                        _animator.SetTrigger(Neutral);
+                        break;
+                    case EmotionType.HAPPY:
+                        _animator.SetTrigger(Happy);
+                        break;
+                    case EmotionType.SAD:
+                        _animator.SetTrigger(Sad);
+                        break;
+                    case EmotionType.ANGRY:
+                        _animator.SetTrigger(Angry);
+                        break;
+                }
+            }
             _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue].text));
         }
     }
@@ -239,6 +299,9 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
         VignetteController.InteractionTriggered.Invoke(false);
         _dialogueBox.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
         _background.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
+        _eKey.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
+        _nameBox.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
+        _nameText.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
         _occupied = false;
 
         if (_typingCoroutine != null)
@@ -246,6 +309,10 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
             StopCoroutine(_typingCoroutine);
         }
         _isTalking = false;
+        if (_animator != null)
+        {
+            _animator.SetBool(Talk, false);
+        }
     }
 
     /// <summary>
@@ -266,6 +333,9 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
             _dialogueBox.SetText(_tutorialHint);
             _dialogueBox.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
             _background.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
+            _eKey.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
+            _nameBox.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
+            _nameText.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
         }
     }
 
@@ -373,4 +443,11 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
         }
         return true;
     }
+}
+public enum EmotionType
+{
+    NEUTRAL,
+    HAPPY,
+    SAD,
+    ANGRY
 }

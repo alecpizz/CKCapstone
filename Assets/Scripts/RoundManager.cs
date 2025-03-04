@@ -18,10 +18,8 @@ using UnityEngine.InputSystem;
 public enum TurnState
 {
     Player = 0,
-    World = 1,
-    Enemy = 2,
-    Harmony = 3,
-    None = 4,
+    Enemy = 1,
+    None = 2,
 }
 
 
@@ -43,6 +41,11 @@ public sealed class RoundManager : MonoBehaviour
     [SerializeField] private EventReference _playerTurnEvent;
     [SerializeField] private EventReference _enemyTurnEvent;
 
+    [Header("Autocomplete Mechanic")]
+    [SerializeField, Tooltip("Timescale during autocomplete dash")] private float _autocompleteSpeed = 3;
+
+    public event Action<bool> AutocompleteToggled;
+
     /// <summary>
     /// Whether someone is having their turn.
     /// </summary>
@@ -54,11 +57,6 @@ public sealed class RoundManager : MonoBehaviour
     public bool IsPlayerTurn => _turnState == TurnState.Player;
 
     /// <summary>
-    /// Whether it's the world's turn.
-    /// </summary>
-    public bool IsWorldTurn => _turnState == TurnState.World;
-
-    /// <summary>
     /// Whether enemies exist in the given scene.
     /// </summary>
     public bool EnemiesPresent => _turnListeners[TurnState.Enemy].Count > 0;
@@ -67,11 +65,6 @@ public sealed class RoundManager : MonoBehaviour
     /// Whether it's the enemy's turn.
     /// </summary>
     public bool IsEnemyTurn => _turnState == TurnState.Enemy;
-
-    /// <summary>
-    /// Whether it's the harmony's turn
-    /// </summary>
-    public bool IsHarmonyTurn => _turnState == TurnState.Harmony;
 
     /// <summary>
     /// Sets the singleton instance and initializes the dictionaries for
@@ -133,9 +126,13 @@ public sealed class RoundManager : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        // Not being called unless movement is blocked
         if (_playerControls.InGame.Movement.IsPressed() && !TurnInProgress)
         {
-            PerformMovement();
+            if(PlayerMovement.Instance.CanMove)
+            {
+                PerformMovement();
+            }
         }
     }
 
@@ -147,17 +144,20 @@ public sealed class RoundManager : MonoBehaviour
     /// <param name="obj"></param>
     private void RegisterMovementInput(InputAction.CallbackContext obj)
     {
-        Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>();
-        Vector3 dir = new Vector3(input.x, 0f, input.y);
-        _lastMovementInput = dir;
-        if (_turnState != TurnState.None)
+        var dir = GetNormalizedInput();
+
+        if(_turnState != TurnState.None && _lastMovementInput == dir)
         {
-            return;
+            EnableAutocomplete();
         }
+
+        _lastMovementInput = dir;
+
         _movementRegistered = true;
         _movementRegisteredTime = Time.unscaledTime;
 
-        if (_turnState != TurnState.None) return;
+        if (_turnState != TurnState.None)
+            return;
 
         PerformMovement();
     }
@@ -172,6 +172,7 @@ public sealed class RoundManager : MonoBehaviour
         if (!_playerControls.InGame.Movement.IsPressed())
         {
             _movementRegistered = false;
+            return;
         }
 
         _turnState = TurnState.Player;
@@ -194,17 +195,23 @@ public sealed class RoundManager : MonoBehaviour
     /// <param name="listener"></param>
     public void CompleteTurn(ITurnListener listener)
     {
-        if (listener.TurnState != _turnState) //don't complete if it's not our turn. this shouldn't happen
+        //don't complete if it's not our turn. this shouldn't happen
+        if (listener.TurnState != _turnState &&
+            (listener.SecondaryTurnState != _turnState ||
+            listener.SecondaryTurnState == TurnState.None))
         {
             Debug.LogError("Tried to complete turn while it wasn't our turn state." +
                            $" Listener {listener.TurnState}, state {_turnState}");
             return;
         }
 
+        TurnState listenerTurnState = listener.TurnState == _turnState ?
+            listener.TurnState : listener.SecondaryTurnState;
+
         //check if all entities in this turn state have completed their turn.
-        _completedTurnCounts[listener.TurnState]++;
-        if (_completedTurnCounts[listener.TurnState] < _turnListeners[listener.TurnState].Count) return;
-        _completedTurnCounts[listener.TurnState] = 0;
+        _completedTurnCounts[listenerTurnState]++;
+        if (_completedTurnCounts[listenerTurnState] < _turnListeners[listenerTurnState].Count) return;
+        _completedTurnCounts[listenerTurnState] = 0;
 
         //find out who's turn is next, if it's nobody's, stop.
         var next = GetNextTurn(_turnState);
@@ -212,9 +219,23 @@ public sealed class RoundManager : MonoBehaviour
         {
             _turnState = TurnState.None;
             // Attempts to move player if they buffered an input
+            /*bool doAutocomplete = false;
             if(Time.unscaledTime - _movementRegisteredTime <= _inputBufferWindow)
-                PerformMovement();
+            {
+                if (_lastMovementInput == GetNormalizedInput())
+                {
+                    doAutocomplete = true;
+                    EnableAutocomplete();
+                }
+                    
 
+                PerformMovement();
+            }
+                
+            if(!doAutocomplete)
+                DisableAutocomplete();
+            */
+            DisableAutocomplete();
             return;
         }
 
@@ -254,13 +275,19 @@ public sealed class RoundManager : MonoBehaviour
         //Stops Held Movement
         _movementRegistered = false;
 
-        if (listener.TurnState != _turnState)
+        // Returns if it's not the listener's turn
+        if (listener.TurnState != _turnState &&
+            (listener.SecondaryTurnState != _turnState ||
+            listener.SecondaryTurnState == TurnState.None))
         {
             return;
         }
 
-        _completedTurnCounts[listener.TurnState] = 0;
-        var prev = GetPreviousTurn(listener.TurnState);
+        TurnState listenerTurnState = listener.TurnState == _turnState ?
+            listener.TurnState : listener.SecondaryTurnState;
+
+        _completedTurnCounts[listenerTurnState] = 0;
+        var prev = GetPreviousTurn(listenerTurnState);
         if (prev is null or TurnState.None)
         {
             _turnState = TurnState.None;
@@ -283,10 +310,25 @@ public sealed class RoundManager : MonoBehaviour
     public void RegisterListener(ITurnListener listener)
     {
         if (listener == null) return;
-        if (_turnListeners[listener.TurnState].Contains(listener)) return;
-        _turnListeners[listener.TurnState].Add(listener);
+
+        bool addedListener = false;
+        if (!_turnListeners[listener.TurnState].Contains(listener))
+        {
+            _turnListeners[listener.TurnState].Add(listener);
+            addedListener = true;
+        }
+        if (listener.SecondaryTurnState != TurnState.None &&
+            !_turnListeners[listener.SecondaryTurnState].Contains(listener))
+        {
+            _turnListeners[listener.SecondaryTurnState].Add(listener);
+            addedListener = true;
+        }
+        if (!addedListener) { return; }
+
         //we added something during mid turn!
-        if (listener.TurnState != _turnState) return;
+        if (listener.TurnState != _turnState && 
+            (listener.SecondaryTurnState != _turnState || 
+            listener.SecondaryTurnState == TurnState.None)) return;
         listener.BeginTurn(_lastMovementInput);
     }
 
@@ -297,8 +339,51 @@ public sealed class RoundManager : MonoBehaviour
     public void UnRegisterListener(ITurnListener listener)
     {
         if (listener == null) return;
-        if (!_turnListeners[listener.TurnState].Contains(listener)) return;
-        _turnListeners[listener.TurnState].Remove(listener);
+        if (_turnListeners[listener.TurnState].Contains(listener))
+        {
+            _turnListeners[listener.TurnState].Remove(listener);
+        }
+        if (listener.SecondaryTurnState != TurnState.None &&
+            _turnListeners[listener.SecondaryTurnState].Contains(listener))
+        {
+            _turnListeners[listener.SecondaryTurnState].Remove(listener);
+        }
+    }
+
+    /// <summary>
+    /// Speeds up timescale for a short duration. Call DisableAutocomplete() to toggle off
+    /// </summary>
+    private void EnableAutocomplete()
+    {
+        Time.timeScale = _autocompleteSpeed;
+        AutocompleteToggled?.Invoke(true);
+    }
+
+    /// <summary>
+    /// Returns timescale to default
+    /// </summary>
+    private void DisableAutocomplete()
+    {
+        Time.timeScale = 1;
+        AutocompleteToggled?.Invoke(false);
+    }
+
+    /// <summary>
+    /// Fetches and normalizes the input of the player
+    /// </summary>
+    /// <returns>Normalized input vector</returns>
+    private Vector3 GetNormalizedInput()
+    {
+        Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>();
+        if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
+        {
+            input.y = 0;
+        }
+        else
+        {
+            input.x = 0;
+        }
+        return new Vector3(input.x, 0f, input.y);
     }
 
     /// <summary>
@@ -311,9 +396,7 @@ public sealed class RoundManager : MonoBehaviour
         return turnState switch
         {
             TurnState.Player => TurnState.Enemy,
-            TurnState.Enemy => TurnState.World,
-            TurnState.World => TurnState.Harmony,
-            TurnState.Harmony => TurnState.None,
+            TurnState.Enemy => TurnState.None,
             _ => null
         };
     }
@@ -329,8 +412,6 @@ public sealed class RoundManager : MonoBehaviour
         {
             TurnState.Player => TurnState.None,
             TurnState.Enemy => TurnState.Player,
-            TurnState.World => TurnState.Enemy,
-            TurnState.Harmony => TurnState.World,
             _ => null
         };
     }

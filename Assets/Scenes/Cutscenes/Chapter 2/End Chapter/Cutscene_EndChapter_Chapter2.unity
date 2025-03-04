@@ -140,7 +140,7 @@ PrefabInstance:
         type: 3}
       propertyPath: _gridMeshHolder
       value: 
-      objectReference: {fileID: 381800724}
+      objectReference: {fileID: 0}
     - target: {fileID: 436011373386010899, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: m_IsActive
@@ -181,6 +181,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1215671059214332406, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1528842653513555916, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: m_IsActive
@@ -199,27 +204,27 @@ PrefabInstance:
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Path
-      value: event:/Chapter 2 End Cutscene
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Guid.Data1
-      value: -129330510
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Guid.Data2
-      value: 1196642327
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Guid.Data3
-      value: -1739112038
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Guid.Data4
-      value: 592403969
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2295975639014996387, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
@@ -260,6 +265,11 @@ PrefabInstance:
         type: 3}
       propertyPath: _shouldFadeInOnLoad
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5598251421030866082, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: _playSoundOnSceneChange
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6311636952621972159, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
@@ -331,6 +341,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8515386904444733437, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8902230939137655927, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -339,6 +354,11 @@ PrefabInstance:
     - target: {fileID: 8902230939137655927, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8902230939137655927, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8902230939137655927, guid: dbb0dd27c6fab3344aab4441094b0849,
@@ -360,9 +380,9 @@ PrefabInstance:
       addedObject: {fileID: 1310912737}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dbb0dd27c6fab3344aab4441094b0849, type: 3}
---- !u!1 &381800724 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 138618493934716620, guid: dbb0dd27c6fab3344aab4441094b0849,
+--- !u!20 &381800725 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 7663816770030828482, guid: dbb0dd27c6fab3344aab4441094b0849,
     type: 3}
   m_PrefabInstance: {fileID: 381800723}
   m_PrefabAsset: {fileID: 0}
@@ -1262,7 +1282,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1273226980
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1492,6 +1512,7 @@ GameObject:
   - component: {fileID: 1312136891}
   - component: {fileID: 1312136890}
   - component: {fileID: 1312136892}
+  - component: {fileID: 1312136893}
   m_Layer: 0
   m_Name: CutsceneManager
   m_TagString: Untagged
@@ -1511,12 +1532,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 104df417cc52e654ba0e5d7b9070697e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _isChallengeCutscene: 1
-  _isEndChapterCutscene: 0
+  _isChallengeCutscene: 0
+  _isEndChapterCutscene: 1
   _challengeCutsceneImages:
   - {fileID: 987237890}
-  _endChapterCutsceneVideo: {fileID: 0}
-  _cutsceneDuration: 54
+  _cutsceneDuration: 56
   _cutsceneAudio:
     Guid:
       Data1: -129330510
@@ -1524,8 +1544,8 @@ MonoBehaviour:
       Data3: -1739112038
       Data4: 592403969
     Path: event:/Chapter 2 End Cutscene
-  _loadingLevelIndex: 0
-  _audioVolumeOverride: 5
+  _loadingLevelIndex: 26
+  _audioVolumeOverride: 1
 --- !u!4 &1312136891
 Transform:
   m_ObjectHideFlags: 0
@@ -1567,6 +1587,42 @@ MonoBehaviour:
     and want to give them props or bring up concerns. Thank you.
   _sentences: 6
   _subtitleObject: {fileID: 1310912738}
+--- !u!328 &1312136893
+VideoPlayer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1312136889}
+  m_Enabled: 1
+  m_VideoClip: {fileID: 32900000, guid: 078e922176896cd4c83a082f1bb6c34c, type: 3}
+  m_TargetCameraAlpha: 1
+  m_TargetCamera3DLayout: 0
+  m_TargetCamera: {fileID: 381800725}
+  m_TargetTexture: {fileID: 0}
+  m_TimeReference: 0
+  m_TargetMaterialRenderer: {fileID: 0}
+  m_TargetMaterialProperty: <noninit>
+  m_RenderMode: 1
+  m_AspectRatio: 3
+  m_DataSource: 0
+  m_TimeUpdateMode: 1
+  m_PlaybackSpeed: 1
+  m_AudioOutputMode: 0
+  m_TargetAudioSources:
+  - {fileID: 0}
+  m_DirectAudioVolumes:
+  - 1
+  m_Url: 
+  m_EnabledAudioTracks: 01
+  m_DirectAudioMutes: 00
+  m_ControlledAudioTrackCount: 1
+  m_PlayOnAwake: 0
+  m_SkipOnDrop: 0
+  m_Looping: 0
+  m_WaitForFirstFrame: 1
+  m_FrameReadyEventEnabled: 0
+  m_VideoShaders: []
 --- !u!1001 &1534550047
 PrefabInstance:
   m_ObjectHideFlags: 0

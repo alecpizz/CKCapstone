@@ -1217,7 +1217,7 @@ PrefabInstance:
         type: 3}
       propertyPath: _gridMeshHolder
       value: 
-      objectReference: {fileID: 381800724}
+      objectReference: {fileID: 0}
     - target: {fileID: 925676350848293028, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: m_Name
@@ -1324,12 +1324,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dbb0dd27c6fab3344aab4441094b0849, type: 3}
---- !u!1 &381800724 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 138618493934716620, guid: dbb0dd27c6fab3344aab4441094b0849,
-    type: 3}
-  m_PrefabInstance: {fileID: 381800723}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &381800725 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2891856093418539150, guid: dbb0dd27c6fab3344aab4441094b0849,
@@ -4679,7 +4673,7 @@ PrefabInstance:
     - target: {fileID: 2136362874793484460, guid: dda7842c0387e794a8c66ddc56220932,
         type: 3}
       propertyPath: _levelIndexToLoad
-      value: 4
+      value: 59
       objectReference: {fileID: 0}
     - target: {fileID: 3725983269745070237, guid: dda7842c0387e794a8c66ddc56220932,
         type: 3}
@@ -5563,6 +5557,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PRE_Metronome
       objectReference: {fileID: 0}
+    - target: {fileID: 5701776591767013567, guid: 2f5b26343a140d047864548534642419,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: b0b3f35f666ecce42a2998ac5f6140a7, type: 2}
     - target: {fileID: 7582661336523163796, guid: 2f5b26343a140d047864548534642419,
         type: 3}
       propertyPath: _HUDEffect
@@ -6395,12 +6394,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2218283480543364310, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
         type: 3}
+      propertyPath: _circularMovement
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2218283480543364310, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
+        type: 3}
       propertyPath: _movePoints.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2218283480543364310, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
+        type: 3}
+      propertyPath: _movePoints.Array.data[1].direction
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2218283480543364310, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
         type: 3}
       propertyPath: _movePoints.Array.data[0].tilesToMove
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2218283480543364310, guid: 8c51bcb36de0e9f428b1644d95ab07b8,
+        type: 3}
+      propertyPath: _movePoints.Array.data[1].tilesToMove
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2833258578220505359, guid: 8c51bcb36de0e9f428b1644d95ab07b8,

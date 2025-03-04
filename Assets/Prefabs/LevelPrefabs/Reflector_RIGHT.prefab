@@ -222,8 +222,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mirror: {fileID: 4784836867817577750}
-  _rotationDuration: 0.2
-  _beamToggleDelay: 0.6
+  _rotationDuration: 0.25
+  _beamToggleDelay: 0
+  _rotationDegrees: 180
 --- !u!1001 &1858446099240012047
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -240,7 +241,7 @@ PrefabInstance:
     - target: {fileID: 4743837448429484636, guid: d56f04d119596214f90aabbaf3e35fc0,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 0.018
       objectReference: {fileID: 0}
     - target: {fileID: 4743837448429484636, guid: d56f04d119596214f90aabbaf3e35fc0,
         type: 3}
@@ -250,7 +251,7 @@ PrefabInstance:
     - target: {fileID: 4743837448429484636, guid: d56f04d119596214f90aabbaf3e35fc0,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.14
+      value: -0.12
       objectReference: {fileID: 0}
     - target: {fileID: 4743837448429484636, guid: d56f04d119596214f90aabbaf3e35fc0,
         type: 3}
@@ -295,12 +296,7 @@ PrefabInstance:
     - target: {fileID: 8857718779942515223, guid: d56f04d119596214f90aabbaf3e35fc0,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.198
-      objectReference: {fileID: 0}
-    - target: {fileID: 8857718779942515223, guid: d56f04d119596214f90aabbaf3e35fc0,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0
+      value: -0.144
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -366,7 +362,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10308, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 4aab49c391c17ab419b4f068034aea7b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -387,7 +383,7 @@ ParticleSystemRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_RenderMode: 0
+  m_RenderMode: 4
   m_MeshDistribution: 0
   m_SortMode: 0
   m_MinParticleSize: 0
@@ -398,7 +394,7 @@ ParticleSystemRenderer:
   m_SortingFudge: 0
   m_NormalDirection: 1
   m_ShadowBias: 0
-  m_RenderAlignment: 0
+  m_RenderAlignment: 2
   m_Pivot: {x: 0, y: 0, z: 0}
   m_Flip: {x: 0, y: 0, z: 0}
   m_EnableGPUInstancing: 1
@@ -410,7 +406,7 @@ ParticleSystemRenderer:
   m_VertexStreams: 00010304
   m_UseCustomTrailVertexStreams: 0
   m_TrailVertexStreams: 00010304
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 4711208715938537054, guid: aa557fc7c6f22a6488cac5d85593a02d, type: 3}
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
@@ -555,7 +551,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.1
+      scalar: 0
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -673,7 +669,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 3
+      scalar: 2
       minScalar: 2.5
       maxCurve:
         serializedVersion: 2
@@ -885,7 +881,7 @@ ParticleSystem:
     startRotationY:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: -0.7452556
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -993,7 +989,7 @@ ParticleSystem:
     maxNumParticles: 1000
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
-    rotation3D: 0
+    rotation3D: 1
     gravityModifier:
       serializedVersion: 2
       minMaxState: 0

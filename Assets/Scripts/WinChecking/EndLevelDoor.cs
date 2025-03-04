@@ -5,6 +5,8 @@
 *    Description: Door unlocks when action on WinChecker is invoked.
 *       If door is unlocked and player walks into it, a new scene will load.
 *******************************************************************/
+
+using FMODUnity;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using SaintsField;
@@ -20,7 +22,9 @@ public class EndLevelDoor : MonoBehaviour
 
     [SerializeField] private Animator _anim;
 
-    [SerializeField] private DoorLightBehaviour _lanternScript; 
+    [SerializeField] private DoorLightBehaviour _lanternScript;
+
+    [SerializeField] private EventReference _doorSound;
 
     /// <summary>
     /// Door glow is assigned a value when the function awakens
@@ -74,8 +78,14 @@ public class EndLevelDoor : MonoBehaviour
             //make the door open
             _anim.Play("ANIM_DoorOpen");
 
-            //light the lantern
-            _lanternScript.TurnLightOn();
+            //light the lantern (null check for cutscene skip)
+            if(_lanternScript != null)
+                _lanternScript.TurnLightOn();
+        }
+         //End level door opening sound
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySound(_doorSound);
         }
     }
 
@@ -101,7 +111,8 @@ public class EndLevelDoor : MonoBehaviour
                 playerMovement.ForceTurnEnd();
                 playerMovement.enabled = false;
             }
-
+            SaveDataManager.SetLastFinishedLevel(SceneManager.GetActiveScene().name);
+            SaveDataManager.SetLevelCompleted(SceneManager.GetActiveScene().name);
             SceneController.Instance.LoadNewScene(_levelIndexToLoad);
         }
         else if (other.CompareTag("Player"))

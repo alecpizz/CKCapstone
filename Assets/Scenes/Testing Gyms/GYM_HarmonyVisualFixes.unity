@@ -130,10 +130,56 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 125233841770136038, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: _gridSize
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 925676350848293028, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: m_Name
       value: Base_LevelPrefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 1215671059214332406, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: holdMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1215671059214332406, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: toggleMenu
+      value: 
+      objectReference: {fileID: 491354514}
+    - target: {fileID: 1215671059214332406, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: speedToggle
+      value: 
+      objectReference: {fileID: 371470132}
+    - target: {fileID: 3779010635345215091, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 19
+      objectReference: {fileID: 0}
+    - target: {fileID: 3953667755189143540, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_text
+      value: Hold to Speed Up
+      objectReference: {fileID: 0}
+    - target: {fileID: 6020768258729223735, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 4138122257192751858, guid: eea34dfcfa5375843b1676ba844a49c0,
+        type: 3}
+    - target: {fileID: 6020768258729223735, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ToggleChange
+      objectReference: {fileID: 0}
+    - target: {fileID: 6020768258729223735, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: GameSpeedOptions, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 7757164700761813088, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
@@ -205,6 +251,24 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dbb0dd27c6fab3344aab4441094b0849, type: 3}
+--- !u!114 &371470132 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6020768258729223735, guid: dbb0dd27c6fab3344aab4441094b0849,
+    type: 3}
+  m_PrefabInstance: {fileID: 371470131}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 491354514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &491354514 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6215457987414962627, guid: dbb0dd27c6fab3344aab4441094b0849,
+    type: 3}
+  m_PrefabInstance: {fileID: 371470131}
+  m_PrefabAsset: {fileID: 0}
 --- !u!43 &1091657797
 Mesh:
   m_ObjectHideFlags: 0
