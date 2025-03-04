@@ -108,6 +108,7 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void Pause()
     {
+        if (SceneController.Instance == null || SceneController.Instance.Transitioning) return;
         DebugMenuManager.Instance.PauseMenu = true;
         _pauseScreen.SetActive(true);
         _restartButton.SetActive(false);
