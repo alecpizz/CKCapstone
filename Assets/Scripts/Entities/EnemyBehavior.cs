@@ -155,6 +155,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     //public static PlayerMovement Instance;
     private static readonly int Forward = Animator.StringToHash("Forward");
+    private static readonly int Frozen = Animator.StringToHash("Frozen");
 
 
     [SerializeField] private Animator _animator;
@@ -456,6 +457,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
             if (_animator != null)
             {
+                _animator.SetBool(Frozen, false);
                 _animator.SetTrigger(Forward);
             }
             var dist = Vector3Int.Distance(currCell, goalCell);
@@ -784,6 +786,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     {
         if (_isSonEnemy)
         {
+            if (_animator != null)
+            {
+                _animator.SetBool(Frozen, true);
+            }
             _isFrozen = true;
         }
     }
@@ -793,6 +799,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// </summary>
     public void OnLaserExit()
     {
+        if (_animator != null)
+        {
+            _animator.SetBool(Frozen, false);
+        }
         _isFrozen = false;
     }
 
