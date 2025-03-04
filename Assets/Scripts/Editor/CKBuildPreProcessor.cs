@@ -37,11 +37,14 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             BuildSceneIndex();
         }
 
-        CheckScriptingDefines();
+        ToggleUnlockedDefines();
     }
 
-    [MenuItem("Tools/Crowded Kitchen/Script Defines")]
-    public static void CheckScriptingDefines()
+    /// <summary>
+    /// 
+    /// </summary>
+    [MenuItem("Tools/Crowded Kitchen/Toggle Unlocked Levels")]
+    public static void ToggleUnlockedDefines()
     {
         var buildTarget = NamedBuildTarget.FromBuildTargetGroup(
             BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget));
@@ -53,6 +56,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             if (!hasOverride)
             {
                 symbols.Add("OVERRIDE_LEVEL");
+                Debug.Log("<color=green>Added</color> define");
             }
         }
         else
@@ -60,6 +64,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             if (hasOverride)
             {
                 symbols.Remove("OVERRIDE_LEVEL");
+                Debug.Log("<color=red>Removed</color> define");
             }
         }
 

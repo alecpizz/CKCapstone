@@ -152,6 +152,9 @@ public class MenuManager : MonoBehaviour
         SceneManager.LoadScene(_firstLevelIndex);
     }
 
+    /// <summary>
+    /// Attempts to load the last saved puzzle.
+    /// </summary>
     public void ContinueGame()
     {
         string level = SaveDataManager.GetLastFinishedLevel();
