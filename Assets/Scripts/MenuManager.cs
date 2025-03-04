@@ -153,6 +153,19 @@ public class MenuManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Attempts to load the last saved puzzle.
+    /// </summary>
+    public void ContinueGame()
+    {
+        string level = SaveDataManager.GetLastFinishedLevel();
+        if (string.IsNullOrEmpty(level)) return;
+        var scene = SceneManager.GetSceneByName(level);
+        if (!scene.IsValid()) return;
+        int idx = scene.buildIndex;
+        SceneManager.LoadScene(idx);
+    }
+
+    /// <summary>
     /// Prompts the user with a quit confirm selection after pressing the quit button
     /// </summary>
     public void QuitConfirm()
