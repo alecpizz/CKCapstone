@@ -41,7 +41,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
     }
 
     /// <summary>
-    /// 
+    /// Toggles the unlocked level define.
     /// </summary>
     [MenuItem("Tools/Crowded Kitchen/Toggle Unlocked Levels")]
     public static void ToggleUnlockedDefines()
