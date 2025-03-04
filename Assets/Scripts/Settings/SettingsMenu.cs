@@ -54,6 +54,8 @@ public class SettingsMenu : MonoBehaviour
         _resolutionDropdown.ClearOptions();
         List<string> options = new();
 
+        Dictionary<Resolution, RefreshRate> resolutionDict = new();//continue with Alec's changes
+
         int currentResolutionIndex = 0;
         for (int i = 0; i < _resolutions.Count; i++)
         {
