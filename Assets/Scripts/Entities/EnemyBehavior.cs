@@ -24,7 +24,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 {
     public bool IsTransparent
     {
-        get => false;
+        get => !_isFrozen;
     }
 
     public bool BlocksHarmonyBeam
