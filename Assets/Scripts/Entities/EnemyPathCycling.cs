@@ -64,11 +64,6 @@ public class EnemyPathCycling : MonoBehaviour
     {
         if (CycleUnset)
         {
-            for (int i = 0; i < _allEnemyArray.Length; i++)
-            {
-                _allEnemyArray[i].DestPathVFX.SetActive(false);
-                _allEnemyArray[i].DestinationMarker.SetActive(false);
-            }
             CycleUnset = false;
             IsCycling = false;
             _cycleNumber = -1;
@@ -76,7 +71,6 @@ public class EnemyPathCycling : MonoBehaviour
     }
 
     /// <summary>
-    /// 
     /// Allows someone with a controller to cycle through the enemy paths in the order of the array
     /// </summary>
     /// <param name="context"></param>
@@ -92,8 +86,7 @@ public class EnemyPathCycling : MonoBehaviour
             IsCycling = true;
             _cycleNumber = 0;
             _singleEnemyPathOn = !_singleEnemyPathOn;
-            _allEnemyArray[_cycleNumber].DestPathVFX.SetActive(_singleEnemyPathOn);
-            _allEnemyArray[_cycleNumber].DestinationMarker.SetActive(_singleEnemyPathOn);
+            _allEnemyArray[_cycleNumber].PathingCycle();
         }
         else
         {
@@ -102,16 +95,13 @@ public class EnemyPathCycling : MonoBehaviour
             {
                 if (_cycleNumber >= _allEnemyArray.Length)
                 {
-                    _allEnemyArray[_allEnemyArray.Length - 1].DestPathVFX.SetActive(false);
-                    _allEnemyArray[_allEnemyArray.Length - 1].DestinationMarker.SetActive(false);
+                    _allEnemyArray[_allEnemyArray.Length - 1].PathingCycle();
                     _cycleNumber = -1;
                 }
                 else
                 {
-                    _allEnemyArray[_cycleNumber - 1].DestPathVFX.SetActive(false);
-                    _allEnemyArray[_cycleNumber - 1].DestinationMarker.SetActive(false);
-                    _allEnemyArray[_cycleNumber].DestPathVFX.SetActive(true);
-                    _allEnemyArray[_cycleNumber].DestinationMarker.SetActive(true);
+                    _allEnemyArray[_cycleNumber - 1].PathingCycle();
+                    _allEnemyArray[_cycleNumber].PathingCycle();
                     _cycleNumber++;
                 }
             }
@@ -119,8 +109,7 @@ public class EnemyPathCycling : MonoBehaviour
             {
                 for (int i = 0; i < _allEnemyArray.Length; i++)
                 {
-                    _allEnemyArray[i].DestPathVFX.SetActive(true);
-                    _allEnemyArray[i].DestinationMarker.SetActive(true);
+                    _allEnemyArray[i].PathingCycle();
                 }
                 _cycleNumber++;
             }
@@ -128,13 +117,9 @@ public class EnemyPathCycling : MonoBehaviour
             {
                 for (int i = 0; i < _allEnemyArray.Length; i++)
                 {
-                    _allEnemyArray[i].DestPathVFX.SetActive(false);
-                    _allEnemyArray[i].DestinationMarker.SetActive(false);
+                    _allEnemyArray[i].PathingCycle();
                 }
-                _allEnemyArray[_allEnemyArray.Length - 1].DestPathVFX.SetActive(false);
-                _allEnemyArray[_allEnemyArray.Length - 1].DestinationMarker.SetActive(false);
-                _allEnemyArray[_cycleNumber].DestPathVFX.SetActive(true);
-                _allEnemyArray[_cycleNumber].DestinationMarker.SetActive(true);
+                _allEnemyArray[_cycleNumber].PathingCycle();
                 _cycleNumber++;
             }
         }

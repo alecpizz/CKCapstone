@@ -1,6 +1,6 @@
 /******************************************************************
  *    Author: Cole Stranczek
- *    Contributors: Cole Stranczek, Mitchell Young, Nick Grinstead, Alec Pizziferro
+ *    Contributors: Cole Stranczek, Mitchell Young, Nick Grinstead, Alec Pizziferro, Alex Laubenstein
  *    Jamison Parks
  *    Date Created: 10/3/24
  *    Description: Script that handles the behavior of the enemy,
@@ -48,7 +48,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [SerializeField] private GameObject _destinationMarker;
     [SerializeField] private GameObject _destPathVFX;
 
-
     //Destination object values
 
     public bool CollidingWithRay { get; set; }= false;
@@ -71,7 +70,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [PlayaInfoBox("The floor for how fast the enemy can move.")] [SerializeField]
     private float _minMoveTime = 0.175f;
 
-    [SerializeField] private bool _currentToggle = true;
+    [SerializeField] private bool _currentGroupToggle = true;
+    [SerializeField] private bool _currentSoloToggle = true;
 
     [SerializeField] private float _rotationTime = 0.10f;
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
@@ -306,11 +306,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     /// <summary>
     /// DestinationPath is called whenever the mouse ray collides with the enemy.
-    /// This function turns the _destPathVFX and _destinationMarker objects on/off.
+    /// This function turns the __destPathVFX and __destinationMarker objects on/off.
     /// </summary>
     public void DestinationPath()
     {
-        if (!_currentToggle)
+        if (!_currentGroupToggle)
         {
             return;
         }
@@ -321,15 +321,41 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     /// <summary>
     /// Toggles all enemy pathing on the current level when the player
-    /// presses spacebar.
+    /// presses Q.
     /// </summary>
     /// <param name="context"></param>
     private void PathingToggle(InputAction.CallbackContext context)
     {
-        _destPathVFX.SetActive(_currentToggle);
-        _destinationMarker.SetActive(_currentToggle);
+        if (EnemyPathCycling.Instance.IsCycling)
+        {
+            EnemyPathCycling.Instance.CycleUnset = true;
+            _currentSoloToggle = true;
 
-        _currentToggle = !_currentToggle;
+            _destPathVFX.SetActive(false);
+            _destinationMarker.SetActive(false);
+
+            _currentGroupToggle = true;
+        }
+        else
+        {
+            _destPathVFX.SetActive(_currentGroupToggle);
+            _destinationMarker.SetActive(_currentGroupToggle);
+
+            _currentGroupToggle = !_currentGroupToggle;
+        }
+    }
+
+    /// <summary>
+    /// Toggles enemy pathing individually for enemiesin  the current level when the player
+    /// presses a bumper .
+    /// </summary>
+    /// <param name="context"></param>
+    public void PathingCycle()
+    {
+        _destPathVFX.SetActive(_currentSoloToggle);
+        _destinationMarker.SetActive(_currentSoloToggle);
+
+        _currentSoloToggle = !_currentSoloToggle;
     }
 
     /// <summary>
