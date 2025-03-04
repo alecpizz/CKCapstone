@@ -480,6 +480,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                             !DebugMenuManager.Instance.Invincibility)
                         {
                             //hit a player!
+                            PlayerMovement.Instance.OnDeath();
                             SceneController.Instance.ReloadCurrentScene();
                         }
                     });
