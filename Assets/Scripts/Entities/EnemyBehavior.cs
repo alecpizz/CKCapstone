@@ -37,6 +37,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         get => transform.position;
     }
 
+    public Transform EntityTransform 
+    { 
+        get => transform; 
+    }
+
     [SerializeField] private Vector3 _positionOffset;
 
     public GameObject EntryObject

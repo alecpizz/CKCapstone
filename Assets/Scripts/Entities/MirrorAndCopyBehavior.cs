@@ -20,6 +20,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     public bool IsTransparent { get => false; }
     public bool BlocksHarmonyBeam { get => false; }
     public Vector3 Position { get => transform.position; }
+    public Transform EntityTransform { get => transform; }
     public GameObject EntryObject { get => gameObject; }
 
     public bool EnemyFrozen { get; private set; } = false;
