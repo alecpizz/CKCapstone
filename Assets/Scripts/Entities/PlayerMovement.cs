@@ -155,6 +155,20 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             TimeSignatureManager.Instance.UnregisterTimeListener(this);
     }
 
+    /// <summary>
+    /// Unregisters input actions on player death
+    /// </summary>
+    public void OnDeath()
+    {
+        if (RoundManager.Instance != null)
+        {
+            RoundManager.Instance.UnRegisterListener(this);
+            RoundManager.Instance.AutocompleteToggled -= OnAutocompleteToggledEvent;
+        }
+
+        if (TimeSignatureManager.Instance != null)
+            TimeSignatureManager.Instance.UnregisterTimeListener(this);
+    }
 
     /// <summary>
     /// Helper coroutine for performing movement with a delay
@@ -178,11 +192,11 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                 && gameObject.transform.position != readPos) ||
                 (DebugMenuManager.Instance.GhostMode))
             {
+                GridBase.Instance.UpdateEntryAtPosition(this, move);
                 _animator.SetTrigger(Forward);
                 yield return Tween.Position(transform,
                     move + _positionOffset, duration: modifiedMovementTime, 
                     _movementEase).ToYieldInstruction();
-                GridBase.Instance.UpdateEntry(this);
             }
 
             if (_playerMovementTiming > 1)
@@ -192,35 +206,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         }
 
         _canMove = true;
-        //RoundManager.Instance.CompleteTurn(this);
     }
-
-    /// <summary>
-    /// Reloads scene when player hits an enemy
-    /// </summary>
-    /// <param name="collision">Data from collision</param>
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (!DebugMenuManager.Instance.Invincibility 
-            && collision.gameObject.CompareTag("Enemy") ||
-            !DebugMenuManager.Instance.Invincibility 
-            && collision.gameObject.CompareTag("SonEnemy"))
-        {
-            // Checks if the enemy is frozen; if they are, doesn't reload the scene
-            EnemyBehavior enemy = collision.collider.GetComponent<EnemyBehavior>();
-            if (enemy == null)
-                return;
-
-            MirrorAndCopyBehavior mirrorCopy = collision.collider.GetComponent<MirrorAndCopyBehavior>();
-            if (mirrorCopy == null)
-                return;
-
-            Time.timeScale = 0f;
-
-            SceneController.Instance.ReloadCurrentScene();
-        }
-    }
-
 
     /// <summary>
     /// Receives the new player movement speed when time signature updates
