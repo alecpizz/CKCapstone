@@ -151,6 +151,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private bool _isReturningToStart = false;
     private int _indicatorIndex = 0;
     private bool _indicatorReturningToStart = false;
+    private int _currentEnemyIndex = 0;
 
     //public static PlayerMovement Instance;
     private static readonly int Forward = Animator.StringToHash("Forward");
@@ -481,6 +482,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                             !DebugMenuManager.Instance.Invincibility)
                         {
                             //hit a player!
+                            PlayerMovement.Instance.OnDeath();
                             SceneController.Instance.ReloadCurrentScene();
                         }
                     });
@@ -614,6 +616,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 moveIndex = 1;
             }
         }
+
+        _currentEnemyIndex = moveIndex;
     }
 
 
@@ -700,7 +704,15 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             else
             {
                 //our moves will start with the enemy time signature since we're circularly repeating our movement.
-                moveIndex = _enemyMovementTime;
+                moveIndex = _currentEnemyIndex + _enemyMovementTime;
+
+                //if the number of moves exceeds the list count start from 0 and then add the amount remaining.
+                if (moveIndex > _moveDestinations.Count - 1)
+                {
+                    int offsetCircular = moveIndex - (_moveDestinations.Count - 1);
+                    moveIndex = 0;
+                    moveIndex += offsetCircular;
+                }
             }
         }
     }
