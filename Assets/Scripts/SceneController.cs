@@ -39,6 +39,8 @@ public class SceneController : MonoBehaviour
     private const float xUvOffset = 0.5f;
     private const float yUvOffset = 0.28f;
 
+    public bool Transitioning {get; private set;}
+    
     /// <summary>
     /// Creates instance and starts fade in transition
     /// </summary>
@@ -55,6 +57,8 @@ public class SceneController : MonoBehaviour
         {
             StartCoroutine(CircleWipeTransition(true, _currentFadeColor));
         }
+        
+        Transitioning = false;
     }
 
     /// <summary>
@@ -122,13 +126,17 @@ public class SceneController : MonoBehaviour
         _circleWipeImage.materialForRendering.SetFloat(_circleSizePropId, startingCircleSize);
         _circleWipeImage.materialForRendering.SetColor(_backgroundColorPropId, fadeColor);
 
+        Transitioning = true;
+        
         RepositionCircleWipe();
         if (AudioManager.Instance != null && _playSoundOnSceneChange)
         {
             AudioManager.Instance.PlaySound(_endSound);
         }
         yield return new WaitForEndOfFrame();
-
+        
+        
+        
         // Animates circle wipe until the end time is reached
         while (elapsedTime < _timeForScreenWipe)
         {
@@ -142,8 +150,8 @@ public class SceneController : MonoBehaviour
         _circleWipeImage.materialForRendering.SetFloat(_circleSizePropId, targetCircleSize);
 
         yield return new WaitForSecondsRealtime(0.1f);
-
-        Time.timeScale = 1f;
+        
+        Transitioning = false;
 
         // Loads new scene if needed
         if (!isFadingIn && sceneIndexToLoad != -1)
