@@ -155,6 +155,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     //public static PlayerMovement Instance;
     private static readonly int Forward = Animator.StringToHash("Forward");
+    private static readonly int Attack = Animator.StringToHash("Attack");
 
 
     [SerializeField] private Animator _animator;
@@ -482,6 +483,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                         {
                             //hit a player!
                             PlayerMovement.Instance.OnDeath();
+                            if (_animator != null)
+                            {
+                                _animator.SetTrigger(Attack);
+                            }
                             SceneController.Instance.ReloadCurrentScene();
                         }
                     });
