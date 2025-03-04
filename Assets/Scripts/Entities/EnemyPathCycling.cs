@@ -21,34 +21,23 @@ public class EnemyPathCycling : MonoBehaviour
 
     private int _cycleNumber = -1;
 
-    public bool IsCycling = false;
+    public bool IsCycling { get; private set; } = false;
     public bool CycleUnset = false;
     private bool _singleEnemy = false;
     private bool _singleEnemyPathOn = false;
 
     //Arrays to gather the enemy game objects for cycling
-    [SerializeField] private GameObject[] _enemyArray;
-    [SerializeField] private GameObject[] _sonEnemyArray;
-    [SerializeField] private GameObject[] _allEnemyArray;
-    [SerializeField] private List<EnemyBehavior> _allEnemyBehaviorList;
+    private GameObject[] _enemyArray;
+    private GameObject[] _sonEnemyArray;
+    private EnemyBehavior[] _allEnemyArray;
 
     /// <summary>
     /// Fills up the arrays with enemies
-    /// </summary>
+    /// </summary>          
     private void Awake()
     {
         Instance = this;
-        _enemyArray = GameObject.FindGameObjectsWithTag("Enemy");
-        _sonEnemyArray = GameObject.FindGameObjectsWithTag("SonEnemy");
-        _allEnemyArray = _enemyArray.Concat(_sonEnemyArray).ToArray();
-        foreach (var enemy in _allEnemyArray)
-        {
-            if (enemy.TryGetComponent(out EnemyBehavior behaviour))
-            {
-                _allEnemyBehaviorList.Add(behaviour);
-            }
-
-        }
+        _allEnemyArray = GameObject.FindObjectsOfType<EnemyBehavior>();
         if (_allEnemyArray.Length == 1)
         {
             _singleEnemy = true;
@@ -59,7 +48,7 @@ public class EnemyPathCycling : MonoBehaviour
     /// <summary>
     /// enables the controls used in the script
     /// </summary>
-    void Start()
+    private void Start()
     {
         _input = new PlayerControls();
         _input.InGame.Enable();
@@ -75,10 +64,10 @@ public class EnemyPathCycling : MonoBehaviour
     {
         if (CycleUnset)
         {
-            for (int i = 0; i < _allEnemyBehaviorList.Count; i++)
+            for (int i = 0; i < _allEnemyArray.Length; i++)
             {
-                _allEnemyBehaviorList[i].DestPathVFX.SetActive(false);
-                _allEnemyBehaviorList[i].DestinationMarker.SetActive(false);
+                _allEnemyArray[i].DestPathVFX.SetActive(false);
+                _allEnemyArray[i].DestinationMarker.SetActive(false);
             }
             CycleUnset = false;
             IsCycling = false;
@@ -94,58 +83,58 @@ public class EnemyPathCycling : MonoBehaviour
     private void PathingForward(InputAction.CallbackContext context)
     {
         
-        if (_allEnemyBehaviorList.Count == 0)
+        if (_allEnemyArray.Length == 0)
         {
-            //do nothing
+            return;
         }
-        else if (_singleEnemy)
+        if (_singleEnemy)
         {
             IsCycling = true;
             _cycleNumber = 0;
             _singleEnemyPathOn = !_singleEnemyPathOn;
-            _allEnemyBehaviorList[_cycleNumber].DestPathVFX.SetActive(_singleEnemyPathOn);
-            _allEnemyBehaviorList[_cycleNumber].DestinationMarker.SetActive(_singleEnemyPathOn);
+            _allEnemyArray[_cycleNumber].DestPathVFX.SetActive(_singleEnemyPathOn);
+            _allEnemyArray[_cycleNumber].DestinationMarker.SetActive(_singleEnemyPathOn);
         }
         else
         {
             IsCycling = true;
             if (_cycleNumber > 0)
             {
-                if (_cycleNumber >= _allEnemyBehaviorList.Count)
+                if (_cycleNumber >= _allEnemyArray.Length)
                 {
-                    _allEnemyBehaviorList[_allEnemyBehaviorList.Count - 1].DestPathVFX.SetActive(false);
-                    _allEnemyBehaviorList[_allEnemyBehaviorList.Count - 1].DestinationMarker.SetActive(false);
+                    _allEnemyArray[_allEnemyArray.Length - 1].DestPathVFX.SetActive(false);
+                    _allEnemyArray[_allEnemyArray.Length - 1].DestinationMarker.SetActive(false);
                     _cycleNumber = -1;
                 }
                 else
                 {
-                    _allEnemyBehaviorList[_cycleNumber - 1].DestPathVFX.SetActive(false);
-                    _allEnemyBehaviorList[_cycleNumber - 1].DestinationMarker.SetActive(false);
-                    _allEnemyBehaviorList[_cycleNumber].DestPathVFX.SetActive(true);
-                    _allEnemyBehaviorList[_cycleNumber].DestinationMarker.SetActive(true);
+                    _allEnemyArray[_cycleNumber - 1].DestPathVFX.SetActive(false);
+                    _allEnemyArray[_cycleNumber - 1].DestinationMarker.SetActive(false);
+                    _allEnemyArray[_cycleNumber].DestPathVFX.SetActive(true);
+                    _allEnemyArray[_cycleNumber].DestinationMarker.SetActive(true);
                     _cycleNumber++;
                 }
             }
             else if (_cycleNumber < 0)
             {
-                for (int i = 0; i < _allEnemyBehaviorList.Count; i++)
+                for (int i = 0; i < _allEnemyArray.Length; i++)
                 {
-                    _allEnemyBehaviorList[i].DestPathVFX.SetActive(true);
-                    _allEnemyBehaviorList[i].DestinationMarker.SetActive(true);
+                    _allEnemyArray[i].DestPathVFX.SetActive(true);
+                    _allEnemyArray[i].DestinationMarker.SetActive(true);
                 }
                 _cycleNumber++;
             }
             else
             {
-                for (int i = 0; i < _allEnemyBehaviorList.Count; i++)
+                for (int i = 0; i < _allEnemyArray.Length; i++)
                 {
-                    _allEnemyBehaviorList[i].DestPathVFX.SetActive(false);
-                    _allEnemyBehaviorList[i].DestinationMarker.SetActive(false);
+                    _allEnemyArray[i].DestPathVFX.SetActive(false);
+                    _allEnemyArray[i].DestinationMarker.SetActive(false);
                 }
-                _allEnemyBehaviorList[_allEnemyBehaviorList.Count - 1].DestPathVFX.SetActive(false);
-                _allEnemyBehaviorList[_allEnemyBehaviorList.Count - 1].DestinationMarker.SetActive(false);
-                _allEnemyBehaviorList[_cycleNumber].DestPathVFX.SetActive(true);
-                _allEnemyBehaviorList[_cycleNumber].DestinationMarker.SetActive(true);
+                _allEnemyArray[_allEnemyArray.Length - 1].DestPathVFX.SetActive(false);
+                _allEnemyArray[_allEnemyArray.Length - 1].DestinationMarker.SetActive(false);
+                _allEnemyArray[_cycleNumber].DestPathVFX.SetActive(true);
+                _allEnemyArray[_cycleNumber].DestinationMarker.SetActive(true);
                 _cycleNumber++;
             }
         }

@@ -1,0 +1,608 @@
+/******************************************************************
+ *    Author: Cole Stranczek
+ *    Contributors: Cole Stranczek, Mitchell Young, Nick Grinstead, Alec Pizziferro, Alex Laubenstein
+ *    Date Created: 10/3/24
+ *    Description: Script that handles the behavior of the enemy,
+ *    from movement to causing a failstate with the player
+ *******************************************************************/
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Serialization;
+using UnityEngine.InputSystem;
+using PrimeTween;
+using Unity.VisualScripting;
+using FMODUnity;
+using SaintsField;
+using SaintsField.Playa;
+
+public class EnemyBehavior1 : MonoBehaviour, IGridEntry, ITimeListener,
+    ITurnListener, IHarmonyBeamEntity
+{
+    public bool IsTransparent
+    {
+        get => false;
+    }
+
+    public bool BlocksHarmonyBeam
+    {
+        get => false;
+    }
+
+    public Vector3 Position
+    {
+        get => transform.position;
+    }
+
+    [SerializeField] private Vector3 _positionOffset;
+
+    public GameObject EntryObject
+    {
+        get => gameObject;
+    }
+
+    private PlayerControls _input;
+    public GameObject DestinationMarker;
+    public GameObject DestPathVFX;
+
+
+    //Destination object values
+
+    public bool CollidingWithRay { get; set; }= false;
+
+    [SerializeField] private float _destYPos = 1f;
+    [SerializeField] private float _lineYPosOffset = 1f;
+
+    //Wait time between enemy moving each individual tile while on path to next destination
+    [PlayaInfoBox("Time for the enemy to move between each tile. " +
+                  "\n This will be divided by the number of spaces it will move.")]
+    [SerializeField]
+    private float _waitTime = 0.5f;
+
+    [PlayaInfoBox("The floor for how fast the enemy can move.")] [SerializeField]
+    private float _minMoveTime = 0.175f;
+
+    public bool CurrentToggle = true;
+
+    [SerializeField] private float _rotationTime = 0.10f;
+    [SerializeField] private Ease _rotationEase = Ease.InOutSine;
+    [SerializeField] private Ease _movementEase = Ease.OutBack;
+
+    /// <summary>
+    /// Helper enum for enemy directions.
+    /// </summary>
+    public enum Direction
+    {
+        Up,
+        Down,
+        Left,
+        Right
+    }
+
+    /// <summary>
+    /// Struct to hold an enemy's move. Contains a direction and magnitude.
+    /// </summary>
+    [System.Serializable]
+    private struct movePoints
+    {
+        public Direction direction;
+        public int tilesToMove;
+
+        /// <summary>
+        /// Grabs the vector3 equivalent of the direction assigned to this struct.
+        /// </summary>
+        /// <returns>A vector3 equivalent of direction.</returns>
+        public Vector3 GetDirection()
+        {
+            return direction switch
+            {
+                Direction.Up => Vector3.forward,
+                Direction.Down => Vector3.back,
+                Direction.Left => Vector3.left,
+                Direction.Right => Vector3.right,
+                _ => Vector3.zero
+            };
+        }
+    }
+
+    [SerializeField] private List<movePoints> _movePoints;
+
+    //Check true in the inspector if the enemy is moving in
+    //a circular pattern (doesn't want to move back and forth)
+    [InfoBox("If the enemy uses circular movement, after reaching the end of its moves, " +
+             "it will go back to its first move, rather than moving backwards through its moves.", EMessageType.Info)]
+    [SerializeField] private bool _circularMovement = false;
+
+    private LineRenderer _vfxLine;
+    [SerializeField] private float _enemyRotateToMovementDelay = 0.2f;
+
+    private bool _isFrozen = false;
+
+    // Event reference for the enemy movement sound
+    [SerializeField] private EventReference _enemyMove = default;
+
+    [FormerlySerializedAs("sonEnemy")] [SerializeField]
+    private bool _isSonEnemy;
+
+    private readonly List<Vector3Int> _moveDestinations = new();
+
+    // Timing from metronome
+    private int _enemyMovementTime = 1;
+
+    private Rigidbody _rb;
+
+    private int _moveIndex = 0;
+    private bool _isReturningToStart = false;
+    private int _indicatorIndex = 0;
+    private bool _indicatorReturningToStart = false;
+
+    /// <summary>
+    /// Disables a PrimeTween warning and sets the instance
+    /// </summary>
+    private void Awake()
+    {
+        PrimeTweenConfig.warnEndValueEqualsCurrent = false;
+        PrimeTweenConfig.warnZeroDuration = false;
+    }
+
+    /// <summary>
+    /// Start is called before the first frame update.
+    /// </summary>
+    private void Start()
+    {
+        SnapToGridSpace();
+        BuildCellList();
+        GridBase.Instance.AddEntry(this);
+
+        _rb = GetComponent<Rigidbody>();
+        _rb.isKinematic = true;
+
+        DestinationMarker.transform.SetParent(null);
+
+        // Make sure enemies are always seen at the start
+
+        if (TimeSignatureManager.Instance != null)
+        {
+            TimeSignatureManager.Instance.RegisterTimeListener(this);
+        }
+
+        _vfxLine = DestPathVFX.GetComponent<LineRenderer>();
+        _vfxLine.positionCount = 2;
+
+        DestPathVFX.SetActive(false);
+        DestinationMarker.SetActive(false);
+        for (int i = 0; i < _enemyMovementTime; i++)
+        {
+            UpdateDestinationMarker();
+        }
+
+        DestinationPath();
+
+        //enables neccesary inputs needed for the enemies
+        _input = new PlayerControls();
+        _input.InGame.Enable();
+
+        _input.InGame.Toggle.performed += PathingToggle;
+    }
+
+    /// <summary>
+    /// Registers the instance in the RoundManager.
+    /// </summary>
+    private void OnEnable()
+    {
+        if (RoundManager.Instance != null)
+        {
+            RoundManager.Instance.RegisterListener(this);
+        }
+    }
+
+    /// <summary>
+    /// Visualizer for enemy pathing in editor.
+    /// </summary>
+    private void OnDrawGizmos()
+    {
+        if (_moveDestinations.Count == 0)
+        {
+            var grid = GridBase.Instance;
+            if (grid != null)
+            {
+                List<Vector3Int> cells = new();
+                Vector3 prevCell = transform.position;
+                cells.Add(grid.WorldToCell(transform.position));
+                foreach (var pt in _movePoints)
+                {
+                    for (int i = 0; i < pt.tilesToMove; i++)
+                    {
+                        var newPos = grid.GetCellPositionInDirection(prevCell,
+                            pt.GetDirection());
+                        prevCell = newPos;
+                    }
+
+                    cells.Add(grid.WorldToCell(prevCell));
+                }
+
+                for (int i = 0; i < cells.Count; i++)
+                {
+                    var color = Color.HSVToRGB((float) i / cells.Count, 1f, 1f);
+                    Gizmos.color = color;
+                    Gizmos.DrawSphere(grid.CellToWorld(cells[i]), 0.2f);
+                }
+            }
+        }
+        else
+        {
+            var grid = GridBase.Instance;
+            if (grid != null)
+            {
+                for (var i = 0; i < _moveDestinations.Count; i++)
+                {
+                    var cell = _moveDestinations[i];
+                    var color = Color.HSVToRGB((float) i / _moveDestinations.Count, 1f, 1f);
+                    Gizmos.color = color;
+                    Gizmos.DrawSphere(grid.CellToWorld(cell), 0.2f);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Unregisters from player input
+    /// </summary>
+    private void OnDisable()
+    {
+        if (RoundManager.Instance != null)
+        {
+            RoundManager.Instance.UnRegisterListener(this);
+        }
+
+        if (TimeSignatureManager.Instance != null)
+        {
+            TimeSignatureManager.Instance.UnregisterTimeListener(this);
+        }
+
+        _input.InGame.Toggle.performed -= PathingToggle;
+        _input.InGame.Disable();
+    }
+
+    /// <summary>
+    /// Takes the assigned moves to the enemy and builds a list
+    /// of static points, relative to the enemy's initial position. 
+    /// </summary>
+    private void BuildCellList()
+    {
+        var grid = GridBase.Instance;
+        Vector3 prevCell = transform.position;
+        _moveDestinations.Add(grid.WorldToCell(transform.position));
+        foreach (var pt in _movePoints)
+        {
+            for (int i = 0; i < pt.tilesToMove; i++)
+            {
+                var newPos = grid.GetCellPositionInDirection(prevCell,
+                    pt.GetDirection());
+                prevCell = newPos;
+            }
+
+            _moveDestinations.Add(grid.WorldToCell(prevCell));
+        }
+    }
+
+    /// <summary>
+    /// DestinationPath is called whenever the mouse ray collides with the enemy.
+    /// This function turns the DestPathVFX and DestinationMarker objects on/off.
+    /// </summary>
+    public void DestinationPath()
+    {
+        if (!CurrentToggle)
+        {
+            return;
+        }
+
+        DestPathVFX.SetActive(CollidingWithRay);
+        DestinationMarker.SetActive(CollidingWithRay);
+    }
+
+    /// <summary>
+    /// Toggles all enemy pathing on the current level when the player
+    /// presses spacebar.
+    /// </summary>
+    /// <param name="context"></param>
+    private void PathingToggle(InputAction.CallbackContext context)
+    {
+        if (EnemyPathCycling.Instance.IsCycling)
+        {
+            EnemyPathCycling.Instance.CycleUnset = true;
+        }
+        else
+        {
+            DestPathVFX.SetActive(CurrentToggle);
+            DestinationMarker.SetActive(CurrentToggle);
+
+            CurrentToggle = !CurrentToggle;
+        }
+    }
+
+    /// <summary>
+    /// This function updates the position of the DestinationMarker object using the
+    /// _movePoints list.
+    /// </summary>
+    private void UpdateDestinationMarker()
+    {
+        //Sets the DestinationMarker object to the enemy's current position
+        DestinationMarker.transform.position = transform.position;
+        Vector3 linePos = transform.position;
+        linePos.y = _lineYPosOffset;
+        _vfxLine.SetPosition(0, linePos);
+        //Looks at the time signature for the enemy so it can place multiple moves in advance
+
+        EvaluateNextMove(ref _indicatorIndex, ref _indicatorReturningToStart);
+
+        //Finds the direction and tiles to move based on its own current point index value
+        var destPoint = _moveDestinations[_indicatorIndex];
+        var destPointWorld = GridBase.Instance.CellToWorld(destPoint);
+
+        linePos = destPointWorld;
+        linePos.y = _lineYPosOffset;
+
+        _vfxLine.SetPosition(1, destPointWorld);
+        destPointWorld.y += _destYPos;
+        DestinationMarker.transform.position = destPointWorld;
+    }
+
+    /// <summary>
+    /// Implementation of ITimeListeners time sig method.
+    /// Stores the enemy movement time.
+    /// </summary>
+    /// <param name="newTimeSignature">The new time signature.</param>
+    public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
+    {
+        _enemyMovementTime = newTimeSignature.y;
+
+        if (_enemyMovementTime <= 0)
+        {
+            _enemyMovementTime = 1;
+        }
+    }
+
+    public TurnState TurnState => TurnState.Enemy;
+
+    /// <summary>
+    /// Called by RoundManager to start this entity's turn
+    /// </summary>
+    /// <param name="direction">Direction of movement</param>
+    public void BeginTurn(Vector3 direction)
+    {
+        // StartCoroutine(MoveEnemy());
+        //figure out where we should move next.
+        if (_isFrozen)
+        {
+            RoundManager.Instance.CompleteTurn(this);
+            return;
+        }
+
+        StartCoroutine(MovementRoutine());
+    }
+
+    /// <summary>
+    /// Coroutine for handling enemy movement. Handles determining pathing,
+    /// Tween movement, and updating the indicator.
+    /// </summary>
+    /// <returns>null</returns>
+    private IEnumerator MovementRoutine()
+    {
+        bool blocked = false;
+        for (int i = 0; i < _enemyMovementTime; i++)
+        {
+            int prevMove = _moveIndex;
+            bool prevReturn = _isReturningToStart;
+            EvaluateNextMove(ref _moveIndex, ref _isReturningToStart);
+            var movePt = _moveDestinations[_moveIndex];
+            var currCell = GridBase.Instance.WorldToCell(transform.position);
+            var goalCell = GetLongestPath(GridBase.Instance.CellToWorld(movePt));
+            //we were blocked by something, adjust memory
+            if (goalCell != movePt)
+            {
+                blocked = true;
+                //we can still make the move in the future, we just need to try again because we were blocked.
+                _moveIndex = prevMove;
+                _isReturningToStart = prevReturn;
+            }
+
+            //already at this spot, next turn.
+            if (goalCell == currCell)
+            {
+                continue;
+            }
+            var dist = Vector3Int.Distance(currCell, movePt);
+            var rotationDir = (GridBase.Instance.CellToWorld(movePt) - transform.position).normalized;
+            var moveWorld = GridBase.Instance.CellToWorld(movePt);
+            dist = Mathf.Max(dist, 1f);
+            float movementTime = Mathf.Clamp((_waitTime / _enemyMovementTime) * dist,
+                _minMoveTime, float.MaxValue);
+            var tween = Tween
+                .Position(transform, endValue: moveWorld + _positionOffset,
+                    duration: movementTime, _movementEase).OnUpdate(
+                    target: this,
+                    (_, _) =>
+                    {
+                        GridBase.Instance.UpdateEntry(this);
+                        //not a fan of this but it should be more consistent than 
+                        //using collisions
+                        //also just math comparisons, no memory accessing outside of Position.
+                        if (GridBase.Instance.WorldToCell(PlayerMovement.Instance.Position) ==
+                            GridBase.Instance.WorldToCell(transform.position) &&
+                            !DebugMenuManager.Instance.Invincibility)
+                        {
+                            //hit a player!
+                            SceneController.Instance.ReloadCurrentScene();
+                        }
+                    });
+            yield return Tween.Rotation(transform, endValue: Quaternion.LookRotation(rotationDir),
+                duration: _rotationTime,
+                ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).Chain(tween).ToYieldInstruction();
+            AudioManager.Instance.PlaySound(_enemyMove);
+            GridBase.Instance.UpdateEntry(this);
+        }
+
+        if (!blocked)
+        {
+            UpdateDestinationMarker();
+        }
+
+        RoundManager.Instance.CompleteTurn(this);
+    }
+
+    /// <summary>
+    /// Determines the longest path from the enemy's current position
+    /// to its goal. WIll stop if it's blocked by something.
+    /// </summary>
+    /// <param name="goal">The goal position, in world space to get to.</param>
+    /// <returns>The updated goal cell.</returns>
+    private Vector3Int GetLongestPath(Vector3 goal)
+    {
+        var direction = (goal - transform.position);
+        direction.Normalize();
+        bool stop = false;
+        var originTilePos = GridBase.Instance.WorldToCell(transform.position);
+        var currTilePos = GridBase.Instance.CellToWorld(originTilePos);
+        //loop thru all tiles in the direction of the goal, stopping if blocked or if we're at the goal.
+        do
+        {
+            var nextCell = GridBase.Instance.GetCellPositionInDirection(currTilePos, direction);
+            stop = !CanPassThroughCell(GridBase.Instance.WorldToCell(nextCell));
+            if (stop) continue;
+            if (currTilePos == nextCell || nextCell == goal)
+            {
+                currTilePos = nextCell;
+                break;
+            }
+
+            currTilePos = nextCell;
+        } while (!stop);
+
+        return GridBase.Instance.WorldToCell(currTilePos);
+    }
+
+    /// <summary>
+    /// Determines if the enemy can pass through the cell.
+    /// </summary>
+    /// <param name="cell">The cell to check.</param>
+    /// <returns>True if the enemy can pass through.</returns>
+    private bool CanPassThroughCell(Vector3Int cell)
+    {
+        var entries = GridBase.Instance.GetCellEntries(cell);
+        foreach (var entry in entries)
+        {
+            //can pass thru walls
+            if (entry.IsTransparent)
+            {
+                continue;
+            }
+
+            //can pass thru the player
+            if (entry.EntryObject == PlayerMovement.Instance.gameObject)
+            {
+                continue;
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Determines the next move index for the enemy.
+    /// </summary>
+    /// <param name="moveIndex"></param>
+    /// <param name="looped"></param>
+    private void EvaluateNextMove(ref int moveIndex, ref bool looped)
+    {
+        //not at the end of our list of moves.
+        if (moveIndex < _moveDestinations.Count - 1)
+        {
+            if (!looped)
+            {
+                //move forward as normal
+                moveIndex++;
+            }
+            else
+            {
+                moveIndex--;
+                //we've returned to the start, so reset everything to be back as normal
+                if (moveIndex <= 0)
+                {
+                    moveIndex = 0;
+                    looped = false;
+                }
+            }
+        }
+        else
+        {
+            //we're at the end of our potential moves, so let's determine how we're gonna get back.
+
+            if (!_circularMovement)
+            {
+                //we're not using circular movement, so for future turns we need to move backwards until we reach 
+                // the start again. 
+                looped = true;
+                moveIndex--;
+            }
+            else
+            {
+                //our moves will start with 0 again.
+                moveIndex = 0;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Can force enemy turn to end early
+    /// </summary>
+    public void ForceTurnEnd()
+    {
+        StopAllCoroutines();
+        GridBase.Instance.UpdateEntry(this);
+        RoundManager.Instance.CompleteTurn(this);
+    }
+
+    public bool AllowLaserPassThrough
+    {
+        get => true;
+    }
+
+    /// <summary>
+    /// Freezes the enemy.
+    /// </summary>
+    public void OnLaserHit()
+    {
+        if (_isSonEnemy)
+        {
+            _isFrozen = true;
+        }
+    }
+
+    /// <summary>
+    /// Unfreezes the enemy.
+    /// </summary>
+    public void OnLaserExit()
+    {
+        _isFrozen = false;
+    }
+
+    public bool HitWrapAround
+    {
+        get => _isSonEnemy;
+    }
+
+    /// <summary>
+    /// Places this object in the center of its grid cell
+    /// </summary>
+    public void SnapToGridSpace()
+    {
+        Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
+        Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos);
+        transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z);
+    }
+}
