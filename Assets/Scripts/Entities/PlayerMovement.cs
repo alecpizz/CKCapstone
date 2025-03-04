@@ -192,11 +192,11 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                 && gameObject.transform.position != readPos) ||
                 (DebugMenuManager.Instance.GhostMode))
             {
+                GridBase.Instance.UpdateEntryAtPosition(this, move);
                 _animator.SetTrigger(Forward);
                 yield return Tween.Position(transform,
                     move + _positionOffset, duration: modifiedMovementTime, 
                     _movementEase).ToYieldInstruction();
-                GridBase.Instance.UpdateEntry(this);
             }
 
             if (_playerMovementTiming > 1)
@@ -206,7 +206,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         }
 
         _canMove = true;
-        //RoundManager.Instance.CompleteTurn(this);
     }
 
     /// <summary>
