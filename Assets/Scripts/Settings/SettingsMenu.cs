@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Claire Noto
-*    Contributors: Claire Noto, Alec Pizziferro
+*    Contributors: Claire Noto, Alec Pizziferro, Josephine Qualls
 *    Date Created: 11/13/2024
 *    Description: Settings Menu for adjusting graphics and accessibility options.
 *******************************************************************/
@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
 
 public class SettingsMenu : MonoBehaviour
 {
@@ -19,7 +20,7 @@ public class SettingsMenu : MonoBehaviour
     [SerializeField] private Toggle _tooltipsToggle;
     [SerializeField] private Toggle _subtitlesToggle;
 
-    private Resolution[] _resolutions;
+    private List<Resolution> _resolutions;
 
     private const string Settings = "Settings";
     private const string ScreenName = "Screen";
@@ -48,22 +49,39 @@ public class SettingsMenu : MonoBehaviour
     /// </summary>
     private void SetupResolutionDropdown()
     {
-        _resolutions = Screen.resolutions;
+        //list of every resolution
+        _resolutions = Screen.resolutions.ToList();
         _resolutionDropdown.ClearOptions();
         List<string> options = new();
 
         int currentResolutionIndex = 0;
-        for (int i = 0; i < _resolutions.Length; i++)
+        for (int i = 0; i < _resolutions.Count; i++)
         {
-            string option = _resolutions[i].width + " x " + _resolutions[i].height;
-            options.Add(option);
+            //set the resolution index to the initial screen resolution
             if (_resolutions[i].width == Screen.currentResolution.width &&
                 _resolutions[i].height == Screen.currentResolution.height)
             {
                 currentResolutionIndex = i;
             }
+
+            //will add the resolution option as long as it isn't a repeat
+            if (i - 1 > 0 && _resolutions[i - 1].width == _resolutions[i].width &&
+                _resolutions[i - 1].height == _resolutions[i].height)
+            {
+                continue;
+            }
+            else
+            {
+                string option = _resolutions[i].width + " x " + _resolutions[i].height;
+                options.Add(option);
+            }
         }
 
+        //removes the first option because it is a repeat (will show up in build but not editor)
+        _resolutions.RemoveAt(0);
+        options.RemoveAt(0);
+
+        //adds all the options to the dropdown
         _resolutionDropdown.AddOptions(options);
         var resolutionIdx = SaveDataManager.GetSettingInt(ScreenName, Resolution);
         if (resolutionIdx == -1)
