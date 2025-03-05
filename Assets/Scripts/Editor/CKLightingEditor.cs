@@ -106,62 +106,67 @@ public static class CKLightingEditor
             "Assets/Prefabs/VFX/Environment/EnvFX_Chapter4.prefab");
         var fx = Object.Instantiate(fxPrefab);
 
-        var grid = GridBase.Instance;
-        var cloudPrefab = fx.transform.Find("VolumetricClouds/VolClouds");
-        if (grid != null)
-        {
-            HashSet<Vector3Int> colliderMap = new();
-            var gridEntries = Object.FindObjectsOfType<GridPlacer>();
-            foreach (var gridPlacer in gridEntries)
-            {
-                var cell = grid.WorldToCell(gridPlacer.transform.position);
-                if (gridPlacer.gameObject.name.Contains("Disable"))
-                {
-                    colliderMap.Add(
-                        cell);
-                }
-            }
-
-            List<Vector3Int> cloudCells = new();
-            for (int i = 0; i < grid.Size; i++)
-            {
-                for (int j = 0; j < grid.Size; j++)
-                {
-                    var gridIdx = new Vector3Int(i, 0, j);
-                    if (!colliderMap.Contains(gridIdx) && j < data.MinimumGridZ)
-                    {
-                        cloudCells.Add(gridIdx);
-                    }
-                }
-            }
-
-            List<ParticleSystem> cloudParticles = new();
-            for (var index = 0; index < cloudCells.Count; index += data.CloudSpacing)
-            {
-                var cell = cloudCells[index];
-                var worldPos = grid.CellToWorld(cell);
-                var obj = Object.Instantiate(cloudPrefab.gameObject, worldPos - new Vector3(0.5f, 0f, 1f),
-                    Quaternion.Euler(-90f, 0f, 0f), fx.transform);
-                cloudParticles.Add(obj.GetComponent<ParticleSystem>());
-            }
-
-            foreach (var cloud in cloudParticles)
-            {
-                var main = cloud.main;
-                var startColor = main.startColor;
-                var colorMin = startColor.colorMin;
-                Color.RGBToHSV(colorMin, out float h, out float s, out float v);
-                h *= data.HueMultiplier;
-                startColor.colorMin = Color.HSVToRGB(h, s, v);
-                var colorMax = startColor.colorMax;
-                Color.RGBToHSV(colorMax, out h, out s, out v);
-                h *= data.HueMultiplier;
-                startColor.colorMax = Color.HSVToRGB(h, s, v);
-                main.startColor = startColor;
-            }
-
-            Object.DestroyImmediate(fx.transform.Find("VolumetricClouds").gameObject);
-        }
+        Object.DestroyImmediate(fx.transform.Find("VolumetricClouds").gameObject);
+        /**************************************************************
+         * CLOUD PASS BELOW. commented out while i figure out a better
+         * way to distribute them.
+         *************************************************************/
+        // var grid = GridBase.Instance;
+        // var cloudPrefab = fx.transform.Find("VolumetricClouds/VolClouds");
+        // if (grid != null)
+        // {
+        //     HashSet<Vector3Int> colliderMap = new();
+        //     var gridEntries = Object.FindObjectsOfType<GridPlacer>();
+        //     foreach (var gridPlacer in gridEntries)
+        //     {
+        //         var cell = grid.WorldToCell(gridPlacer.transform.position);
+        //         if (gridPlacer.gameObject.name.Contains("Disable"))
+        //         {
+        //             colliderMap.Add(
+        //                 cell);
+        //         }
+        //     }
+        //
+        //     List<Vector3Int> cloudCells = new();
+        //     for (int i = 0; i < grid.Size; i++)
+        //     {
+        //         for (int j = 0; j < grid.Size; j++)
+        //         {
+        //             var gridIdx = new Vector3Int(i, 0, j);
+        //             if (!colliderMap.Contains(gridIdx) && j < data.MinimumGridZ)
+        //             {
+        //                 cloudCells.Add(gridIdx);
+        //             }
+        //         }
+        //     }
+        //
+        //     List<ParticleSystem> cloudParticles = new();
+        //     for (var index = 0; index < cloudCells.Count; index += data.CloudSpacing)
+        //     {
+        //         var cell = cloudCells[index];
+        //         var worldPos = grid.CellToWorld(cell);
+        //         var obj = Object.Instantiate(cloudPrefab.gameObject, worldPos - new Vector3(0.5f, 0f, 1f),
+        //             Quaternion.Euler(-90f, 0f, 0f), fx.transform);
+        //         cloudParticles.Add(obj.GetComponent<ParticleSystem>());
+        //     }
+        //
+        //     foreach (var cloud in cloudParticles)
+        //     {
+        //         var main = cloud.main;
+        //         var startColor = main.startColor;
+        //         var colorMin = startColor.colorMin;
+        //         Color.RGBToHSV(colorMin, out float h, out float s, out float v);
+        //         h *= data.HueMultiplier;
+        //         startColor.colorMin = Color.HSVToRGB(h, s, v);
+        //         var colorMax = startColor.colorMax;
+        //         Color.RGBToHSV(colorMax, out h, out s, out v);
+        //         h *= data.HueMultiplier;
+        //         startColor.colorMax = Color.HSVToRGB(h, s, v);
+        //         main.startColor = startColor;
+        //     }
+        //
+        //     Object.DestroyImmediate(fx.transform.Find("VolumetricClouds").gameObject);
+        // }
     }
 
     [MenuItem("Tools/Crowded Kitchen/Light Level/Chapter 5 Lighting")]

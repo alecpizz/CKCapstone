@@ -47,7 +47,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
     [MenuItem("Tools/Crowded Kitchen/Run Scene Linking")]
     public static void BuildSceneIndex()
     {
-        var nowOpenScene = EditorSceneManager.GetActiveScene();
+        // var nowOpenScene = EditorSceneManager.GetActiveScene();
         // // Find valid Scene paths and make a list of EditorBuildSettingsScene
         AddScenesToBuild();
         var levelData = LevelOrderSelection.Instance.SelectedLevelData;
@@ -78,18 +78,43 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         for (var chapterIndex = 0; chapterIndex < levelData.Chapters.Count; chapterIndex++)
         {
             var chapter = levelData.Chapters[chapterIndex];
+            Action<LightingData> lightDataMethod = null;
+            switch (chapter.Lighting)
+            {
+                case LevelOrder.LightingMode.None:
+                    break;
+                case LevelOrder.LightingMode.Chapter1:
+                    lightDataMethod = CKLightingEditor.ApplyChapter1Lighting;
+                    break;
+                case LevelOrder.LightingMode.Chapter2:
+                    lightDataMethod = CKLightingEditor.ApplyChapter2Lighting;
+                    break;
+                case LevelOrder.LightingMode.Chapter3:
+                    lightDataMethod = CKLightingEditor.ApplyChapter3Lighting;
+                    break;
+                case LevelOrder.LightingMode.Chapter4:
+                    lightDataMethod = CKLightingEditor.ApplyChapter4Lighting;
+                    break;
+                case LevelOrder.LightingMode.Chapter5:
+                    lightDataMethod = CKLightingEditor.ApplyChapter5Lighting;
+                    break;
+                case LevelOrder.LightingMode.Custom:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
             var intro = chapter.Intro;
-            SetOpenerCloserSceneExit(intro, chapter.Puzzles[0].Scene);
-            UpdatePuzzles(chapterIndex);
+            SetOpenerCloserSceneExit(intro, chapter.Puzzles[0].Scene, lightDataMethod);
+            UpdatePuzzles(chapterIndex, lightDataMethod);
 
             var outro = chapter.Outro;
             var outroExit = chapterIndex != levelData.Chapters.Count - 1
                 ? levelData.Chapters[chapterIndex + 1].GetStartingLevel.Scene
                 : levelData.CreditsScene;
-            SetOpenerCloserSceneExit(outro, outroExit);
+            SetOpenerCloserSceneExit(outro, outroExit, lightDataMethod);
         }
 
-        EditorSceneManager.OpenScene(nowOpenScene.path, OpenSceneMode.Single);
+        // EditorSceneManager.OpenScene(nowOpenScene.path, OpenSceneMode.Single);
     }
 
     /// <summary>
@@ -99,7 +124,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
     /// </summary>
     /// <param name="entrance">The scene to modify.</param>
     /// <param name="scene">The destination scene to link towards.</param>
-    private static void SetOpenerCloserSceneExit(LevelOrder.LevelData entrance, SceneAsset scene)
+    private static void SetOpenerCloserSceneExit(LevelOrder.LevelData entrance, SceneAsset scene, Action<LightingData> lightingDataAction)
     {
         if (entrance.Scene == null) return;
         //apply transitions for intro/outro
@@ -131,6 +156,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             SetDoorExitScene(endLevelDoor, SceneUtility.GetBuildIndexByScenePath(
                 AssetDatabase.GetAssetPath(scene)));
         }
+        lightingDataAction?.Invoke(entrance.LightingData);
 
         EditorSceneManager.SaveScene(introScene);
     }
@@ -139,35 +165,11 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
     /// Goes through a chapter's puzzles and updates each of their exit locations.
     /// </summary>
     /// <param name="chapterIndex">The index of the chapter that is being modified.</param>
-    private static void UpdatePuzzles(int chapterIndex)
+    private static void UpdatePuzzles(int chapterIndex, Action<LightingData> lightingDataApply)
     {
         var levelData = LevelOrderSelection.Instance.SelectedLevelData;
         var chapter = levelData.Chapters[chapterIndex];
-        Action<LightingData> lightDataMethod = null;
-        switch (chapter.Lighting)
-        {
-            case LevelOrder.LightingMode.None:
-                break;
-            case LevelOrder.LightingMode.Chapter1:
-                lightDataMethod = CKLightingEditor.ApplyChapter1Lighting;
-                break;
-            case LevelOrder.LightingMode.Chapter2:
-                lightDataMethod = CKLightingEditor.ApplyChapter2Lighting;
-                break;
-            case LevelOrder.LightingMode.Chapter3:
-                lightDataMethod = CKLightingEditor.ApplyChapter3Lighting;
-                break;
-            case LevelOrder.LightingMode.Chapter4:
-                lightDataMethod = CKLightingEditor.ApplyChapter4Lighting;
-                break;
-            case LevelOrder.LightingMode.Chapter5:
-                lightDataMethod = CKLightingEditor.ApplyChapter5Lighting;
-                break;
-            case LevelOrder.LightingMode.Custom:
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+       
         
         for (int puzzleIndex = 0; puzzleIndex < chapter.Puzzles.Count; puzzleIndex++)
         {
@@ -253,7 +255,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 EditorUtility.SetDirty(endLevelDoor);
             }
             
-            lightDataMethod?.Invoke(currentLevel.LightingData);
+            lightingDataApply?.Invoke(currentLevel.LightingData);
 
             EditorSceneManager.MarkSceneDirty(currScene);
             //save the changes

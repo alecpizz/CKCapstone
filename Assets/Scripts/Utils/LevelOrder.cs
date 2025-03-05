@@ -46,6 +46,8 @@ public class LevelOrder : ScriptableObject
     [Serializable]
     public class Chapter
     {
+        [field: SerializeField]
+        public LightingMode Lighting { get; internal set; } = LightingMode.None;
         [field: SerializeField] public string ChapterName { get; internal set; } = "Chapter CHANGEME";
 
         [field: SerializeField, SepTitle("Intro Level", EColor.Green), SaintsRow(inline: true)]
@@ -56,7 +58,6 @@ public class LevelOrder : ScriptableObject
 
         [field: SerializeField, SepTitle("Outro Level", EColor.Red), SaintsRow(inline: true)]
         public LevelData Outro { get; internal set; } = new();
-        public LightingMode Lighting { get; internal set; } = LightingMode.None;
         public LevelData GetStartingLevel => Intro.Scene ? Intro : Puzzles[0];
     }
 
