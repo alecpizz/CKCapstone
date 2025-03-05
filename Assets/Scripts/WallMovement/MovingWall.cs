@@ -42,6 +42,9 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     //type of tween animation for walls
     [SerializeField] private Ease _easeType;
 
+    [SerializeField] private float _blockedAnimStrength = 0.2f;
+    [SerializeField] private float _blockedAnimDuration = 0.2f;
+
     //to decide if switch should be true or not
     private bool _worked = true;
 
@@ -168,6 +171,9 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
         }
         else
         {
+            Transform target = _shouldActivate ? _wallGhost.transform : transform;
+            Tween.PunchLocalPosition(target, Vector3.up * _blockedAnimStrength, _blockedAnimDuration);
+
             TriggerHarmonyScan();
             _worked = false;
         }
