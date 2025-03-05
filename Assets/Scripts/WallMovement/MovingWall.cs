@@ -42,6 +42,7 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     //type of tween animation for walls
     [SerializeField] private Ease _easeType;
 
+    //timing and strength of tween for blocked animation
     [SerializeField] private float _blockedRotationStrength = 0.4f;
     [SerializeField] private float _blockedAnimStrength = 0.2f;
     [SerializeField] private float _blockedAnimDuration = 0.2f;
