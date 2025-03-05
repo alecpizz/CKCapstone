@@ -6,7 +6,9 @@
  *    automatically.
  *******************************************************************/
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEditor.Build;
@@ -14,6 +16,7 @@ using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 public class CKBuildPreProcessor : IPreprocessBuildWithReport
 {
@@ -77,7 +80,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             var chapter = levelData.Chapters[chapterIndex];
             var intro = chapter.Intro;
             SetOpenerCloserSceneExit(intro, chapter.Puzzles[0].Scene);
-            UpdatePuzzleExits(chapterIndex);
+            UpdatePuzzles(chapterIndex);
 
             var outro = chapter.Outro;
             var outroExit = chapterIndex != levelData.Chapters.Count - 1
@@ -85,206 +88,10 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 : levelData.CreditsScene;
             SetOpenerCloserSceneExit(outro, outroExit);
         }
+
+        EditorSceneManager.OpenScene(nowOpenScene.path, OpenSceneMode.Single);
     }
 
-    [MenuItem("Tools/Crowded Kitchen/Light Level/Chapter 1 Lighting")]
-    public static void ApplyChapter1Lighting()
-    {
-        //testing chapter 1 here
-        Material skybox = AssetDatabase.LoadAssetAtPath<Material>(
-            "Assets/Materials/Lighting/MAT_Skybox_1.mat");
-        if (skybox == null)
-        {
-            Debug.LogError("Couldn't find skybox!");
-            return;
-        }
-
-        RenderSettings.skybox = skybox;
-
-        RenderSettings.ambientIntensity = 0.5f;
-        TryDestroyEnvironmentArt();
-        var fxPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
-            "Assets/Prefabs/VFX/Environment/EnvFX_Chapter1.prefab");
-        var fx = Object.Instantiate(fxPrefab);
-        var godRays = fx.transform.Find("GodRays");
-        var godParticles = godRays.GetComponent<ParticleSystem>();
-        //set the alpha of the particle
-        const float newGodRayAlpha = 1.0f;
-        AdjustGodRays(godParticles, newGodRayAlpha);
-        //set mote size
-        
-        AdjustMotes(fx);
-        //need to adjust god ray position
-    }
-
-    private static void AdjustGodRays(ParticleSystem godParticles, float newGodRayAlpha)
-    {
-        var main = godParticles.main;
-        var startColor = main.startColor;
-        var startColorColor = startColor.color;
-        startColorColor.a = newGodRayAlpha;
-        startColor.color = startColorColor;
-        main.startColor = startColor;
-    }
-
-
-    [MenuItem("Tools/Crowded Kitchen/Light Level/Chapter 2 Lighting")]
-    public static void ApplyChapter2Lighting()
-    {
-        Material skybox = AssetDatabase.LoadAssetAtPath<Material>(
-            "Assets/Materials/Lighting/MAT_Skybox_2.mat");
-        if (skybox == null)
-        {
-            Debug.LogError("Couldn't find skybox!");
-            return;
-        }
-
-        RenderSettings.skybox = skybox;
-        
-        RenderSettings.ambientIntensity = 0.4f;
-        TryDestroyEnvironmentArt();
-        var fxPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
-            "Assets/Prefabs/VFX/Environment/EnvFX_Chapter2.prefab");
-        var fx = Object.Instantiate(fxPrefab);
-        AdjustMotes(fx);
-        var godRays = fx.transform.Find("GodRays");
-        var godParticles = godRays.GetComponent<ParticleSystem>();
-        AdjustGodRays(godParticles, 1.0f);
-    }
-
-    [MenuItem("Tools/Crowded Kitchen/Light Level/Chapter 3 Lighting")]
-    public static void ApplyChapter3Lighting()
-    {
-        Material skybox = AssetDatabase.LoadAssetAtPath<Material>(
-            "Assets/Materials/Lighting/MAT_Skybox_3.mat");
-        if (skybox == null)
-        {
-            Debug.LogError("Couldn't find skybox!");
-            return;
-        }
-
-        RenderSettings.skybox = skybox;
-        RenderSettings.ambientIntensity = 0.5f;
-        TryDestroyEnvironmentArt();
-        var fxPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
-            "Assets/Prefabs/VFX/Environment/EnvFX_Chapter3.prefab");
-        var fx = Object.Instantiate(fxPrefab);
-        var godRays = fx.transform.Find("GodRays");
-        var godParticles = godRays.GetComponent<ParticleSystem>();
-        AdjustGodRays(godParticles, 1f);
-    }
-
-    [MenuItem("Tools/Crowded Kitchen/Light Level/Chapter 4 Lighting")]
-    public static void ApplyChapter4Lighting()
-    {
-        Material skybox = AssetDatabase.LoadAssetAtPath<Material>(
-            "Assets/Materials/Lighting/MAT_Skybox_4.mat");
-        if (skybox == null)
-        {
-            Debug.LogError("Couldn't find skybox!");
-            return;
-        }
-        RenderSettings.skybox = skybox;
-        RenderSettings.ambientIntensity = 1.3f;
-        TryDestroyEnvironmentArt();
-        var fxPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
-            "Assets/Prefabs/VFX/Environment/EnvFX_Chapter4.prefab");
-        var fx = Object.Instantiate(fxPrefab);
-        
-        //TODO: place clouds around bottom faces of level
-        //TODO: cloud color intensity, make darker or lighter based on float value
-    }
-
-    [MenuItem("Tools/Crowded Kitchen/Light Level/Chapter 5 Lighting")]
-    public static void ApplyChapter5Lighting()
-    {
-        Material skybox = AssetDatabase.LoadAssetAtPath<Material>(
-            "Assets/Materials/Lighting/MAT_Skybox_5.mat");
-        if (skybox == null)
-        {
-            Debug.LogError("Couldn't find skybox!");
-            return;
-        }
-        RenderSettings.skybox = skybox;
-        RenderSettings.ambientIntensity = 1.3f;
-        TryDestroyEnvironmentArt();
-        var fxPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
-            "Assets/Prefabs/VFX/Environment/EnvFX_Chapter5.prefab");
-        var fx = Object.Instantiate(fxPrefab);
-        var rainParticles = fx.transform.Find("CFXR4 Rain Falling").GetComponent<ParticleSystem>();
-        var (startMin, startMax) = (0.01f, 0.02f);
-        var main = rainParticles.main;
-        var startSize = main.startSize;
-        startSize.constantMin = startMin;
-        startSize.constantMax = startMax;
-        main.startSize = startSize;
-        main.simulationSpeed = 0.55f;
-        var emission = rainParticles.emission;
-        var rateOverTime = emission.rateOverTime;
-        rateOverTime.constant = 500;
-        emission.rateOverTime = rateOverTime;
-        var startColor = main.startColor;
-        var startColorColor = startColor.color;
-        startColorColor.a = 0.682353f;
-        startColor.color = startColorColor;
-        main.startColor = startColor;
-        //TODO: rain drops at front edge of floor tiles
-    }
-
-    private static void TryDestroyEnvironmentArt()
-    {
-        var ch1 = GameObject.Find("EnvFX_Chapter1(Clone)");
-        var ch2 = GameObject.Find("EnvFX_Chapter2(Clone)");
-        var ch3 = GameObject.Find("EnvFX_Chapter3(Clone)");
-        var ch4 = GameObject.Find("EnvFX_Chapter4(Clone)");
-        var ch5 = GameObject.Find("EnvFX_Chapter5(Clone)");
-        if (ch1) Object.DestroyImmediate(ch1);
-        if (ch2) Object.DestroyImmediate(ch2);
-        if (ch3) Object.DestroyImmediate(ch3);
-        if (ch4) Object.DestroyImmediate(ch4);
-        if (ch5) Object.DestroyImmediate(ch5);
-    }
-
-    private static void AdjustMotes(GameObject fx)
-    {
-        var grid = GridBase.Instance;
-        if (grid != null)
-        {
-            Dictionary<Vector3Int, Collider> colliderMap = new();
-            var gridEntries = GameObject.FindObjectsOfType<GridPlacer>();
-            foreach (var gridPlacer in gridEntries)
-            {
-                var cell = grid.WorldToCell(gridPlacer.transform.position);
-                if (gridPlacer.gameObject.name.Contains("Disable") && !colliderMap.ContainsKey(cell))
-                {
-                    colliderMap.Add(
-                        cell, gridPlacer.GetComponent<Collider>());
-                }
-            }
-
-            var bounds = new Bounds();
-            for (int i = 0; i < grid.Size; i++)
-            {
-                for (int j = 0; j < grid.Size; j++)
-                {
-                    var gridIdx = new Vector3Int(i, 0, j);
-                    if (!colliderMap.ContainsKey(gridIdx))
-                    {
-                        //this is a grid cell
-                        bounds.Encapsulate(grid.CellToWorld(gridIdx));
-                    }
-                }
-            }
-
-            var motes = fx.transform.Find("Motes");
-            motes.transform.position = bounds.center;
-            var moteParticles = motes.GetComponent<ParticleSystem>();
-            Vector3 moteSize = new Vector3(bounds.size.x + 0.5f, bounds.size.z + 0.5f, 4f);
-            var shape = moteParticles.shape;
-            shape.scale = moteSize;
-        }
-    }
-    
     /// <summary>
     /// Sets the scene links for scenes that are a opener/closer.
     /// Typically these will have a cutscene framework object in the scene
@@ -332,10 +139,36 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
     /// Goes through a chapter's puzzles and updates each of their exit locations.
     /// </summary>
     /// <param name="chapterIndex">The index of the chapter that is being modified.</param>
-    private static void UpdatePuzzleExits(int chapterIndex)
+    private static void UpdatePuzzles(int chapterIndex)
     {
         var levelData = LevelOrderSelection.Instance.SelectedLevelData;
         var chapter = levelData.Chapters[chapterIndex];
+        Action<LightingData> lightDataMethod = null;
+        switch (chapter.Lighting)
+        {
+            case LevelOrder.LightingMode.None:
+                break;
+            case LevelOrder.LightingMode.Chapter1:
+                lightDataMethod = CKLightingEditor.ApplyChapter1Lighting;
+                break;
+            case LevelOrder.LightingMode.Chapter2:
+                lightDataMethod = CKLightingEditor.ApplyChapter2Lighting;
+                break;
+            case LevelOrder.LightingMode.Chapter3:
+                lightDataMethod = CKLightingEditor.ApplyChapter3Lighting;
+                break;
+            case LevelOrder.LightingMode.Chapter4:
+                lightDataMethod = CKLightingEditor.ApplyChapter4Lighting;
+                break;
+            case LevelOrder.LightingMode.Chapter5:
+                lightDataMethod = CKLightingEditor.ApplyChapter5Lighting;
+                break;
+            case LevelOrder.LightingMode.Custom:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        
         for (int puzzleIndex = 0; puzzleIndex < chapter.Puzzles.Count; puzzleIndex++)
         {
             var currentLevel = chapter.Puzzles[puzzleIndex];
@@ -419,6 +252,8 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
 
                 EditorUtility.SetDirty(endLevelDoor);
             }
+            
+            lightDataMethod?.Invoke(currentLevel.LightingData);
 
             EditorSceneManager.MarkSceneDirty(currScene);
             //save the changes
@@ -462,7 +297,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         editorBuildSettingsScenes.Add(
             new EditorBuildSettingsScene(AssetDatabase.GetAssetPath(levelData.MainMenuScene),
                 true));
-        levelData.PrettySceneNames.Add(new LevelOrder.PrettyData {PrettyName = "Main Menu", showUp = false});
+        levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = "Main Menu", showUp = false });
         //add each chapter's data
         int chapterIndex = 0;
         foreach (var chapter in levelData.Chapters)
@@ -475,7 +310,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                     AssetDatabase.GetAssetPath(chapter.Intro.Scene),
                     true));
                 levelData.PrettySceneNames.Add(new LevelOrder.PrettyData
-                    {PrettyName = chapter.Intro.LevelName, showUp = false});
+                    { PrettyName = chapter.Intro.LevelName, showUp = false });
             }
 
             //add all puzzles
@@ -485,7 +320,8 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                     AssetDatabase.GetAssetPath(level.Scene),
                     true));
-                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData {PrettyName = level.LevelName, showUp = true});
+                levelData.PrettySceneNames.Add(
+                    new LevelOrder.PrettyData { PrettyName = level.LevelName, showUp = true });
             }
 
             //add outro scene
@@ -495,7 +331,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                     AssetDatabase.GetAssetPath(chapter.Outro.Scene),
                     true));
                 levelData.PrettySceneNames.Add(new LevelOrder.PrettyData
-                    {PrettyName = chapter.Outro.LevelName, showUp = true});
+                    { PrettyName = chapter.Outro.LevelName, showUp = true });
             }
         }
 
@@ -509,7 +345,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                 AssetDatabase.GetAssetPath(levelData.CreditsScene),
                 true));
-            levelData.PrettySceneNames.Add(new LevelOrder.PrettyData {PrettyName = "Credits Scene", showUp = false});
+            levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = "Credits Scene", showUp = false });
         }
 
         EditorUtility.SetDirty(levelData);

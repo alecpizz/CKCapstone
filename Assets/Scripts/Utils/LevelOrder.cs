@@ -24,6 +24,17 @@ public class LevelOrder : ScriptableObject
     [field: SerializeField, SepTitle("Main Menu", EColor.Aqua), BelowSeparator(EColor.Aqua)]
     public SceneAsset MainMenuScene { get; private set; }
 
+    public enum LightingMode
+    {
+        None = -1,
+        Chapter1,
+        Chapter2,
+        Chapter3,
+        Chapter4,
+        Chapter5,
+        Custom
+    }
+    
     /// <summary>
     /// A class representing a chapter.
     /// A chapter contains:
@@ -45,7 +56,7 @@ public class LevelOrder : ScriptableObject
 
         [field: SerializeField, SepTitle("Outro Level", EColor.Red), SaintsRow(inline: true)]
         public LevelData Outro { get; internal set; } = new();
-
+        public LightingMode Lighting { get; internal set; } = LightingMode.None;
         public LevelData GetStartingLevel => Intro.Scene ? Intro : Puzzles[0];
     }
 
@@ -73,6 +84,8 @@ public class LevelOrder : ScriptableObject
         [field: SerializeField, ShowIf(nameof(HasChallengeExit))]
         public SceneAsset ChallengeScene { get; private set; }
 
+        [field: SerializeField] public LightingData LightingData { get; private set; } = new();
+
         /// <summary>
         /// Copy constructor for the level data.
         /// </summary>
@@ -85,6 +98,7 @@ public class LevelOrder : ScriptableObject
             ExitScene = other.ExitScene;
             HasChallengeExit = other.HasChallengeExit;
             ChallengeScene = other.ChallengeScene;
+            LightingData = other.LightingData;
         }
 
         /// <summary>
