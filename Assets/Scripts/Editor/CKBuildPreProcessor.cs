@@ -110,15 +110,143 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         var godParticles = godRays.GetComponent<ParticleSystem>();
         //set the alpha of the particle
         const float newGodRayAlpha = 1.0f;
+        AdjustGodRays(godParticles, newGodRayAlpha);
+        //set mote size
+        
+        AdjustMotes(fx);
+        //need to adjust god ray position
+    }
+
+    private static void AdjustGodRays(ParticleSystem godParticles, float newGodRayAlpha)
+    {
         var main = godParticles.main;
         var startColor = main.startColor;
         var startColorColor = startColor.color;
         startColorColor.a = newGodRayAlpha;
         startColor.color = startColorColor;
         main.startColor = startColor;
-        //set mote size
+    }
 
 
+    [MenuItem("Tools/Crowded Kitchen/Light Level/Chapter 2 Lighting")]
+    public static void ApplyChapter2Lighting()
+    {
+        Material skybox = AssetDatabase.LoadAssetAtPath<Material>(
+            "Assets/Materials/Lighting/MAT_Skybox_2.mat");
+        if (skybox == null)
+        {
+            Debug.LogError("Couldn't find skybox!");
+            return;
+        }
+
+        RenderSettings.skybox = skybox;
+        
+        RenderSettings.ambientIntensity = 0.4f;
+        TryDestroyEnvironmentArt();
+        var fxPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+            "Assets/Prefabs/VFX/Environment/EnvFX_Chapter2.prefab");
+        var fx = Object.Instantiate(fxPrefab);
+        AdjustMotes(fx);
+        var godRays = fx.transform.Find("GodRays");
+        var godParticles = godRays.GetComponent<ParticleSystem>();
+        AdjustGodRays(godParticles, 1.0f);
+    }
+
+    [MenuItem("Tools/Crowded Kitchen/Light Level/Chapter 3 Lighting")]
+    public static void ApplyChapter3Lighting()
+    {
+        Material skybox = AssetDatabase.LoadAssetAtPath<Material>(
+            "Assets/Materials/Lighting/MAT_Skybox_3.mat");
+        if (skybox == null)
+        {
+            Debug.LogError("Couldn't find skybox!");
+            return;
+        }
+
+        RenderSettings.skybox = skybox;
+        RenderSettings.ambientIntensity = 0.5f;
+        TryDestroyEnvironmentArt();
+        var fxPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+            "Assets/Prefabs/VFX/Environment/EnvFX_Chapter3.prefab");
+        var fx = Object.Instantiate(fxPrefab);
+        var godRays = fx.transform.Find("GodRays");
+        var godParticles = godRays.GetComponent<ParticleSystem>();
+        AdjustGodRays(godParticles, 1f);
+    }
+
+    [MenuItem("Tools/Crowded Kitchen/Light Level/Chapter 4 Lighting")]
+    public static void ApplyChapter4Lighting()
+    {
+        Material skybox = AssetDatabase.LoadAssetAtPath<Material>(
+            "Assets/Materials/Lighting/MAT_Skybox_4.mat");
+        if (skybox == null)
+        {
+            Debug.LogError("Couldn't find skybox!");
+            return;
+        }
+        RenderSettings.skybox = skybox;
+        RenderSettings.ambientIntensity = 1.3f;
+        TryDestroyEnvironmentArt();
+        var fxPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+            "Assets/Prefabs/VFX/Environment/EnvFX_Chapter4.prefab");
+        var fx = Object.Instantiate(fxPrefab);
+        
+        //TODO: place clouds around bottom faces of level
+        //TODO: cloud color intensity, make darker or lighter based on float value
+    }
+
+    [MenuItem("Tools/Crowded Kitchen/Light Level/Chapter 5 Lighting")]
+    public static void ApplyChapter5Lighting()
+    {
+        Material skybox = AssetDatabase.LoadAssetAtPath<Material>(
+            "Assets/Materials/Lighting/MAT_Skybox_5.mat");
+        if (skybox == null)
+        {
+            Debug.LogError("Couldn't find skybox!");
+            return;
+        }
+        RenderSettings.skybox = skybox;
+        RenderSettings.ambientIntensity = 1.3f;
+        TryDestroyEnvironmentArt();
+        var fxPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+            "Assets/Prefabs/VFX/Environment/EnvFX_Chapter5.prefab");
+        var fx = Object.Instantiate(fxPrefab);
+        var rainParticles = fx.transform.Find("CFXR4 Rain Falling").GetComponent<ParticleSystem>();
+        var (startMin, startMax) = (0.01f, 0.02f);
+        var main = rainParticles.main;
+        var startSize = main.startSize;
+        startSize.constantMin = startMin;
+        startSize.constantMax = startMax;
+        main.startSize = startSize;
+        main.simulationSpeed = 0.55f;
+        var emission = rainParticles.emission;
+        var rateOverTime = emission.rateOverTime;
+        rateOverTime.constant = 500;
+        emission.rateOverTime = rateOverTime;
+        var startColor = main.startColor;
+        var startColorColor = startColor.color;
+        startColorColor.a = 0.682353f;
+        startColor.color = startColorColor;
+        main.startColor = startColor;
+        //TODO: rain drops at front edge of floor tiles
+    }
+
+    private static void TryDestroyEnvironmentArt()
+    {
+        var ch1 = GameObject.Find("EnvFX_Chapter1(Clone)");
+        var ch2 = GameObject.Find("EnvFX_Chapter2(Clone)");
+        var ch3 = GameObject.Find("EnvFX_Chapter3(Clone)");
+        var ch4 = GameObject.Find("EnvFX_Chapter4(Clone)");
+        var ch5 = GameObject.Find("EnvFX_Chapter5(Clone)");
+        if (ch1) Object.DestroyImmediate(ch1);
+        if (ch2) Object.DestroyImmediate(ch2);
+        if (ch3) Object.DestroyImmediate(ch3);
+        if (ch4) Object.DestroyImmediate(ch4);
+        if (ch5) Object.DestroyImmediate(ch5);
+    }
+
+    private static void AdjustMotes(GameObject fx)
+    {
         var grid = GridBase.Instance;
         if (grid != null)
         {
@@ -126,10 +254,11 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             var gridEntries = GameObject.FindObjectsOfType<GridPlacer>();
             foreach (var gridPlacer in gridEntries)
             {
-                if (gridPlacer.gameObject.name.Contains("Disable"))
+                var cell = grid.WorldToCell(gridPlacer.transform.position);
+                if (gridPlacer.gameObject.name.Contains("Disable") && !colliderMap.ContainsKey(cell))
                 {
                     colliderMap.Add(
-                        grid.WorldToCell(gridPlacer.transform.position), gridPlacer.GetComponent<Collider>());
+                        cell, gridPlacer.GetComponent<Collider>());
                 }
             }
 
@@ -154,23 +283,8 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             var shape = moteParticles.shape;
             shape.scale = moteSize;
         }
-        //need to adjust god ray position
     }
-
-    private static void TryDestroyEnvironmentArt()
-    {
-        var ch1 = GameObject.Find("EnvFX_Chapter1(Clone)");
-        var ch2 = GameObject.Find("EnvFX_Chapter2(Clone)");
-        var ch3 = GameObject.Find("EnvFX_Chapter3(Clone)");
-        var ch4 = GameObject.Find("EnvFX_Chapter4(Clone)");
-        var ch5 = GameObject.Find("EnvFX_Chapter5(Clone)");
-        if (ch1) Object.DestroyImmediate(ch1);
-        if (ch2) Object.DestroyImmediate(ch2);
-        if (ch3) Object.DestroyImmediate(ch3);
-        if (ch4) Object.DestroyImmediate(ch4);
-        if (ch5) Object.DestroyImmediate(ch5);
-    }
-
+    
     /// <summary>
     /// Sets the scene links for scenes that are a opener/closer.
     /// Typically these will have a cutscene framework object in the scene
