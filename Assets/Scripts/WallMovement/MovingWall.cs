@@ -42,6 +42,7 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     //type of tween animation for walls
     [SerializeField] private Ease _easeType;
 
+    [SerializeField] private float _blockedRotationStrength = 0.4f;
     [SerializeField] private float _blockedAnimStrength = 0.2f;
     [SerializeField] private float _blockedAnimDuration = 0.2f;
 
@@ -171,8 +172,13 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
         }
         else
         {
+            // Perform blocked animation
             Transform target = _shouldActivate ? _wallGhost.transform : transform;
             Tween.PunchLocalPosition(target, Vector3.up * _blockedAnimStrength, _blockedAnimDuration);
+            Tween.ShakeLocalRotation(target, Vector3.forward * _blockedRotationStrength, _blockedAnimDuration);
+
+            // Reset _shouldActivate since the wall didn't move
+            _shouldActivate = !_shouldActivate;
 
             TriggerHarmonyScan();
             _worked = false;
