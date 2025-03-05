@@ -167,7 +167,7 @@ public sealed class RoundManager : MonoBehaviour
     /// </summary>
     private void PerformMovement()
     {
-        if (!_movementRegistered) return;
+        if (!_movementRegistered || DebugMenuManager.Instance.PauseMenu) return;
 
         if (!_playerControls.InGame.Movement.IsPressed())
         {
