@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Claire Noto
-*    Contributors: Claire Noto
+*    Contributors: Claire Noto, Alec Pizziferro, Josephine Qualls
 *    Date Created: 11/13/2024
 *    Description: Settings Menu for adjusting graphics and accessibility options.
 *******************************************************************/
@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
 
 public class SettingsMenu : MonoBehaviour
 {
@@ -19,12 +20,17 @@ public class SettingsMenu : MonoBehaviour
     [SerializeField] private Toggle _tooltipsToggle;
     [SerializeField] private Toggle _subtitlesToggle;
 
-    private Resolution[] _resolutions;
+    //will hold all of the resolutions
+    private List<Resolution> _resolutions = new();
 
-    public const string Fullscreen = "Fullscreen";
-    public const string Resolution = "Resolution";
-    public const string Tooltips = "Tooltips";
-    public const string Subtitles = "Subtitles";
+    private const string Settings = "Settings";
+    private const string ScreenName = "Screen";
+    private const string Volume = "Volume";
+    private const string Accessibility = "Accessibility";
+    private const string Fullscreen = "Fullscreen";
+    private const string Resolution = "Resolution";
+    private const string Tooltips = "Tooltips";
+    private const string Subtitles = "Subtitles";
 
     private void Start()
     {
@@ -44,24 +50,64 @@ public class SettingsMenu : MonoBehaviour
     /// </summary>
     private void SetupResolutionDropdown()
     {
-        _resolutions = Screen.resolutions;
+        //temporary list of every resolution
+        var resolutions = Screen.resolutions.ToList();
         _resolutionDropdown.ClearOptions();
         List<string> options = new();
 
-        int currentResolutionIndex = 0;
-        for (int i = 0; i < _resolutions.Length; i++)
+        //will hold every resolution (by width x height) and refresh rate
+        //that'll be filtered and then added to options list
+        Dictionary<(int, int), RefreshRate> resolutionDict = new Dictionary<(int, int), RefreshRate>();
+
+        for (var i = 0; i < resolutions.Count; i++)
         {
-            string option = _resolutions[i].width + " x " + _resolutions[i].height;
-            options.Add(option);
-            if (_resolutions[i].width == Screen.currentResolution.width &&
-                _resolutions[i].height == Screen.currentResolution.height)
+            //the current resolution and that resolutions width x height
+            var currentResolution = resolutions[i];
+            (int, int) res = (currentResolution.width, currentResolution.height);
+
+            //Adds resolution if it isn't there
+            if (!resolutionDict.ContainsKey(res))
             {
-                currentResolutionIndex = i;
+                resolutionDict.Add(res, currentResolution.refreshRateRatio);
+            }
+
+            //holds the highest refreshrate
+            if (currentResolution.refreshRateRatio.value > resolutionDict[res].value)
+            {
+                resolutionDict[res] = currentResolution.refreshRateRatio;
             }
         }
+        
+        //Adds the resultions filtered to the main resolutions list
+        foreach (var pair in resolutionDict)
+        {
+            _resolutions.Add(new Resolution()
+            {
+                width = pair.Key.Item1,
+                height = pair.Key.Item2,
+                refreshRateRatio = pair.Value
+            });
+        }
 
+        int currentResolutionIndex = _resolutions.IndexOf(Screen.currentResolution);
+        
+        //goes through the list and adds the dimensions to the options list
+        foreach (var resolution in _resolutions)
+        {
+            string option = resolution.width + " x " + resolution.height;
+            options.Add(option);
+        }
+
+        //adds all the options to the dropdown
         _resolutionDropdown.AddOptions(options);
-        _resolutionDropdown.value = PlayerPrefs.GetInt(Resolution, currentResolutionIndex);
+
+        var resolutionIdx = SaveDataManager.GetSettingInt(ScreenName, Resolution);
+        if (resolutionIdx == -1)
+        {
+            resolutionIdx = currentResolutionIndex;
+            SaveDataManager.SetSettingInt(ScreenName, Resolution, resolutionIdx);
+        }
+        _resolutionDropdown.value = resolutionIdx;
         _resolutionDropdown.RefreshShownValue();
     }
 
@@ -73,8 +119,7 @@ public class SettingsMenu : MonoBehaviour
     {
         Resolution resolution = _resolutions[resolutionIndex];
         Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
-        PlayerPrefs.SetInt(Resolution, resolutionIndex);
-        PlayerPrefs.Save();
+        SaveDataManager.SetSettingInt(ScreenName, Resolution, resolutionIndex);        
     }
 
     /// <summary>
@@ -84,8 +129,7 @@ public class SettingsMenu : MonoBehaviour
     public void SetFullscreen(bool isFullscreen)
     {
         Screen.fullScreen = isFullscreen;
-        PlayerPrefs.SetInt(Fullscreen, isFullscreen ? 1 : 0);
-        PlayerPrefs.Save();
+        SaveDataManager.SetSettingBool(ScreenName, Fullscreen, isFullscreen); 
     }
 
     /// <summary>
@@ -94,8 +138,7 @@ public class SettingsMenu : MonoBehaviour
     /// <param name="tooltips">True if tooltips are enabled</param>
     public void SetTooltips(bool tooltips)
     {
-        PlayerPrefs.SetInt(Tooltips, tooltips ? 1 : 0);
-        PlayerPrefs.Save();
+        SaveDataManager.SetSettingBool(Accessibility, Tooltips, tooltips);
     }
 
     /// <summary>
@@ -104,8 +147,7 @@ public class SettingsMenu : MonoBehaviour
     /// <param name="subtitles">True if subtitles are enabled</param>
     public void SetSubtitles(bool subtitles)
     {
-        PlayerPrefs.SetInt(Subtitles, subtitles ? 1 : 0);
-        PlayerPrefs.Save();
+        SaveDataManager.SetSettingBool(Accessibility, Subtitles, subtitles);
     }
 
     /// <summary>
@@ -113,9 +155,9 @@ public class SettingsMenu : MonoBehaviour
     /// </summary>
     public void LoadSettings()
     {
-        _resolutionDropdown.value = PlayerPrefs.GetInt(Resolution, 0);
-        _fullscreenToggle.isOn = PlayerPrefs.GetInt(Fullscreen, 1) == 1;
-        _tooltipsToggle.isOn = PlayerPrefs.GetInt(Tooltips, 1) == 1;
-        _subtitlesToggle.isOn = PlayerPrefs.GetInt(Subtitles, 1) == 1;
+        _resolutionDropdown.value = SaveDataManager.GetSettingInt(ScreenName, Resolution);
+        _fullscreenToggle.isOn = SaveDataManager.GetSettingBool(ScreenName, Fullscreen);
+        _tooltipsToggle.isOn = SaveDataManager.GetSettingBool(Accessibility, Tooltips);
+        _subtitlesToggle.isOn = SaveDataManager.GetSettingBool(Accessibility, Subtitles);
     }
 }

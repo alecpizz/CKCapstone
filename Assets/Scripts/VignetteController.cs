@@ -1,6 +1,6 @@
 /******************************************************************
  *    Author: Nick Grinstead
- *    Contributors: 
+ *    Contributors: Trinity Hutson
  *    Date Created: 11/19/24
  *    Description: Script for playing the vignette fade in and out effect.
  *      Assumes it's on the same object as a volume object.
@@ -22,6 +22,8 @@ public class VignetteController : MonoBehaviour, ITurnListener
 
     private Vignette _vignette;
 
+    [SerializeField] private bool _shouldPlayMoveVignette = false;
+
     [SerializeField] private Color _vignetteColor = Color.red;
 
     [Space]
@@ -35,6 +37,8 @@ public class VignetteController : MonoBehaviour, ITurnListener
 
     [SerializeField] private float _vignetteIntensity = 0.4f;
     [SerializeField] private float _vignetteSmoothness = 0.1f;
+
+    [SerializeField] private float _vignetteEndDelay = 0.2f;
 
     [Space]
 
@@ -75,7 +79,7 @@ public class VignetteController : MonoBehaviour, ITurnListener
         bool enemies = RoundManager.Instance.EnemiesPresent;
         _vignette.active = enemies;
         if (!enemies) return;
-        RoundManager.Instance.RegisterListener(this);
+            RoundManager.Instance.RegisterListener(this);
     }
 
     /// <summary>
@@ -97,21 +101,27 @@ public class VignetteController : MonoBehaviour, ITurnListener
     /// <param name="direction"></param>
     public void BeginTurn(Vector3 direction)
     {
+        if (!_shouldPlayMoveVignette)
+        {
+            RoundManager.Instance.CompleteTurn(this);
+            return;
+        }
+
         if (RoundManager.Instance.IsPlayerTurn)
         {
             Tween.Custom(_vignette.intensity.value, _vignetteIntensity, _vignetteFadeInTime,
                 newValue => _vignette.intensity.value = newValue,
                 _vignetteStartEasing, 1, CycleMode.Restart,
-                0.0f, 0.2f)
+                0.0f, _vignetteEndDelay)
                 .OnComplete(() => ToggleTurnState());
         }
         else
         {
-            Tween.Custom(_vignette.intensity.value, 0f, _vignetteFadeOutTime, 
+            ToggleTurnState();
+            Tween.Custom(_vignette.intensity.value, 0f, _vignetteFadeOutTime,
                 newValue => _vignette.intensity.value = newValue,
                 _vignetteEndEasing, 1, CycleMode.Restart,
-                0.2f, 0.0f)
-                .OnComplete(() => ToggleTurnState());
+                _vignetteEndDelay, 0.0f);
         }
     }
 
@@ -144,6 +154,10 @@ public class VignetteController : MonoBehaviour, ITurnListener
     /// <param name="isActive">True if the vignette should toggle on</param>
     private void ToggleInteractableVignette(bool isActive)
     {
+        // The vignette doesn't always activate in Awake so this ensures its active
+        if (!_vignette.active)
+            _vignette.active = true;
+
         if (isActive)
         {
             Sequence.Create(1).Group(

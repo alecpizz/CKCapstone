@@ -8,16 +8,19 @@
 
 using System.Collections;
 using System.Collections.Generic;
+using FMODUnity;
 using PrimeTween;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using SaintsField.Playa;
+using SaintsField;
 
 public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener, IHarmonyBeamEntity
 {
     public bool IsTransparent { get => false; }
     public bool BlocksHarmonyBeam { get => false; }
     public Vector3 Position { get => transform.position; }
+    public Transform EntityTransform { get => transform; }
     public GameObject EntryObject { get => gameObject; }
 
     public bool EnemyFrozen { get; private set; } = false;
@@ -32,8 +35,15 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     //Determines whether or not the enemy's movement is reversed
     [SerializeField] private bool _mirrored;
 
+    [PlayaInfoBox("Time delay from when an enemy starts their turn and actually begins moving." +
+      "\n This is meant to prevent enemies from moving before the player starts to move.")]
+    [PropRange(0f, 0.5f)]
+    [SerializeField]
+    private float _timeBeforeTurn = 0.1f;
+
     [PlayaInfoBox("Time it takes to move one space.")]
     [SerializeField] private float _movementTime = 0.55f;
+
     [PlayaInfoBox("The floor for how fast the enemy can move.")]
     [SerializeField] private float _minMoveTime = 0.175f;
 
@@ -53,6 +63,9 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     //public static PlayerMovement Instance;
     private static readonly int Forward = Animator.StringToHash("Forward");
     [SerializeField] private Animator _animator;
+    
+    //
+    [SerializeField] private EventReference _walkSound;
 
     /// <summary>
     /// Prime tween configuration
@@ -106,6 +119,8 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     /// <returns></returns>
     private IEnumerator MoveEnemy(Vector3 moveDirection)
     {
+        yield return new WaitForSeconds(_timeBeforeTurn);
+
         if (!EnemyFrozen)
         {
 
@@ -156,6 +171,11 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                     Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
                     ease: _rotationEase);
 
+                    if (AudioManager.Instance != null && _mirrored)
+                    {
+                        AudioManager.Instance.PlaySound(_walkSound);
+                    }
+                    
                     yield return Tween.Position(transform,
                         move + _positionOffset, modifiedMovementTime, ease: _movementEase).OnUpdate<MirrorAndCopyBehavior>(target: this, (target, tween) =>
                         {
@@ -196,6 +216,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
         {
             Time.timeScale = 0f;
 
+            PlayerMovement.Instance.OnDeath();
             SceneController.Instance.ReloadCurrentScene();
         }
     }

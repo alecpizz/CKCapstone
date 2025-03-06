@@ -119,8 +119,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
     [Button] 
     public void ResetMemory()
     {
-        PlayerPrefs.SetInt(SceneManager.GetActiveScene().name, 0);
-        PlayerPrefs.Save();
+        SaveDataManager.SetNpcProgressionCurrentScene(0);
     }
 
     /// <summary>
@@ -151,11 +150,10 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
         _currentTypingSpeed = Mathf.Clamp(
             _typingSpeed - _dialogueEntries[_currentDialogue].adjustTypingSpeed, 2f, 15f) / 100f;
 
-        if (PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) >= _totalNpcs)
+        if (SaveDataManager.GetNpcProgressionCurrentScene() >=  _totalNpcs)
         {
             UnlockDoors();
         }
-        Debug.Log("Door Progress: (" + PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) + "/" + _totalNpcs + ")");
     }
 
     /// <summary>
@@ -229,10 +227,9 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
 
                 if (!_loopedOnce && _currentDialogue == (_dialogueEntries.Count - 1))
                 {
-                    PlayerPrefs.SetInt(SceneManager.GetActiveScene().name, PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) + 1);
-                    PlayerPrefs.Save();
-                    Debug.Log("Door Progress: (" + PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) + "/" + _totalNpcs + ")");
-                    if (PlayerPrefs.GetInt(SceneManager.GetActiveScene().name) == _totalNpcs)
+                    int progress = SaveDataManager.GetNpcProgressionCurrentScene() + 1;
+                    SaveDataManager.SetNpcProgressionCurrentScene(progress);
+                    if (progress >= _totalNpcs)
                     {
                         UnlockDoors();
                     }
