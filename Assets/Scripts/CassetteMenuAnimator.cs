@@ -25,6 +25,8 @@ public class CassetteMenuAnimator : MonoBehaviour
     [SerializeField] private float _hoverDuration = 0.2f;
     [SerializeField] private float _unHoverDuration = 0.2f;
     [SerializeField] private float _selectDuration = 0.2f;
+    [SerializeField] private float _lidCloseDuration = 0.2f;
+    [SerializeField] private Ease _lidCloseEase = Ease.InCirc;
 
     [SerializeField] private TweenSettings<Vector3> _lidClose;
 
@@ -39,16 +41,20 @@ public class CassetteMenuAnimator : MonoBehaviour
 
     private readonly List<CassetteButton> _buttons = new();
     private float _initButtonYPos;
+    private float _initLidRotation;
 
     private void Awake()
     {
         _buttons.AddRange(GetComponentsInChildren<CassetteButton>());
         EventSystem.current.SetSelectedGameObject(_menuCanvas);
         _initButtonYPos = _buttons[0].transform.localPosition.y;
+        _initLidRotation = _lid.transform.localEulerAngles.x;
     }
-
+    
     public void OnHoverButton(int idx)
     {
+        Tween.LocalEulerAngles(_buttons[idx].transform, endValue: new Vector3(_hoverRotate, 0f), ease: _hoverEase,
+            duration: _hoverDuration, startValue: new Vector3(0f, 0f));
         Tween.LocalPositionY(_buttons[idx].transform, endValue: _hoverDepth, ease:
             _hoverEase, duration: _hoverDuration).OnComplete(
             () => { _buttons[idx].OnHover?.Invoke(); });
@@ -61,6 +67,8 @@ public class CassetteMenuAnimator : MonoBehaviour
 
     public void OnUnHoverButton(int idx)
     {
+        Tween.LocalEulerAngles(_buttons[idx].transform, endValue: new Vector3(0f, 0f), ease: _unHoverEase,
+            duration: _unHoverDuration, startValue: new Vector3(_hoverRotate, 0f));
         Tween.LocalPositionY(_buttons[idx].transform, endValue: _initButtonYPos,
             ease: _unHoverEase, duration: _unHoverDuration).OnComplete(() =>
         {
@@ -75,17 +83,37 @@ public class CassetteMenuAnimator : MonoBehaviour
 
     public void OnSelectButton(int idx)
     {
-        Tween.LocalPositionY(_buttons[idx].transform, endValue: _selectDepth, ease: _selectEase,
-            duration: _selectDuration).OnComplete(() =>
+        if (!_buttons[idx].PlayClosingAnimation)
         {
-            _buttons[idx].OnClick?.Invoke();
-            Tween.LocalPositionY(_buttons[idx].transform, endValue: _initButtonYPos, ease: _unHoverEase,
-                duration: _unHoverDuration);
-        });
-        AudioManager.Instance.PlaySound(_onSelectEvent, new ParamRef()
+            Tween.LocalPositionY(_buttons[idx].transform, endValue: _selectDepth, ease: _selectEase,
+                duration: _selectDuration).OnComplete(() =>
+            {
+                _buttons[idx].OnClick?.Invoke();
+                Tween.LocalPositionY(_buttons[idx].transform, endValue: _initButtonYPos, ease: _unHoverEase,
+                    duration: _unHoverDuration);
+                Tween.LocalEulerAngles(_buttons[idx].transform, endValue: new Vector3(0f, 0f), ease: _unHoverEase,
+                    duration: _unHoverDuration, startValue: new Vector3(_hoverRotate, 0f));
+            });
+            AudioManager.Instance.PlaySound(_onSelectEvent, new ParamRef()
+            {
+                Name = "Main Menu",
+                Value = 0f
+            });
+        }
+        else
         {
-            Name = "Main Menu",
-            Value = 0f
-        });
+            Tween.LocalPositionY(_buttons[idx].transform, endValue: _selectDepth, ease: _selectEase,
+                duration: _selectDuration).Chain(Tween.LocalRotation(_lid, startValue: _lid.localRotation,
+                endValue: Quaternion.Euler(0f, 0f, 0f),
+                ease: _lidCloseEase, duration: _lidCloseDuration)).OnComplete(() =>
+            {
+                _buttons[idx].OnClick?.Invoke();
+                Tween.LocalPositionY(_buttons[idx].transform, endValue: _initButtonYPos, ease: _unHoverEase,
+                    duration: _unHoverDuration);
+                Tween.LocalEulerAngles(_buttons[idx].transform, endValue: new Vector3(0f, 0f), ease: _unHoverEase,
+                    duration: _unHoverDuration, startValue: new Vector3(_hoverRotate, 0f));
+            });
+        }
     }
+    
 }

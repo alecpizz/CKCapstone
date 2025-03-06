@@ -694,14 +694,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _menuCanvas: {fileID: 997577393}
   _hoverDepth: 0.115
-  _hoverRotate: 0
-  _selectDepth: 0.0873
+  _hoverRotate: 11
+  _selectDepth: 0.095
   _hoverEase: 26
   _unHoverEase: 21
   _selectEase: 20
   _hoverDuration: 0.2
   _unHoverDuration: 0.2
   _selectDuration: 0.2
+  _lidCloseDuration: 1.5
+  _lidCloseEase: 20
   _lidClose:
     startFromCurrent: 0
     startValue: {x: -42.473, y: 0, z: 0}
@@ -2904,7 +2906,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e91a5fae858749c1a292a45ac788bc50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <PlayClosingAnimation>k__BackingField: 0
+  <PlayClosingAnimation>k__BackingField: 1
   OnHover:
     m_PersistentCalls:
       m_Calls: []
@@ -3982,6 +3984,31 @@ PrefabInstance:
       propertyPath: m_Name
       value: LP_CassettePlayer 3
       objectReference: {fileID: 0}
+    - target: {fileID: 5748489710339304012, guid: cd84112cb38fdd24cba3460c164a57ba,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5748489710339304012, guid: cd84112cb38fdd24cba3460c164a57ba,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5748489710339304012, guid: cd84112cb38fdd24cba3460c164a57ba,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5748489710339304012, guid: cd84112cb38fdd24cba3460c164a57ba,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5748489710339304012, guid: cd84112cb38fdd24cba3460c164a57ba,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7318511011964339994, guid: cd84112cb38fdd24cba3460c164a57ba,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -4224,7 +4251,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e91a5fae858749c1a292a45ac788bc50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <PlayClosingAnimation>k__BackingField: 0
+  <PlayClosingAnimation>k__BackingField: 1
   OnHover:
     m_PersistentCalls:
       m_Calls: []
@@ -5587,7 +5614,7 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 5
+          m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
