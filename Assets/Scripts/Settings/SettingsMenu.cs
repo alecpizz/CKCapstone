@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Claire Noto
-*    Contributors: Claire Noto, Alec Pizziferro
+*    Contributors: Claire Noto, Alec Pizziferro, Josephine Qualls
 *    Date Created: 11/13/2024
 *    Description: Settings Menu for adjusting graphics and accessibility options.
 *******************************************************************/
@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
 
 public class SettingsMenu : MonoBehaviour
 {
@@ -19,7 +20,8 @@ public class SettingsMenu : MonoBehaviour
     [SerializeField] private Toggle _tooltipsToggle;
     [SerializeField] private Toggle _subtitlesToggle;
 
-    private Resolution[] _resolutions;
+    //will hold all of the resolutions
+    private List<Resolution> _resolutions = new();
 
     private const string Settings = "Settings";
     private const string ScreenName = "Screen";
@@ -48,23 +50,57 @@ public class SettingsMenu : MonoBehaviour
     /// </summary>
     private void SetupResolutionDropdown()
     {
-        _resolutions = Screen.resolutions;
+        //temporary list of every resolution
+        var resolutions = Screen.resolutions.ToList();
         _resolutionDropdown.ClearOptions();
         List<string> options = new();
 
-        int currentResolutionIndex = 0;
-        for (int i = 0; i < _resolutions.Length; i++)
+        //will hold every resolution (by width x height) and refresh rate
+        //that'll be filtered and then added to options list
+        Dictionary<(int, int), RefreshRate> resolutionDict = new Dictionary<(int, int), RefreshRate>();
+
+        for (var i = 0; i < resolutions.Count; i++)
         {
-            string option = _resolutions[i].width + " x " + _resolutions[i].height;
-            options.Add(option);
-            if (_resolutions[i].width == Screen.currentResolution.width &&
-                _resolutions[i].height == Screen.currentResolution.height)
+            //the current resolution and that resolutions width x height
+            var currentResolution = resolutions[i];
+            (int, int) res = (currentResolution.width, currentResolution.height);
+
+            //Adds resolution if it isn't there
+            if (!resolutionDict.ContainsKey(res))
             {
-                currentResolutionIndex = i;
+                resolutionDict.Add(res, currentResolution.refreshRateRatio);
+            }
+
+            //holds the highest refreshrate
+            if (currentResolution.refreshRateRatio.value > resolutionDict[res].value)
+            {
+                resolutionDict[res] = currentResolution.refreshRateRatio;
             }
         }
+        
+        //Adds the resultions filtered to the main resolutions list
+        foreach (var pair in resolutionDict)
+        {
+            _resolutions.Add(new Resolution()
+            {
+                width = pair.Key.Item1,
+                height = pair.Key.Item2,
+                refreshRateRatio = pair.Value
+            });
+        }
 
+        int currentResolutionIndex = _resolutions.IndexOf(Screen.currentResolution);
+        
+        //goes through the list and adds the dimensions to the options list
+        foreach (var resolution in _resolutions)
+        {
+            string option = resolution.width + " x " + resolution.height;
+            options.Add(option);
+        }
+
+        //adds all the options to the dropdown
         _resolutionDropdown.AddOptions(options);
+
         var resolutionIdx = SaveDataManager.GetSettingInt(ScreenName, Resolution);
         if (resolutionIdx == -1)
         {
