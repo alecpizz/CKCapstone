@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Rider Hagen
-*    Contributors: David Galmines
+*    Contributors: David Galmines, Alec Pizziferro
 *    Date Created: 9/26/24
 *    Description: This is just meant to make menu buttons, when pressed, work.
 *******************************************************************/
@@ -67,15 +67,11 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void OptionsMainMenu()
     {
-        AudioManager.Instance.PlaySound(_buttonPress);
-        PrimeTween.Tween.Delay(0.2f).OnComplete(() =>
-        {
-            _optionsScreen.SetActive(true);
-            _mainMenuStart.SetActive(false);
-            _mainMenuSettings.SetActive(false);
-            _mainMenuQuit.SetActive(false);
-            EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
-        });
+        _optionsScreen.SetActive(true);
+        _mainMenuStart.SetActive(false);
+        _mainMenuSettings.SetActive(false);
+        _mainMenuQuit.SetActive(false);
+        EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
     }
 
     /// <summary>
@@ -130,11 +126,7 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void ActivateTutorialCanvas()
     {
-        AudioManager.Instance.PlaySound(_buttonPress);
-        PrimeTween.Tween.Delay(0.2f).OnComplete(() =>
-        {
-            _tutorialCanvas.SetActive(true);
-        });
+         _tutorialCanvas.SetActive(true);
     }
 
     /// <summary>
@@ -179,11 +171,7 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void QuitConfirm()
     {
-        AudioManager.Instance.PlaySound(_buttonPress);
-        PrimeTween.Tween.Delay(0.2f).OnComplete(() =>
-        {
-           _confirmQuit.SetActive(true);
-        });
+        _confirmQuit.SetActive(true);
     }
 
     /// <summary>
