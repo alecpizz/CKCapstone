@@ -253,7 +253,8 @@ public sealed class RoundManager : MonoBehaviour
             _turnState = next.Value;
         }
 
-        if (_turnState != TurnState.None)
+        if (_turnState != TurnState.None && SceneController.Instance != null &&
+            !SceneController.Instance.Transitioning)
         {
             if (IsEnemyTurn)
             {
