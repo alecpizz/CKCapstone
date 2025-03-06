@@ -68,9 +68,9 @@ public class MenuManager : MonoBehaviour
     public void OptionsMainMenu()
     {
         _optionsScreen.SetActive(true);
-        _mainMenuStart.SetActive(false);
+        // _mainMenuStart.SetActive(false);
         _mainMenuSettings.SetActive(false);
-        _mainMenuQuit.SetActive(false);
+        // _mainMenuQuit.SetActive(false);
         EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
     }
 
@@ -80,9 +80,9 @@ public class MenuManager : MonoBehaviour
     public void Options()
     {
         _optionsScreen.SetActive(true);
-        _mainMenuStart.SetActive(false);
+        // _mainMenuStart.SetActive(false);
         _mainMenuSettings.SetActive(false);
-        _mainMenuQuit.SetActive(false);
+        // _mainMenuQuit.SetActive(false);
         EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
     }
 
@@ -95,7 +95,7 @@ public class MenuManager : MonoBehaviour
         _optionsScreen.SetActive(false);
         _mainMenuFirst.SetActive(true);
         _mainMenuSettings.SetActive(true);
-        _mainMenuQuit.SetActive(true);
+        // _mainMenuQuit.SetActive(true);
         EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
     }
 
