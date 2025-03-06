@@ -41,15 +41,13 @@ public class HarmonySwitch : MonoBehaviour, IParentSwitch
     /// <param name="direction">The direction the player moved</param>
     public void MoveObject()
     {
-        _beamScript.ToggleBeam(false);
+        Tween.StopAll(transform);
 
         Vector3 targetRotation = transform.eulerAngles;
         targetRotation.y += _shouldActivate ? _rotationDegrees : -_rotationDegrees;
 
-        Sequence.Create(1).Chain(
-            Tween.Delay(_beamToggleDelay)).Chain(
-            Tween.EulerAngles(transform, transform.eulerAngles, targetRotation, _rotationDuration)
-            .OnComplete(() => ResetOnTweenEnd()));
+        Tween.EulerAngles(transform, transform.eulerAngles, targetRotation, _rotationDuration)
+            .OnComplete(() => ResetOnTweenEnd());
     }
 
     /// <summary>
@@ -65,7 +63,10 @@ public class HarmonySwitch : MonoBehaviour, IParentSwitch
     /// </summary>
     public void SwitchActivation()
     {
-        MoveObject();
+        // Turns off beam before rotating the beam after a delay
+        _beamScript.ToggleBeam(false);
+        Invoke(nameof(MoveObject), _beamToggleDelay);
+
         _shouldActivate = !_shouldActivate;
     }
 }
