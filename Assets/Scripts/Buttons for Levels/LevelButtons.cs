@@ -62,6 +62,12 @@ public class LevelButtons : MonoBehaviour
                     continue;
                 }
 
+#if !OVERRIDE_LEVEL
+                if (!SaveDataManager.GetLevelCompleted(sceneName))
+                {
+                    continue;
+                }
+#endif
                 //initiate obj variable
                 IndividualButtons obj;
 
