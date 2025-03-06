@@ -144,9 +144,6 @@ public sealed class RoundManager : MonoBehaviour
     /// <param name="obj"></param>
     private void RegisterMovementInput(InputAction.CallbackContext obj)
     {
-        if (Time.timeScale != 1)
-            return;
-
         var dir = GetNormalizedInput();
 
         if(_turnState != TurnState.None && _lastMovementInput == dir)
@@ -160,6 +157,9 @@ public sealed class RoundManager : MonoBehaviour
         _movementRegisteredTime = Time.unscaledTime;
 
         if (_turnState != TurnState.None)
+            return;
+
+        if (_turnState != TurnState.None && Time.timeScale != 1)
             return;
 
         PerformMovement();
