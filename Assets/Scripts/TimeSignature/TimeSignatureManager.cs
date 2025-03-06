@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Nick Grinstead
-*    Contributors: 
+*    Contributors: Rider Hagen
 *    Date Created: 10/20/24
 *    Description: Script for tracking the current time signature.
 *    Has methods for updating to a new time signature and pushs updates
@@ -9,6 +9,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SaintsField;
+using TMPro;
 
 public class TimeSignatureManager : MonoBehaviour
 {
@@ -22,6 +23,8 @@ public class TimeSignatureManager : MonoBehaviour
     [SerializeField] private Vector2Int _secondaryTimeSignature;
     private Vector2Int _startingTimeSignature;
     private bool _isToggled = false;
+
+    [SerializeField] private TextMeshPro _metronomePredictor;
 
     private List<ITimeListener> _timeListeners = new List<ITimeListener>();
 
@@ -56,6 +59,11 @@ public class TimeSignatureManager : MonoBehaviour
         }
 
         _startingTimeSignature = _timeSignature;
+
+        if (_metronomePredictor != null)
+        {
+            _metronomePredictor.text = _secondaryTimeSignature.x + "/" + _secondaryTimeSignature.y;
+        }
     }
 
     /// <summary>
@@ -68,8 +76,18 @@ public class TimeSignatureManager : MonoBehaviour
         _timeSignature = _isToggled ? _secondaryTimeSignature : _startingTimeSignature;
 
         UpdateListeners();
+
+        if (_isToggled)
+        {
+            _metronomePredictor.text = _startingTimeSignature.x + "/" + _startingTimeSignature.y;
+
+        }
+        else
+        {
+            _metronomePredictor.text = _secondaryTimeSignature.x + "/" + _secondaryTimeSignature.y;
+        }
     }
-    
+
     /// <summary>
     /// Method for updating the listeners that are registered to this manager
     /// </summary>
