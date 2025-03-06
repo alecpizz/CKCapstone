@@ -129,7 +129,7 @@ public sealed class RoundManager : MonoBehaviour
         // Not being called unless movement is blocked
         if (_playerControls.InGame.Movement.IsPressed() && !TurnInProgress)
         {
-            if(PlayerMovement.Instance.CanMove)
+            if(PlayerMovement.Instance.CanMove && Time.timeScale == 1)
             {
                 PerformMovement();
             }
@@ -156,7 +156,7 @@ public sealed class RoundManager : MonoBehaviour
         _movementRegistered = true;
         _movementRegisteredTime = Time.unscaledTime;
 
-        if (_turnState != TurnState.None)
+        if (_turnState != TurnState.None && Time.timeScale != 1)
             return;
 
         PerformMovement();
@@ -167,7 +167,7 @@ public sealed class RoundManager : MonoBehaviour
     /// </summary>
     private void PerformMovement()
     {
-        if (!_movementRegistered) return;
+        if (!_movementRegistered || DebugMenuManager.Instance.PauseMenu) return;
 
         if (!_playerControls.InGame.Movement.IsPressed())
         {
@@ -253,7 +253,8 @@ public sealed class RoundManager : MonoBehaviour
             _turnState = next.Value;
         }
 
-        if (_turnState != TurnState.None)
+        if (_turnState != TurnState.None && SceneController.Instance != null &&
+            !SceneController.Instance.Transitioning)
         {
             if (IsEnemyTurn)
             {

@@ -228,6 +228,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
         {
             Time.timeScale = 0f;
 
+            PlayerMovement.Instance.OnDeath();
             SceneController.Instance.ReloadCurrentScene();
         }
     }
