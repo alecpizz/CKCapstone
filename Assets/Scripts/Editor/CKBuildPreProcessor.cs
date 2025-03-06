@@ -78,6 +78,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         for (var chapterIndex = 0; chapterIndex < levelData.Chapters.Count; chapterIndex++)
         {
             var chapter = levelData.Chapters[chapterIndex];
+            //very gross switch statement, none & custom are unused right now
             Action<LightingData> lightDataMethod = null;
             switch (chapter.Lighting)
             {

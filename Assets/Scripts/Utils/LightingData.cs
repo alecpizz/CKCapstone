@@ -1,4 +1,10 @@
-﻿
+﻿/******************************************************************
+ *    Author: Alec Pizziferro
+ *    Contributors:  nullptr
+ *    Date Created: 3/5/2025
+ *    Description: A class that holds a few specific lighting
+ *    parameters.
+ *******************************************************************/
 using System;
 using UnityEngine;
 
