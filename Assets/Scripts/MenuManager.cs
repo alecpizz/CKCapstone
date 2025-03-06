@@ -108,6 +108,7 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void Pause()
     {
+        if (SceneController.Instance == null || SceneController.Instance.Transitioning) return;
         DebugMenuManager.Instance.PauseMenu = true;
         _pauseScreen.SetActive(true);
         _restartButton.SetActive(false);
@@ -150,6 +151,19 @@ public class MenuManager : MonoBehaviour
     public void StartGame()
     {
         SceneManager.LoadScene(_firstLevelIndex);
+    }
+
+    /// <summary>
+    /// Attempts to load the last saved puzzle.
+    /// </summary>
+    public void ContinueGame()
+    {
+        string level = SaveDataManager.GetLastFinishedLevel();
+        if (string.IsNullOrEmpty(level)) return;
+        var scene = SceneManager.GetSceneByName(level);
+        if (!scene.IsValid()) return;
+        int idx = scene.buildIndex;
+        SceneManager.LoadScene(idx);
     }
 
     /// <summary>

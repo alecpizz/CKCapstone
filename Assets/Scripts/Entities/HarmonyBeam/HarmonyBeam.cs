@@ -154,6 +154,7 @@ public class HarmonyBeam : MonoBehaviour
                                     + _enemyHitOffset, Quaternion.identity);
                                 _wrappedEnemyFX.TryAdd(entity, enemyFX);
                                 _wrappedEnemyFX[entity] = enemyFX;
+                                enemyFX.transform.parent = entity.EntityTransform;
                                 _enemyGrabbedInstance = 
                                     AudioManager.Instance.PlaySound(_enemyHarmonization);
                             }
