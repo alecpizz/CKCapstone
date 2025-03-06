@@ -70,10 +70,18 @@ public class SettingsMenu : MonoBehaviour
             if (i - 1 > 0 && _resolutions[i - 1].width == _resolutions[i].width &&
                 _resolutions[i - 1].height == _resolutions[i].height)
             {
-                continue;
+                resolutionDict.Add(_resolutions[i], _resolutions[i].refreshRateRatio);
+
+                if (resolutionDict[_resolutions[i - 1]].value < resolutionDict[_resolutions[i]].value)
+                {
+                    resolutionDict[_resolutions[i-1]] = _resolutions[i].refreshRateRatio;
+                }
+
+                //continue;
             }
             else
             {
+                resolutionDict.Add(_resolutions[i], _resolutions[i].refreshRateRatio);
                 string option = _resolutions[i].width + " x " + _resolutions[i].height;
                 options.Add(option);
             }
