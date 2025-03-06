@@ -39,6 +39,7 @@ public class CassetteMenuAnimator : MonoBehaviour
     [SepTitle("Cassette Parts", EColor.Blue)] [SerializeField]
     private Transform _lid;
 
+    private bool _isPlayingLidAnimation = false;
     private readonly List<CassetteButton> _buttons = new();
     private float _initButtonYPos;
     private float _initLidRotation;
@@ -53,6 +54,7 @@ public class CassetteMenuAnimator : MonoBehaviour
     
     public void OnHoverButton(int idx)
     {
+        if (_isPlayingLidAnimation) return;
         Tween.LocalEulerAngles(_buttons[idx].transform, endValue: new Vector3(_hoverRotate, 0f), ease: _hoverEase,
             duration: _hoverDuration, startValue: new Vector3(0f, 0f));
         Tween.LocalPositionY(_buttons[idx].transform, endValue: _hoverDepth, ease:
@@ -67,6 +69,7 @@ public class CassetteMenuAnimator : MonoBehaviour
 
     public void OnUnHoverButton(int idx)
     {
+        if (_isPlayingLidAnimation) return;
         Tween.LocalEulerAngles(_buttons[idx].transform, endValue: new Vector3(0f, 0f), ease: _unHoverEase,
             duration: _unHoverDuration, startValue: new Vector3(_hoverRotate, 0f));
         Tween.LocalPositionY(_buttons[idx].transform, endValue: _initButtonYPos,
@@ -83,6 +86,7 @@ public class CassetteMenuAnimator : MonoBehaviour
 
     public void OnSelectButton(int idx)
     {
+        if (_isPlayingLidAnimation) return;
         if (!_buttons[idx].PlayClosingAnimation)
         {
             Tween.LocalPositionY(_buttons[idx].transform, endValue: _selectDepth, ease: _selectEase,
@@ -102,16 +106,14 @@ public class CassetteMenuAnimator : MonoBehaviour
         }
         else
         {
+            _isPlayingLidAnimation = true;
             Tween.LocalPositionY(_buttons[idx].transform, endValue: _selectDepth, ease: _selectEase,
                 duration: _selectDuration).Chain(Tween.LocalRotation(_lid, startValue: _lid.localRotation,
                 endValue: Quaternion.Euler(0f, 0f, 0f),
                 ease: _lidCloseEase, duration: _lidCloseDuration)).OnComplete(() =>
             {
                 _buttons[idx].OnClick?.Invoke();
-                Tween.LocalPositionY(_buttons[idx].transform, endValue: _initButtonYPos, ease: _unHoverEase,
-                    duration: _unHoverDuration);
-                Tween.LocalEulerAngles(_buttons[idx].transform, endValue: new Vector3(0f, 0f), ease: _unHoverEase,
-                    duration: _unHoverDuration, startValue: new Vector3(_hoverRotate, 0f));
+                _isPlayingLidAnimation = false;
             });
         }
     }
