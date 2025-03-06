@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEditor.Build;
+using UnityEditor.Build.Player;
 using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -37,6 +38,39 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             //apply build scenes
             BuildSceneIndex();
         }
+
+        ToggleUnlockedDefines();
+    }
+
+    /// <summary>
+    /// Toggles the unlocked level define.
+    /// </summary>
+    [MenuItem("Tools/Crowded Kitchen/Toggle Unlocked Levels")]
+    public static void ToggleUnlockedDefines()
+    {
+        var buildTarget = NamedBuildTarget.FromBuildTargetGroup(
+            BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget));
+        List<string> symbols = PlayerSettings.GetScriptingDefineSymbols(buildTarget).Split(';').ToList();
+        bool hasOverride = symbols.Any(symbol => symbol.ToUpper() == "OVERRIDE_LEVEL");
+        if (EditorUtility.DisplayDialog("Build Pre-Process Question",
+                "Do you wish to build with all levels in level select unlocked?", "yes", "no"))
+        {
+            if (!hasOverride)
+            {
+                symbols.Add("OVERRIDE_LEVEL");
+                Debug.Log("<color=green>Added</color> define");
+            }
+        }
+        else
+        {
+            if (hasOverride)
+            {
+                symbols.Remove("OVERRIDE_LEVEL");
+                Debug.Log("<color=red>Removed</color> define");
+            }
+        }
+
+        PlayerSettings.SetScriptingDefineSymbols(buildTarget, symbols.ToArray());
     }
 
     /// <summary>
@@ -348,7 +382,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                 AssetDatabase.GetAssetPath(levelData.CreditsScene),
                 true));
-            levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = "Credits Scene", showUp = false });
+            levelData.PrettySceneNames.Add(new LevelOrder.PrettyData {PrettyName = "Credits Scene", showUp = false});
         }
 
         EditorUtility.SetDirty(levelData);
