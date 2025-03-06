@@ -11,6 +11,7 @@ public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity, ITurnListener
     public bool AllowLaserPassThrough => true;
     public bool HitWrapAround => false;
     public Vector3 Position => transform.position;
+    public Transform EntityTransform { get => transform; }
 
     public TurnState TurnState => TurnState.Player;
     public TurnState SecondaryTurnState => TurnState.None;
