@@ -30,6 +30,9 @@ public class LevelButtons : MonoBehaviour
     //List of all buttons to each chapter in game
     [SerializeField] private List<Button> _allChapButtons;
 
+    //Prefix word of a level
+    [SerializeField] private string _levelPrefix = "Level: ";
+
     /// <summary>
     /// At run-time, buttons equal to the number of scenes are generated.
     /// </summary>
@@ -91,7 +94,7 @@ public class LevelButtons : MonoBehaviour
                 else
                 {
                     //Levels are named Level + relevant number (even challenges)
-                    obj.GetComponentInChildren<TextMeshProUGUI>().text = "Level: " + (tally-1).ToString();
+                    obj.GetComponentInChildren<TextMeshProUGUI>().text = _levelPrefix + (tally-1).ToString();
                 }
 
                 //The index of a button is set
