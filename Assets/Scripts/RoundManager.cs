@@ -148,7 +148,7 @@ public sealed class RoundManager : MonoBehaviour
 
         if(_turnState != TurnState.None && _lastMovementInput == dir)
         {
-            EnableAutocomplete();
+            //EnableAutocomplete();
         }
 
         _lastMovementInput = dir;
@@ -235,7 +235,7 @@ public sealed class RoundManager : MonoBehaviour
             if(!doAutocomplete)
                 DisableAutocomplete();
             */
-            DisableAutocomplete();
+            //DisableAutocomplete();
             return;
         }
 
