@@ -24,7 +24,7 @@ public class TimeSignatureManager : MonoBehaviour
     private Vector2Int _startingTimeSignature;
     private bool _isToggled = false;
 
-    [SerializeField] private TextMeshPro _metronomePredictor;
+    [SerializeField] private TMP_Text _metronomePredictor;
 
     private List<ITimeListener> _timeListeners = new List<ITimeListener>();
 
@@ -39,6 +39,11 @@ public class TimeSignatureManager : MonoBehaviour
         }
 
         Instance = this;
+
+        if (_secondaryTimeSignature.x != 0)
+        {
+            _metronomePredictor = GameObject.Find("MetronomePredictor").GetComponent<TMP_Text>();
+        }
 
         if (_timeSignature.x <= 0)
         {
