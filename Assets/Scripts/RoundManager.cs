@@ -355,7 +355,7 @@ public sealed class RoundManager : MonoBehaviour
     /// </summary>
     private void EnableAutocomplete()
     {
-        Time.timeScale = _autocompleteSpeed;
+        //Time.timeScale = _autocompleteSpeed;
         AutocompleteToggled?.Invoke(true);
     }
 
@@ -364,7 +364,7 @@ public sealed class RoundManager : MonoBehaviour
     /// </summary>
     private void DisableAutocomplete()
     {
-        Time.timeScale = 1;
+        //Time.timeScale = 1;
         AutocompleteToggled?.Invoke(false);
     }
 
