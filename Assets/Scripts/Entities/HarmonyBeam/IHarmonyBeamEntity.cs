@@ -38,4 +38,9 @@ public interface IHarmonyBeamEntity
     /// The position of the object.
     /// </summary>
     Vector3 Position { get; }
+
+    /// <summary>
+    /// The attached transform of the object.
+    /// </summary>
+    Transform EntityTransform { get; }
 }
