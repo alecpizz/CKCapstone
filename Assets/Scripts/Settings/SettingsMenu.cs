@@ -54,7 +54,15 @@ public class SettingsMenu : MonoBehaviour
         _resolutionDropdown.ClearOptions();
         List<string> options = new();
 
-        Dictionary<Resolution, RefreshRate> resolutionDict = new();//continue with Alec's changes
+        //will hold every resolution and refresh rate that'll be filtered and then added to options list
+        Dictionary<Resolution, RefreshRate> resolutionDict = new Dictionary<Resolution, RefreshRate>();
+
+        //will hold the highest refresh rate that occurs for the resolutions more than once
+        RefreshRate highestRefresh = _resolutions[0].refreshRateRatio;
+
+        //helps keep track of the frequency of a refresh rate occuring
+        int prevRateCount = 0;
+        int currRateCount = 0;
 
         int currentResolutionIndex = 0;
         for (int i = 0; i < _resolutions.Count; i++)
@@ -66,30 +74,53 @@ public class SettingsMenu : MonoBehaviour
                 currentResolutionIndex = i;
             }
 
-            //will add the resolution option as long as it isn't a repeat
-            if (i - 1 > 0 && _resolutions[i - 1].width == _resolutions[i].width &&
-                _resolutions[i - 1].height == _resolutions[i].height)
+            //checks for what resolution is being looked through right now
+            if (resolutionDict.ContainsKey(_resolutions[i]))
             {
-                resolutionDict.Add(_resolutions[i], _resolutions[i].refreshRateRatio);
-
-                if (resolutionDict[_resolutions[i - 1]].value < resolutionDict[_resolutions[i]].value)
-                {
-                    resolutionDict[_resolutions[i-1]] = _resolutions[i].refreshRateRatio;
-                }
-
-                //continue;
+                //if an instance of that resolution exists then the higher refresh rate is used
+                resolutionDict[_resolutions[i]] = _resolutions[i].refreshRateRatio;
+                prevRateCount++;
             }
             else
             {
+                //if an instance doesn't exist put it in the dictionary
                 resolutionDict.Add(_resolutions[i], _resolutions[i].refreshRateRatio);
-                string option = _resolutions[i].width + " x " + _resolutions[i].height;
-                options.Add(option);
+                prevRateCount = 1;
+            }
+            
+            //sets the value of the highest refresh rate
+            if (highestRefresh.value < _resolutions[i].refreshRateRatio.value)
+            {
+                if(currRateCount < prevRateCount)
+                {
+                    highestRefresh = _resolutions[i].refreshRateRatio;
+                    Debug.Log(highestRefresh.value);
+                    currRateCount = prevRateCount;
+                }
+                else if (currRateCount > prevRateCount && prevRateCount > 1)
+                {
+                    highestRefresh = _resolutions[i].refreshRateRatio;
+                    Debug.Log(highestRefresh.value);
+                }
+                
             }
         }
 
+        foreach(KeyValuePair<Resolution, RefreshRate> kvp in resolutionDict)
+        {
+            if(kvp.Value.Equals(highestRefresh))
+            {
+                string option = kvp.Key.width + " x " + kvp.Key.height;
+                options.Add(option);
+
+                Debug.Log(option + " + " + kvp.Value);
+            }
+            
+        }
+
         //removes the first option because it is a repeat (will show up in build but not editor)
-        _resolutions.RemoveAt(0);
-        options.RemoveAt(0);
+        //_resolutions.RemoveAt(0);
+        //options.RemoveAt(0);
 
         //adds all the options to the dropdown
         _resolutionDropdown.AddOptions(options);
