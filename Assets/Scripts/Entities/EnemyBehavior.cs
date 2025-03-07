@@ -160,7 +160,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     //public static PlayerMovement Instance;
     private static readonly int Forward = Animator.StringToHash("Forward");
+    private static readonly int Attack = Animator.StringToHash("Attack");
     private static readonly int Frozen = Animator.StringToHash("Frozen");
+    private static readonly int Turn = Animator.StringToHash("Turn");
 
 
     [SerializeField] private Animator _animator;
@@ -489,17 +491,36 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                         {
                             //hit a player!
                             PlayerMovement.Instance.OnDeath();
+                            if (_animator != null)
+                            {
+                                _animator.SetTrigger(Attack);
+                            }
                             SceneController.Instance.ReloadCurrentScene();
                         }
                     });
             AudioManager.Instance.PlaySound(_enemyMove);
+            if (rotationDir != transform.forward)
+            {
+                if (_animator != null)
+                {
+                    _animator.SetTrigger(Turn);
+                }
+            }
             yield return Tween.Rotation(transform, endValue: Quaternion.LookRotation(rotationDir),
                 duration: _rotationTime,
                 ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).Chain(tween).ToYieldInstruction();
+            if (_animator != null)
+            {
+                _animator.ResetTrigger(Turn);
+            }
             GridBase.Instance.UpdateEntry(this);
 
             if (_endRotate)
             {
+                if (_animator != null)
+                {
+                    _animator.SetTrigger(Turn);
+                }
                 yield return Tween.Rotation(transform, endValue: Quaternion.LookRotation(-rotationDir),
                 duration: _rotationTime,
                 ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).ToYieldInstruction();
