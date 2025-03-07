@@ -65,13 +65,6 @@ public class TimeSignatureManager : MonoBehaviour
 
         _startingTimeSignature = _timeSignature;
 
-        foreach (GameObject ITimeListener in _timeListeners)
-        {
-
-            _metronomePredictor = ITimeListener.GetComponent<TMP_Text>();
-
-        }
-
         if (_metronomePredictor != null)
         {
             _metronomePredictor.text = _secondaryTimeSignature.x + "/" + _secondaryTimeSignature.y;
@@ -88,16 +81,24 @@ public class TimeSignatureManager : MonoBehaviour
         _timeSignature = _isToggled ? _secondaryTimeSignature : _startingTimeSignature;
 
         UpdateListeners();
+    }
 
-        if (_isToggled)
-        {
-            _metronomePredictor.text = _startingTimeSignature.x + "/" + _startingTimeSignature.y;
+    /// <summary>
+    /// Fetches the current time signature
+    /// </summary>
+    /// <returns>Current Time Signature</returns>
+    public Vector2Int GetCurrentTimeSignature()
+    {
+        return !_isToggled ? _startingTimeSignature : _secondaryTimeSignature;
+    }
 
-        }
-        else
-        {
-            _metronomePredictor.text = _secondaryTimeSignature.x + "/" + _secondaryTimeSignature.y;
-        }
+    /// <summary>
+    /// Fetches the next time signature to be used
+    /// </summary>
+    /// <returns>Next Time Signature that will be swapped to if metronome is interacted with</returns>
+    public Vector2Int GetNextTimeSignature()
+    {
+        return _isToggled ? _startingTimeSignature : _secondaryTimeSignature;
     }
 
     /// <summary>
