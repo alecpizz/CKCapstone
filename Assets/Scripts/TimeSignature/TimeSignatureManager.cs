@@ -40,10 +40,10 @@ public class TimeSignatureManager : MonoBehaviour
 
         Instance = this;
 
-        if (_secondaryTimeSignature.x != 0)
-        {
-            _metronomePredictor = GameObject.Find("MetronomePredictor").GetComponent<TMP_Text>();
-        }
+        //if (_secondaryTimeSignature.x != 0)
+        //{
+        //    _metronomePredictor = GameObject.Find("MetronomePredictor").GetComponent<TMP_Text>();
+        //}
 
         if (_timeSignature.x <= 0)
         {
@@ -64,6 +64,13 @@ public class TimeSignatureManager : MonoBehaviour
         }
 
         _startingTimeSignature = _timeSignature;
+
+        foreach (GameObject ITimeListener in _timeListeners)
+        {
+
+            _metronomePredictor = ITimeListener.GetComponent<TMP_Text>();
+
+        }
 
         if (_metronomePredictor != null)
         {
