@@ -40,11 +40,6 @@ public class TimeSignatureManager : MonoBehaviour
 
         Instance = this;
 
-        //if (_secondaryTimeSignature.x != 0)
-        //{
-        //    _metronomePredictor = GameObject.Find("MetronomePredictor").GetComponent<TMP_Text>();
-        //}
-
         if (_timeSignature.x <= 0)
         {
             _timeSignature.x = 1;
