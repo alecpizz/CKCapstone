@@ -9,6 +9,7 @@ using PrimeTween;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
+using FMODUnity;
 using UnityEditor;
 using UnityEngine;
 using SaintsField.Playa;
@@ -42,6 +43,11 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     //type of tween animation for walls
     [SerializeField] private Ease _easeType;
 
+    //timing and strength of tween for blocked animation
+    [SerializeField] private float _blockedRotationStrength = 0.4f;
+    [SerializeField] private float _blockedAnimStrength = 0.2f;
+    [SerializeField] private float _blockedAnimDuration = 0.2f;
+
     //to decide if switch should be true or not
     private bool _worked = true;
 
@@ -60,6 +66,8 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     public bool BlocksHarmonyBeam { get => true; }
 
     public GameObject EntryObject => gameObject;
+
+    [SerializeField] private EventReference _wallSound = default;
 
     public Vector3 Position => transform.position;
 
@@ -100,6 +108,7 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     public void SwitchActivation()
     {
         _shouldActivate = !_shouldActivate;
+        AudioManager.Instance.PlaySound(_wallSound);
         MoveObject();
     }
 
@@ -168,6 +177,14 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
         }
         else
         {
+            // Perform blocked animation
+            Transform target = _shouldActivate ? _wallGhost.transform : transform;
+            Tween.PunchLocalPosition(target, Vector3.up * _blockedAnimStrength, _blockedAnimDuration);
+            Tween.ShakeLocalRotation(target, Vector3.forward * _blockedRotationStrength, _blockedAnimDuration);
+
+            // Reset _shouldActivate since the wall didn't move
+            _shouldActivate = !_shouldActivate;
+
             TriggerHarmonyScan();
             _worked = false;
         }

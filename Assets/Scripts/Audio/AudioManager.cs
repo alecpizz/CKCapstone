@@ -44,6 +44,31 @@ public class AudioManager : MonoBehaviour
         _key.setParameterByName("MusicLayering", _musicLayering);
     }
 
+    public EventInstance PlaySound(EventReference reference, params ParamRef[] parameters)
+    {
+        if (reference.IsNull)
+        {
+            Debug.LogWarning("NO REFERENCE SOUND!");
+            return default;
+        }
+
+        EventInstance audioEvent;
+
+        if (AudioInstances.ContainsKey(reference))
+            AudioInstances.TryGetValue(reference, out audioEvent);
+        else
+        {
+            audioEvent = RuntimeManager.CreateInstance(reference);
+            AudioInstances.Add(reference, audioEvent);
+        }
+        foreach (var paramRef in parameters)
+        {
+            audioEvent.setParameterByName(paramRef.Name, paramRef.Value);
+        }
+        audioEvent.start();
+        return audioEvent;
+    }
+    
     /// <summary>
     /// Plays an FMOD sound using a reference. Just add an eventreference and setup the sound
     /// in the inspector. See the FMOD Guide in resources for more info.
