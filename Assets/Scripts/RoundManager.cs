@@ -8,8 +8,10 @@
 using System;
 using System.Collections.Generic;
 using FMODUnity;
+using PrimeTween;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 /// <summary>
 /// Enum for the current state. Must contain a delimiter.
@@ -43,6 +45,7 @@ public sealed class RoundManager : MonoBehaviour
 
     [Header("Autocomplete Mechanic")]
     [SerializeField, Tooltip("Timescale during autocomplete dash")] private float _autocompleteSpeed = 3;
+    [SerializeField] private Image _speedUI;
 
     public event Action<bool> AutocompleteToggled;
 
@@ -361,6 +364,8 @@ public sealed class RoundManager : MonoBehaviour
     {
         Time.timeScale = _autocompleteSpeed;
         AutocompleteToggled?.Invoke(true);
+
+        Tween.Alpha(_speedUI, 1, 0.2f, Ease.OutSine).OnComplete(() => { _speedUI.gameObject.SetActive(true); });
     }
 
     /// <summary>
@@ -370,6 +375,7 @@ public sealed class RoundManager : MonoBehaviour
     {
         Time.timeScale = 1;
         AutocompleteToggled?.Invoke(false);
+        Tween.Alpha(_speedUI, 0, 0.4f, Ease.OutSine).OnComplete(()=> { _speedUI.gameObject.SetActive(false); });
     }
 
     /// <summary>
