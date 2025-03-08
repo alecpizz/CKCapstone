@@ -189,6 +189,11 @@ public class SettingsTabs : MonoBehaviour
         button.GetComponent<Image>().sprite = _ogSprites[button];
     }
 
+    public void OpenLevelSelect()
+    {
+        _levelSelectButton.onClick?.Invoke();
+    }
+    
     /// <summary>
     /// Opens a specific tab and hides others.
     /// </summary>
