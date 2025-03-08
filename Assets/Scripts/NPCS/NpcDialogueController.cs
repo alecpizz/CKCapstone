@@ -239,6 +239,8 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
             else
             {
                 _currentDialogue = 0;
+                HideDialogue();
+                return;
             }
 
             if (_typingCoroutine != null)
@@ -324,6 +326,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
     {
         if (other.gameObject.CompareTag("Player"))
         {
+            _currentDialogue = 0;
             _playerWithinBounds = true;
             if (_typingCoroutine != null)
             {
