@@ -26,9 +26,7 @@ public class EnemyPathCycling : MonoBehaviour
     private bool _singleEnemy = false;
     private bool _singleEnemyPathOn = false;
 
-    //Arrays to gather the enemy game objects for cycling
-    private GameObject[] _enemyArray;
-    private GameObject[] _sonEnemyArray;
+    //Array to gather the enemy game objects for cycling
     private EnemyBehavior[] _allEnemyArray;
 
     /// <summary>
@@ -54,7 +52,6 @@ public class EnemyPathCycling : MonoBehaviour
         _input.InGame.Enable();
 
         _input.InGame.CycleForward.performed += PathingForward;
-        Debug.Log(_cycleNumber);
     }
 
     /// <summary>
@@ -76,11 +73,13 @@ public class EnemyPathCycling : MonoBehaviour
     /// <param name="context"></param>
     private void PathingForward(InputAction.CallbackContext context)
     {
-        
+        //if there are no enemies return early
         if (_allEnemyArray.Length == 0)
         {
             return;
         }
+        //Makes it so it just turns on and off the enemy path if there is a single enemy
+        //since there is no need for it to get turned on multiple times
         if (_singleEnemy)
         {
             IsCycling = true;
@@ -88,16 +87,19 @@ public class EnemyPathCycling : MonoBehaviour
             _singleEnemyPathOn = !_singleEnemyPathOn;
             _allEnemyArray[_cycleNumber].PathingCycle();
         }
+        //handles cycling between multiple enemies
         else
         {
             IsCycling = true;
             if (_cycleNumber > 0)
             {
+                //resets the cycle back to the start
                 if (_cycleNumber >= _allEnemyArray.Length)
                 {
                     _allEnemyArray[_allEnemyArray.Length - 1].PathingCycle();
                     _cycleNumber = -1;
                 }
+                //turns on the next enemy path while turning off the previous enemy path
                 else
                 {
                     _allEnemyArray[_cycleNumber - 1].PathingCycle();
@@ -105,6 +107,7 @@ public class EnemyPathCycling : MonoBehaviour
                     _cycleNumber++;
                 }
             }
+            //if at the start of the cycle turn on all enemy paths
             else if (_cycleNumber < 0)
             {
                 for (int i = 0; i < _allEnemyArray.Length; i++)
@@ -113,6 +116,7 @@ public class EnemyPathCycling : MonoBehaviour
                 }
                 _cycleNumber++;
             }
+            //turns off all enemy paths and starts singular enemy cycling
             else
             {
                 for (int i = 0; i < _allEnemyArray.Length; i++)

@@ -70,8 +70,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [PlayaInfoBox("The floor for how fast the enemy can move.")] [SerializeField]
     private float _minMoveTime = 0.175f;
 
-    [SerializeField] private bool _currentGroupToggle = true;
-    [SerializeField] private bool _currentSoloToggle = true;
+    private bool _currentGroupToggle = true;
+    private bool _currentSoloToggle = true;
 
     [SerializeField] private float _rotationTime = 0.10f;
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
