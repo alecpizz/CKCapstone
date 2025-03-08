@@ -132,15 +132,15 @@ public class EnemyPathCycling : MonoBehaviour
     /// <param name="context">Input context</param>
     private void ToggleEnemyPaths(InputAction.CallbackContext context)
     {
+        foreach (var enemy in _allEnemyArray)
+        {
+            enemy.PathingToggle(IsCycling);
+        }
+
         if (IsCycling)
         {
             IsCycling = false;
             _cycleNumber = -1;
-        }
-
-        foreach (var enemy in _allEnemyArray)
-        {
-            enemy.PathingToggle(IsCycling);
         }
     }
 }
