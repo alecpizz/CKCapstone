@@ -64,9 +64,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""CycleForward"",
+                    ""name"": ""Select Menu Item1"",
                     ""type"": ""Button"",
-                    ""id"": ""375fce2c-45e0-420c-98a7-dfaa110c00be"",
+                    ""id"": ""85b82eb0-a542-41bb-938e-50e5553ec99a"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -384,23 +384,45 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""43620adb-cde8-48b5-961b-8259bf866bd0"",
-                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""id"": ""3a7cbc91-bf07-4aa4-a5f1-66a825945076"",
+                    ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""CycleForward"",
+                    ""action"": ""Select Menu Item1"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""9de5774b-a059-45af-ab07-a45f14d1a033"",
-                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""id"": ""e002cc52-4509-479e-bdcc-4fb4597760a6"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""CycleForward"",
+                    ""action"": ""Select Menu Item1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cc85f42e-b28c-4712-aae6-ee869e17e329"",
+                    ""path"": ""<SwitchProControllerHID>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Select Menu Item1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""413a7c43-a791-482f-8339-abb7c68d9817"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Select Menu Item1"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -415,7 +437,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_InGame_Movement = m_InGame.FindAction("Movement", throwIfNotFound: true);
         m_InGame_Toggle = m_InGame.FindAction("Toggle", throwIfNotFound: true);
         m_InGame_GameSpeed = m_InGame.FindAction("GameSpeed", throwIfNotFound: true);
-        m_InGame_CycleForward = m_InGame.FindAction("CycleForward", throwIfNotFound: true);
+        m_InGame_SelectMenuItem1 = m_InGame.FindAction("Select Menu Item1", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -481,7 +503,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_InGame_Movement;
     private readonly InputAction m_InGame_Toggle;
     private readonly InputAction m_InGame_GameSpeed;
-    private readonly InputAction m_InGame_CycleForward;
+    private readonly InputAction m_InGame_SelectMenuItem1;
     public struct InGameActions
     {
         private @PlayerControls m_Wrapper;
@@ -490,7 +512,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @Movement => m_Wrapper.m_InGame_Movement;
         public InputAction @Toggle => m_Wrapper.m_InGame_Toggle;
         public InputAction @GameSpeed => m_Wrapper.m_InGame_GameSpeed;
-        public InputAction @CycleForward => m_Wrapper.m_InGame_CycleForward;
+        public InputAction @SelectMenuItem1 => m_Wrapper.m_InGame_SelectMenuItem1;
         public InputActionMap Get() { return m_Wrapper.m_InGame; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -512,9 +534,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @GameSpeed.started += instance.OnGameSpeed;
             @GameSpeed.performed += instance.OnGameSpeed;
             @GameSpeed.canceled += instance.OnGameSpeed;
-            @CycleForward.started += instance.OnCycleForward;
-            @CycleForward.performed += instance.OnCycleForward;
-            @CycleForward.canceled += instance.OnCycleForward;
+            @SelectMenuItem1.started += instance.OnSelectMenuItem1;
+            @SelectMenuItem1.performed += instance.OnSelectMenuItem1;
+            @SelectMenuItem1.canceled += instance.OnSelectMenuItem1;
         }
 
         private void UnregisterCallbacks(IInGameActions instance)
@@ -531,9 +553,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @GameSpeed.started -= instance.OnGameSpeed;
             @GameSpeed.performed -= instance.OnGameSpeed;
             @GameSpeed.canceled -= instance.OnGameSpeed;
-            @CycleForward.started -= instance.OnCycleForward;
-            @CycleForward.performed -= instance.OnCycleForward;
-            @CycleForward.canceled -= instance.OnCycleForward;
+            @SelectMenuItem1.started -= instance.OnSelectMenuItem1;
+            @SelectMenuItem1.performed -= instance.OnSelectMenuItem1;
+            @SelectMenuItem1.canceled -= instance.OnSelectMenuItem1;
         }
 
         public void RemoveCallbacks(IInGameActions instance)
@@ -557,6 +579,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnMovement(InputAction.CallbackContext context);
         void OnToggle(InputAction.CallbackContext context);
         void OnGameSpeed(InputAction.CallbackContext context);
-        void OnCycleForward(InputAction.CallbackContext context);
+        void OnSelectMenuItem1(InputAction.CallbackContext context);
     }
 }

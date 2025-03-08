@@ -24,7 +24,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 {
     public bool IsTransparent
     {
-        get => false;
+        get => !_isFrozen;
     }
 
     public bool BlocksHarmonyBeam
@@ -35,6 +35,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     public Vector3 Position
     {
         get => transform.position;
+    }
+
+    public Transform EntityTransform 
+    { 
+        get => transform; 
     }
 
     [SerializeField] private Vector3 _positionOffset;
@@ -151,9 +156,13 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private bool _isReturningToStart = false;
     private int _indicatorIndex = 0;
     private bool _indicatorReturningToStart = false;
+    private int _currentEnemyIndex = 0;
 
     //public static PlayerMovement Instance;
     private static readonly int Forward = Animator.StringToHash("Forward");
+    private static readonly int Attack = Animator.StringToHash("Attack");
+    private static readonly int Frozen = Animator.StringToHash("Frozen");
+    private static readonly int Turn = Animator.StringToHash("Turn");
 
 
     [SerializeField] private Animator _animator;
@@ -481,6 +490,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
             if (_animator != null)
             {
+                _animator.SetBool(Frozen, false);
                 _animator.SetTrigger(Forward);
             }
             var dist = Vector3Int.Distance(currCell, goalCell);
@@ -507,17 +517,36 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                         {
                             //hit a player!
                             PlayerMovement.Instance.OnDeath();
+                            if (_animator != null)
+                            {
+                                _animator.SetTrigger(Attack);
+                            }
                             SceneController.Instance.ReloadCurrentScene();
                         }
                     });
             AudioManager.Instance.PlaySound(_enemyMove);
+            if (rotationDir != transform.forward)
+            {
+                if (_animator != null)
+                {
+                    _animator.SetTrigger(Turn);
+                }
+            }
             yield return Tween.Rotation(transform, endValue: Quaternion.LookRotation(rotationDir),
                 duration: _rotationTime,
                 ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).Chain(tween).ToYieldInstruction();
+            if (_animator != null)
+            {
+                _animator.ResetTrigger(Turn);
+            }
             GridBase.Instance.UpdateEntry(this);
 
             if (_endRotate)
             {
+                if (_animator != null)
+                {
+                    _animator.SetTrigger(Turn);
+                }
                 yield return Tween.Rotation(transform, endValue: Quaternion.LookRotation(-rotationDir),
                 duration: _rotationTime,
                 ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).ToYieldInstruction();
@@ -636,6 +665,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 moveIndex = 1;
             }
         }
+
+        _currentEnemyIndex = moveIndex;
     }
 
 
@@ -722,7 +753,15 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             else
             {
                 //our moves will start with the enemy time signature since we're circularly repeating our movement.
-                moveIndex = _enemyMovementTime;
+                moveIndex = _currentEnemyIndex + _enemyMovementTime;
+
+                //if the number of moves exceeds the list count start from 0 and then add the amount remaining.
+                if (moveIndex > _moveDestinations.Count - 1)
+                {
+                    int offsetCircular = moveIndex - (_moveDestinations.Count - 1);
+                    moveIndex = 0;
+                    moveIndex += offsetCircular;
+                }
             }
         }
     }
@@ -799,6 +838,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     {
         if (_isSonEnemy)
         {
+            if (_animator != null)
+            {
+                _animator.SetBool(Frozen, true);
+            }
             _isFrozen = true;
         }
     }
@@ -808,6 +851,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// </summary>
     public void OnLaserExit()
     {
+        if (_animator != null)
+        {
+            _animator.SetBool(Frozen, false);
+        }
         _isFrozen = false;
     }
 
