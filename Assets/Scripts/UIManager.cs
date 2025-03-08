@@ -47,8 +47,10 @@ public class UIManager : MonoBehaviour, ITimeListener
     private List<int> _notes;
 
     private const string BaseCollectedText = "Collect the notes in numerical order:";
-    [SerializeField] private string levelText = "Level";
-    [SerializeField] private string challengeText = "Challenge";
+    [SerializeField] private string _levelText = "Level";
+    [SerializeField] private string _challengeText = "Challenge";
+
+    [SerializeField] private LevelButtons _levelButtons;
 
     /// <summary>
     /// Initializing values and registering to actions
@@ -94,13 +96,12 @@ public class UIManager : MonoBehaviour, ITimeListener
         if(_isChallenge)
         {
             //Challenges are currently Challenge + their level number
-            int index = SceneManager.GetActiveScene().buildIndex;
-            _levelNumber.text = $"{challengeText} {index - 1}";
+            _levelNumber.text = $"{_challengeText} {_levelButtons.GetLvlCounter()}";
         }
         else
         {
             //Levels are Level + lvl number
-            _levelNumber.text = $"{levelText} {SceneManager.GetActiveScene().buildIndex-1}";
+            _levelNumber.text = $"{_levelText} {_levelButtons.GetLvlCounter()}";
         }
 
         //Currently saving old if statement to potentially use/repurpose for Trinity's revisions

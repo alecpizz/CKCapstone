@@ -33,6 +33,9 @@ public class LevelButtons : MonoBehaviour
     //Prefix word of a level
     [SerializeField] private string _levelPrefix = "Level: ";
 
+    //Counter for the levels
+    private int _lvlCounter = 0;
+
     /// <summary>
     /// At run-time, buttons equal to the number of scenes are generated.
     /// </summary>
@@ -47,6 +50,9 @@ public class LevelButtons : MonoBehaviour
         {
             //initially sets the gameObjects to off
             _chapters[i-1].SetActive(false);
+
+            //for keeping the level numbers consistent
+            _lvlCounter++;
 
             for (; tally < range; tally++)
             {
@@ -79,6 +85,7 @@ public class LevelButtons : MonoBehaviour
                 {
                     //the cutscene tab should always be the last chapter tab
                     obj = Instantiate(_buttonPrefab, _chapters[_chapters.Count-1].transform).GetComponent<IndividualButtons>();
+                    _lvlCounter--;
                 }
                 else
                 {
@@ -94,7 +101,7 @@ public class LevelButtons : MonoBehaviour
                 else
                 {
                     //Levels are named Level + relevant number (even challenges)
-                    obj.GetComponentInChildren<TextMeshProUGUI>().text = _levelPrefix + (tally-1).ToString();
+                    obj.GetComponentInChildren<TextMeshProUGUI>().text = _levelPrefix + (_lvlCounter).ToString();
                 }
 
                 //The index of a button is set
@@ -126,5 +133,14 @@ public class LevelButtons : MonoBehaviour
         {
             _chapters[i].SetActive(i == num);
         }
+    }
+
+    /// <summary>
+    /// Returns the current level number
+    /// </summary>
+    /// <returns></returns>
+    public int GetLvlCounter()
+    {
+        return _lvlCounter;
     }
 }
