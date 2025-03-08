@@ -1,6 +1,6 @@
 /******************************************************************
  *    Author: Alex Laubenstein
- *    Contributors: Alex Laubenstein
+ *    Contributors: Alex Laubenstein, Nick Grinstead
  *    Date Created: 2/13/25
  *    Description: Script that handles the ability to cycle through
  *                 individual enemy paths on controller
@@ -22,7 +22,6 @@ public class EnemyPathCycling : MonoBehaviour
     private int _cycleNumber = -1;
 
     public bool IsCycling { get; private set; } = false;
-    public bool CycleUnset = false;
     private bool _singleEnemy = false;
     private bool _singleEnemyPathOn = false;
 
@@ -52,19 +51,17 @@ public class EnemyPathCycling : MonoBehaviour
         _input.InGame.Enable();
 
         _input.InGame.CycleForward.performed += PathingForward;
+        _input.InGame.Toggle.performed += ToggleEnemyPaths;
     }
 
     /// <summary>
-    /// Stops the enemy cycling when the toggle button is pressed
+    /// Unregisters from inputs
     /// </summary>
-    private void Update()
+    private void OnDisable()
     {
-        if (CycleUnset)
-        {
-            CycleUnset = false;
-            IsCycling = false;
-            _cycleNumber = -1;
-        }
+        _input.InGame.Disable();
+        _input.InGame.CycleForward.performed -= PathingForward;
+        _input.InGame.Toggle.performed -= ToggleEnemyPaths;
     }
 
     /// <summary>
@@ -126,6 +123,24 @@ public class EnemyPathCycling : MonoBehaviour
                 _allEnemyArray[_cycleNumber].PathingCycle();
                 _cycleNumber++;
             }
+        }
+    }
+
+    /// <summary>
+    /// Toggles the path VFX for all enemies
+    /// </summary>
+    /// <param name="context">Input context</param>
+    private void ToggleEnemyPaths(InputAction.CallbackContext context)
+    {
+        if (IsCycling)
+        {
+            IsCycling = false;
+            _cycleNumber = -1;
+        }
+
+        foreach (var enemy in _allEnemyArray)
+        {
+            enemy.PathingToggle(IsCycling);
         }
     }
 }

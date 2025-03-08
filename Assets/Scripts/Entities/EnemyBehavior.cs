@@ -49,7 +49,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         get => gameObject;
     }
 
-    private PlayerControls _input;
     [SerializeField] private GameObject _destinationMarker;
     [SerializeField] private GameObject _destPathVFX;
 
@@ -205,11 +204,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
         UpdateDestinationMarker();
         DestinationPath();
-
-        _input = new PlayerControls();
-        _input.InGame.Enable();
-
-        _input.InGame.Toggle.performed += PathingToggle;
     }
 
     /// <summary>
@@ -273,7 +267,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     }
 
     /// <summary>
-    /// Unregisters from player input
+    /// Unregisters from from managers
     /// </summary>
     private void OnDisable()
     {
@@ -286,9 +280,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         {
             TimeSignatureManager.Instance.UnregisterTimeListener(this);
         }
-
-        _input.InGame.Toggle.performed -= PathingToggle;
-        _input.InGame.Disable();
     }
 
     /// <summary>
@@ -333,11 +324,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// presses Q.
     /// </summary>
     /// <param name="context"></param>
-    private void PathingToggle(InputAction.CallbackContext context)
+    public void PathingToggle(bool isCycling)
     {
-        if (EnemyPathCycling.Instance.IsCycling)
+        if (isCycling)
         {
-            EnemyPathCycling.Instance.CycleUnset = true;
             _currentSoloToggle = true;
 
             _destPathVFX.SetActive(false);
@@ -816,10 +806,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     }
 
 
-        /// <summary>
-        /// Can force enemy turn to end early
-        /// </summary>
-        public void ForceTurnEnd()
+    /// <summary>
+    /// Can force enemy turn to end early
+    /// </summary>
+    public void ForceTurnEnd()
     {
         StopAllCoroutines();
         GridBase.Instance.UpdateEntry(this);
