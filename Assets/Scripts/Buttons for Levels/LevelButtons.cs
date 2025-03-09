@@ -5,6 +5,7 @@
 *    Description: Generates buttons for every level in the game.
 *******************************************************************/
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -30,6 +31,18 @@ public class LevelButtons : MonoBehaviour
     //List of all buttons to each chapter in game
     [SerializeField] private List<Button> _allChapButtons;
 
+    //Prefix word of a level
+    [SerializeField] private string _levelPrefix = "Level: ";
+
+    //Counter for the levels
+    private int _lvlCounter = -1;
+
+    //Stores the true buildIndex and the level select number
+    private Dictionary<int, int> _lvlNumberAssignment = new();
+
+    //Call to update the dictionary for UIManager
+    public static Action DictionaryUpdate;
+
     /// <summary>
     /// At run-time, buttons equal to the number of scenes are generated.
     /// </summary>
@@ -47,6 +60,9 @@ public class LevelButtons : MonoBehaviour
 
             for (; tally < range; tally++)
             {
+                //for keeping the level numbers consistent
+                _lvlCounter++;
+
                 //The nicer name assigned to a level and whether they should be assigned to a button
                 string name = LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames[tally].PrettyName;
                 bool shown = LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames[tally].showUp;
@@ -62,6 +78,12 @@ public class LevelButtons : MonoBehaviour
                     continue;
                 }
 
+#if !OVERRIDE_LEVEL
+                if (!SaveDataManager.GetLevelCompleted(sceneName))
+                {
+                    continue;
+                }
+#endif
                 //initiate obj variable
                 IndividualButtons obj;
 
@@ -81,15 +103,19 @@ public class LevelButtons : MonoBehaviour
                 if (sceneName[0] == 'I' || sceneName.Contains("Cutscene"))
                 {
                     obj.GetComponentInChildren<TextMeshProUGUI>().text = name;
+                    _lvlCounter--;
                 }
                 else
                 {
                     //Levels are named Level + relevant number (even challenges)
-                    obj.GetComponentInChildren<TextMeshProUGUI>().text = "Level: " + (tally-1).ToString();
+                    obj.GetComponentInChildren<TextMeshProUGUI>().text = _levelPrefix + (_lvlCounter).ToString();
                 }
 
                 //The index of a button is set
                 obj.SetIndex(tally);
+
+                //Add to the dictionary for getter method
+                _lvlNumberAssignment.Add(tally, _lvlCounter);
             }
 
             if (i < _chapterLevelCount.Length)
@@ -98,6 +124,8 @@ public class LevelButtons : MonoBehaviour
             }
                 
         }
+
+        DictionaryUpdate?.Invoke();
 
         //loops through buttons to change the respective GameObject
         for(int j = 0; j < _allChapButtons.Count; j++)
@@ -117,5 +145,14 @@ public class LevelButtons : MonoBehaviour
         {
             _chapters[i].SetActive(i == num);
         }
+    }
+
+    /// <summary>
+    /// Returns the current level number
+    /// </summary>
+    /// <returns></returns>
+    public int GetLvlCounter(int index)
+    {
+        return _lvlNumberAssignment[index];
     }
 }
