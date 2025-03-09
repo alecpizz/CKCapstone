@@ -8,8 +8,10 @@
 using System;
 using System.Collections.Generic;
 using FMODUnity;
+using PrimeTween;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 /// <summary>
 /// Enum for the current state. Must contain a delimiter.
@@ -43,6 +45,7 @@ public sealed class RoundManager : MonoBehaviour
 
     [Header("Autocomplete Mechanic")]
     [SerializeField, Tooltip("Timescale during autocomplete dash")] private float _autocompleteSpeed = 3;
+    [SerializeField] private Image _speedUI;
 
     public event Action<bool> AutocompleteToggled;
 
@@ -129,7 +132,7 @@ public sealed class RoundManager : MonoBehaviour
         // Not being called unless movement is blocked
         if (_playerControls.InGame.Movement.IsPressed() && !TurnInProgress)
         {
-            if(PlayerMovement.Instance.CanMove)
+            if(PlayerMovement.Instance.CanMove && Time.timeScale == 1)
             {
                 PerformMovement();
             }
@@ -144,6 +147,9 @@ public sealed class RoundManager : MonoBehaviour
     /// <param name="obj"></param>
     private void RegisterMovementInput(InputAction.CallbackContext obj)
     {
+        if (_turnState != TurnState.None && Time.timeScale > 1)
+            return;
+
         var dir = GetNormalizedInput();
 
         if(_turnState != TurnState.None && _lastMovementInput == dir)
@@ -167,7 +173,7 @@ public sealed class RoundManager : MonoBehaviour
     /// </summary>
     private void PerformMovement()
     {
-        if (!_movementRegistered) return;
+        if (!_movementRegistered || DebugMenuManager.Instance.PauseMenu) return;
 
         if (!_playerControls.InGame.Movement.IsPressed())
         {
@@ -358,6 +364,8 @@ public sealed class RoundManager : MonoBehaviour
     {
         Time.timeScale = _autocompleteSpeed;
         AutocompleteToggled?.Invoke(true);
+
+        Tween.Alpha(_speedUI, 1, 0.2f, Ease.OutSine).OnComplete(() => { _speedUI.gameObject.SetActive(true); });
     }
 
     /// <summary>
@@ -367,6 +375,7 @@ public sealed class RoundManager : MonoBehaviour
     {
         Time.timeScale = 1;
         AutocompleteToggled?.Invoke(false);
+        Tween.Alpha(_speedUI, 0, 0.4f, Ease.OutSine).OnComplete(()=> { _speedUI.gameObject.SetActive(false); });
     }
 
     /// <summary>
