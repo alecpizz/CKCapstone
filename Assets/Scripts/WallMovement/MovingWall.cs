@@ -9,6 +9,7 @@ using PrimeTween;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
+using FMODUnity;
 using UnityEditor;
 using UnityEngine;
 using SaintsField.Playa;
@@ -66,6 +67,8 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
 
     public GameObject EntryObject => gameObject;
 
+    [SerializeField] private EventReference _wallSound = default;
+
     public Vector3 Position => transform.position;
 
     private bool _shouldActivate = false;
@@ -105,6 +108,7 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     public void SwitchActivation()
     {
         _shouldActivate = !_shouldActivate;
+        AudioManager.Instance.PlaySound(_wallSound);
         MoveObject();
     }
 
