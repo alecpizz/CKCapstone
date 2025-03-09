@@ -397,6 +397,16 @@ public static class CKLightingEditor
     private static void ReplaceGridPrefab(string prefabPath)
     {
         var grid = GridBase.Instance;
+        if (grid == null)
+        {
+            grid = Object.FindObjectOfType<GridBase>();
+        }
+
+        if (grid == null)
+        {
+            Debug.LogWarning("Couldn't find a grid, skipping this level");
+            return;
+        }
         //delete any extra grids minus the prefab's one.
         for (int i = grid.transform.childCount - 1; i >= 0; i--)
         {
@@ -404,7 +414,7 @@ public static class CKLightingEditor
             {
                 continue;
             }
-            Object.DestroyImmediate(grid.transform.GetChild(i));
+            Object.DestroyImmediate(grid.transform.GetChild(i).gameObject);
         }
 
         //set the field to be the new prefab.
