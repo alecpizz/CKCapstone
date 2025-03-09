@@ -20,6 +20,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     public bool IsTransparent { get => false; }
     public bool BlocksHarmonyBeam { get => false; }
     public Vector3 Position { get => transform.position; }
+    public Transform EntityTransform { get => transform; }
     public GameObject EntryObject { get => gameObject; }
 
     public bool EnemyFrozen { get; private set; } = false;
@@ -182,6 +183,18 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                         }).ToYieldInstruction();
 
                     HarmonyBeam.TriggerHarmonyScan?.Invoke();
+
+                    //not a fan of this but it should be more consistent than 
+                    //using collisions
+                    //also just math comparisons, no memory accessing outside of Position.
+                    if (GridBase.Instance.WorldToCell(PlayerMovement.Instance.Position) ==
+                        GridBase.Instance.WorldToCell(transform.position) &&
+                        !DebugMenuManager.Instance.Invincibility)
+                    {
+                        //hit a player!
+                        PlayerMovement.Instance.OnDeath();
+                        SceneController.Instance.ReloadCurrentScene();
+                    }
                 }
                 else
                 {
@@ -215,6 +228,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
         {
             Time.timeScale = 0f;
 
+            PlayerMovement.Instance.OnDeath();
             SceneController.Instance.ReloadCurrentScene();
         }
     }

@@ -6,14 +6,18 @@
  *    automatically.
  *******************************************************************/
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using UnityEditor;
 using UnityEditor.Build;
+using UnityEditor.Build.Player;
 using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 public class CKBuildPreProcessor : IPreprocessBuildWithReport
 {
@@ -34,6 +38,39 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             //apply build scenes
             BuildSceneIndex();
         }
+
+        ToggleUnlockedDefines();
+    }
+
+    /// <summary>
+    /// Toggles the unlocked level define.
+    /// </summary>
+    [MenuItem("Tools/Crowded Kitchen/Toggle Unlocked Levels")]
+    public static void ToggleUnlockedDefines()
+    {
+        var buildTarget = NamedBuildTarget.FromBuildTargetGroup(
+            BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget));
+        List<string> symbols = PlayerSettings.GetScriptingDefineSymbols(buildTarget).Split(';').ToList();
+        bool hasOverride = symbols.Any(symbol => symbol.ToUpper() == "OVERRIDE_LEVEL");
+        if (EditorUtility.DisplayDialog("Build Pre-Process Question",
+                "Do you wish to build with all levels in level select unlocked?", "yes", "no"))
+        {
+            if (!hasOverride)
+            {
+                symbols.Add("OVERRIDE_LEVEL");
+                Debug.Log("<color=green>Added</color> define");
+            }
+        }
+        else
+        {
+            if (hasOverride)
+            {
+                symbols.Remove("OVERRIDE_LEVEL");
+                Debug.Log("<color=red>Removed</color> define");
+            }
+        }
+
+        PlayerSettings.SetScriptingDefineSymbols(buildTarget, symbols.ToArray());
     }
 
     /// <summary>
@@ -44,7 +81,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
     [MenuItem("Tools/Crowded Kitchen/Run Scene Linking")]
     public static void BuildSceneIndex()
     {
-        var nowOpenScene = EditorSceneManager.GetActiveScene();
+        // var nowOpenScene = EditorSceneManager.GetActiveScene();
         // // Find valid Scene paths and make a list of EditorBuildSettingsScene
         AddScenesToBuild();
         var levelData = LevelOrderSelection.Instance.SelectedLevelData;
@@ -55,7 +92,8 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         if (menuManager != null)
         {
             //use reflection to set the menu manager's load value
-            var field = menuManager.GetType().GetField("_firstLevelIndex", BindingFlags.Instance | BindingFlags.NonPublic);
+            var field = menuManager.GetType()
+                .GetField("_firstLevelIndex", BindingFlags.Instance | BindingFlags.NonPublic);
             if (field != null)
             {
                 int index = SceneUtility.GetBuildIndexByScenePath(
@@ -74,16 +112,44 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         for (var chapterIndex = 0; chapterIndex < levelData.Chapters.Count; chapterIndex++)
         {
             var chapter = levelData.Chapters[chapterIndex];
+            //very gross switch statement, none & custom are unused right now
+            Action<LightingData> lightDataMethod = null;
+            switch (chapter.Lighting)
+            {
+                case LevelOrder.LightingMode.None:
+                    break;
+                case LevelOrder.LightingMode.Chapter1:
+                    lightDataMethod = CKLightingEditor.ApplyChapter1Lighting;
+                    break;
+                case LevelOrder.LightingMode.Chapter2:
+                    lightDataMethod = CKLightingEditor.ApplyChapter2Lighting;
+                    break;
+                case LevelOrder.LightingMode.Chapter3:
+                    lightDataMethod = CKLightingEditor.ApplyChapter3Lighting;
+                    break;
+                case LevelOrder.LightingMode.Chapter4:
+                    lightDataMethod = CKLightingEditor.ApplyChapter4Lighting;
+                    break;
+                case LevelOrder.LightingMode.Chapter5:
+                    lightDataMethod = CKLightingEditor.ApplyChapter5Lighting;
+                    break;
+                case LevelOrder.LightingMode.Custom:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
             var intro = chapter.Intro;
-            SetOpenerCloserSceneExit(intro, chapter.Puzzles[0].Scene);
-            UpdatePuzzleExits(chapterIndex);
+            SetOpenerCloserSceneExit(intro, chapter.Puzzles[0].Scene, lightDataMethod);
+            UpdatePuzzles(chapterIndex, lightDataMethod);
 
             var outro = chapter.Outro;
             var outroExit = chapterIndex != levelData.Chapters.Count - 1
                 ? levelData.Chapters[chapterIndex + 1].GetStartingLevel.Scene
                 : levelData.CreditsScene;
-            SetOpenerCloserSceneExit(outro, outroExit);
+            SetOpenerCloserSceneExit(outro, outroExit, lightDataMethod);
         }
+
+        // EditorSceneManager.OpenScene(nowOpenScene.path, OpenSceneMode.Single);
     }
 
     /// <summary>
@@ -93,7 +159,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
     /// </summary>
     /// <param name="entrance">The scene to modify.</param>
     /// <param name="scene">The destination scene to link towards.</param>
-    private static void SetOpenerCloserSceneExit(LevelOrder.LevelData entrance, SceneAsset scene)
+    private static void SetOpenerCloserSceneExit(LevelOrder.LevelData entrance, SceneAsset scene, Action<LightingData> lightingDataAction)
     {
         if (entrance.Scene == null) return;
         //apply transitions for intro/outro
@@ -104,7 +170,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         var cutsceneFrameWork = Object.FindObjectOfType<CutsceneFramework>();
         if (cutsceneFrameWork != null)
         {
-            var field = cutsceneFrameWork.GetType().GetField("_loadingLevelIndex", 
+            var field = cutsceneFrameWork.GetType().GetField("_loadingLevelIndex",
                 BindingFlags.Instance | BindingFlags.NonPublic);
             if (field != null)
             {
@@ -125,6 +191,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             SetDoorExitScene(endLevelDoor, SceneUtility.GetBuildIndexByScenePath(
                 AssetDatabase.GetAssetPath(scene)));
         }
+        lightingDataAction?.Invoke(entrance.LightingData);
 
         EditorSceneManager.SaveScene(introScene);
     }
@@ -133,10 +200,12 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
     /// Goes through a chapter's puzzles and updates each of their exit locations.
     /// </summary>
     /// <param name="chapterIndex">The index of the chapter that is being modified.</param>
-    private static void UpdatePuzzleExits(int chapterIndex)
+    private static void UpdatePuzzles(int chapterIndex, Action<LightingData> lightingDataApply)
     {
         var levelData = LevelOrderSelection.Instance.SelectedLevelData;
         var chapter = levelData.Chapters[chapterIndex];
+       
+        
         for (int puzzleIndex = 0; puzzleIndex < chapter.Puzzles.Count; puzzleIndex++)
         {
             var currentLevel = chapter.Puzzles[puzzleIndex];
@@ -186,6 +255,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 Debug.LogError($"Missing scene! {currentLevel.LevelName}");
                 continue;
             }
+
             var currScene = EditorSceneManager.OpenScene(
                 AssetDatabase.GetAssetPath(currentLevel.Scene));
             var doors = Object.FindObjectsOfType<EndLevelDoor>();
@@ -194,7 +264,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             if (doors.Length > 2)
             {
                 Debug.LogWarning("There are more than 2 doors in this scene. " +
-                    "There may be duplicate exits...");
+                                 "There may be duplicate exits...");
             }
 
             foreach (var endLevelDoor in doors)
@@ -219,6 +289,8 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
 
                 EditorUtility.SetDirty(endLevelDoor);
             }
+            
+            lightingDataApply?.Invoke(currentLevel.LightingData);
 
             EditorSceneManager.MarkSceneDirty(currScene);
             //save the changes
@@ -253,7 +325,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
     private static void AddScenesToBuild()
     {
         //TODO: double check levels aren't being included twice lol
-        List<EditorBuildSettingsScene> editorBuildSettingsScenes = 
+        List<EditorBuildSettingsScene> editorBuildSettingsScenes =
             new List<EditorBuildSettingsScene>();
         var levelData = LevelOrderSelection.Instance.SelectedLevelData;
         levelData.PrettyChapterNames.Clear();
@@ -261,7 +333,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         //add the main menu scene
         editorBuildSettingsScenes.Add(
             new EditorBuildSettingsScene(AssetDatabase.GetAssetPath(levelData.MainMenuScene),
-            true));
+                true));
         levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = "Main Menu", showUp = false });
         //add each chapter's data
         int chapterIndex = 0;
@@ -274,7 +346,8 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                     AssetDatabase.GetAssetPath(chapter.Intro.Scene),
                     true));
-                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = chapter.Intro.LevelName, showUp = false });
+                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData
+                    { PrettyName = chapter.Intro.LevelName, showUp = false });
             }
 
             //add all puzzles
@@ -284,7 +357,8 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                     AssetDatabase.GetAssetPath(level.Scene),
                     true));
-                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = level.LevelName, showUp = true });
+                levelData.PrettySceneNames.Add(
+                    new LevelOrder.PrettyData { PrettyName = level.LevelName, showUp = true });
             }
 
             //add outro scene
@@ -293,7 +367,8 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                     AssetDatabase.GetAssetPath(chapter.Outro.Scene),
                     true));
-                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = chapter.Outro.LevelName, showUp = true });
+                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData
+                    { PrettyName = chapter.Outro.LevelName, showUp = true });
             }
         }
 
@@ -307,11 +382,11 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                 AssetDatabase.GetAssetPath(levelData.CreditsScene),
                 true));
-            levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = "Credits Scene", showUp = false });
+            levelData.PrettySceneNames.Add(new LevelOrder.PrettyData {PrettyName = "Credits Scene", showUp = false});
         }
+
         EditorUtility.SetDirty(levelData);
         Debug.Log($"Added {editorBuildSettingsScenes.Count} Scenes");
         EditorBuildSettings.scenes = editorBuildSettingsScenes.ToArray();
     }
-    
 }
