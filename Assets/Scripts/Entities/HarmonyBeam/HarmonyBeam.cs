@@ -98,6 +98,8 @@ public class HarmonyBeam : MonoBehaviour
             {
                 particleSystem.Stop();
             }
+
+            ScanForObjects();
         }
 
         AudioManager.Instance.PauseSound(_beamInstance, _beamActive);
