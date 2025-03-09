@@ -1,10 +1,11 @@
 /******************************************************************
-*    Author: Claire Noto
-*    Contributors: Claire Noto, Alec Pizziferro
-*    Date Created: 09/19/2024
-*    Description: Audio Manager using FMOD. See FMOD documentation 
-*    for more info
-*******************************************************************/
+ *    Author: Claire Noto
+ *    Contributors: Claire Noto, Alec Pizziferro
+ *    Date Created: 09/19/2024
+ *    Description: Audio Manager using FMOD. See FMOD documentation
+ *    for more info
+ *******************************************************************/
+
 using System.Collections.Generic;
 using UnityEngine;
 using FMODUnity;
@@ -12,6 +13,7 @@ using FMOD.Studio;
 using STOP_MODE = FMOD.Studio.STOP_MODE;
 using System;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 
 public class AudioManager : MonoBehaviour
@@ -24,24 +26,63 @@ public class AudioManager : MonoBehaviour
     private Dictionary<EventReference, EventInstance> AudioInstances;
 
     private EventInstance _key;
+    private static EventReference _nextMusic;
+    private static int _nextLayering;
 
     private void Awake()
     {
+        //total hack right here guys
+        _nextMusic = _music;
+        _nextLayering = _nextLayering;
         if (Instance != null && Instance != this)
-            Destroy(Instance.gameObject);
-        
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+
+        transform.parent = null;
+        DontDestroyOnLoad(gameObject);
+
         Instance = this;
         AudioInstances = new Dictionary<EventReference, EventInstance>();
     }
 
-    void Start()
+    private void OnEnable()
     {
-        _key = PlaySound(_music);
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    void Update()
+    private void OnDisable()
     {
-        _key.setParameterByName("MusicLayering", _musicLayering);
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
+    {
+        Debug.Log("Scene loaded, changing audio.");
+        if (_key.isValid())
+        {
+            _key.getDescription(out var description);
+            description.getPath(out var path);
+            if (path != _nextMusic.Path)
+            {
+                _key.stop(STOP_MODE.ALLOWFADEOUT);
+                _key = PlaySound(_nextMusic);
+            }
+
+            _key.setParameterByName("MusicLayering", _nextLayering);
+        }
+        else
+        {
+            _key = PlaySound(_nextMusic);
+            _key.setParameterByName("MusicLayering", _nextLayering);
+        }
+    }
+
+    private void Start()
+    {
+        _key = PlaySound(_nextMusic);
+        _key.setParameterByName("MusicLayering", _nextLayering);
     }
 
     public EventInstance PlaySound(EventReference reference, params ParamRef[] parameters)
@@ -61,14 +102,16 @@ public class AudioManager : MonoBehaviour
             audioEvent = RuntimeManager.CreateInstance(reference);
             AudioInstances.Add(reference, audioEvent);
         }
+
         foreach (var paramRef in parameters)
         {
             audioEvent.setParameterByName(paramRef.Name, paramRef.Value);
         }
+
         audioEvent.start();
         return audioEvent;
     }
-    
+
     /// <summary>
     /// Plays an FMOD sound using a reference. Just add an eventreference and setup the sound
     /// in the inspector. See the FMOD Guide in resources for more info.
@@ -111,12 +154,13 @@ public class AudioManager : MonoBehaviour
             Debug.LogWarning("NO REFERENCE SOUND!");
             return default;
         }
-            EventInstance audioEvent = RuntimeManager.CreateInstance(reference);
 
-            RuntimeManager.AttachInstanceToGameObject(audioEvent, target.transform);
+        EventInstance audioEvent = RuntimeManager.CreateInstance(reference);
 
-            audioEvent.start();
-            return audioEvent;
+        RuntimeManager.AttachInstanceToGameObject(audioEvent, target.transform);
+
+        audioEvent.start();
+        return audioEvent;
     }
 
     /// <summary>
@@ -169,7 +213,7 @@ public class AudioManager : MonoBehaviour
             Debug.LogWarning("Null audioEvent. Please use a real event instance.");
         }
     }
-    
+
     /// <summary>
     /// Lerps the volume over amount of seconds.
     /// </summary>
@@ -187,20 +231,20 @@ public class AudioManager : MonoBehaviour
             Debug.LogWarning("Null audioEvent. Please use a real event instance.");
         }
     }
-    
+
     /// <summary>
     /// Lerps the volume over amount of seconds.
     /// </summary>
     /// <param name="audioEvent">the desired sound instance</param>
     /// <param name="goalVolume">the target volume (range 0-10)</param>
     /// <param name="duration">the speed volume fades (in seconds)</param>
-    private IEnumerator Fade(EventInstance audioEvent, float goalVolume, float duration) 
+    private IEnumerator Fade(EventInstance audioEvent, float goalVolume, float duration)
     {
         if (goalVolume < 0)
-            goalVolume = 0; 
+            goalVolume = 0;
         else if (goalVolume > 10)
             goalVolume = 10;
-        
+
         float timeElapsed = 0;
 
         audioEvent.getVolume(out var currentVolume);
@@ -212,6 +256,7 @@ public class AudioManager : MonoBehaviour
             timeElapsed += Time.deltaTime;
             yield return null;
         }
+
         audioEvent.setVolume(goalVolume);
     }
 
@@ -234,8 +279,8 @@ public class AudioManager : MonoBehaviour
     /// </summary>
     private void OnDestroy()
     {
-        StopAllSounds();
-        AudioInstances.Clear();
+        // StopAllSounds();
+        // AudioInstances.Clear();
     }
 
     /// <summary>
