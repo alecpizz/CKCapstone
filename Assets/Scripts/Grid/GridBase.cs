@@ -49,6 +49,8 @@ public class GridBase : MonoBehaviour
 
     private const string GridMeshName = "Grid Mesh Holder";
 
+    public int Size => _gridSize;
+
     /// <summary>
     /// Grabs the grid component.
     /// </summary>
@@ -380,7 +382,6 @@ public class GridBase : MonoBehaviour
         }
     }
 
-    
     /// <summary>
     /// Destroys the grid mesh.
     /// </summary>
