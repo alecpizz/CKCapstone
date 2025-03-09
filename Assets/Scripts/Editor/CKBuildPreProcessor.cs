@@ -6,6 +6,7 @@
  *    automatically.
  *******************************************************************/
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -16,6 +17,7 @@ using UnityEditor.Build.Reporting;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 public class CKBuildPreProcessor : IPreprocessBuildWithReport
 {
@@ -79,7 +81,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
     [MenuItem("Tools/Crowded Kitchen/Run Scene Linking")]
     public static void BuildSceneIndex()
     {
-        var nowOpenScene = EditorSceneManager.GetActiveScene();
+        // var nowOpenScene = EditorSceneManager.GetActiveScene();
         // // Find valid Scene paths and make a list of EditorBuildSettingsScene
         AddScenesToBuild();
         var levelData = LevelOrderSelection.Instance.SelectedLevelData;
@@ -110,16 +112,44 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         for (var chapterIndex = 0; chapterIndex < levelData.Chapters.Count; chapterIndex++)
         {
             var chapter = levelData.Chapters[chapterIndex];
+            //very gross switch statement, none & custom are unused right now
+            Action<LightingData> lightDataMethod = null;
+            switch (chapter.Lighting)
+            {
+                case LevelOrder.LightingMode.None:
+                    break;
+                case LevelOrder.LightingMode.Chapter1:
+                    lightDataMethod = CKLightingEditor.ApplyChapter1Lighting;
+                    break;
+                case LevelOrder.LightingMode.Chapter2:
+                    lightDataMethod = CKLightingEditor.ApplyChapter2Lighting;
+                    break;
+                case LevelOrder.LightingMode.Chapter3:
+                    lightDataMethod = CKLightingEditor.ApplyChapter3Lighting;
+                    break;
+                case LevelOrder.LightingMode.Chapter4:
+                    lightDataMethod = CKLightingEditor.ApplyChapter4Lighting;
+                    break;
+                case LevelOrder.LightingMode.Chapter5:
+                    lightDataMethod = CKLightingEditor.ApplyChapter5Lighting;
+                    break;
+                case LevelOrder.LightingMode.Custom:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
             var intro = chapter.Intro;
-            SetOpenerCloserSceneExit(intro, chapter.Puzzles[0].Scene);
-            UpdatePuzzleExits(chapterIndex);
+            SetOpenerCloserSceneExit(intro, chapter.Puzzles[0].Scene, lightDataMethod);
+            UpdatePuzzles(chapterIndex, lightDataMethod);
 
             var outro = chapter.Outro;
             var outroExit = chapterIndex != levelData.Chapters.Count - 1
                 ? levelData.Chapters[chapterIndex + 1].GetStartingLevel.Scene
                 : levelData.CreditsScene;
-            SetOpenerCloserSceneExit(outro, outroExit);
+            SetOpenerCloserSceneExit(outro, outroExit, lightDataMethod);
         }
+
+        // EditorSceneManager.OpenScene(nowOpenScene.path, OpenSceneMode.Single);
     }
 
     /// <summary>
@@ -129,7 +159,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
     /// </summary>
     /// <param name="entrance">The scene to modify.</param>
     /// <param name="scene">The destination scene to link towards.</param>
-    private static void SetOpenerCloserSceneExit(LevelOrder.LevelData entrance, SceneAsset scene)
+    private static void SetOpenerCloserSceneExit(LevelOrder.LevelData entrance, SceneAsset scene, Action<LightingData> lightingDataAction)
     {
         if (entrance.Scene == null) return;
         //apply transitions for intro/outro
@@ -161,6 +191,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             SetDoorExitScene(endLevelDoor, SceneUtility.GetBuildIndexByScenePath(
                 AssetDatabase.GetAssetPath(scene)));
         }
+        lightingDataAction?.Invoke(entrance.LightingData);
 
         EditorSceneManager.SaveScene(introScene);
     }
@@ -169,10 +200,12 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
     /// Goes through a chapter's puzzles and updates each of their exit locations.
     /// </summary>
     /// <param name="chapterIndex">The index of the chapter that is being modified.</param>
-    private static void UpdatePuzzleExits(int chapterIndex)
+    private static void UpdatePuzzles(int chapterIndex, Action<LightingData> lightingDataApply)
     {
         var levelData = LevelOrderSelection.Instance.SelectedLevelData;
         var chapter = levelData.Chapters[chapterIndex];
+       
+        
         for (int puzzleIndex = 0; puzzleIndex < chapter.Puzzles.Count; puzzleIndex++)
         {
             var currentLevel = chapter.Puzzles[puzzleIndex];
@@ -256,6 +289,8 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
 
                 EditorUtility.SetDirty(endLevelDoor);
             }
+            
+            lightingDataApply?.Invoke(currentLevel.LightingData);
 
             EditorSceneManager.MarkSceneDirty(currScene);
             //save the changes
@@ -299,7 +334,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         editorBuildSettingsScenes.Add(
             new EditorBuildSettingsScene(AssetDatabase.GetAssetPath(levelData.MainMenuScene),
                 true));
-        levelData.PrettySceneNames.Add(new LevelOrder.PrettyData {PrettyName = "Main Menu", showUp = false});
+        levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = "Main Menu", showUp = false });
         //add each chapter's data
         int chapterIndex = 0;
         foreach (var chapter in levelData.Chapters)
@@ -312,7 +347,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                     AssetDatabase.GetAssetPath(chapter.Intro.Scene),
                     true));
                 levelData.PrettySceneNames.Add(new LevelOrder.PrettyData
-                    {PrettyName = chapter.Intro.LevelName, showUp = false});
+                    { PrettyName = chapter.Intro.LevelName, showUp = false });
             }
 
             //add all puzzles
@@ -322,7 +357,8 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                     AssetDatabase.GetAssetPath(level.Scene),
                     true));
-                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData {PrettyName = level.LevelName, showUp = true});
+                levelData.PrettySceneNames.Add(
+                    new LevelOrder.PrettyData { PrettyName = level.LevelName, showUp = true });
             }
 
             //add outro scene
@@ -332,7 +368,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                     AssetDatabase.GetAssetPath(chapter.Outro.Scene),
                     true));
                 levelData.PrettySceneNames.Add(new LevelOrder.PrettyData
-                    {PrettyName = chapter.Outro.LevelName, showUp = true});
+                    { PrettyName = chapter.Outro.LevelName, showUp = true });
             }
         }
 
