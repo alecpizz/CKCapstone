@@ -46,7 +46,7 @@ public static class CKLightingEditor
         var godParticles = godRays.GetComponent<ParticleSystem>();
         AdjustGodRays(godParticles, data.GodRayAlpha);
         AdjustMotes(fx);
-        string prefab = "Assets/Prefabs/LevelPrefabs/GridTile.prefab";
+        string prefab = "Assets/Prefabs/LevelPrefabs/GridTileCH1.prefab";
         ReplaceGridPrefab(prefab);
         //need to adjust god ray position
     }
@@ -87,7 +87,7 @@ public static class CKLightingEditor
         var godRays = fx.transform.Find("GodRays");
         var godParticles = godRays.GetComponent<ParticleSystem>();
         AdjustGodRays(godParticles, data.GodRayAlpha);
-        string prefab = "Assets/Prefabs/LevelPrefabs/GridTile.prefab";
+        string prefab = "Assets/Prefabs/LevelPrefabs/GridTileCH2.prefab";
         ReplaceGridPrefab(prefab);
     }
 
@@ -123,7 +123,7 @@ public static class CKLightingEditor
         var godRays = fx.transform.Find("GodRays");
         var godParticles = godRays.GetComponent<ParticleSystem>();
         AdjustGodRays(godParticles, data.GodRayAlpha);
-        string prefab = "Assets/Prefabs/LevelPrefabs/GridTile.prefab";
+        string prefab = "Assets/Prefabs/LevelPrefabs/GridTileCH3.prefab";
         ReplaceGridPrefab(prefab);
     }
 
@@ -158,7 +158,7 @@ public static class CKLightingEditor
         var fx = Object.Instantiate(fxPrefab);
 
         Object.DestroyImmediate(fx.transform.Find("VolumetricClouds").gameObject);
-        string prefab = "Assets/Prefabs/LevelPrefabs/GridTile.prefab";
+        string prefab = "Assets/Prefabs/LevelPrefabs/GridTileCH4.prefab";;
         ReplaceGridPrefab(prefab);
         /**************************************************************
          * CLOUD PASS BELOW. commented out while i figure out a better
@@ -308,7 +308,7 @@ public static class CKLightingEditor
 
         //clean up prefab's particles
         Object.DestroyImmediate(fx.transform.Find("Raindrops").gameObject);
-        string prefab = "Assets/Prefabs/LevelPrefabs/GridTile.prefab";
+        string prefab = "Assets/Prefabs/LevelPrefabs/GridTileCH5.prefab";
         ReplaceGridPrefab(prefab);
     }
 
@@ -413,6 +413,7 @@ public static class CKLightingEditor
         if (field != null)
         {
             field.SetValue(grid, cubePrefab);
+            EditorUtility.SetDirty(grid);
         }
         else
         {
