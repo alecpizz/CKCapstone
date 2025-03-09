@@ -6,11 +6,13 @@
  *    with game specific lighting assets. Pretty fragile.
  *******************************************************************/
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
 public static class CKLightingEditor
 {
+    private const string GridPrefab = "_gridPrefab";
     /// <summary>
     /// Applies ch1 lighting with pre-set settings.
     /// </summary>
@@ -44,8 +46,12 @@ public static class CKLightingEditor
         var godParticles = godRays.GetComponent<ParticleSystem>();
         AdjustGodRays(godParticles, data.GodRayAlpha);
         AdjustMotes(fx);
+        string prefab = "Assets/Prefabs/LevelPrefabs/GridTile.prefab";
+        ReplaceGridPrefab(prefab);
         //need to adjust god ray position
     }
+
+   
 
     /// <summary>
     /// Applies ch2 lighting with pre-set settings.
@@ -81,6 +87,8 @@ public static class CKLightingEditor
         var godRays = fx.transform.Find("GodRays");
         var godParticles = godRays.GetComponent<ParticleSystem>();
         AdjustGodRays(godParticles, data.GodRayAlpha);
+        string prefab = "Assets/Prefabs/LevelPrefabs/GridTile.prefab";
+        ReplaceGridPrefab(prefab);
     }
 
     /// <summary>
@@ -115,6 +123,8 @@ public static class CKLightingEditor
         var godRays = fx.transform.Find("GodRays");
         var godParticles = godRays.GetComponent<ParticleSystem>();
         AdjustGodRays(godParticles, data.GodRayAlpha);
+        string prefab = "Assets/Prefabs/LevelPrefabs/GridTile.prefab";
+        ReplaceGridPrefab(prefab);
     }
 
     /// <summary>
@@ -148,6 +158,8 @@ public static class CKLightingEditor
         var fx = Object.Instantiate(fxPrefab);
 
         Object.DestroyImmediate(fx.transform.Find("VolumetricClouds").gameObject);
+        string prefab = "Assets/Prefabs/LevelPrefabs/GridTile.prefab";
+        ReplaceGridPrefab(prefab);
         /**************************************************************
          * CLOUD PASS BELOW. commented out while i figure out a better
          * way to distribute them without it looking shitty.
@@ -296,6 +308,8 @@ public static class CKLightingEditor
 
         //clean up prefab's particles
         Object.DestroyImmediate(fx.transform.Find("Raindrops").gameObject);
+        string prefab = "Assets/Prefabs/LevelPrefabs/GridTile.prefab";
+        ReplaceGridPrefab(prefab);
     }
 
     /// <summary>
@@ -374,5 +388,35 @@ public static class CKLightingEditor
         Vector3 moteSize = new Vector3(bounds.size.x + 0.5f, bounds.size.z + 0.5f, 4f);
         var shape = moteParticles.shape;
         shape.scale = moteSize;
+    }
+    
+    /// <summary>
+    /// Replaces the grid prefab for the scene.
+    /// </summary>
+    /// <param name="prefabPath">The path to the new prefab.</param>
+    private static void ReplaceGridPrefab(string prefabPath)
+    {
+        var grid = GridBase.Instance;
+        //delete any extra grids minus the prefab's one.
+        for (int i = grid.transform.childCount - 1; i >= 0; i--)
+        {
+            if (PrefabUtility.IsPartOfAnyPrefab(grid.transform.GetChild(i).gameObject))
+            {
+                continue;
+            }
+            Object.DestroyImmediate(grid.transform.GetChild(i));
+        }
+
+        //set the field to be the new prefab.
+        var cubePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+        var field = grid.GetType().GetField(GridPrefab, BindingFlags.Instance | BindingFlags.NonPublic);
+        if (field != null)
+        {
+            field.SetValue(grid, cubePrefab);
+        }
+        else
+        {
+            Debug.LogError($"Could not find field {GridPrefab}");
+        }
     }
 }
