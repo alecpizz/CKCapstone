@@ -1,6 +1,6 @@
 /******************************************************************
  *    Author: Alec Pizziferro
- *    Contributors: N/A
+ *    Contributors: Nick Grinstead
  *    Date Created: 9/20/2024
  *    Description: Class for interfacing with a grid, stores information about
  *   what entities are in a cell, as well as provides methods for converting world
@@ -48,6 +48,8 @@ public class GridBase : MonoBehaviour
     private Dictionary<Vector3Int, GameObject> _gridObjects = new();
 
     private const string GridMeshName = "Grid Mesh Holder";
+
+    public int Size => _gridSize;
 
     /// <summary>
     /// Grabs the grid component.
@@ -122,13 +124,25 @@ public class GridBase : MonoBehaviour
     /// <param name="obj"></param>
     public void UpdateEntry(IGridEntry obj)
     {
+        UpdateEntryAtPosition(obj, obj.Position);
+    }
+
+    /// <summary>
+    ///  Updates an entries status in the grid to be at a specified position. 
+    ///  If the entry isn't in the grid, it will be added.
+    /// If there is no position change it will exit early.
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <param name="position"></param>
+    public void UpdateEntryAtPosition(IGridEntry obj, Vector3 objPosition)
+    {
         if (!_gameObjectToGridMap.TryGetValue(obj, out var prevPos))
         {
             AddEntry(obj);
             return;
         }
 
-        Vector3Int newPos = WorldToCell(obj.Position);
+        Vector3Int newPos = WorldToCell(objPosition);
         if (prevPos == newPos) return;
         _gameObjectToGridMap[obj] = newPos;
         _gridEntries[prevPos].Remove(obj);
@@ -368,7 +382,6 @@ public class GridBase : MonoBehaviour
         }
     }
 
-    
     /// <summary>
     /// Destroys the grid mesh.
     /// </summary>
