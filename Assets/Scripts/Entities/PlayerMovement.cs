@@ -90,7 +90,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     [SerializeField] private Animator _animator;
 
     [Header("Dash")]
-    [SerializeField] private ParticleSystem dashParticles;
+    [SerializeField] private ParticleSystem _dashParticles;
+    [SerializeField] private TrailRenderer[] _dashTrails;
 
     /// <summary>
     /// Sets instance upon awake.
@@ -138,6 +139,10 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             RoundManager.Instance.RegisterListener(this);
             RoundManager.Instance.AutocompleteToggled += OnAutocompleteToggledEvent;
         }
+
+        _dashParticles.Stop();
+        foreach (TrailRenderer t in _dashTrails)
+            t.emitting = false;
     }
 
     /// <summary>
@@ -298,8 +303,18 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     private void OnAutocompleteToggledEvent(bool isActive)
     {
         if (isActive)
-            dashParticles.Play();
+        {
+            _dashParticles.Play();
+            foreach (TrailRenderer t in _dashTrails)
+                t.emitting = true;
+        }
+            
         else
-            dashParticles.Stop();
+        {
+            _dashParticles.Stop();
+            foreach (TrailRenderer t in _dashTrails)
+                t.emitting = false;
+        }
+            
     }
 }
