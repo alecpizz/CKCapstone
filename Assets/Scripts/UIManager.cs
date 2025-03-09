@@ -53,6 +53,14 @@ public class UIManager : MonoBehaviour, ITimeListener
     [SerializeField] private LevelButtons _levelButtons;
 
     /// <summary>
+    /// Updates the dictionary first so the numbers will show on the time signature
+    /// </summary>
+    private void Awake()
+    {
+        LevelButtons.DictionaryUpdate += LvlDictUpdate;
+    }
+
+    /// <summary>
     /// Initializing values and registering to actions
     /// </summary>
     private void Start()
@@ -91,18 +99,6 @@ public class UIManager : MonoBehaviour, ITimeListener
         WinChecker.GotCorrectSequence += DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence += DisplayIncorrectMessage;
 
-        //Assigns the name of scenes to the time signature in a level
-        if (_levelNumber == null) return;
-        if(_isChallenge)
-        {
-            //Challenges are currently Challenge + their level number
-            _levelNumber.text = $"{_challengeText} {_levelButtons.GetLvlCounter()}";
-        }
-        else
-        {
-            //Levels are Level + lvl number
-            _levelNumber.text = $"{_levelText} {_levelButtons.GetLvlCounter()}";
-        }
 
         //Currently saving old if statement to potentially use/repurpose for Trinity's revisions
 
@@ -129,6 +125,27 @@ public class UIManager : MonoBehaviour, ITimeListener
         }*/
     }
 
+    /// <summary>
+    /// Assigns the proper level name to the time signature
+    /// </summary>
+    private void LvlDictUpdate()
+    {
+        int index = SceneManager.GetActiveScene().buildIndex;
+
+        //Assigns the name of scenes to the time signature in a level
+        if (_levelNumber == null) return;
+        if (_isChallenge)
+        {
+            //Challenges are currently Challenge + their level number
+            _levelNumber.text = $"{_challengeText} {_levelButtons.GetLvlCounter(index)}";
+        }
+        else
+        {
+            //Levels are Level + lvl number
+            _levelNumber.text = $"{_levelText} {_levelButtons.GetLvlCounter(index)}";
+        }
+    }
+
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
     {
         if (_timeSignatureUiX == null || _timeSignatureUiY == null)
@@ -151,6 +168,7 @@ public class UIManager : MonoBehaviour, ITimeListener
         WinChecker.CollectedNote -= UpdateGhostNotesIcons;
         WinChecker.GotCorrectSequence -= DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence -= DisplayIncorrectMessage;
+        LevelButtons.DictionaryUpdate -= LvlDictUpdate;
 
         if (_timeSigManager != null)
         {
