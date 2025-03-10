@@ -20,7 +20,7 @@ public class SubtitleManager : MonoBehaviour
 {
     //code set up
     [SerializeField] private EventReference _dialogue;
-    [SerializeField] private string _subtitleText;
+    [SerializeField, TextArea(6, 12)] private string _subtitleText;
     [SerializeField] private int _sentences;
     [SerializeField] private float _sentenceDelay = 1;
 
