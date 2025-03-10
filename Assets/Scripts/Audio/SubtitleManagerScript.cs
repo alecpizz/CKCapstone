@@ -22,6 +22,7 @@ public class SubtitleManager : MonoBehaviour
     [SerializeField] private EventReference _dialogue;
     [SerializeField] private string _subtitleText;
     [SerializeField] private int _sentences;
+    [SerializeField] private float _sentenceDelay = 1;
 
     //visual set up
     [SerializeField] private TMP_Text _subtitleObject;
@@ -34,6 +35,8 @@ public class SubtitleManager : MonoBehaviour
     //FMOD stuffs
     private static int _currentIndex;
     private EventInstance _currentDialogue;
+
+    CutsceneFramework _cutsceneFramework;
 
 
 
@@ -70,7 +73,9 @@ public class SubtitleManager : MonoBehaviour
 
         //playing first segment
         _subtitleObject.text = _subtitleArray[0];
-        _currentDialogue = AudioManager.Instance.PlaySound(_dialogue);
+
+        StartCoroutine(SubtitleSequence());
+        //_currentDialogue = AudioManager.Instance.PlaySound(_dialogue);
     }
 
     /// <summary>
@@ -80,12 +85,22 @@ public class SubtitleManager : MonoBehaviour
     private void Update()
     {
         // Disable subtitles
-        if (PlayerPrefs.GetInt("Subtitles") == 0)
-            return;
+        /*if (PlayerPrefs.GetInt("Subtitles") == 0)
+            return;*/
 
+        /*
         if (!IsPlaying(_currentDialogue))
         {
             AudioManager.Instance.StopSound(_currentDialogue);
+            NextSegment();
+        }*/
+    }
+
+    IEnumerator SubtitleSequence()
+    {
+        while(_currentIndex < _sentences)
+        {
+            yield return new WaitForSeconds(_sentenceDelay);
             NextSegment();
         }
     }
@@ -115,7 +130,7 @@ public class SubtitleManager : MonoBehaviour
         {
             _subtitleObject.text = _subtitleArray[_currentIndex];
             _currentDialogue.setParameterByName("Sample Sentence", _currentIndex + 1);
-            _currentDialogue = AudioManager.Instance.PlaySound(_dialogue);
+            //_currentDialogue = AudioManager.Instance.PlaySound(_dialogue);
         }
     }
 }
