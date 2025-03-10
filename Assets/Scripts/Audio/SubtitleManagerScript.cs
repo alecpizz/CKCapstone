@@ -78,31 +78,15 @@ public class SubtitleManager : MonoBehaviour
         _currentDialogue = AudioManager.Instance.PlaySound(_dialogue);
     }
 
-    /// <summary>
-    /// called on tics
-    /// used to find if the current line of dialogue is finished
-    /// </summary>
-    private void Update()
-    {
-        // Disable subtitles
-        /*if (PlayerPrefs.GetInt("Subtitles") == 0)
-            return;*/
-
-        /*
-        if (!IsPlaying(_currentDialogue))
-        {
-            AudioManager.Instance.StopSound(_currentDialogue);
-            NextSegment();
-        }*/
-    }
-
     IEnumerator SubtitleSequence()
     {
         while(_currentIndex < _sentences)
         {
-            yield return new WaitForSeconds(_sentenceDelay);
+            yield return new WaitForSeconds(1f + ((float)_subtitleObject.text.Length / 12));
             NextSegment();
         }
+
+        _cutsceneFramework.SkipCutscene();
     }
 
     /// <summary>
