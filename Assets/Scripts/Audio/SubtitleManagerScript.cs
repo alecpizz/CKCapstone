@@ -38,7 +38,10 @@ public class SubtitleManager : MonoBehaviour
 
     CutsceneFramework _cutsceneFramework;
 
-
+    private void Awake()
+    {
+        _cutsceneFramework = GetComponent<CutsceneFramework>();
+    }
 
     /// <summary>
     /// called on scene begin. used to set variables, cut up the _subtitleText string into sentences, 
