@@ -13,6 +13,7 @@ using UnityEngine;
 [Serializable]
 public class LightingData
 {
+    public bool ApplyLightingData = true;
     public float AmbientIntensity = 0.5f;
     public float GodRayAlpha = 1.0f;
     [Range(1, 5)]
