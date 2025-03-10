@@ -64,7 +64,8 @@ public class AudioManager : MonoBehaviour
         {
             _key.getDescription(out var description);
             description.getPath(out var path);
-            if (path != _nextMusic.Path)
+            // Double check that this works. _nextMusic.ToString() replaced _nextMusic.Path since .Path cannot be accessed in build
+            if (path != _nextMusic.ToString())
             {
                 _key.stop(STOP_MODE.ALLOWFADEOUT);
                 _key = PlaySound(_nextMusic);
@@ -132,8 +133,16 @@ public class AudioManager : MonoBehaviour
             AudioInstances.TryGetValue(reference, out audioEvent);
         else
         {
-            audioEvent = RuntimeManager.CreateInstance(reference);
-            AudioInstances.Add(reference, audioEvent);
+            try
+            {
+                audioEvent = RuntimeManager.CreateInstance(reference);
+                AudioInstances.Add(reference, audioEvent);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Sound Event Not Found! \n" + e.StackTrace);
+                return default;
+            }
         }
 
         audioEvent.start();
