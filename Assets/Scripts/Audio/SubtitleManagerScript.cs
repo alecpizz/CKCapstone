@@ -75,7 +75,7 @@ public class SubtitleManager : MonoBehaviour
         _subtitleObject.text = _subtitleArray[0];
 
         StartCoroutine(SubtitleSequence());
-        //_currentDialogue = AudioManager.Instance.PlaySound(_dialogue);
+        _currentDialogue = AudioManager.Instance.PlaySound(_dialogue);
     }
 
     /// <summary>
