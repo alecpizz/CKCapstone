@@ -26,6 +26,7 @@ public static class CKLightingEditor
     /// <param name="data"></param>
     public static void ApplyChapter1Lighting(LightingData data)
     {
+        if (!data.ApplyLightingData) return;
         //testing chapter 1 here
         Material skybox = AssetDatabase.LoadAssetAtPath<Material>(
             "Assets/Materials/Lighting/MAT_Skybox_1.mat");
@@ -65,7 +66,8 @@ public static class CKLightingEditor
     /// </summary>
     /// <param name="data"></param>
     public static void ApplyChapter2Lighting(LightingData data)
-    {
+    { 
+        if (!data.ApplyLightingData) return;
         //grab skybox from assets and apply it
         Material skybox = AssetDatabase.LoadAssetAtPath<Material>(
             "Assets/Materials/Lighting/MAT_Skybox_2.mat");
@@ -104,6 +106,7 @@ public static class CKLightingEditor
     /// <param name="data"></param>
     public static void ApplyChapter3Lighting(LightingData data)
     {
+        if (!data.ApplyLightingData) return;
         //grab skybox from assets and apply it
         Material skybox = AssetDatabase.LoadAssetAtPath<Material>(
             "Assets/Materials/Lighting/MAT_Skybox_3.mat");
@@ -140,6 +143,7 @@ public static class CKLightingEditor
     /// <param name="data"></param>
     public static void ApplyChapter4Lighting(LightingData data)
     {
+        if (!data.ApplyLightingData) return;
         //grab skybox from assets and apply it
         Material skybox = AssetDatabase.LoadAssetAtPath<Material>(
             "Assets/Materials/Lighting/MAT_Skybox_4.mat");
@@ -238,6 +242,7 @@ public static class CKLightingEditor
     /// <param name="data"></param>
     public static void ApplyChapter5Lighting(LightingData data)
     {
+        if (!data.ApplyLightingData) return;
         //grab skybox and apply it
         Material skybox = AssetDatabase.LoadAssetAtPath<Material>(
             "Assets/Materials/Lighting/MAT_Skybox_5.mat");

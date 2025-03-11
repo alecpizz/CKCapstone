@@ -122,6 +122,9 @@ public class LevelButtons : MonoBehaviour
             {
                 range += _chapterLevelCount[i];
             }
+
+            //to not include transitions
+            _lvlCounter--;
                 
         }
 
