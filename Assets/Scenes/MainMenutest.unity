@@ -2788,6 +2788,58 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1ee0c39cbed86d94a8a50e31435b04a2, type: 3}
+--- !u!1 &1094741325
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1094741327}
+  - component: {fileID: 1094741326}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1094741326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1094741325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2bbe8088a9dc6d4f97c948f623e59c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _music:
+    Guid:
+      Data1: 1087454660
+      Data2: 1125730479
+      Data3: 2075035788
+      Data4: 1825618196
+    Path: event:/Music Controller
+  _musicLayering: 4
+--- !u!4 &1094741327
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1094741325}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 10.440863, y: 3.8584332, z: 15.986116}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1236063913
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3193,7 +3245,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1306577879}
   - component: {fileID: 1306577878}
-  - component: {fileID: 1306577880}
   - component: {fileID: 1306577881}
   m_Layer: 0
   m_Name: GameController
@@ -3248,26 +3299,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1306577880
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1306577877}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2bbe8088a9dc6d4f97c948f623e59c0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _music:
-    Guid:
-      Data1: 1087454660
-      Data2: 1125730479
-      Data3: 2075035788
-      Data4: 1825618196
-    Path: event:/Music Controller
-  _musicLayering: 4
 --- !u!114 &1306577881
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6453,3 +6484,4 @@ SceneRoots:
   - {fileID: 1769696153}
   - {fileID: 1782314182}
   - {fileID: 1483585220}
+  - {fileID: 1094741327}
