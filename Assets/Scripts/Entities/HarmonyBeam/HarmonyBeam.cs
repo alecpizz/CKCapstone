@@ -68,6 +68,9 @@ public class HarmonyBeam : MonoBehaviour
     private void OnDisable()
     {
         TriggerHarmonyScan -= ScanForObjects;
+
+        AudioManager.Instance.StopSound(_beamInstance);
+        AudioManager.Instance.StopSound(_enemyGrabbedInstance);
     }
 
     /// <summary>
