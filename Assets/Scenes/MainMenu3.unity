@@ -5588,63 +5588,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5748a2d702cc1654ba93f7db1a23518a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _onHover:
-    startFromCurrent: 0
-    startValue: 0
-    endValue: -0.015
-    settings:
-      duration: 0.2
-      ease: 20
-      customEase:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      cycles: 1
-      cycleMode: 0
-      startDelay: 0
-      endDelay: 0
-      useUnscaledTime: 0
-      useFixedUpdate: 0
-  _offHover:
-    startFromCurrent: 0
-    startValue: -0.015
-    endValue: 0
-    settings:
-      duration: 0.2
-      ease: 21
-      customEase:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      cycles: 1
-      cycleMode: 0
-      startDelay: 0
-      endDelay: 0
-      useUnscaledTime: 0
-      useFixedUpdate: 0
-  _onSelect:
-    startFromCurrent: 0
-    startValue: -0.015
-    endValue: -0.035
-    settings:
-      duration: 0.2
-      ease: 17
-      customEase:
-        serializedVersion: 2
-        m_Curve: []
-        m_PreInfinity: 2
-        m_PostInfinity: 2
-        m_RotationOrder: 4
-      cycles: 1
-      cycleMode: 0
-      startDelay: 0
-      endDelay: 0
-      useUnscaledTime: 0
-      useFixedUpdate: 0
+  _hoverDepth: 0.115
+  _hoverRotate: 0
+  _selectDepth: 0.0873
+  _hoverEase: 20
+  _unHoverEase: 21
+  _selectEase: 20
+  _hoverDuration: 0.2
+  _unHoverDuration: 0.2
+  _selectDuration: 0.2
+  _lidCloseDuration: 0.2
+  _lidCloseEase: 20
   _lidClose:
     startFromCurrent: 0
     startValue: {x: 0, y: 0, z: 0}
@@ -5721,7 +5675,15 @@ MonoBehaviour:
       Data3: 2142963355
       Data4: -53796704
     Path: event:/Main Menu Clicks
+  _onLidCloseEvent:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
   _lid: {fileID: 1745654537}
+  _menuCanvas: {fileID: 0}
 --- !u!1 &2081803080 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2569194304589019112, guid: 6a8517eb504a3dc4f90bc546f81eaf46,
