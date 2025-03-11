@@ -53,6 +53,8 @@ public class SceneController : MonoBehaviour
 
         Instance = this;
 
+        Time.timeScale = 1.0f;
+
         if (_shouldFadeInOnLoad)
         {
             StartCoroutine(CircleWipeTransition(true, _currentFadeColor));
