@@ -27,7 +27,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject _mainMenuSettings;
     [SerializeField] private GameObject _mainMenuQuit;
     [SerializeField] private GameObject _restartButton;
-
+    
     [SerializeField] private EventReference _buttonPress;
 
     private DebugInputActions _inputActions;
@@ -112,7 +112,7 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void Pause()
     {
-        if (!_pauseScreen.activeInHierarchy)
+        if (_pauseScreen != null && !_pauseScreen.activeInHierarchy)
         {
             if (SceneController.Instance == null || SceneController.Instance.Transitioning) return;
             DebugMenuManager.Instance.PauseMenu = true;
@@ -124,8 +124,9 @@ public class MenuManager : MonoBehaviour
         else if (_optionsScreen.activeInHierarchy)
         {
             OptionsClose();
+            _mainMenu.SetActive(true);
         }
-        else if (_pauseScreen.activeInHierarchy)
+        else if (_pauseScreen != null && _pauseScreen.activeInHierarchy)
         {
             Unpause();
         }
