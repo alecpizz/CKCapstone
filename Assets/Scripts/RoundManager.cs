@@ -40,8 +40,6 @@ public sealed class RoundManager : MonoBehaviour
     private bool _movementRegistered = false;
     private float _movementRegisteredTime = -1;
     [SerializeField] private float _inputBufferWindow = 0.5f;
-    [SerializeField] private EventReference _playerTurnEvent;
-    [SerializeField] private EventReference _enemyTurnEvent;
 
     [Header("Autocomplete Mechanic")]
     [SerializeField, Tooltip("Timescale during autocomplete dash")] private float _autocompleteSpeed = 3;
@@ -93,18 +91,6 @@ public sealed class RoundManager : MonoBehaviour
             _completedTurnCounts.Add((TurnState)i, 0);
         }
     }
-
-#if UNITY_EDITOR
-    /// <summary>
-    /// Resets default turn events since we can't set default values anymore.
-    /// </summary>
-    private void Reset()
-    {
-        _playerTurnEvent = EventReference.Find("event:/Turn Start Player");
-        _enemyTurnEvent = EventReference.Find("event:/Turn Start Enemy");
-    }
-#endif
-
 
     /// <summary>
     /// Enables the player controls and hooks a callback for movement input.
@@ -183,11 +169,6 @@ public sealed class RoundManager : MonoBehaviour
 
         _turnState = TurnState.Player;
 
-        //only play player turn sound if there's enemies in the scene.
-        if (_turnListeners[TurnState.Enemy].Count > 0)
-        {
-            AudioManager.Instance.PlaySound(_playerTurnEvent);
-        }
         //perform the turn now so that it's frame perfect.
         foreach (var turnListener in _turnListeners[TurnState.Player])
         {
@@ -262,10 +243,6 @@ public sealed class RoundManager : MonoBehaviour
         if (_turnState != TurnState.None && SceneController.Instance != null &&
             !SceneController.Instance.Transitioning)
         {
-            if (IsEnemyTurn)
-            {
-                AudioManager.Instance.PlaySound(_enemyTurnEvent);
-            }
             foreach (var turnListener in _turnListeners[_turnState])
             {
                 turnListener.BeginTurn(_lastMovementInput);
