@@ -63,8 +63,8 @@ public class AudioManager : MonoBehaviour
         if (_key.isValid())
         {
             _key.getDescription(out var description);
-            description.getPath(out var path);
-            if (path != _nextMusic.Path)
+            description.getID(out var id);
+            if (id != _nextMusic.Guid)
             {
                 _key.stop(STOP_MODE.ALLOWFADEOUT);
                 _key = PlaySound(_nextMusic);
