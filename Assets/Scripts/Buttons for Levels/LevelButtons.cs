@@ -170,7 +170,7 @@ public class LevelButtons : MonoBehaviour
         }
         else
         {
-            return _lvlNumberAssignment[index-1]; 
+            return -1;
         }  
     }
 }
