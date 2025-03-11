@@ -164,6 +164,13 @@ public class LevelButtons : MonoBehaviour
     /// <returns></returns>
     public int GetLvlCounter(int index)
     {
-        return _lvlNumberAssignment[index];
+        if (_lvlNumberAssignment.ContainsKey(index))
+        {
+            return _lvlNumberAssignment[index];
+        }
+        else
+        {
+            return _lvlNumberAssignment[index-1]; 
+        }  
     }
 }
