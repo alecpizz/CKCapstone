@@ -50,6 +50,7 @@ public class UIManager : MonoBehaviour, ITimeListener
     private const string BaseCollectedText = "Collect the notes in numerical order:";
     [SerializeField] private string _levelText = "Level";
     [SerializeField] private string _challengeText = "Challenge";
+    [SerializeField] private string _intermissionText = "Intermission";
 
     [SerializeField] private LevelButtons _levelButtons;
 
@@ -132,7 +133,6 @@ public class UIManager : MonoBehaviour, ITimeListener
     private void LvlDictUpdate()
     {
         int index = SceneManager.GetActiveScene().buildIndex;
-        var prettyName = LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames[index].PrettyName;
 
         //Gets the path to a scene
         string path = SceneUtility.GetScenePathByBuildIndex(index);
@@ -144,14 +144,14 @@ public class UIManager : MonoBehaviour, ITimeListener
         if (_isChallenge)
         {
             //Challenges are currently Challenge + their level number
-            _levelNumber.text = $"{_challengeText} {_levelButtons.GetLvlCounter(index)}";
+            _levelNumber.text = _challengeText;
         }
         else
         {
             //Levels are Level + lvl number
             if (sceneName[0] == 'I')
             {
-                _levelNumber.text = prettyName;
+                _levelNumber.text = _intermissionText;
             }
             else
             {
