@@ -63,9 +63,9 @@ public class AudioManager : MonoBehaviour
         if (_key.isValid())
         {
             _key.getDescription(out var description);
-            description.getPath(out var path);
-            // Double check that this works. _nextMusic.ToString() replaced _nextMusic.Path since .Path cannot be accessed in build
-            if (path != _nextMusic.ToString())
+
+            description.getID(out var id);
+            if (id != _nextMusic.Guid)
             {
                 _key.stop(STOP_MODE.ALLOWFADEOUT);
                 _key = PlaySound(_nextMusic);
