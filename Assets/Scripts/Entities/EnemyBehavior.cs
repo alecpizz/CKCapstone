@@ -860,6 +860,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     {
         Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
         Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos);
-        transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z);
+        transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z) + _positionOffset;
     }
 }
