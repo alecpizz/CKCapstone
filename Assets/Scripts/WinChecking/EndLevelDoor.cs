@@ -17,6 +17,7 @@ public class EndLevelDoor : MonoBehaviour
     [SerializeField] private int _levelIndexToLoad = 0;
     [SerializeField] private bool _isUnlocked = false;
     private DoorGlow _doorGlow;
+    [SerializeField] private GameObject _doorPortalVFX;
 
     [SerializeField] private ParticleSystem _unlockedParticles;
 
@@ -32,6 +33,7 @@ public class EndLevelDoor : MonoBehaviour
     private void Awake()
     {
         _doorGlow = GetComponent<DoorGlow>();
+        _doorPortalVFX.SetActive(false);
     }
 
     /// <summary>
@@ -81,6 +83,8 @@ public class EndLevelDoor : MonoBehaviour
             //light the lantern (null check for cutscene skip)
             if(_lanternScript != null)
                 _lanternScript.TurnLightOn();
+            
+            _doorPortalVFX.SetActive(true);
         }
          //End level door opening sound
         if (AudioManager.Instance != null)
