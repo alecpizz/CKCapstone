@@ -139,7 +139,7 @@ public class CutsceneFramework : MonoBehaviour
     /// <summary>
     /// Used to skip the cutscene when an input is given
     /// </summary>
-    private void SkipCutscene()
+    public void SkipCutscene()
     {
         StopAllCoroutines();
         SceneController.Instance.LoadNewScene(_loadingLevelIndex);
