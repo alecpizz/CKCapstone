@@ -34,6 +34,8 @@ public class LevelButtons : MonoBehaviour
     //Prefix word of a level
     [SerializeField] private string _levelPrefix = "Level: ";
 
+    [SerializeField] private string _challengeText = "Challenge";
+
     //Counter for the levels
     private int _lvlCounter = -1;
 
@@ -105,9 +107,15 @@ public class LevelButtons : MonoBehaviour
                     obj.GetComponentInChildren<TextMeshProUGUI>().text = name;
                     _lvlCounter--;
                 }
+                else if (sceneName.Contains("C_"))
+                {
+                    //Challenges have been changed to just say challenge
+                    obj.GetComponentInChildren<TextMeshProUGUI>().text = _challengeText;
+                    _lvlCounter--;
+                }
                 else
                 {
-                    //Levels are named Level + relevant number (even challenges)
+                    //Levels are named Level + relevant number
                     obj.GetComponentInChildren<TextMeshProUGUI>().text = _levelPrefix + (_lvlCounter).ToString();
                 }
 
