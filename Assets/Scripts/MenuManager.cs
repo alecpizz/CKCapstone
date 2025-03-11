@@ -113,6 +113,10 @@ public class MenuManager : MonoBehaviour
             EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
             Time.timeScale = 0f;
         }
+        else if (_optionsScreen.activeInHierarchy)
+        {
+            OptionsClose();
+        }
         else if (_pauseScreen.activeInHierarchy)
         {
             Unpause();
