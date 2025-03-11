@@ -14,6 +14,7 @@ using UnityEngine.SceneManagement;
 using SaintsField;
 using Unity.VisualScripting;
 using UnityEngine.Serialization;
+using static UnityEngine.Rendering.DebugUI;
 
 public class UIManager : MonoBehaviour, ITimeListener
 {
@@ -47,8 +48,19 @@ public class UIManager : MonoBehaviour, ITimeListener
     private List<int> _notes;
 
     private const string BaseCollectedText = "Collect the notes in numerical order:";
-    [SerializeField] private string levelText = "Level";
-    [SerializeField] private string challengeText = "Challenge";
+    [SerializeField] private string _levelText = "Level";
+    [SerializeField] private string _challengeText = "Challenge";
+    [SerializeField] private string _intermissionText = "Intermission";
+
+    [SerializeField] private LevelButtons _levelButtons;
+
+    /// <summary>
+    /// Updates the dictionary first so the numbers will show on the time signature
+    /// </summary>
+    private void Awake()
+    {
+        LevelButtons.DictionaryUpdate += LvlDictUpdate;
+    }
 
     /// <summary>
     /// Initializing values and registering to actions
@@ -89,19 +101,6 @@ public class UIManager : MonoBehaviour, ITimeListener
         WinChecker.GotCorrectSequence += DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence += DisplayIncorrectMessage;
 
-        //Assigns the name of scenes to the time signature in a level
-        if (_levelNumber == null) return;
-        if(_isChallenge)
-        {
-            //Challenges are currently Challenge + their level number
-            int index = SceneManager.GetActiveScene().buildIndex;
-            _levelNumber.text = $"{challengeText} {index - 1}";
-        }
-        else
-        {
-            //Levels are Level + lvl number
-            _levelNumber.text = $"{levelText} {SceneManager.GetActiveScene().buildIndex-1}";
-        }
 
         //Currently saving old if statement to potentially use/repurpose for Trinity's revisions
 
@@ -128,6 +127,39 @@ public class UIManager : MonoBehaviour, ITimeListener
         }*/
     }
 
+    /// <summary>
+    /// Assigns the proper level name to the time signature
+    /// </summary>
+    private void LvlDictUpdate()
+    {
+        int index = SceneManager.GetActiveScene().buildIndex;
+
+        //Gets the path to a scene
+        string path = SceneUtility.GetScenePathByBuildIndex(index);
+        //Uses the path to get the full name of the scene in the build
+        string sceneName = System.IO.Path.GetFileNameWithoutExtension(path);
+
+        //Assigns the name of scenes to the time signature in a level
+        if (_levelNumber == null) return;
+        if (_isChallenge)
+        {
+            //Challenges are currently Challenge + their level number
+            _levelNumber.text = _challengeText;
+        }
+        else
+        {
+            //Levels are Level + lvl number
+            if (sceneName[0] == 'I')
+            {
+                _levelNumber.text = _intermissionText;
+            }
+            else
+            {
+                _levelNumber.text = $"{_levelText} {_levelButtons.GetLvlCounter(index)}";
+            }
+        }
+    }
+
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
     {
         if (_timeSignatureUiX == null || _timeSignatureUiY == null)
@@ -150,6 +182,7 @@ public class UIManager : MonoBehaviour, ITimeListener
         WinChecker.CollectedNote -= UpdateGhostNotesIcons;
         WinChecker.GotCorrectSequence -= DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence -= DisplayIncorrectMessage;
+        LevelButtons.DictionaryUpdate -= LvlDictUpdate;
 
         if (_timeSigManager != null)
         {

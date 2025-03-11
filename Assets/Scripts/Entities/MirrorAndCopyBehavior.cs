@@ -62,6 +62,10 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
  
     //public static PlayerMovement Instance;
     private static readonly int Forward = Animator.StringToHash("Forward");
+    private static readonly int Attack = Animator.StringToHash("Attack");
+    private static readonly int Frozen = Animator.StringToHash("Frozen");
+    private static readonly int Turn = Animator.StringToHash("Turn");
+
     [SerializeField] private Animator _animator;
     
     //
@@ -126,6 +130,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
 
             if (_animator != null)
             {
+                _animator.SetBool(Frozen, false);
                 _animator.SetTrigger(Forward);
             }
 
@@ -168,8 +173,19 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                 }
                 if (canMove == true)
                 {
+                    if (moveDirection != transform.forward)
+                    {
+                        if (_animator != null)
+                        {
+                            _animator.SetTrigger(Turn);
+                        }
+                    }
                     Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
                     ease: _rotationEase);
+                    if (_animator != null)
+                    {
+                        _animator.ResetTrigger(Turn);
+                    }
 
                     if (AudioManager.Instance != null && _mirrored)
                     {
@@ -193,6 +209,10 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                     {
                         //hit a player!
                         PlayerMovement.Instance.OnDeath();
+                        if (_animator != null)
+                        {
+                            _animator.SetTrigger(Attack);
+                        }
                         SceneController.Instance.ReloadCurrentScene();
                     }
                 }
@@ -264,6 +284,10 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     {
         if (sonEnemy)
         {
+            if (_animator != null)
+            {
+                _animator.SetBool(Frozen, true);
+            }
             EnemyFrozen = true;
         }
     }
@@ -273,6 +297,10 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     /// </summary>
     public void OnLaserExit()
     {
+        if (_animator != null)
+        {
+            _animator.SetBool(Frozen, false);
+        }
         EnemyFrozen = false;
     }
 
