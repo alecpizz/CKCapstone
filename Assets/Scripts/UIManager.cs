@@ -52,16 +52,6 @@ public class UIManager : MonoBehaviour, ITimeListener
     [SerializeField] private string _challengeText = "Challenge";
     [SerializeField] private string _intermissionText = "Intermission";
 
-    [SerializeField] private LevelButtons _levelButtons;
-
-    /// <summary>
-    /// Updates the dictionary first so the numbers will show on the time signature
-    /// </summary>
-    private void Awake()
-    {
-        LevelButtons.DictionaryUpdate += LvlDictUpdate;
-    }
-
     /// <summary>
     /// Initializing values and registering to actions
     /// </summary>
@@ -125,6 +115,12 @@ public class UIManager : MonoBehaviour, ITimeListener
             }
                 
         }*/
+        
+    }
+
+    public void SetLevelText(string text)
+    {
+        _levelNumber.text = text;
     }
 
     /// <summary>
@@ -132,32 +128,32 @@ public class UIManager : MonoBehaviour, ITimeListener
     /// </summary>
     private void LvlDictUpdate()
     {
-        int index = SceneManager.GetActiveScene().buildIndex;
-
-        //Gets the path to a scene
-        string path = SceneUtility.GetScenePathByBuildIndex(index);
-        //Uses the path to get the full name of the scene in the build
-        string sceneName = System.IO.Path.GetFileNameWithoutExtension(path);
-
-        //Assigns the name of scenes to the time signature in a level
-        if (_levelNumber == null) return;
-        if (_isChallenge)
-        {
-            //Challenges are currently Challenge + their level number
-            _levelNumber.text = _challengeText;
-        }
-        else
-        {
-            //Levels are Level + lvl number
-            if (sceneName[0] == 'I')
-            {
-                _levelNumber.text = _intermissionText;
-            }
-            else
-            {
-                _levelNumber.text = $"{_levelText} {_levelButtons.GetLvlCounter(index)}";
-            }
-        }
+        // int index = SceneManager.GetActiveScene().buildIndex;
+        //
+        // //Gets the path to a scene
+        // string path = SceneUtility.GetScenePathByBuildIndex(index);
+        // //Uses the path to get the full name of the scene in the build
+        // string sceneName = System.IO.Path.GetFileNameWithoutExtension(path);
+        //
+        // //Assigns the name of scenes to the time signature in a level
+        // if (_levelNumber == null) return;
+        // if (_isChallenge)
+        // {
+        //     //Challenges are currently Challenge + their level number
+        //     _levelNumber.text = _challengeText;
+        // }
+        // else
+        // {
+        //     //Levels are Level + lvl number
+        //     if (sceneName[0] == 'I')
+        //     {
+        //         _levelNumber.text = _intermissionText;
+        //     }
+        //     else
+        //     {
+        //         _levelNumber.text = $"{_levelText} {_levelButtons.GetLvlCounter(index)}";
+        //     }
+        // }
     }
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
@@ -182,7 +178,6 @@ public class UIManager : MonoBehaviour, ITimeListener
         WinChecker.CollectedNote -= UpdateGhostNotesIcons;
         WinChecker.GotCorrectSequence -= DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence -= DisplayIncorrectMessage;
-        LevelButtons.DictionaryUpdate -= LvlDictUpdate;
 
         if (_timeSigManager != null)
         {

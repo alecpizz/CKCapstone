@@ -171,18 +171,15 @@ public class MenuManager : MonoBehaviour
     public void ContinueGame()
     {
         string level = SaveDataManager.GetLastFinishedLevel();
+        Debug.Log($"trying to continue {level}");
         if (string.IsNullOrEmpty(level))
         {
+            Debug.Log($"Last Level not saved");
             StartGame();
             return;
         }
-        var scene = SceneManager.GetSceneByName(level);
-        if (!scene.IsValid())
-        {
-            StartGame();
-            return;
-        }
-        int idx = scene.buildIndex;
+
+        int idx = SceneUtility.GetBuildIndexByScenePath(level);
         SceneManager.LoadScene(idx);
     }
 

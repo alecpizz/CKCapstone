@@ -115,8 +115,9 @@ public class EndLevelDoor : MonoBehaviour
                 playerMovement.ForceTurnEnd();
                 playerMovement.enabled = false;
             }
-            SaveDataManager.SetLastFinishedLevel(SceneManager.GetSceneByBuildIndex(_levelIndexToLoad).name);
-            SaveDataManager.SetLevelCompleted(SceneManager.GetActiveScene().name);
+            string scenePath = SceneUtility.GetScenePathByBuildIndex(_levelIndexToLoad);
+            SaveDataManager.SetLastFinishedLevel(scenePath);
+            SaveDataManager.SetLevelCompleted(SceneManager.GetActiveScene().path);
             SceneController.Instance.LoadNewScene(_levelIndexToLoad);
         }
         else if (other.CompareTag("Player"))

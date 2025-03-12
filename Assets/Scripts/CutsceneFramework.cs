@@ -142,6 +142,9 @@ public class CutsceneFramework : MonoBehaviour
     public void SkipCutscene()
     {
         StopAllCoroutines();
+        string scenePath = SceneUtility.GetScenePathByBuildIndex(_loadingLevelIndex);
+        SaveDataManager.SetLastFinishedLevel(scenePath);
+        SaveDataManager.SetLevelCompleted(SceneManager.GetActiveScene().path);
         SceneController.Instance.LoadNewScene(_loadingLevelIndex);
     }
     
