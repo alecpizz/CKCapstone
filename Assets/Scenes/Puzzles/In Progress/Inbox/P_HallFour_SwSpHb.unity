@@ -10559,9 +10559,19 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 856613603846329405, guid: dbb0dd27c6fab3344aab4441094b0849, type: 3}
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 8793952534625745512, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1968049171}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dbb0dd27c6fab3344aab4441094b0849, type: 3}
+--- !u!4 &1683708801 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8793952534625745512, guid: dbb0dd27c6fab3344aab4441094b0849,
+    type: 3}
+  m_PrefabInstance: {fileID: 1683708800}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1706718115
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15920,6 +15930,37 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1949846346}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1968049170
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1968049171}
+  m_Layer: 0
+  m_Name: Grid Mesh Holder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1968049171
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1968049170}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1683708801}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2011216207
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16156,6 +16197,7 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 1683708800}
   - {fileID: 1534550047}
   - {fileID: 1922030914}
   - {fileID: 918567558}
@@ -16163,5 +16205,4 @@ SceneRoots:
   - {fileID: 32424140}
   - {fileID: 399818289}
   - {fileID: 217700697}
-  - {fileID: 1683708800}
   - {fileID: 870221970}
