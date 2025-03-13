@@ -8,8 +8,10 @@
 using System;
 using System.Collections.Generic;
 using FMODUnity;
+using PrimeTween;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 /// <summary>
 /// Enum for the current state. Must contain a delimiter.
@@ -18,11 +20,8 @@ using UnityEngine.InputSystem;
 public enum TurnState
 {
     Player = 0,
-    World = 1,
-    Enemy = 2,
-    SecondWorld = 3,
-    Harmony = 4,
-    None = 5,
+    Enemy = 1,
+    None = 2,
 }
 
 
@@ -39,11 +38,14 @@ public sealed class RoundManager : MonoBehaviour
     private PlayerControls _playerControls;
     private Vector3 _lastMovementInput;
     private bool _movementRegistered = false;
-    private bool _movementPressedThisFrame;
     private float _movementRegisteredTime = -1;
     [SerializeField] private float _inputBufferWindow = 0.5f;
-    [SerializeField] private EventReference _playerTurnEvent;
-    [SerializeField] private EventReference _enemyTurnEvent;
+
+    [Header("Autocomplete Mechanic")]
+    [SerializeField, Tooltip("Timescale during autocomplete dash")] private float _autocompleteSpeed = 3;
+    [SerializeField] private Image _speedUI;
+
+    public event Action<bool> AutocompleteToggled;
 
     /// <summary>
     /// Whether someone is having their turn.
@@ -56,11 +58,6 @@ public sealed class RoundManager : MonoBehaviour
     public bool IsPlayerTurn => _turnState == TurnState.Player;
 
     /// <summary>
-    /// Whether it's the world's turn.
-    /// </summary>
-    public bool IsWorldTurn => _turnState == TurnState.World;
-
-    /// <summary>
     /// Whether enemies exist in the given scene.
     /// </summary>
     public bool EnemiesPresent => _turnListeners[TurnState.Enemy].Count > 0;
@@ -69,16 +66,6 @@ public sealed class RoundManager : MonoBehaviour
     /// Whether it's the enemy's turn.
     /// </summary>
     public bool IsEnemyTurn => _turnState == TurnState.Enemy;
-
-    /// <summary>
-    /// Whether it's the harmony's turn
-    /// </summary>
-    public bool IsHarmonyTurn => _turnState == TurnState.Harmony;
-
-    /// <summary>
-    /// Whether it's the second world turn
-    /// </summary>
-    public bool IsSecondWorldTurn => _turnState == TurnState.SecondWorld;
 
     /// <summary>
     /// Sets the singleton instance and initializes the dictionaries for
@@ -105,18 +92,6 @@ public sealed class RoundManager : MonoBehaviour
         }
     }
 
-#if UNITY_EDITOR
-    /// <summary>
-    /// Resets default turn events since we can't set default values anymore.
-    /// </summary>
-    private void Reset()
-    {
-        _playerTurnEvent = EventReference.Find("event:/Turn Start Player");
-        _enemyTurnEvent = EventReference.Find("event:/Turn Start Enemy");
-    }
-#endif
-
-
     /// <summary>
     /// Enables the player controls and hooks a callback for movement input.
     /// </summary>
@@ -140,10 +115,13 @@ public sealed class RoundManager : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        _movementPressedThisFrame = _playerControls.InGame.Movement.IsPressed();
-        if (_movementPressedThisFrame && !TurnInProgress)
+        // Not being called unless movement is blocked
+        if (_playerControls.InGame.Movement.IsPressed() && !TurnInProgress)
         {
-            PerformMovement();
+            if(PlayerMovement.Instance.CanMove && Time.timeScale == 1)
+            {
+                PerformMovement();
+            }
         }
     }
 
@@ -155,25 +133,23 @@ public sealed class RoundManager : MonoBehaviour
     /// <param name="obj"></param>
     private void RegisterMovementInput(InputAction.CallbackContext obj)
     {
-        Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>();
-        if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
-        {
-            input.y = 0;
-        }
-        else
-        {
-            input.x = 0;
-        }
-        Vector3 dir = new Vector3(input.x, 0f, input.y);
-        _lastMovementInput = dir;
-        if (_turnState != TurnState.None)
-        {
+        if (_turnState != TurnState.None && Time.timeScale > 1)
             return;
+
+        var dir = GetNormalizedInput();
+
+        if(_turnState != TurnState.None && _lastMovementInput == dir)
+        {
+            EnableAutocomplete();
         }
+
+        _lastMovementInput = dir;
+
         _movementRegistered = true;
         _movementRegisteredTime = Time.unscaledTime;
 
-        if (_turnState != TurnState.None) return;
+        if (_turnState != TurnState.None)
+            return;
 
         PerformMovement();
     }
@@ -183,20 +159,16 @@ public sealed class RoundManager : MonoBehaviour
     /// </summary>
     private void PerformMovement()
     {
-        if (!_movementRegistered) return;
+        if (!_movementRegistered || DebugMenuManager.Instance.PauseMenu) return;
 
-        if (!_movementPressedThisFrame)
+        if (!_playerControls.InGame.Movement.IsPressed())
         {
             _movementRegistered = false;
+            return;
         }
 
         _turnState = TurnState.Player;
 
-        //only play player turn sound if there's enemies in the scene.
-        if (_turnListeners[TurnState.Enemy].Count > 0)
-        {
-            AudioManager.Instance.PlaySound(_playerTurnEvent);
-        }
         //perform the turn now so that it's frame perfect.
         foreach (var turnListener in _turnListeners[TurnState.Player])
         {
@@ -234,9 +206,23 @@ public sealed class RoundManager : MonoBehaviour
         {
             _turnState = TurnState.None;
             // Attempts to move player if they buffered an input
+            /*bool doAutocomplete = false;
             if(Time.unscaledTime - _movementRegisteredTime <= _inputBufferWindow)
-                PerformMovement();
+            {
+                if (_lastMovementInput == GetNormalizedInput())
+                {
+                    doAutocomplete = true;
+                    EnableAutocomplete();
+                }
+                    
 
+                PerformMovement();
+            }
+                
+            if(!doAutocomplete)
+                DisableAutocomplete();
+            */
+            DisableAutocomplete();
             return;
         }
 
@@ -254,12 +240,9 @@ public sealed class RoundManager : MonoBehaviour
             _turnState = next.Value;
         }
 
-        if (_turnState != TurnState.None)
+        if (_turnState != TurnState.None && SceneController.Instance != null &&
+            !SceneController.Instance.Transitioning)
         {
-            if (IsEnemyTurn)
-            {
-                AudioManager.Instance.PlaySound(_enemyTurnEvent);
-            }
             foreach (var turnListener in _turnListeners[_turnState])
             {
                 turnListener.BeginTurn(_lastMovementInput);
@@ -352,6 +335,45 @@ public sealed class RoundManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Speeds up timescale for a short duration. Call DisableAutocomplete() to toggle off
+    /// </summary>
+    private void EnableAutocomplete()
+    {
+        Time.timeScale = _autocompleteSpeed;
+        AutocompleteToggled?.Invoke(true);
+
+        Tween.Alpha(_speedUI, 1, 0.2f, Ease.OutSine).OnComplete(() => { _speedUI.gameObject.SetActive(true); });
+    }
+
+    /// <summary>
+    /// Returns timescale to default
+    /// </summary>
+    private void DisableAutocomplete()
+    {
+        Time.timeScale = 1;
+        AutocompleteToggled?.Invoke(false);
+        Tween.Alpha(_speedUI, 0, 0.4f, Ease.OutSine).OnComplete(()=> { _speedUI.gameObject.SetActive(false); });
+    }
+
+    /// <summary>
+    /// Fetches and normalizes the input of the player
+    /// </summary>
+    /// <returns>Normalized input vector</returns>
+    private Vector3 GetNormalizedInput()
+    {
+        Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>();
+        if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
+        {
+            input.y = 0;
+        }
+        else
+        {
+            input.x = 0;
+        }
+        return new Vector3(input.x, 0f, input.y);
+    }
+
+    /// <summary>
     /// Helper method to get the next turn state.
     /// </summary>
     /// <param name="turnState">The turn state to compare against.</param>
@@ -360,11 +382,8 @@ public sealed class RoundManager : MonoBehaviour
     {
         return turnState switch
         {
-            TurnState.Player => TurnState.World,
-            TurnState.World => TurnState.Enemy,
-            TurnState.Enemy => TurnState.SecondWorld,
-            TurnState.SecondWorld => TurnState.Harmony,
-            TurnState.Harmony => TurnState.None,
+            TurnState.Player => TurnState.Enemy,
+            TurnState.Enemy => TurnState.None,
             _ => null
         };
     }
@@ -379,10 +398,7 @@ public sealed class RoundManager : MonoBehaviour
         return turnState switch
         {
             TurnState.Player => TurnState.None,
-            TurnState.World => TurnState.Player,
-            TurnState.Enemy => TurnState.World,
-            TurnState.SecondWorld => TurnState.Enemy,
-            TurnState.Harmony => TurnState.SecondWorld,
+            TurnState.Enemy => TurnState.Player,
             _ => null
         };
     }

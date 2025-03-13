@@ -16,6 +16,7 @@ using UnityEngine.Events;
 using FMODUnity;
 using FMOD.Studio;
 using SaintsField.Playa;
+using JetBrains.Annotations;
 
 public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
 {
@@ -44,6 +45,11 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         get => gameObject;
     }
 
+    public bool CanMove
+    {
+        get => _canMove;
+    }
+
     [SerializeField] private Vector3 _positionOffset;
     [SerializeField] private PlayerInteraction _playerInteraction;
 
@@ -60,6 +66,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     [SerializeField] private float _rotationTime = 0.05f;
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
     [SerializeField] private Ease _movementEase = Ease.OutBack;
+
+    private bool _canMove;
 
     private float _movementTime;
     // Timing from metronome
@@ -81,6 +89,10 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
     [SerializeField] private Animator _animator;
 
+    [Header("Dash")]
+    [SerializeField] private ParticleSystem _dashParticles;
+    [SerializeField] private TrailRenderer[] _dashTrails;
+
     /// <summary>
     /// Sets instance upon awake.
     /// </summary>
@@ -95,6 +107,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// </summary>
     private void Start()
     {
+        _canMove = true;
+
         FacingDirection = new Vector3(0, 0, 0);
         if (RoundManager.Instance.EnemiesPresent)
         {
@@ -111,6 +125,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
         _movementTime = RoundManager.Instance.EnemiesPresent ? 
             _withEnemiesMovementTime : _noEnemiesMovementTime;
+
+        RoundManager.Instance.AutocompleteToggled += OnAutocompleteToggledEvent;
     }
 
     /// <summary>
@@ -119,7 +135,14 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     private void OnEnable()
     {
         if (RoundManager.Instance != null)
+        {
             RoundManager.Instance.RegisterListener(this);
+            RoundManager.Instance.AutocompleteToggled += OnAutocompleteToggledEvent;
+        }
+
+        _dashParticles.Stop();
+        foreach (TrailRenderer t in _dashTrails)
+            t.emitting = false;
     }
 
     /// <summary>
@@ -128,21 +151,38 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     private void OnDisable()
     {
         if (RoundManager.Instance != null)
+        {
             RoundManager.Instance.UnRegisterListener(this);
+            RoundManager.Instance.AutocompleteToggled -= OnAutocompleteToggledEvent;
+        }
+            
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.UnregisterTimeListener(this);
     }
 
+    /// <summary>
+    /// Unregisters input actions on player death
+    /// </summary>
+    public void OnDeath()
+    {
+        if (RoundManager.Instance != null)
+        {
+            RoundManager.Instance.UnRegisterListener(this);
+            RoundManager.Instance.AutocompleteToggled -= OnAutocompleteToggledEvent;
+        }
+
+        if (TimeSignatureManager.Instance != null)
+            TimeSignatureManager.Instance.UnregisterTimeListener(this);
+    }
 
     /// <summary>
     /// Helper coroutine for performing movement with a delay
     /// </summary>
     /// <param name="moveDirection">Direction of player movement</param>
     /// <returns>Waits for short delay while moving</returns>
-    private IEnumerator MovementDelay(Vector3 moveDirection)
+    private IEnumerator MovePlayer(Vector3 moveDirection)
     {
-        yield return new WaitForSeconds(_rotationTime);
-        float modifiedMovementTime = Mathf.Clamp(_movementTime / _playerMovementTiming,
+        float modifiedMovementTime = Mathf.Clamp(_movementTime / (_playerMovementTiming + 1),
             _minMovementTime, float.MaxValue);
 
         for (int i = 0; i < _playerMovementTiming; i++)
@@ -157,11 +197,11 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                 && gameObject.transform.position != readPos) ||
                 (DebugMenuManager.Instance.GhostMode))
             {
+                GridBase.Instance.UpdateEntryAtPosition(this, move);
                 _animator.SetTrigger(Forward);
                 yield return Tween.Position(transform,
                     move + _positionOffset, duration: modifiedMovementTime, 
                     _movementEase).ToYieldInstruction();
-                GridBase.Instance.UpdateEntry(this);
             }
 
             if (_playerMovementTiming > 1)
@@ -170,35 +210,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             }
         }
 
-        RoundManager.Instance.CompleteTurn(this);
+        _canMove = true;
     }
-
-    /// <summary>
-    /// Reloads scene when player hits an enemy
-    /// </summary>
-    /// <param name="collision">Data from collision</param>
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (!DebugMenuManager.Instance.Invincibility 
-            && collision.gameObject.CompareTag("Enemy") ||
-            !DebugMenuManager.Instance.Invincibility 
-            && collision.gameObject.CompareTag("SonEnemy"))
-        {
-            // Checks if the enemy is frozen; if they are, doesn't reload the scene
-            EnemyBehavior enemy = collision.collider.GetComponent<EnemyBehavior>();
-            if (enemy == null)
-                return;
-
-            MirrorAndCopyBehavior mirrorCopy = collision.collider.GetComponent<MirrorAndCopyBehavior>();
-            if (mirrorCopy == null)
-                return;
-
-            Time.timeScale = 0f;
-
-            SceneController.Instance.ReloadCurrentScene();
-        }
-    }
-
 
     /// <summary>
     /// Receives the new player movement speed when time signature updates
@@ -220,33 +233,44 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// </summary>
     /// <param name="direction">The direction the player should move</param>
     public void BeginTurn(Vector3 direction)
-    {
-        Vector3Int dir = new Vector3Int((int) direction.x, (int) direction.y, (int) direction.z);
+    { 
+        if (_canMove)
+        {
+            _canMove = false;
 
-        bool isSameDirection = FacingDirection == direction;
+            Vector3Int dir = new Vector3Int((int)direction.x, (int)direction.y, (int)direction.z);
 
-        FacingDirection = direction; //End of animation section
+            bool isSameDirection = FacingDirection == direction;
 
-        float rotationTime = isSameDirection ? 0 : _rotationTime;
+            FacingDirection = direction; //End of animation section
 
-        Tween.Rotation(transform, endValue: Quaternion.LookRotation(direction), duration: rotationTime,
-            ease: _rotationEase).OnComplete(
-            () =>
-            {
-                var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
-                if ((GridBase.Instance.CellIsTransparent(move) || DebugMenuManager.Instance.GhostMode))
+            float rotationTime = isSameDirection ? 0 : _rotationTime;
+
+            Tween.Rotation(transform, endValue: Quaternion.LookRotation(direction), duration: rotationTime,
+                ease: _rotationEase).OnComplete(
+                () =>
                 {
-                    AudioManager.Instance.PlaySound(_playerMove);
-                    StartCoroutine(MovementDelay(direction));
-                    OnPlayerMoveComplete?.Invoke(); //keeps track of movement completion
-                }
-                else
-                {
-                    AudioManager.Instance.PlaySound(_playerCantMove);
-                    RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
-                }
-            });
-        
+                    var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
+
+                    if ((GridBase.Instance.CellIsTransparent(move) || DebugMenuManager.Instance.GhostMode))
+                    {
+                        AudioManager.Instance.PlaySound(_playerMove);
+                        StartCoroutine(MovePlayer(direction));
+                        RoundManager.Instance.CompleteTurn(this);
+                        OnPlayerMoveComplete?.Invoke(); //keeps track of movement completion
+                    }
+                    else
+                    {
+                        _canMove = true;
+                        AudioManager.Instance.PlaySound(_playerCantMove);
+                        RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
+                    }
+                });
+        }
+        else
+        {
+            RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
+        }
     }
 
     /// <summary>
@@ -254,9 +278,12 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// </summary>
     public void ForceTurnEnd()
     {
+        if (!RoundManager.Instance.IsPlayerTurn) {  return; }
+
         StopAllCoroutines();
         GridBase.Instance.UpdateEntry(this);
         RoundManager.Instance.CompleteTurn(this);
+        _canMove = true;
     }
 
     /// <summary>
@@ -267,5 +294,27 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
         Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos);
         transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z);
+    }
+
+    /// <summary>
+    /// Toggles dash particles when the autocomplete is toggled on/off
+    /// </summary>
+    /// <param name="isActive"></param>
+    private void OnAutocompleteToggledEvent(bool isActive)
+    {
+        if (isActive)
+        {
+            _dashParticles.Play();
+            foreach (TrailRenderer t in _dashTrails)
+                t.emitting = true;
+        }
+            
+        else
+        {
+            _dashParticles.Stop();
+            foreach (TrailRenderer t in _dashTrails)
+                t.emitting = false;
+        }
+            
     }
 }

@@ -8,10 +8,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class MetronomeBehavior : MonoBehaviour
+public class MetronomeBehavior : MonoBehaviour, ITimeListener
 {
     public UnityEvent MetronomeTriggered;
 
@@ -48,6 +49,9 @@ public class MetronomeBehavior : MonoBehaviour
 
     private PlayerMovement _player;
 
+    [SerializeField]
+    private TMP_Text _metronomePredictor;
+
     /// <summary>
     /// Keeps the particle effects from playing right away.
     /// </summary>
@@ -57,7 +61,25 @@ public class MetronomeBehavior : MonoBehaviour
         _contactIndicator.Pause();
         //_anim = GetComponentInParent<Animator>();
 
+        // rotate to always be readable
+        _metronomePredictor.rectTransform.forward = Vector3.forward;
+        _metronomePredictor.rectTransform.Rotate(Vector3.right * 90);
+
         _isSlow = _initiallySlow;
+    }
+
+    /// <summary>
+    /// Updates metronome predictor text
+    /// </summary>
+    private void Start()
+    {
+        if (TimeSignatureManager.Instance != null)
+        {
+            TimeSignatureManager.Instance.RegisterTimeListener(this);
+        }
+
+        Vector2Int nextTimeSig = TimeSignatureManager.Instance.GetNextTimeSignature();
+        _metronomePredictor.text = nextTimeSig.x + "/" + nextTimeSig.y;
     }
 
     /// <summary>
@@ -81,9 +103,6 @@ public class MetronomeBehavior : MonoBehaviour
         _isSlow = !_isSlow;
         
         _anim.speed = _isSlow ? _slowSpeed : _fastSpeed;
-       // print("Updated Speed: " + _anim.speed);
-
-        //_anim.SetBool("WeightUp", isSlow);
     }
 
     /// <summary>
@@ -142,7 +161,11 @@ public class MetronomeBehavior : MonoBehaviour
         _contactIndicator.Play();
         _HUDEffect.SetActive(false);
 
-        _player.ForceTurnEnd();
+        PlayerMovement playerMovement;
+        if (other.gameObject.TryGetComponent<PlayerMovement>(out  playerMovement))
+        {
+            playerMovement.ForceTurnEnd();
+        }
 
         EnemyBehavior enemyBehavior;
         if (other.gameObject.TryGetComponent<EnemyBehavior>(out enemyBehavior))
@@ -155,5 +178,18 @@ public class MetronomeBehavior : MonoBehaviour
         {
             mirrorAndCopyBehavior.ForceTurnEnd();
         }
+    }
+
+    /// <summary>
+    /// Implementation of ITimeListener. Updates text indicator
+    /// </summary>
+    /// <param name="newTimeSignature"></param>
+    public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
+    {
+        if (TimeSignatureManager.Instance == null)
+            return;
+
+        Vector2Int nextTimeSig = TimeSignatureManager.Instance.GetNextTimeSignature();
+        _metronomePredictor.text = nextTimeSig.x + "/" + nextTimeSig.y;
     }
 }

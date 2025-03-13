@@ -1,6 +1,7 @@
 /******************************************************************
  *    Author: Cole Stranczek
- *    Contributors: Cole Stranczek, Mitchell Young, Nick Grinstead, Alec Pizziferro
+ *    Contributors: Cole Stranczek, Mitchell Young, Nick Grinstead, Alec Pizziferro, Alex Laubenstein
+ *    Jamison Parks
  *    Date Created: 10/3/24
  *    Description: Script that handles the behavior of the enemy,
  *    from movement to causing a failstate with the player
@@ -23,7 +24,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 {
     public bool IsTransparent
     {
-        get => false;
+        get => !_isFrozen;
     }
 
     public bool BlocksHarmonyBeam
@@ -36,6 +37,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         get => transform.position;
     }
 
+    public Transform EntityTransform 
+    { 
+        get => transform; 
+    }
+
     [SerializeField] private Vector3 _positionOffset;
 
     public GameObject EntryObject
@@ -43,10 +49,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         get => gameObject;
     }
 
-    private PlayerControls _input;
     [SerializeField] private GameObject _destinationMarker;
     [SerializeField] private GameObject _destPathVFX;
-
 
     //Destination object values
 
@@ -54,6 +58,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     [SerializeField] private float _destYPos = 1f;
     [SerializeField] private float _lineYPosOffset = 1f;
+
+    [PlayaInfoBox("Time delay from when an enemy starts their turn and actually begins moving." +
+        "\n This is meant to prevent enemies from moving before the player starts to move.")]
+    [PropRange(0f, 0.5f)]
+    [SerializeField]
+    private float _timeBeforeTurn = 0.1f;
 
     //Wait time between enemy moving each individual tile while on path to next destination
     [PlayaInfoBox("Time for the enemy to move between each tile. " +
@@ -64,11 +74,19 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [PlayaInfoBox("The floor for how fast the enemy can move.")] [SerializeField]
     private float _minMoveTime = 0.175f;
 
-    [SerializeField] private bool _currentToggle = true;
+    private bool _currentGroupToggle = true;
+    private bool _currentSoloToggle = true;
 
     [SerializeField] private float _rotationTime = 0.10f;
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
     [SerializeField] private Ease _movementEase = Ease.OutBack;
+    private bool _endRotate = false;
+
+    private int _offsetDestCount = 0;
+    private bool _signatureIsChanged = false;
+    private bool _firstTurnBack = false;
+    private bool _metronomeTriggered = false;
+    private bool _notFirstCheck = false;
 
     /// <summary>
     /// Helper enum for enemy directions.
@@ -137,6 +155,16 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private bool _isReturningToStart = false;
     private int _indicatorIndex = 0;
     private bool _indicatorReturningToStart = false;
+    private int _currentEnemyIndex = 0;
+
+    //public static PlayerMovement Instance;
+    private static readonly int Forward = Animator.StringToHash("Forward");
+    private static readonly int Attack = Animator.StringToHash("Attack");
+    private static readonly int Frozen = Animator.StringToHash("Frozen");
+    private static readonly int Turn = Animator.StringToHash("Turn");
+
+
+    [SerializeField] private Animator _animator;
 
     /// <summary>
     /// Disables a PrimeTween warning.
@@ -173,17 +201,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
         _destPathVFX.SetActive(false);
         _destinationMarker.SetActive(false);
-        for (int i = 0; i < _enemyMovementTime; i++)
-        {
-            UpdateDestinationMarker();
-        }
 
+        UpdateDestinationMarker();
         DestinationPath();
-
-        _input = new PlayerControls();
-        _input.InGame.Enable();
-
-        _input.InGame.Toggle.performed += PathingToggle;
     }
 
     /// <summary>
@@ -247,7 +267,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     }
 
     /// <summary>
-    /// Unregisters from player input
+    /// Unregisters from from managers
     /// </summary>
     private void OnDisable()
     {
@@ -260,9 +280,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         {
             TimeSignatureManager.Instance.UnregisterTimeListener(this);
         }
-
-        _input.InGame.Toggle.performed -= PathingToggle;
-        _input.InGame.Disable();
     }
 
     /// <summary>
@@ -289,11 +306,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     /// <summary>
     /// DestinationPath is called whenever the mouse ray collides with the enemy.
-    /// This function turns the _destPathVFX and _destinationMarker objects on/off.
+    /// This function turns the __destPathVFX and __destinationMarker objects on/off.
     /// </summary>
     public void DestinationPath()
     {
-        if (!_currentToggle)
+        if (!_currentGroupToggle)
         {
             return;
         }
@@ -304,15 +321,40 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     /// <summary>
     /// Toggles all enemy pathing on the current level when the player
-    /// presses spacebar.
+    /// presses Q.
     /// </summary>
     /// <param name="context"></param>
-    private void PathingToggle(InputAction.CallbackContext context)
+    public void PathingToggle(bool isCycling)
     {
-        _destPathVFX.SetActive(_currentToggle);
-        _destinationMarker.SetActive(_currentToggle);
+        if (isCycling)
+        {
+            _currentSoloToggle = true;
 
-        _currentToggle = !_currentToggle;
+            _destPathVFX.SetActive(false);
+            _destinationMarker.SetActive(false);
+
+            _currentGroupToggle = true;
+        }
+        else
+        {
+            _destPathVFX.SetActive(_currentGroupToggle);
+            _destinationMarker.SetActive(_currentGroupToggle);
+
+            _currentGroupToggle = !_currentGroupToggle;
+        }
+    }
+
+    /// <summary>
+    /// Toggles enemy pathing individually for enemiesin  the current level when the player
+    /// presses a bumper .
+    /// </summary>
+    /// <param name="context"></param>
+    public void PathingCycle()
+    {
+        _destPathVFX.SetActive(_currentSoloToggle);
+        _destinationMarker.SetActive(_currentSoloToggle);
+
+        _currentSoloToggle = !_currentSoloToggle;
     }
 
     /// <summary>
@@ -325,19 +367,25 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _destinationMarker.transform.position = transform.position;
         Vector3 linePos = transform.position;
         linePos.y = _lineYPosOffset;
-        _vfxLine.SetPosition(0, linePos);
         //Looks at the time signature for the enemy so it can place multiple moves in advance
 
-        EvaluateNextMove(ref _indicatorIndex, ref _indicatorReturningToStart);
+        NextMarkerDestination(ref _indicatorIndex, ref _indicatorReturningToStart);
+        _vfxLine.positionCount = _moveDestinations.Count;
 
         //Finds the direction and tiles to move based on its own current point index value
         var destPoint = _moveDestinations[_indicatorIndex];
         var destPointWorld = GridBase.Instance.CellToWorld(destPoint);
 
-        linePos = destPointWorld;
-        linePos.y = _lineYPosOffset;
+        //Sets each point in the _vfx line along the tile path in the _moveDestinations list
+        //starting from the enemy's current position
+        for (int i = 0; i < _moveDestinations.Count; i++)
+        {
+            Vector3 _vfxPos = GridBase.Instance.CellToWorld(_moveDestinations[i]);
+            _vfxPos.y = _lineYPosOffset;
 
-        _vfxLine.SetPosition(1, destPointWorld);
+            _vfxLine.SetPosition(i, _vfxPos);
+        }
+
         destPointWorld.y += _destYPos;
         _destinationMarker.transform.position = destPointWorld;
     }
@@ -349,6 +397,16 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// <param name="newTimeSignature">The new time signature.</param>
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
     {
+        if (_enemyMovementTime != newTimeSignature.y && _notFirstCheck)
+        {
+            _metronomeTriggered = true;
+        }
+        
+        if (!_notFirstCheck)
+        {
+            _notFirstCheck = true;
+        }
+
         _enemyMovementTime = newTimeSignature.y;
 
         if (_enemyMovementTime <= 0)
@@ -384,6 +442,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// <returns>null</returns>
     private IEnumerator MovementRoutine()
     {
+        yield return new WaitForSeconds(_timeBeforeTurn);
+
         bool blocked = false;
         for (int i = 0; i < _enemyMovementTime; i++)
         {
@@ -393,6 +453,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             var movePt = _moveDestinations[_moveIndex];
             var currCell = GridBase.Instance.WorldToCell(transform.position);
             var goalCell = GetLongestPath(GridBase.Instance.CellToWorld(movePt));
+
+            if (_moveIndex == _moveDestinations.Count - 1 && !_circularMovement)
+            {
+                _endRotate = true;
+            }
             //we were blocked by something, adjust memory
             if (goalCell != movePt)
             {
@@ -413,6 +478,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 continue;
             }
 
+            if (_animator != null)
+            {
+                _animator.SetBool(Frozen, false);
+                _animator.SetTrigger(Forward);
+            }
             var dist = Vector3Int.Distance(currCell, goalCell);
             var rotationDir = (GridBase.Instance.CellToWorld(goalCell) - transform.position).normalized;
             var moveWorld = GridBase.Instance.CellToWorld(goalCell);
@@ -436,22 +506,50 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                             !DebugMenuManager.Instance.Invincibility)
                         {
                             //hit a player!
+                            PlayerMovement.Instance.OnDeath();
+                            if (_animator != null)
+                            {
+                                _animator.SetTrigger(Attack);
+                            }
                             SceneController.Instance.ReloadCurrentScene();
                         }
                     });
+            AudioManager.Instance.PlaySound(_enemyMove);
+            if (rotationDir != transform.forward)
+            {
+                if (_animator != null)
+                {
+                    _animator.SetTrigger(Turn);
+                }
+            }
             yield return Tween.Rotation(transform, endValue: Quaternion.LookRotation(rotationDir),
                 duration: _rotationTime,
                 ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).Chain(tween).ToYieldInstruction();
-            AudioManager.Instance.PlaySound(_enemyMove);
+            if (_animator != null)
+            {
+                _animator.ResetTrigger(Turn);
+            }
             GridBase.Instance.UpdateEntry(this);
-        }
 
+            if (_endRotate)
+            {
+                if (_animator != null)
+                {
+                    _animator.SetTrigger(Turn);
+                }
+                yield return Tween.Rotation(transform, endValue: Quaternion.LookRotation(-rotationDir),
+                duration: _rotationTime,
+                ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).ToYieldInstruction();
+                _endRotate = false;
+            }
+        }
         if (!blocked)
         {
             UpdateDestinationMarker();
         }
-
+        
         RoundManager.Instance.CompleteTurn(this);
+
     }
 
     /// <summary>
@@ -536,6 +634,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 {
                     moveIndex = 0;
                     looped = false;
+                    _endRotate = true;
                 }
             }
         }
@@ -556,7 +655,156 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 moveIndex = 1;
             }
         }
+
+        _currentEnemyIndex = moveIndex;
     }
+
+
+    /// <summary>
+    /// Determines the next move index for the enemy's pathing indicator
+    /// using the current time signature.
+    /// </summary>
+    /// <param name="moveIndex">Reference to the evaluated move index.</param>
+    /// <param name="looped">Reference to the evaluated loop state.</param>
+    private void NextMarkerDestination(ref int moveIndex, ref bool looped)
+    {
+        //if the time signature changes the destination marker position changes
+        //based on current enemy position
+        if (_metronomeTriggered)
+        {
+            _signatureIsChanged = !_signatureIsChanged;
+            if (!looped)
+            {
+                moveIndex = _moveDestinations.Count - 1;
+            }
+            else
+            {
+                moveIndex = 0;
+            }
+
+            if (!_signatureIsChanged)
+            {
+                _firstTurnBack = true;
+            }
+            _metronomeTriggered = false;
+        }
+
+        //not at the end of our list of moves.
+        if (moveIndex < _moveDestinations.Count - 1)
+        {
+            if (!looped)
+            {
+                //move forward according to time signature
+                moveIndex += _enemyMovementTime;
+
+                //if time signature exceeds enemy position count start reversing
+                HandleOverflow(ref _indicatorIndex, ref looped);
+            }
+            else
+            {
+                moveIndex-=_enemyMovementTime;
+                //we've returned to the start, so reset everything to be back as normal
+                if (moveIndex <= 0)
+                {
+                    if (_signatureIsChanged)
+                    {
+                        moveIndex = _moveDestinations.Count - 1;
+                    }
+                    else
+                    {
+                        moveIndex = 0;
+                    }
+                    looped = false;
+                }
+            }
+        }
+        else
+        {
+            //we're at the end of our potential moves, so let's determine how we're gonna get back.
+
+            if (!_circularMovement)
+            {
+                //we're not using circular movement, so for future turns we need to move backwards until we reach 
+                // the start again.
+                moveIndex -= _enemyMovementTime;
+                if (!_firstTurnBack)
+                {
+                    looped = true;
+                }
+                else
+                {
+                    moveIndex += _enemyMovementTime;
+                    _firstTurnBack = false;
+                }
+
+                //if time signature exceeds enemy position count start reversing
+                HandleOverflow(ref _indicatorIndex, ref looped);
+            }
+            else
+            {
+                //our moves will start with the enemy time signature since we're circularly repeating our movement.
+                moveIndex = _currentEnemyIndex + _enemyMovementTime;
+
+                //if the number of moves exceeds the list count start from 0 and then add the amount remaining.
+                if (moveIndex > _moveDestinations.Count - 1)
+                {
+                    int offsetCircular = moveIndex - (_moveDestinations.Count - 1);
+                    moveIndex = 0;
+                    moveIndex += offsetCircular;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Handles moveIndex for the NextMarkerDestination function if the
+    /// time signature movement exceeds the boundaries of 0 or the
+    /// _moveDestinations list count.
+    /// </summary>
+    /// <param name="moveIndex">Reference to the evaluated move index.</param>
+    /// <param name="looped">Reference to the evaluated loop state.</param>
+    private void HandleOverflow(ref int moveIndex, ref bool looped)
+    {
+        //If going back through the list check for less than before
+        //greater than.
+        if (looped)
+        {
+            //Increases if below 0
+            if (moveIndex < 0)
+            {
+                _offsetDestCount = -moveIndex;
+                moveIndex = 0;
+                moveIndex += _offsetDestCount;
+            }
+            //Decreases if over _moveDestinations count
+            if (moveIndex > _moveDestinations.Count - 1)
+            {
+                _offsetDestCount = -moveIndex;
+                moveIndex = _moveDestinations.Count - 1;
+                moveIndex += _offsetDestCount;
+            }
+        }
+        //If going normally through the list check for greater than before
+        //less than.
+        else
+        {
+            //Decreases if over _moveDestinations count
+            if (moveIndex > _moveDestinations.Count - 1)
+            {
+                _offsetDestCount = -moveIndex;
+                moveIndex = _moveDestinations.Count - 1;
+                moveIndex += _offsetDestCount;
+            }
+            //Increases if below 0
+            if (moveIndex < 0)
+            {
+                _offsetDestCount = -moveIndex;
+                moveIndex = 0;
+                moveIndex += _offsetDestCount;
+            }
+        }
+    }
+
 
     /// <summary>
     /// Can force enemy turn to end early
@@ -580,6 +828,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     {
         if (_isSonEnemy)
         {
+            if (_animator != null)
+            {
+                _animator.SetBool(Frozen, true);
+            }
             _isFrozen = true;
         }
     }
@@ -589,6 +841,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// </summary>
     public void OnLaserExit()
     {
+        if (_animator != null)
+        {
+            _animator.SetBool(Frozen, false);
+        }
         _isFrozen = false;
     }
 
@@ -604,6 +860,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     {
         Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
         Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos);
-        transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z);
+        transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z) + _positionOffset;
     }
 }

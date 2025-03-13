@@ -1,6 +1,6 @@
 /******************************************************************
  *    Author: Nick Grinstead
- *    Contributors:  Rider Hagen, Alec Pizziferro
+ *    Contributors:  Rider Hagen, Alec Pizziferro, Josephine Qualls
  *    Date Created: 9/28/24
  *    Description: Script designed to handle all realtime
  *    UI related functionality.
@@ -14,6 +14,7 @@ using UnityEngine.SceneManagement;
 using SaintsField;
 using Unity.VisualScripting;
 using UnityEngine.Serialization;
+using static UnityEngine.Rendering.DebugUI;
 
 public class UIManager : MonoBehaviour, ITimeListener
 {
@@ -47,7 +48,9 @@ public class UIManager : MonoBehaviour, ITimeListener
     private List<int> _notes;
 
     private const string BaseCollectedText = "Collect the notes in numerical order:";
-    private const string LevelText = "Level";
+    [SerializeField] private string _levelText = "Level";
+    [SerializeField] private string _challengeText = "Challenge";
+    [SerializeField] private string _intermissionText = "Intermission";
 
     /// <summary>
     /// Initializing values and registering to actions
@@ -88,14 +91,69 @@ public class UIManager : MonoBehaviour, ITimeListener
         WinChecker.GotCorrectSequence += DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence += DisplayIncorrectMessage;
 
-        //Note (ALEC): I commented this out assuming that we will set this up in build.
-        if (_levelNumber != null)
+
+        //Currently saving old if statement to potentially use/repurpose for Trinity's revisions
+
+        /*if (LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames.Count > 0)
         {
-            if (_isChallenge)
-                _levelNumber.text = "Challenge";
-            else
-                _levelNumber.text = $"{LevelText} {SceneManager.GetActiveScene().buildIndex}";
+            int index = SceneManager.GetActiveScene().buildIndex;
+            var prettyName = LevelOrderSelection.Instance.SelectedLevelData.PrettySceneNames[index].PrettyName;
+            _levelNumber.text = prettyName; //Change to reflect what Trinity wants
         }
+        else
+        {
+            //legacy level ordering
+            if (_isChallenge)
+            {
+                _levelNumber.text = "Challenge";
+                Debug.Log("it's challenging");
+            }
+            else
+            {
+                _levelNumber.text = $"{LevelText} {SceneManager.GetActiveScene().buildIndex}";
+                Debug.Log("it's a level");
+            }
+                
+        }*/
+        
+    }
+
+    public void SetLevelText(string text)
+    {
+        _levelNumber.text = text;
+    }
+
+    /// <summary>
+    /// Assigns the proper level name to the time signature
+    /// </summary>
+    private void LvlDictUpdate()
+    {
+        // int index = SceneManager.GetActiveScene().buildIndex;
+        //
+        // //Gets the path to a scene
+        // string path = SceneUtility.GetScenePathByBuildIndex(index);
+        // //Uses the path to get the full name of the scene in the build
+        // string sceneName = System.IO.Path.GetFileNameWithoutExtension(path);
+        //
+        // //Assigns the name of scenes to the time signature in a level
+        // if (_levelNumber == null) return;
+        // if (_isChallenge)
+        // {
+        //     //Challenges are currently Challenge + their level number
+        //     _levelNumber.text = _challengeText;
+        // }
+        // else
+        // {
+        //     //Levels are Level + lvl number
+        //     if (sceneName[0] == 'I')
+        //     {
+        //         _levelNumber.text = _intermissionText;
+        //     }
+        //     else
+        //     {
+        //         _levelNumber.text = $"{_levelText} {_levelButtons.GetLvlCounter(index)}";
+        //     }
+        // }
     }
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)

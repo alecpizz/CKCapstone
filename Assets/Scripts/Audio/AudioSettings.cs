@@ -1,10 +1,11 @@
 /******************************************************************
-*    Author: Claire Noto
-*    Contributors: Claire Noto
-*    Date Created: 10/31/2024
-*    Description: System that handles the AudioSettings in the
-*                 settings menu.
-*******************************************************************/
+ *    Author: Claire Noto
+ *    Contributors: Claire Noto, Alec Pizziferro
+ *    Date Created: 10/31/2024
+ *    Description: System that handles the AudioSettings in the
+ *                 settings menu.
+ *******************************************************************/
+
 using UnityEngine;
 using FMOD.Studio;
 using FMODUnity;
@@ -19,22 +20,14 @@ public class AudioSettings : MonoBehaviour
     private Bus _master;
     private Bus _bgMusic;
     private Bus _SFX;
+    
+    private const string Volume = "Volume";
+    private const string MasterVolume = "Master";
+    private const string MusicVolume = "Music";
+    private const string SFXVolume = "SFX";
 
-    public static AudioSettings Instance;
-    private const string MasterVolume = "MasterVolume";
-    private const string MusicVolume = "MusicVolume";
-    private const string SFXVolume = "SFXVolume";
-
-    void Awake()
+    private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        } 
-        else if (Instance != this)
-        {
-            Destroy(this);
-        }    
         _bgMusic = RuntimeManager.GetBus("bus:/Music");
         _SFX = RuntimeManager.GetBus("bus:/SFX");
         _master = RuntimeManager.GetBus("bus:/");
@@ -42,30 +35,7 @@ public class AudioSettings : MonoBehaviour
 
     private void Start()
     {
-        if (!PlayerPrefs.HasKey(MasterVolume))
-        {
-            Debug.Log("Data not found");
-            _masterSlider.value = 1;
-            _bgMusicSlider.value = 1;
-            _SFXSlider.value = 1;
-
-            PlayerPrefs.SetFloat(MasterVolume, 1f);
-            PlayerPrefs.SetFloat(MusicVolume, 1f);
-            PlayerPrefs.SetFloat(SFXVolume, 1f);
-
-            _master.setVolume(_masterSlider.value);
-            _bgMusic.setVolume(_bgMusicSlider.value);
-            _SFX.setVolume(_SFXSlider.value);
-
-        }
-        else
-        {
-            Debug.Log("Data found");
-            Load();
-            SetMasterVolume();
-            SetMusicVolume();
-            SetSFXVolume();
-        }
+        Load();
     }
 
     /// <summary>
@@ -74,7 +44,7 @@ public class AudioSettings : MonoBehaviour
     public void SetMasterVolume()
     {
         _master.setVolume(_masterSlider.value);
-        PlayerPrefs.SetFloat(MasterVolume, _masterSlider.value);
+        SaveDataManager.SetSettingFloat(Volume, MasterVolume, _masterSlider.value);
     }
 
     /// <summary>
@@ -83,7 +53,7 @@ public class AudioSettings : MonoBehaviour
     public void SetMusicVolume()
     {
         _bgMusic.setVolume(_bgMusicSlider.value);
-        PlayerPrefs.SetFloat(MusicVolume, _bgMusicSlider.value);
+        SaveDataManager.SetSettingFloat(Volume, MusicVolume, _bgMusicSlider.value);
     }
 
     /// <summary>
@@ -92,16 +62,19 @@ public class AudioSettings : MonoBehaviour
     public void SetSFXVolume()
     {
         _SFX.setVolume(_SFXSlider.value);
-        PlayerPrefs.SetFloat(SFXVolume, _SFXSlider.value);
+        SaveDataManager.SetSettingFloat(Volume, SFXVolume, _SFXSlider.value);
     }
 
     /// <summary>
-    /// Loads the values from PlayerPrefs and adjusts the sliders accordingly
+    /// Loads the values from Save Data and adjusts the sliders accordingly
     /// </summary>
     private void Load()
     {
-        _bgMusicSlider.value = PlayerPrefs.GetFloat(MusicVolume);
-        _SFXSlider.value = PlayerPrefs.GetFloat(SFXVolume);
-        _masterSlider.value = PlayerPrefs.GetFloat(MasterVolume);
+        _bgMusicSlider.value = SaveDataManager.GetSettingFloat(Volume, MusicVolume);
+        _bgMusic.setVolume(_bgMusicSlider.value);
+        _SFXSlider.value = SaveDataManager.GetSettingFloat(Volume, SFXVolume);
+        _SFX.setVolume(_SFXSlider.value);
+        _masterSlider.value = SaveDataManager.GetSettingFloat(Volume, MasterVolume);
+        _master.setVolume(_masterSlider.value);
     }
 }
