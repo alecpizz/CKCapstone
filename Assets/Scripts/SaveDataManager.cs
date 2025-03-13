@@ -248,9 +248,11 @@ public static class SaveDataManager
     /// <param name="sceneName">The name of the scene that was finished.</param>
     public static void SetLastFinishedLevel(string sceneName)
     {
+        Debug.Log($"SAVING {sceneName}");
         _persistentDataObject.SetData<StringType>(CKSaveData_KEYS.Progression.TableName,
             CKSaveData_KEYS.Progression.Last_Level_Completed.EntryName,
             CKSaveData_KEYS.Progression.Last_Level_Completed._Scene_Name, new StringType(sceneName));
+        Debug.Log(_persistentDataObject.errors);
         SaveData();
     }
 

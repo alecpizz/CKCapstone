@@ -388,14 +388,23 @@ public class GridBase : MonoBehaviour
     private void DestroyMesh()
     {
         //destroy the grid if we have it, in editor don't wait.
-        var gameObj = _gridMeshHolder == null ?
-            transform.Find(GridMeshName).gameObject : _gridMeshHolder;
         if (Application.isPlaying)
         {
-            Destroy(gameObj);
+            if (_gridMeshHolder != null)
+            {
+                Destroy(_gridMeshHolder);
+            }
+
+            var otherGrid = GameObject.Find(GridMeshName);
+            if (otherGrid != null)
+            {
+                Destroy(otherGrid);
+            }
         }
         else
         {
+            var gameObj = _gridMeshHolder == null ?
+                transform.Find(GridMeshName).gameObject : _gridMeshHolder;
             DestroyImmediate(gameObj);
         }
     }

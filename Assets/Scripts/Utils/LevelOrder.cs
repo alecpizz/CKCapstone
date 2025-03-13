@@ -23,7 +23,7 @@ public class LevelOrder : ScriptableObject
 #if UNITY_EDITOR
     [field: SerializeField, SepTitle("Main Menu", EColor.Aqua), BelowSeparator(EColor.Aqua)]
     public SceneAsset MainMenuScene { get; private set; }
-
+#endif
     public enum LightingMode
     {
         None = -1,
@@ -58,7 +58,9 @@ public class LevelOrder : ScriptableObject
 
         [field: SerializeField, SepTitle("Outro Level", EColor.Red), SaintsRow(inline: true)]
         public LevelData Outro { get; internal set; } = new();
+        #if UNITY_EDITOR
         public LevelData GetStartingLevel => Intro.Scene ? Intro : Puzzles[0];
+        #endif
     }
 
     /// <summary>
@@ -74,17 +76,22 @@ public class LevelOrder : ScriptableObject
     public class LevelData
     {
         [field: SerializeField] public string LevelName { get; private set; } = "CHANGEME";
+        #if UNITY_EDITOR
         [field: SerializeField] public SceneAsset Scene { get; internal set; }
+        #endif
+        [field: SerializeField] public string ScenePath { get;  set; }
         [field: SerializeField] public bool UseNextLevelInListAsExit { get; private set; } = true;
 
+        #if UNITY_EDITOR
         [field: SerializeField, HideIf(nameof(UseNextLevelInListAsExit))]
         public SceneAsset ExitScene { get; private set; }
-
+        #endif
         [field: SerializeField] public bool HasChallengeExit { get; private set; } = false;
 
+        #if UNITY_EDITOR
         [field: SerializeField, ShowIf(nameof(HasChallengeExit))]
         public SceneAsset ChallengeScene { get; private set; }
-
+#endif
         [field: SerializeField] public LightingData LightingData { get; private set; } = new();
 
         /// <summary>
@@ -93,12 +100,15 @@ public class LevelOrder : ScriptableObject
         /// <param name="other">The level data to copy from.</param>
         public LevelData(LevelData other)
         {
-            LevelName = other.LevelName;
-            Scene = other.Scene;
             UseNextLevelInListAsExit = other.UseNextLevelInListAsExit;
-            ExitScene = other.ExitScene;
+            LevelName = other.LevelName;
             HasChallengeExit = other.HasChallengeExit;
+            #if UNITY_EDITOR
+            Scene = other.Scene;
+            ExitScene = other.ExitScene;
             ChallengeScene = other.ChallengeScene;
+            #endif
+            ScenePath = other.ScenePath;
             LightingData = other.LightingData;
         }
 
@@ -108,23 +118,26 @@ public class LevelOrder : ScriptableObject
         public LevelData()
         {
             LevelName = "";
+            #if UNITY_EDITOR
             Scene = null;
             ExitScene = null;
             ChallengeScene = null;
+            #endif
         }
     }
 
     [field: SerializeField, ListDrawerSettings(searchable: true, 5)]
     public List<Chapter> Chapters { get; private set; } = new();
-
+#if UNITY_EDITOR
     [field: SerializeField, SepTitle("Credits Scene", EColor.Magenta), BelowSeparator(EColor.Magenta)]
     public SceneAsset CreditsScene { get; private set; }
-
+#endif
     [PlayaInfoBox("Chapter Creation", EMessageType.Info)] [SerializeField]
     private string _chapterName = "Chapter CHANGEME";
 
 
     //holy attributes batman! This just handles the buttons below the field.
+    #if UNITY_EDITOR
     [SepTitle("Level Input", EColor.White)]
     [SerializeField]
     [BelowSeparator("Adding to Chapter", EColor.White)]
@@ -135,9 +148,10 @@ public class LevelOrder : ScriptableObject
     [BelowButton(nameof(ClearLevels), groupBy: "Chapter2")]
     [BelowButton(nameof(ClearIntro), groupBy: "Chapter2")]
     [BelowButton(nameof(ClearOutro), groupBy: "Chapter2")]
+    #endif
     // [BelowButton(nameof(RunBuildPreProcess), groupBy: "Build")]
     private LevelData _inputLevelData;
-#endif
+
 
     [field: SerializeField] public List<PrettyData> PrettySceneNames { get; set; } = new();
     [field: SerializeField] public List<string> PrettyChapterNames { get; set; } = new();

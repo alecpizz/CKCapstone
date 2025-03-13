@@ -13,14 +13,14 @@ using UnityEngine.SceneManagement;
 public class IndividualButtons : MonoBehaviour
 {
     private int _index = 0;
-
+    private string _sceneName = "";
     /// <summary>
     /// The index of the scene is set for the individual buttons
     /// </summary>
     /// <param name="num"></param>
-    public void SetIndex(int num)
+    public void SetIndex(string sceneName)
     {
-        _index = num;
+        _sceneName = sceneName;
     }
 
     /// <summary>
@@ -28,6 +28,6 @@ public class IndividualButtons : MonoBehaviour
     /// </summary>
     public void ChangeScene()
     {
-        SceneManager.LoadScene(_index);
+        SceneManager.LoadScene(SceneUtility.GetBuildIndexByScenePath(_sceneName));
     }
 }
