@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: David Galmines
-*    Contributors: ...
+*    Contributors: Rider Hagen
 *    Date Created: 10/23/24
 *    Description: This is a trigger for supplemental UI to show up 
 *    whenever the player comes into contact.
@@ -26,6 +26,9 @@ public class SupplementalUI : MonoBehaviour
     //background panel
     [SerializeField] private GameObject _panel;
 
+    //arrow attatched to the panel
+    [SerializeField] private GameObject _arrow;
+
     //color variable for making the text fade in and out
     private Color _textColor;
 
@@ -34,6 +37,9 @@ public class SupplementalUI : MonoBehaviour
 
     //image component of the UI panel
     private Image _panelBackground;
+
+    //image for arrow attatched to the panel
+    private Image _arrowImage;
 
     //does the text blurb need to appear on a delay?
     [SerializeField] private bool _hasDelay;
@@ -50,6 +56,7 @@ public class SupplementalUI : MonoBehaviour
         _textColor = _text.color;
         _textColor.a = 0;
         _panelBackground = _panel.GetComponent<Image>();
+        _arrowImage = _arrow.GetComponent<Image>();
         _panelColor = _panelBackground.color;
         _panelColor.a = 0;
 
@@ -168,8 +175,15 @@ public class SupplementalUI : MonoBehaviour
                 _camera.transform.eulerAngles;
         }
 
-        //updates the UI text color
-        _text.color = _textColor;
+        if (_arrow.transform.localEulerAngles !=
+    _camera.transform.eulerAngles)
+        {
+            _arrow.transform.localEulerAngles =
+                _camera.transform.eulerAngles;
+        }
+
+            //updates the UI text color
+            _text.color = _textColor;
 
         //updates background panel color
         _panelBackground.color = _panelColor;
