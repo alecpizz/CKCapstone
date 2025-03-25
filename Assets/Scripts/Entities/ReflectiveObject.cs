@@ -4,7 +4,10 @@
 *    Date Created: 10/12/24
 *    Description: Script that handles harmony beam reflections
 *******************************************************************/
+
+using FMODUnity;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity, ITurnListener
 {
@@ -21,6 +24,8 @@ public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity, ITurnListener
     private bool _isBeingHitByBeam = false;
     private int _scansPerformed = 0;
     private const int _maxScansPerRound = 3;
+
+    [SerializeField] private EventReference _reflectSFX;
 
     /// <summary>
     /// Sets up references to harmony beam attached to this object
@@ -65,7 +70,9 @@ public class ReflectiveObject : MonoBehaviour, IHarmonyBeamEntity, ITurnListener
     {
         _isBeingHitByBeam = true;
         _harmonyBeam.ToggleBeam(true);
-
+        
+        AudioManager.Instance.PlaySound(_reflectSFX);
+        
         if (_scansPerformed < _maxScansPerRound)
         {
             _scansPerformed++;
