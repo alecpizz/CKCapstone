@@ -408,10 +408,10 @@ public class GridBase : MonoBehaviour
                 DestroyImmediate(_gridMeshHolder);
             }
 
-            var gameObj = transform.Find(GridMeshName).gameObject;
-            if (gameObj != null)
+            var tr = transform.Find(GridMeshName);
+            if (tr != null)
             {
-                DestroyImmediate(gameObj);
+                DestroyImmediate(tr.gameObject);
             }
         }
     }
