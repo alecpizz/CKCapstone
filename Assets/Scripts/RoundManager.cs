@@ -38,6 +38,7 @@ public sealed class RoundManager : MonoBehaviour
     private PlayerControls _playerControls;
     private Vector3 _lastMovementInput;
     private bool _movementRegistered = false;
+    private bool _inputBuffered = false;
     private float _movementRegisteredTime = -1;
     [SerializeField] private float _inputBufferWindow = 0.5f;
 
@@ -145,6 +146,9 @@ public sealed class RoundManager : MonoBehaviour
 
         _lastMovementInput = dir;
 
+        if (_movementRegistered)
+            _inputBuffered = true;
+
         _movementRegistered = true;
         _movementRegisteredTime = Time.unscaledTime;
 
@@ -161,11 +165,13 @@ public sealed class RoundManager : MonoBehaviour
     {
         if (!_movementRegistered || DebugMenuManager.Instance.PauseMenu) return;
 
-        if (!_playerControls.InGame.Movement.IsPressed())
+        if (!_playerControls.InGame.Movement.IsPressed() && !_inputBuffered)
         {
             _movementRegistered = false;
             return;
         }
+
+        _inputBuffered = false;
 
         _turnState = TurnState.Player;
 
@@ -206,22 +212,21 @@ public sealed class RoundManager : MonoBehaviour
         {
             _turnState = TurnState.None;
             // Attempts to move player if they buffered an input
-            /*bool doAutocomplete = false;
-            if(Time.unscaledTime - _movementRegisteredTime <= _inputBufferWindow)
+            bool doAutocomplete = false;
+            if (Time.unscaledTime - _movementRegisteredTime <= _inputBufferWindow)
             {
                 if (_lastMovementInput == GetNormalizedInput())
                 {
                     doAutocomplete = true;
                     EnableAutocomplete();
                 }
-                    
 
                 PerformMovement();
             }
-                
-            if(!doAutocomplete)
+
+            if (!doAutocomplete)
                 DisableAutocomplete();
-            */
+
             DisableAutocomplete();
             return;
         }
