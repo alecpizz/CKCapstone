@@ -26,6 +26,14 @@ using SaintsField;
 using System.Runtime.InteropServices;
 
 using Unity.Collections;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
+using UnityEngine.InputSystem.Controls;
+using UnityEditor.SearchService;
+
+
+
+
 
 
 #if UNITY_EDITOR
@@ -84,6 +92,8 @@ public class CutsceneFramework : MonoBehaviour
 
     private uint _mLastReadPositionBytes;
 
+    private IDisposable _mAnyButtonPressedListener;
+
     /// <summary>
     /// Determines whether to play the Challenge or End Chapter Cutscene
     /// </summary>
@@ -93,6 +103,9 @@ public class CutsceneFramework : MonoBehaviour
         _inputActions.UI.Enable();
         _inputActions.UI.SkipCutscene.performed += ctx => SkipCutscene();
         //_endChapterCutsceneVideo.loopPointReached += CheckEnd;
+
+        //Registers is button is pressed
+        _mAnyButtonPressedListener = InputSystem.onAnyButtonPress.Call(ButtonIsPressed);
 
         // Plays the Challenge Cutscene, provided that only the corresponding boolean
         // (_isChallengeCutscene) is true
@@ -115,7 +128,7 @@ public class CutsceneFramework : MonoBehaviour
                 return;
             }
 
-            //Sets up the video to play it in the scenw
+            //Sets up the video to play it in the scene
             _endChapterCutsceneVideo.audioOutputMode = VideoAudioOutputMode.APIOnly;
             _endChapterCutsceneVideo.prepareCompleted += Prepared;
             _endChapterCutsceneVideo.loopPointReached += VideoEnded;
@@ -134,6 +147,12 @@ public class CutsceneFramework : MonoBehaviour
     {
         _inputActions.UI.Disable();
         _inputActions.UI.SkipCutscene.performed -= ctx => SkipCutscene();
+
+        if(_mAnyButtonPressedListener != null)
+        {
+            _mAnyButtonPressedListener.Dispose();
+            _mAnyButtonPressedListener = null;
+        }
     }
 
     /// <summary>
@@ -167,6 +186,20 @@ public class CutsceneFramework : MonoBehaviour
         // functionality for playing a video, particularly for the End Chapter Cutscene)
         // Plays the Challenge Cutscene for a specified amount of time before loading the next level
         StartCoroutine(CutsceneDuration());
+    }
+
+    /// <summary>
+    /// Does an action any time a button is pressed within a Cutscene
+    /// </summary>
+    /// <param name="button"></param>
+    private void ButtonIsPressed(InputControl button)
+    {
+        var scene = SceneManager.GetActiveScene().name;
+
+        if (scene.Substring(0, 2).Equals("CS"))
+        {
+            Debug.Log("Here be the reason!");
+        }
     }
 
     /// <summary>
