@@ -205,6 +205,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                     {
                         CheckForEnemyCollision(move);
                     }).ToYieldInstruction();
+                    _animator.ResetTrigger(Forward);
             }
 
             if (_playerMovementTiming > 1)
