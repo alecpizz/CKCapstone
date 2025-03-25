@@ -198,7 +198,7 @@ public class CutsceneFramework : MonoBehaviour
 
         if (scene.Substring(0, 2).Equals("CS"))
         {
-            Debug.Log("Here be the reason!");
+            Debug.Log("Press the Escape key to skip!");
         }
     }
 
