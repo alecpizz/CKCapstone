@@ -63,6 +63,7 @@ public class AudioManager : MonoBehaviour
         if (_key.isValid())
         {
             _key.getDescription(out var description);
+
             description.getID(out var id);
             if (id != _nextMusic.Guid)
             {
@@ -132,8 +133,16 @@ public class AudioManager : MonoBehaviour
             AudioInstances.TryGetValue(reference, out audioEvent);
         else
         {
-            audioEvent = RuntimeManager.CreateInstance(reference);
-            AudioInstances.Add(reference, audioEvent);
+            try
+            {
+                audioEvent = RuntimeManager.CreateInstance(reference);
+                AudioInstances.Add(reference, audioEvent);
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("Sound Event Not Found! \n" + e.StackTrace);
+                return default;
+            }
         }
 
         audioEvent.start();

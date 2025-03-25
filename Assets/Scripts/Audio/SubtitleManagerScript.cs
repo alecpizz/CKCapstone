@@ -20,8 +20,9 @@ public class SubtitleManager : MonoBehaviour
 {
     //code set up
     [SerializeField] private EventReference _dialogue;
-    [SerializeField] private string _subtitleText;
+    [SerializeField, TextArea(6, 12)] private string _subtitleText;
     [SerializeField] private int _sentences;
+    [SerializeField] private float _sentenceDelay = 1;
 
     //visual set up
     [SerializeField] private TMP_Text _subtitleObject;
@@ -35,7 +36,12 @@ public class SubtitleManager : MonoBehaviour
     private static int _currentIndex;
     private EventInstance _currentDialogue;
 
+    CutsceneFramework _cutsceneFramework;
 
+    private void Awake()
+    {
+        _cutsceneFramework = GetComponent<CutsceneFramework>();
+    }
 
     /// <summary>
     /// called on scene begin. used to set variables, cut up the _subtitleText string into sentences, 
@@ -70,24 +76,20 @@ public class SubtitleManager : MonoBehaviour
 
         //playing first segment
         _subtitleObject.text = _subtitleArray[0];
+
+        StartCoroutine(SubtitleSequence());
         _currentDialogue = AudioManager.Instance.PlaySound(_dialogue);
     }
 
-    /// <summary>
-    /// called on tics
-    /// used to find if the current line of dialogue is finished
-    /// </summary>
-    private void Update()
+    IEnumerator SubtitleSequence()
     {
-        // Disable subtitles
-        if (PlayerPrefs.GetInt("Subtitles") == 0)
-            return;
-
-        if (!IsPlaying(_currentDialogue))
+        while(_currentIndex < _sentences)
         {
-            AudioManager.Instance.StopSound(_currentDialogue);
+            yield return new WaitForSeconds(1f + ((float)_subtitleObject.text.Length / 12));
             NextSegment();
         }
+
+        _cutsceneFramework.SkipCutscene();
     }
 
     /// <summary>
@@ -115,7 +117,7 @@ public class SubtitleManager : MonoBehaviour
         {
             _subtitleObject.text = _subtitleArray[_currentIndex];
             _currentDialogue.setParameterByName("Sample Sentence", _currentIndex + 1);
-            _currentDialogue = AudioManager.Instance.PlaySound(_dialogue);
+            //_currentDialogue = AudioManager.Instance.PlaySound(_dialogue);
         }
     }
 }

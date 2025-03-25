@@ -1,13 +1,14 @@
 /******************************************************************
-*    Author: Josephine Qualls
-*    Contributors: Trinity Hutson, Alex Laubenstein
-*    Date Created: 01/28/2025
-*    Description: Generates buttons for every level in the game.
-*******************************************************************/
+ *    Author: Josephine Qualls
+ *    Contributors: Trinity Hutson, Alex Laubenstein
+ *    Date Created: 01/28/2025
+ *    Description: Generates buttons for every level in the game.
+ *******************************************************************/
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
@@ -21,12 +22,12 @@ public class LevelButtons : MonoBehaviour
     [SerializeField] private GameObject _buttonPrefab;
 
     //the number of levels that a chapter contains
-    [FormerlySerializedAs("_numLevels")]
-    [SerializeField] private int[] _chapterLevelCount;
+    [FormerlySerializedAs("_numLevels")] [SerializeField]
+    private int[] _chapterLevelCount;
 
     //List of chapters in game
-    [FormerlySerializedAs("_levels")]
-    [SerializeField] private List<GameObject> _chapters;
+    [FormerlySerializedAs("_levels")] [SerializeField]
+    private List<GameObject> _chapters;
 
     //List of all buttons to each chapter in game
     [SerializeField] private List<Button> _allChapButtons;
@@ -43,13 +44,100 @@ public class LevelButtons : MonoBehaviour
     private Dictionary<int, int> _lvlNumberAssignment = new();
 
     //Call to update the dictionary for UIManager
-    public static Action DictionaryUpdate;
 
     /// <summary>
     /// At run-time, buttons equal to the number of scenes are generated.
     /// </summary>
-    private void Start()
+    private void Awake()
     {
+        var uiManager = GetComponentInParent<UIManager>();
+        foreach (var chapter in _chapters)
+        {
+            chapter.SetActive(false);
+        }
+
+        var levelData = LevelOrderSelection.Instance.SelectedLevelData;
+        int counter = 1;
+        int challengeCounter = 1;
+        int intermissionCounter = 1;
+        var currentScene = SceneUtility.GetScenePathByBuildIndex(SceneManager.GetActiveScene().buildIndex);
+        bool setLevel = false;
+        foreach (var levelDataChapter in levelData.Chapters)
+        {
+            var idx = levelData.Chapters.IndexOf(levelDataChapter);
+            var chapter = _chapters[idx];
+            foreach (var level in levelDataChapter.Puzzles)
+            {
+                var targetTransform = chapter.transform;
+                string levelText = $"Level {counter}";
+                var sceneName = Path.GetFileNameWithoutExtension(level.ScenePath);
+                if (sceneName.Contains("CS"))
+                {
+                    targetTransform = _chapters[^1].transform;
+                    levelText = level.LevelName;
+                }
+                else if (sceneName[0] == 'I')
+                {
+                    levelText = $"Intermission {intermissionCounter++}";
+                }
+                else if (sceneName[0] == 'C')
+                {
+                    levelText = $"Challenge {challengeCounter++}";
+                }
+                else
+                {
+                    counter++;
+                }
+#if !OVERRIDE_LEVEL
+                if (!SaveDataManager.GetLevelCompleted(level.ScenePath))
+                {
+                    if (uiManager != null && !setLevel)
+                    {
+                        if (currentScene == level.ScenePath)
+                        {
+                            uiManager.SetLevelText(levelText);
+                            setLevel = true;
+                        }
+                    }
+                    continue;
+                }
+#endif
+                var obj = Instantiate(_buttonPrefab, targetTransform).GetComponent<IndividualButtons>();
+                obj.SetIndex(level.ScenePath);
+                obj.GetComponentInChildren<TextMeshProUGUI>().text = levelText;
+                if (uiManager != null && !setLevel)
+                {
+                    if (currentScene == level.ScenePath)
+                    {
+                        uiManager.SetLevelText(levelText);
+                        setLevel = true;
+                    }
+                }
+            }
+
+            var outro = levelDataChapter.Outro;
+#if !OVERRIDE_LEVEL
+            if (!SaveDataManager.GetLevelCompleted(outro.ScenePath))
+            {
+                continue;
+            }
+#endif
+            var sceneName2 = Path.GetFileNameWithoutExtension(outro.ScenePath);
+            if (sceneName2.Contains("CS"))
+            {
+                var obj = Instantiate(_buttonPrefab, _chapters[^1].transform).GetComponent<IndividualButtons>();
+                obj.SetIndex(outro.ScenePath);
+                obj.GetComponentInChildren<TextMeshProUGUI>().text = outro.LevelName;
+            }
+        }
+
+        for (int i = 0; i < _allChapButtons.Count; i++)
+        {
+            int jCopy = i;
+            _allChapButtons[i].onClick.AddListener(() => ActivateButton(jCopy));
+        }
+
+        return;
         //variables to track the level number and how many are in the chapter
         int tally = 1;
         int range = _chapterLevelCount[0] + 1;
@@ -58,7 +146,7 @@ public class LevelButtons : MonoBehaviour
         for (int i = 1; i <= _chapters.Count; i++)
         {
             //initially sets the gameObjects to off
-            _chapters[i-1].SetActive(false);
+            _chapters[i - 1].SetActive(false);
 
             for (; tally < range; tally++)
             {
@@ -81,7 +169,7 @@ public class LevelButtons : MonoBehaviour
                 }
 
 #if !OVERRIDE_LEVEL
-                if (!SaveDataManager.GetLevelCompleted(sceneName))
+                if (!SaveDataManager.GetLevelCompleted(path))
                 {
                     continue;
                 }
@@ -93,14 +181,15 @@ public class LevelButtons : MonoBehaviour
                 if (sceneName.Contains("Cutscene"))
                 {
                     //the cutscene tab should always be the last chapter tab
-                    obj = Instantiate(_buttonPrefab, _chapters[_chapters.Count-1].transform).GetComponent<IndividualButtons>();
+                    obj = Instantiate(_buttonPrefab, _chapters[_chapters.Count - 1].transform)
+                        .GetComponent<IndividualButtons>();
                 }
                 else
                 {
                     //the levels/NPC rooms are assigned to the relevant chapters
                     obj = Instantiate(_buttonPrefab, _chapters[i - 1].transform).GetComponent<IndividualButtons>();
                 }
-                
+
                 //renames NPC room and cutscenes to official names in Level Select menu
                 if (sceneName[0] == 'I' || sceneName.Contains("Cutscene"))
                 {
@@ -120,7 +209,7 @@ public class LevelButtons : MonoBehaviour
                 }
 
                 //The index of a button is set
-                obj.SetIndex(tally);
+                // obj.SetIndex(tally);
 
                 //Add to the dictionary for getter method
                 _lvlNumberAssignment.Add(tally, _lvlCounter);
@@ -133,13 +222,11 @@ public class LevelButtons : MonoBehaviour
 
             //to not include transitions
             _lvlCounter--;
-                
         }
 
-        DictionaryUpdate?.Invoke();
 
         //loops through buttons to change the respective GameObject
-        for(int j = 0; j < _allChapButtons.Count; j++)
+        for (int j = 0; j < _allChapButtons.Count; j++)
         {
             int jCopy = j;
             _allChapButtons[j].onClick.AddListener(() => ActivateButton(jCopy));
@@ -171,6 +258,6 @@ public class LevelButtons : MonoBehaviour
         else
         {
             return -1;
-        }  
+        }
     }
 }
