@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -13,6 +14,25 @@ public static class CKLevelCenter
         if (player == null) return;
         CenterGridEntry(player);
     }
+    
+    [MenuItem("Tools/Crowded Kitchen/Center/Center Selected")]
+    public static void CenterSelected()
+    {
+        var selected = Selection.activeGameObject;
+        if (selected == null) return;
+        var gridEntry = selected.GetComponentInParent<IGridEntry>();
+        CenterGridEntry(gridEntry);
+    }
+
+    [MenuItem("Tools/Crowded Kitchen/Center/Center Enemies")]
+    public static void CenterEnemies()
+    {
+        var enemies = Object.FindObjectsOfType<EnemyBehavior>();
+        foreach (var enemyBehavior in enemies)
+        {
+            CenterGridEntry(enemyBehavior);
+        }
+    }
 
     [MenuItem("Tools/Crowded Kitchen/Pivot/Rotate Mother 90")]
     public static void RotateMother()
@@ -22,14 +42,7 @@ public static class CKLevelCenter
         RotateGridEntry(player);
     }
 
-    [MenuItem("Tools/Crowded Kitchen/Center/Center Selected")]
-    public static void CenterSelected()
-    {
-        var selected = Selection.activeGameObject;
-        if (selected == null) return;
-        var gridEntry = selected.GetComponentInParent<IGridEntry>();
-        CenterGridEntry(gridEntry);
-    }
+   
 
     [MenuItem("Tools/Crowded Kitchen/Pivot/Rotate Selected 90")]
     public static void RotateSelected90()
@@ -57,3 +70,5 @@ public static class CKLevelCenter
         entry.SnapToGridSpace();
     }
 }
+
+#endif
