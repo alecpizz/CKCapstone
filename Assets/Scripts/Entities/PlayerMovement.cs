@@ -202,6 +202,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                 yield return Tween.Position(transform,
                     move + _positionOffset, duration: modifiedMovementTime, 
                     _movementEase).ToYieldInstruction();
+                _animator.ResetTrigger(Forward);
             }
 
             if (_playerMovementTiming > 1)
