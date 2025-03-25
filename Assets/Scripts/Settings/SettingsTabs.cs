@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Claire Noto
-*    Contributors: Claire Noto, Josephine Qualls
+*    Contributors: Claire Noto, Josephine Qualls, Mitchell Young
 *    Date Created: 11/13/2024
 *    Description: Handles settings menu tab navigation.
 *******************************************************************/
@@ -20,7 +20,9 @@ public class SettingsTabs : MonoBehaviour
         Accessibility,
         Gameplay,
         HowToPlay,
-        LevelSelect
+        LevelSelect,
+        Cutscenes,
+        Collectables
     }
 
     [Header("Tab Panels")]
@@ -30,6 +32,8 @@ public class SettingsTabs : MonoBehaviour
     [SerializeField] private GameObject _gameplayPanel;
     [SerializeField] private GameObject _howToPlayPanel;
     [SerializeField] private GameObject _levelSelectPanel;
+    [SerializeField] private GameObject _cutscenesPanel;
+    [SerializeField] private GameObject _collectablesPanel;
 
     [Header("Tab Buttons")]
     [SerializeField] private Button _displayButton;
@@ -38,6 +42,8 @@ public class SettingsTabs : MonoBehaviour
     [SerializeField] private Button _gameplayButton;
     [SerializeField] private Button _howToPlayButton;
     [SerializeField] private Button _levelSelectButton;
+    [SerializeField] private Button _cutscenesButton;
+    [SerializeField] private Button _collectablesButton;
 
     [Header("Button Game Objects")]
     [SerializeField] private GameObject _displayButtonGameObject;
@@ -46,6 +52,8 @@ public class SettingsTabs : MonoBehaviour
     [SerializeField] private GameObject _gameplayButtonGameObject;
     [SerializeField] private GameObject _howToPlayButtonGameObject;
     [SerializeField] private GameObject _levelSelectButtonGameObject;
+    [SerializeField] private GameObject _cutscenesButtonGameObject;
+    [SerializeField] private GameObject _collectablesButtonGameObject;
 
     [Header("Original Button Sprites")]
     [SerializeField] private Sprite _ogDisplayImage;
@@ -54,6 +62,8 @@ public class SettingsTabs : MonoBehaviour
     [SerializeField] private Sprite _ogGameplayImage;
     [SerializeField] private Sprite _ogHowToPlayImage;
     [SerializeField] private Sprite _ogLevelSelectImage;
+    [SerializeField] private Sprite _ogCutscenesImage;
+    [SerializeField] private Sprite _ogCollectablesImage;
 
     [Header("Alternate Button Sprites")]
     [FormerlySerializedAs("_displayImage")]
@@ -74,6 +84,9 @@ public class SettingsTabs : MonoBehaviour
     [FormerlySerializedAs("_levelSelectImage")]
     [SerializeField] private Sprite _altLevelSelectImage;
 
+    [SerializeField] private Sprite _altCutscenesImage;
+    [SerializeField] private Sprite _altCollectablesImage;
+
     //const strings for the tags
     const string DISPLAY = "display";
     const string AUDIO = "audio";
@@ -81,6 +94,8 @@ public class SettingsTabs : MonoBehaviour
     const string GAMEPLAY = "gameplay";
     const string HOWTOPLAY = "how to";
     const string LEVELSELECT = "level";
+    const string CUTSCENES = "cutscenes";
+    const string COLLECTABLES = "collectables";
 
     private Dictionary<Tab, GameObject> _panels;
     private Dictionary<Tab, Button> _buttons;
@@ -101,7 +116,9 @@ public class SettingsTabs : MonoBehaviour
             { Tab.Accessibility, _accessibilityPanel },
             { Tab.Gameplay, _gameplayPanel },
             { Tab.HowToPlay, _howToPlayPanel },
-            { Tab.LevelSelect, _levelSelectPanel }
+            { Tab.LevelSelect, _levelSelectPanel },
+            { Tab.Cutscenes, _cutscenesPanel },
+            { Tab.Collectables, _collectablesPanel }
         };
 
         // Initialize the button dictionary
@@ -112,7 +129,9 @@ public class SettingsTabs : MonoBehaviour
             { Tab.Accessibility , _accessibilityButton },
             { Tab.Gameplay , _gameplayButton },
             { Tab.HowToPlay , _howToPlayButton },
-            { Tab.LevelSelect , _levelSelectButton }
+            { Tab.LevelSelect , _levelSelectButton },
+            { Tab.Cutscenes, _cutscenesButton },
+            { Tab.Collectables, _collectablesButton }
         };
 
         // Initialize the alt images dictionary
@@ -123,7 +142,14 @@ public class SettingsTabs : MonoBehaviour
             {_accessibilityButton, _ogAccessibilityImage },
             {_gameplayButton, _ogGameplayImage },
             {_howToPlayButton, _ogHowToPlayImage },
-            {_levelSelectButton, _ogLevelSelectImage }
+            {_levelSelectButton, _ogLevelSelectImage },
+            //Placeholder
+            {_cutscenesButton, _ogLevelSelectImage },
+            {_collectablesButton, _ogLevelSelectImage }
+
+            //For implementation
+            //{_cutscenesButton, _ogCutscenesImage },
+            //{_collectablesButton, _ogCollectablesImage }
         };
 
         _altSprites = new Dictionary<Button, Sprite>
@@ -133,7 +159,14 @@ public class SettingsTabs : MonoBehaviour
             {_accessibilityButton, _altAccessibilityImage },
             {_gameplayButton, _altGameplayImage },
             {_howToPlayButton, _altHowToPlayImage },
-            {_levelSelectButton, _altLevelSelectImage }
+            {_levelSelectButton, _altLevelSelectImage },
+            //Placeholder
+            {_cutscenesButton,  _altLevelSelectImage },
+            {_collectablesButton, _altLevelSelectImage }
+
+            //For implementation
+            //{_cutscenesButton, _altCutscenesImage },
+            //{_collectablesButton, _altCollectablesImage }
         };
 
         //tags for the buttons so the right images will be shown
@@ -143,6 +176,8 @@ public class SettingsTabs : MonoBehaviour
         _gameplayButton.tag = GAMEPLAY;
         _howToPlayButton.tag = HOWTOPLAY;
         _levelSelectButton.tag = LEVELSELECT;
+        _cutscenesButton.tag = CUTSCENES;
+        _collectablesButton.tag = COLLECTABLES;
 
         // Assign button click events
         //display events
@@ -174,6 +209,16 @@ public class SettingsTabs : MonoBehaviour
         _levelSelectButton.onClick.AddListener(() => OpenTab(Tab.LevelSelect));
         _levelSelectButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_levelSelectButtonGameObject));
         _levelSelectButton.onClick.AddListener(() => ChangeImage(_levelSelectButton));
+
+        //cutscenes events
+        _cutscenesButton.onClick.AddListener(() => OpenTab(Tab.Cutscenes));
+        _cutscenesButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_cutscenesButtonGameObject));
+        _cutscenesButton.onClick.AddListener(() => ChangeImage(_cutscenesButton));
+
+        //collectables events
+        _collectablesButton.onClick.AddListener(() => OpenTab(Tab.Collectables));
+        _collectablesButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_collectablesButtonGameObject));
+        _collectablesButton.onClick.AddListener(() => ChangeImage(_collectablesButton));
 
         // Open the default tab at start
         OpenTab(Tab.Display);
