@@ -34,6 +34,38 @@ public static class CKLevelCenter
         }
     }
 
+    [MenuItem("Tools/Crowded Kitchen/Center/Center Switches")]
+    public static void CenterSwitches()
+    {
+        var switches = Object.FindObjectsOfType<SwitchTrigger>();
+        foreach (var switchTrigger in switches)
+        {
+            CenterGridEntry(switchTrigger);
+        }
+    }
+
+    [MenuItem("Tools/Crowded Kitchen/Center/Center Moving Walls")]
+    public static void CenterMovingWalls()
+    {
+        var movingWalls = Object.FindObjectsOfType<MovingWall>();
+        foreach (var wall in movingWalls)
+        {
+            CenterGridEntry(wall);
+            var placer = wall.GetComponent<GridPlacer>();
+            var placeField = placer.GetType().GetField("_snapToGrid");
+            if (placeField != null)
+            {
+                placeField.SetValue(placer, false);
+            }
+            var field = wall.GetType().GetField("_wallGhost", BindingFlags.NonPublic | BindingFlags.Instance);
+            if (field == null || field.GetValue(wall) == null) continue;
+            GameObject ghost = field.GetValue(wall) as GameObject;
+            if (ghost == null) continue;
+            var entry = ghost.GetComponent<IGridEntry>();
+            CenterGridEntry(entry);
+        }
+    }
+
     [MenuItem("Tools/Crowded Kitchen/Pivot/Rotate Mother 90")]
     public static void RotateMother()
     {

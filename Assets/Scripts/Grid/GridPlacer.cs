@@ -102,6 +102,6 @@ public class GridPlacer : MonoBehaviour, IGridEntry
     public void SnapToGridSpace()
     {
         Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
-        transform.position = GridBase.Instance.CellToWorld(cellPos);
+        transform.position = GridBase.Instance.CellToWorld(cellPos) + _offset;
     }
 }
