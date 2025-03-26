@@ -39,11 +39,13 @@ public sealed class RoundManager : MonoBehaviour
     private Vector3 _lastMovementInput;
     private bool _movementRegistered = false;
     private bool _inputBuffered = false;
+    private bool _autocompleteActive = false;
     private float _movementRegisteredTime = -1;
     [SerializeField] private float _inputBufferWindow = 0.5f;
 
     [Header("Autocomplete Mechanic")]
     [SerializeField, Tooltip("Timescale during autocomplete dash")] private float _autocompleteSpeed = 3;
+    [SerializeField] private float _autocompleteWindow = 0.2f;
     [SerializeField] private Image _speedUI;
 
     public event Action<bool> AutocompleteToggled;
@@ -139,15 +141,19 @@ public sealed class RoundManager : MonoBehaviour
 
         var dir = GetNormalizedInput();
 
-        if(_turnState != TurnState.None && _lastMovementInput == dir)
+        if (_turnState != TurnState.None && _lastMovementInput == dir && 
+            Time.unscaledTime - _movementRegisteredTime <= _autocompleteWindow)
         {
             EnableAutocomplete();
         }
 
         _lastMovementInput = dir;
 
-        if (_movementRegistered)
+        // If a movement is already registered, then flag as buffered
+        if (_movementRegistered && !_autocompleteActive)
+        {
             _inputBuffered = true;
+        }
 
         _movementRegistered = true;
         _movementRegisteredTime = Time.unscaledTime;
@@ -212,20 +218,10 @@ public sealed class RoundManager : MonoBehaviour
         {
             _turnState = TurnState.None;
             // Attempts to move player if they buffered an input
-            bool doAutocomplete = false;
             if (Time.unscaledTime - _movementRegisteredTime <= _inputBufferWindow)
             {
-                if (_lastMovementInput == GetNormalizedInput())
-                {
-                    doAutocomplete = true;
-                    EnableAutocomplete();
-                }
-
                 PerformMovement();
             }
-
-            if (!doAutocomplete)
-                DisableAutocomplete();
 
             DisableAutocomplete();
             return;
@@ -344,6 +340,7 @@ public sealed class RoundManager : MonoBehaviour
     /// </summary>
     private void EnableAutocomplete()
     {
+        _autocompleteActive = true;
         Time.timeScale = _autocompleteSpeed;
         AutocompleteToggled?.Invoke(true);
 
@@ -355,6 +352,7 @@ public sealed class RoundManager : MonoBehaviour
     /// </summary>
     private void DisableAutocomplete()
     {
+        _autocompleteActive = false;
         Time.timeScale = 1;
         AutocompleteToggled?.Invoke(false);
         Tween.Alpha(_speedUI, 0, 0.4f, Ease.OutSine).OnComplete(()=> { _speedUI.gameObject.SetActive(false); });
