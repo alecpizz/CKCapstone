@@ -39,6 +39,8 @@ public class SceneController : MonoBehaviour
     private const float xUvOffset = 0.5f;
     private const float yUvOffset = 0.28f;
 
+    public bool Transitioning {get; private set;}
+    
     /// <summary>
     /// Creates instance and starts fade in transition
     /// </summary>
@@ -51,10 +53,14 @@ public class SceneController : MonoBehaviour
 
         Instance = this;
 
+        Time.timeScale = 1.0f;
+
         if (_shouldFadeInOnLoad)
         {
             StartCoroutine(CircleWipeTransition(true, _currentFadeColor));
         }
+        
+        Transitioning = false;
     }
 
     /// <summary>
@@ -62,6 +68,8 @@ public class SceneController : MonoBehaviour
     /// </summary>
     public void ReloadCurrentScene()
     {
+        if (Transitioning) { return; }
+
         StopAllCoroutines();
         _currentFadeColor = Color.black;
         int sceneIndex = SceneManager.GetActiveScene().buildIndex;
@@ -74,6 +82,8 @@ public class SceneController : MonoBehaviour
     /// <param name="sceneBuildIndex">Build index of the scene to load</param>
     public void LoadNewScene(int sceneBuildIndex)
     {
+        if (Transitioning) { return; }
+
         StopAllCoroutines();
         _currentFadeColor = Color.white;
         StartCoroutine(CircleWipeTransition(false, _currentFadeColor, sceneBuildIndex));
@@ -122,13 +132,17 @@ public class SceneController : MonoBehaviour
         _circleWipeImage.materialForRendering.SetFloat(_circleSizePropId, startingCircleSize);
         _circleWipeImage.materialForRendering.SetColor(_backgroundColorPropId, fadeColor);
 
+        Transitioning = true;
+        
         RepositionCircleWipe();
         if (AudioManager.Instance != null && _playSoundOnSceneChange)
         {
             AudioManager.Instance.PlaySound(_endSound);
         }
         yield return new WaitForEndOfFrame();
-
+        
+        
+        
         // Animates circle wipe until the end time is reached
         while (elapsedTime < _timeForScreenWipe)
         {
@@ -142,8 +156,8 @@ public class SceneController : MonoBehaviour
         _circleWipeImage.materialForRendering.SetFloat(_circleSizePropId, targetCircleSize);
 
         yield return new WaitForSecondsRealtime(0.1f);
-
-        Time.timeScale = 1f;
+        
+        Transitioning = false;
 
         // Loads new scene if needed
         if (!isFadingIn && sceneIndexToLoad != -1)

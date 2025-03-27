@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Rider Hagen
-*    Contributors: David Galmines
+*    Contributors: David Galmines, Alec Pizziferro
 *    Date Created: 9/26/24
 *    Description: This is just meant to make menu buttons, when pressed, work.
 *******************************************************************/
@@ -27,7 +27,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject _mainMenuSettings;
     [SerializeField] private GameObject _mainMenuQuit;
     [SerializeField] private GameObject _restartButton;
-
+    
     [SerializeField] private EventReference _buttonPress;
 
     private DebugInputActions _inputActions;
@@ -67,15 +67,19 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void OptionsMainMenu()
     {
-        AudioManager.Instance.PlaySound(_buttonPress);
-        PrimeTween.Tween.Delay(0.2f).OnComplete(() =>
-        {
-            _optionsScreen.SetActive(true);
-            _mainMenuStart.SetActive(false);
-            _mainMenuSettings.SetActive(false);
-            _mainMenuQuit.SetActive(false);
-            EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
-        });
+        _optionsScreen.SetActive(true);
+        _mainMenu.SetActive(false);
+        EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
+    }
+
+    /// <summary>
+    /// Invoked to close the options menu on the main menu
+    /// </summary>
+    public void OptionsMainMenuClose()
+    {
+        _optionsScreen.SetActive(false);
+        _mainMenu.SetActive(true);
+        EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
     }
 
     /// <summary>
@@ -97,7 +101,7 @@ public class MenuManager : MonoBehaviour
     public void OptionsClose()
     {
         _optionsScreen.SetActive(false);
-        _mainMenuFirst.SetActive(true);
+        _mainMenuStart.SetActive(true);
         _mainMenuSettings.SetActive(true);
         _mainMenuQuit.SetActive(true);
         EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
@@ -108,11 +112,24 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void Pause()
     {
-        DebugMenuManager.Instance.PauseMenu = true;
-        _pauseScreen.SetActive(true);
-        _restartButton.SetActive(false);
-        EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
-        Time.timeScale = 0f;
+        if (_pauseScreen != null && !_pauseScreen.activeInHierarchy)
+        {
+            if (SceneController.Instance == null || SceneController.Instance.Transitioning) return;
+            DebugMenuManager.Instance.PauseMenu = true;
+            _pauseScreen.SetActive(true);
+            _restartButton.SetActive(false);
+            EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+            Time.timeScale = 0f;
+        }
+        else if (_optionsScreen.activeInHierarchy)
+        {
+            OptionsClose();
+            _mainMenu.SetActive(true);
+        }
+        else if (_pauseScreen != null && _pauseScreen.activeInHierarchy)
+        {
+            Unpause();
+        }
     }
 
     /// <summary>
@@ -129,11 +146,7 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void ActivateTutorialCanvas()
     {
-        AudioManager.Instance.PlaySound(_buttonPress);
-        PrimeTween.Tween.Delay(0.2f).OnComplete(() =>
-        {
-            _tutorialCanvas.SetActive(true);
-        });
+         _tutorialCanvas.SetActive(true);
     }
 
     /// <summary>
@@ -153,15 +166,29 @@ public class MenuManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Attempts to load the last saved puzzle.
+    /// </summary>
+    public void ContinueGame()
+    {
+        string level = SaveDataManager.GetLastFinishedLevel();
+        Debug.Log($"trying to continue {level}");
+        if (string.IsNullOrEmpty(level))
+        {
+            Debug.Log($"Last Level not saved");
+            StartGame();
+            return;
+        }
+
+        int idx = SceneUtility.GetBuildIndexByScenePath(level);
+        SceneManager.LoadScene(idx);
+    }
+
+    /// <summary>
     /// Prompts the user with a quit confirm selection after pressing the quit button
     /// </summary>
     public void QuitConfirm()
     {
-        AudioManager.Instance.PlaySound(_buttonPress);
-        PrimeTween.Tween.Delay(0.2f).OnComplete(() =>
-        {
-           _confirmQuit.SetActive(true);
-        });
+        _confirmQuit.SetActive(true);
     }
 
     /// <summary>

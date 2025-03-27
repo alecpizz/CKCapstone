@@ -68,6 +68,9 @@ public class HarmonyBeam : MonoBehaviour
     private void OnDisable()
     {
         TriggerHarmonyScan -= ScanForObjects;
+
+        AudioManager.Instance.StopSound(_beamInstance);
+        AudioManager.Instance.StopSound(_enemyGrabbedInstance);
     }
 
     /// <summary>
@@ -98,6 +101,8 @@ public class HarmonyBeam : MonoBehaviour
             {
                 particleSystem.Stop();
             }
+
+            ScanForObjects();
         }
 
         AudioManager.Instance.PauseSound(_beamInstance, _beamActive);
@@ -154,6 +159,7 @@ public class HarmonyBeam : MonoBehaviour
                                     + _enemyHitOffset, Quaternion.identity);
                                 _wrappedEnemyFX.TryAdd(entity, enemyFX);
                                 _wrappedEnemyFX[entity] = enemyFX;
+                                enemyFX.transform.parent = entity.EntityTransform;
                                 _enemyGrabbedInstance = 
                                     AudioManager.Instance.PlaySound(_enemyHarmonization);
                             }

@@ -20,6 +20,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     public bool IsTransparent { get => false; }
     public bool BlocksHarmonyBeam { get => false; }
     public Vector3 Position { get => transform.position; }
+    public Transform EntityTransform { get => transform; }
     public GameObject EntryObject { get => gameObject; }
 
     public bool EnemyFrozen { get; private set; } = false;
@@ -61,6 +62,10 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
  
     //public static PlayerMovement Instance;
     private static readonly int Forward = Animator.StringToHash("Forward");
+    private static readonly int Attack = Animator.StringToHash("Attack");
+    private static readonly int Frozen = Animator.StringToHash("Frozen");
+    private static readonly int Turn = Animator.StringToHash("Turn");
+
     [SerializeField] private Animator _animator;
     
     //
@@ -125,6 +130,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
 
             if (_animator != null)
             {
+                _animator.SetBool(Frozen, false);
                 _animator.SetTrigger(Forward);
             }
 
@@ -167,8 +173,19 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                 }
                 if (canMove == true)
                 {
+                    if (moveDirection != transform.forward)
+                    {
+                        if (_animator != null)
+                        {
+                            _animator.SetTrigger(Turn);
+                        }
+                    }
                     Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
                     ease: _rotationEase);
+                    if (_animator != null)
+                    {
+                        _animator.ResetTrigger(Turn);
+                    }
 
                     if (AudioManager.Instance != null && _mirrored)
                     {
@@ -182,6 +199,22 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                         }).ToYieldInstruction();
 
                     HarmonyBeam.TriggerHarmonyScan?.Invoke();
+
+                    //not a fan of this but it should be more consistent than 
+                    //using collisions
+                    //also just math comparisons, no memory accessing outside of Position.
+                    if (GridBase.Instance.WorldToCell(PlayerMovement.Instance.Position) ==
+                        GridBase.Instance.WorldToCell(transform.position) &&
+                        !DebugMenuManager.Instance.Invincibility)
+                    {
+                        //hit a player!
+                        PlayerMovement.Instance.OnDeath();
+                        if (_animator != null)
+                        {
+                            _animator.SetTrigger(Attack);
+                        }
+                        SceneController.Instance.ReloadCurrentScene();
+                    }
                 }
                 else
                 {
@@ -215,6 +248,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
         {
             Time.timeScale = 0f;
 
+            PlayerMovement.Instance.OnDeath();
             SceneController.Instance.ReloadCurrentScene();
         }
     }
@@ -250,6 +284,10 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     {
         if (sonEnemy)
         {
+            if (_animator != null)
+            {
+                _animator.SetBool(Frozen, true);
+            }
             EnemyFrozen = true;
         }
     }
@@ -259,6 +297,10 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     /// </summary>
     public void OnLaserExit()
     {
+        if (_animator != null)
+        {
+            _animator.SetBool(Frozen, false);
+        }
         EnemyFrozen = false;
     }
 

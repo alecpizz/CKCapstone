@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Nick Grinstead
-*    Contributors: 
+*    Contributors: Rider Hagen
 *    Date Created: 10/20/24
 *    Description: Script for tracking the current time signature.
 *    Has methods for updating to a new time signature and pushs updates
@@ -9,6 +9,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using SaintsField;
+using TMPro;
 
 public class TimeSignatureManager : MonoBehaviour
 {
@@ -22,6 +23,8 @@ public class TimeSignatureManager : MonoBehaviour
     [SerializeField] private Vector2Int _secondaryTimeSignature;
     private Vector2Int _startingTimeSignature;
     private bool _isToggled = false;
+
+    [SerializeField] private TMP_Text _metronomePredictor;
 
     private List<ITimeListener> _timeListeners = new List<ITimeListener>();
 
@@ -56,6 +59,11 @@ public class TimeSignatureManager : MonoBehaviour
         }
 
         _startingTimeSignature = _timeSignature;
+
+        if (_metronomePredictor != null)
+        {
+            _metronomePredictor.text = _secondaryTimeSignature.x + "/" + _secondaryTimeSignature.y;
+        }
     }
 
     /// <summary>
@@ -69,7 +77,25 @@ public class TimeSignatureManager : MonoBehaviour
 
         UpdateListeners();
     }
-    
+
+    /// <summary>
+    /// Fetches the current time signature
+    /// </summary>
+    /// <returns>Current Time Signature</returns>
+    public Vector2Int GetCurrentTimeSignature()
+    {
+        return !_isToggled ? _startingTimeSignature : _secondaryTimeSignature;
+    }
+
+    /// <summary>
+    /// Fetches the next time signature to be used
+    /// </summary>
+    /// <returns>Next Time Signature that will be swapped to if metronome is interacted with</returns>
+    public Vector2Int GetNextTimeSignature()
+    {
+        return _isToggled ? _startingTimeSignature : _secondaryTimeSignature;
+    }
+
     /// <summary>
     /// Method for updating the listeners that are registered to this manager
     /// </summary>

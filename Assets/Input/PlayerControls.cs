@@ -62,6 +62,24 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": ""Hold,Press"",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Select Menu Item1"",
+                    ""type"": ""Button"",
+                    ""id"": ""85b82eb0-a542-41bb-938e-50e5553ec99a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CycleForward"",
+                    ""type"": ""Button"",
+                    ""id"": ""7fa3fae3-e5f3-4eb7-a660-1f63f2bed52f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -372,6 +390,72 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""GameSpeed"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3a7cbc91-bf07-4aa4-a5f1-66a825945076"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Select Menu Item1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e002cc52-4509-479e-bdcc-4fb4597760a6"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Select Menu Item1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cc85f42e-b28c-4712-aae6-ee869e17e329"",
+                    ""path"": ""<SwitchProControllerHID>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Select Menu Item1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""413a7c43-a791-482f-8339-abb7c68d9817"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Select Menu Item1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8f7fe52b-268f-41b5-84d1-ef1a28973ed9"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CycleForward"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5590558f-323e-4578-99a3-c02aeea19860"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CycleForward"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -384,6 +468,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_InGame_Movement = m_InGame.FindAction("Movement", throwIfNotFound: true);
         m_InGame_Toggle = m_InGame.FindAction("Toggle", throwIfNotFound: true);
         m_InGame_GameSpeed = m_InGame.FindAction("GameSpeed", throwIfNotFound: true);
+        m_InGame_SelectMenuItem1 = m_InGame.FindAction("Select Menu Item1", throwIfNotFound: true);
+        m_InGame_CycleForward = m_InGame.FindAction("CycleForward", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -449,6 +535,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_InGame_Movement;
     private readonly InputAction m_InGame_Toggle;
     private readonly InputAction m_InGame_GameSpeed;
+    private readonly InputAction m_InGame_SelectMenuItem1;
+    private readonly InputAction m_InGame_CycleForward;
     public struct InGameActions
     {
         private @PlayerControls m_Wrapper;
@@ -457,6 +545,8 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @Movement => m_Wrapper.m_InGame_Movement;
         public InputAction @Toggle => m_Wrapper.m_InGame_Toggle;
         public InputAction @GameSpeed => m_Wrapper.m_InGame_GameSpeed;
+        public InputAction @SelectMenuItem1 => m_Wrapper.m_InGame_SelectMenuItem1;
+        public InputAction @CycleForward => m_Wrapper.m_InGame_CycleForward;
         public InputActionMap Get() { return m_Wrapper.m_InGame; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -478,6 +568,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @GameSpeed.started += instance.OnGameSpeed;
             @GameSpeed.performed += instance.OnGameSpeed;
             @GameSpeed.canceled += instance.OnGameSpeed;
+            @SelectMenuItem1.started += instance.OnSelectMenuItem1;
+            @SelectMenuItem1.performed += instance.OnSelectMenuItem1;
+            @SelectMenuItem1.canceled += instance.OnSelectMenuItem1;
+            @CycleForward.started += instance.OnCycleForward;
+            @CycleForward.performed += instance.OnCycleForward;
+            @CycleForward.canceled += instance.OnCycleForward;
         }
 
         private void UnregisterCallbacks(IInGameActions instance)
@@ -494,6 +590,12 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @GameSpeed.started -= instance.OnGameSpeed;
             @GameSpeed.performed -= instance.OnGameSpeed;
             @GameSpeed.canceled -= instance.OnGameSpeed;
+            @SelectMenuItem1.started -= instance.OnSelectMenuItem1;
+            @SelectMenuItem1.performed -= instance.OnSelectMenuItem1;
+            @SelectMenuItem1.canceled -= instance.OnSelectMenuItem1;
+            @CycleForward.started -= instance.OnCycleForward;
+            @CycleForward.performed -= instance.OnCycleForward;
+            @CycleForward.canceled -= instance.OnCycleForward;
         }
 
         public void RemoveCallbacks(IInGameActions instance)
@@ -517,5 +619,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnMovement(InputAction.CallbackContext context);
         void OnToggle(InputAction.CallbackContext context);
         void OnGameSpeed(InputAction.CallbackContext context);
+        void OnSelectMenuItem1(InputAction.CallbackContext context);
+        void OnCycleForward(InputAction.CallbackContext context);
     }
 }
