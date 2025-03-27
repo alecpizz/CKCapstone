@@ -14,7 +14,7 @@ public static class CKLevelCenter
         if (player == null) return;
         CenterGridEntry(player);
     }
-    
+
     [MenuItem("Tools/Crowded Kitchen/Center/Center Selected")]
     public static void CenterSelected()
     {
@@ -57,12 +57,26 @@ public static class CKLevelCenter
             {
                 placeField.SetValue(placer, false);
             }
+
             var field = wall.GetType().GetField("_wallGhost", BindingFlags.NonPublic | BindingFlags.Instance);
             if (field == null || field.GetValue(wall) == null) continue;
             GameObject ghost = field.GetValue(wall) as GameObject;
             if (ghost == null) continue;
             var entry = ghost.GetComponent<IGridEntry>();
             CenterGridEntry(entry);
+        }
+    }
+
+    [MenuItem("Tools/Crowded Kitchen/Center/Center Harmony Beams & Reflectors")]
+    public static void CenterHarmonyBeams()
+    {
+        var harmonyBeams = Object.FindObjectsOfType<HarmonyBeam>();
+        foreach (var harmonyBeam in harmonyBeams)
+        {
+            Vector3Int cellPos = GridBase.Instance.WorldToCell(harmonyBeam.transform.position);
+            harmonyBeam.transform.position = GridBase.Instance.CellToWorld(cellPos) +
+                                             CKOffsetsReference.HarmonyBeamOffset(
+                                                 harmonyBeam.GetComponent<ReflectionSwitch>() != null);
         }
     }
 
@@ -74,7 +88,6 @@ public static class CKLevelCenter
         RotateGridEntry(player);
     }
 
-   
 
     [MenuItem("Tools/Crowded Kitchen/Pivot/Rotate Selected 90")]
     public static void RotateSelected90()
