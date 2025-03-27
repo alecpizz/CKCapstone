@@ -32,6 +32,12 @@ public static class CKLevelCenter
         {
             CenterGridEntry(enemyBehavior);
         }
+
+        var mirrorEnemies = Object.FindObjectsOfType<MirrorAndCopyBehavior>();
+        foreach (var enemyBehavior in mirrorEnemies)
+        {
+            CenterGridEntry(enemyBehavior);
+        }
     }
 
     [MenuItem("Tools/Crowded Kitchen/Center/Center Switches")]
@@ -78,6 +84,70 @@ public static class CKLevelCenter
                                              CKOffsetsReference.HarmonyBeamOffset(
                                                  harmonyBeam.GetComponent<ReflectionSwitch>() != null);
         }
+    }
+
+    [MenuItem("Tools/Crowded Kitchen/Center/Center Metronomes")]
+    public static void CenterMetronomes()
+    {
+        var metronomes = Object.FindObjectsOfType<MetronomeBehavior>();
+        foreach (var metronomeBehavior in metronomes)
+        {
+            //Have to grab the animator at the root because whoever setup the metronome
+            //didn't add the component to the root for some reason. can't use root because if a designer grouped
+            //everything that would break too.
+            var targetTransform = metronomeBehavior.GetComponentInParent<Animator>().transform;
+            Vector3Int cellPos = GridBase.Instance.WorldToCell(targetTransform.position);
+            targetTransform.position = GridBase.Instance.CellToWorld(cellPos) +
+                                       CKOffsetsReference.MetronomeOffset;
+            var predictor = targetTransform.Find("MetronomePredictor");
+            if (predictor == null) continue;
+            cellPos = GridBase.Instance.WorldToCell(predictor.position);
+            predictor.position = GridBase.Instance.CellToWorld(cellPos) + CKOffsetsReference.MetronomePredictorOffset;
+        }
+    }
+
+    [MenuItem("Tools/Crowded Kitchen/Center/Center Doors")]
+    public static void CenterDoors()
+    {
+        var doors = Object.FindObjectsOfType<EndLevelDoor>();
+        foreach (var door in doors)
+        {
+            var right = door.transform.right;
+            var offset = Vector3.zero;
+            if (Vector3.Dot(right, Vector3.back) >= 0.9f)
+            {
+                //door facing front of scene
+                offset = CKOffsetsReference.DoorOffsetDown;
+            }
+            else if (Vector3.Dot(right, Vector3.forward) >= 0.9f)
+            {
+                //door facing back of scene
+                offset = CKOffsetsReference.DoorOffsetUp;
+            }
+            else if (Vector3.Dot(right, Vector3.right) >= 0.9f)
+            {
+                //door is facing right of scene
+                offset = CKOffsetsReference.DoorOffsetLeft;
+            }
+            else if (Vector3.Dot(right, Vector3.left) >= 0.9f)
+            {
+                //door is facing left of scene
+                offset = CKOffsetsReference.DoorOffsetRight;
+            }
+
+            var cell = GridBase.Instance.WorldToCell(door.transform.position);
+            door.transform.position = GridBase.Instance.CellToWorld(cell) + offset;
+        }
+    }
+
+    [MenuItem("Tools/Crowded Kitchen/Pivot/Rotate Selected Door 90")]
+    public static void RotateSelectedDoor()
+    {
+        if (Selection.activeGameObject == null) return;
+        var door = Selection.activeGameObject.GetComponentInParent<EndLevelDoor>();
+        if (door == null) return;
+        door.transform.Rotate(Vector3.up, 90f);
+        CenterDoors();
     }
 
     [MenuItem("Tools/Crowded Kitchen/Pivot/Rotate Mother 90")]
