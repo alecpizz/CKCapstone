@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Madison Gorman
-*    Contributors: Nick Grinstead, Alex Laubenstein
+*    Contributors: Nick Grinstead, Alex Laubenstein, Josephine Qualls
 *    Date Created: 11/07/24
 *    Description: Permits one of two cutscene types to play; either after 
 *    the completion of a challenge level (comprised of a static image, 
@@ -94,6 +94,10 @@ public class CutsceneFramework : MonoBehaviour
 
     private IDisposable _mAnyButtonPressedListener;
 
+    private MenuManager _menuManager = new MenuManager();
+
+    [SerializeField] private GameObject _optionsScreen;
+
     /// <summary>
     /// Determines whether to play the Challenge or End Chapter Cutscene
     /// </summary>
@@ -101,7 +105,8 @@ public class CutsceneFramework : MonoBehaviour
     {
         _inputActions = new DebugInputActions();
         _inputActions.UI.Enable();
-        _inputActions.UI.SkipCutscene.performed += ctx => SkipCutscene();
+        _inputActions.UI.SkipCutscene.performed += ctx => SkipCutscene();    
+        _inputActions.UI.Pause.performed += ctx => _menuManager.Pause();
         //_endChapterCutsceneVideo.loopPointReached += CheckEnd;
 
         //Registers is button is pressed
@@ -147,6 +152,7 @@ public class CutsceneFramework : MonoBehaviour
     {
         _inputActions.UI.Disable();
         _inputActions.UI.SkipCutscene.performed -= ctx => SkipCutscene();
+        _inputActions.UI.Pause.performed -= ctx => _menuManager.Pause();
 
         if(_mAnyButtonPressedListener != null)
         {
@@ -198,7 +204,7 @@ public class CutsceneFramework : MonoBehaviour
 
         if (scene.Substring(0, 2).Equals("CS"))
         {
-            Debug.Log("Press the Escape key to skip!");
+            Debug.Log("Press the Space bar to skip!");
         }
     }
 
