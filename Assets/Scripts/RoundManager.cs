@@ -141,7 +141,7 @@ public sealed class RoundManager : MonoBehaviour
 
         var dir = GetNormalizedInput();
 
-        if (_turnState != TurnState.None && _lastMovementInput == dir && 
+        if (EnemiesPresent && _turnState != TurnState.None && _lastMovementInput == dir && 
             Time.unscaledTime - _movementRegisteredTime <= _autocompleteWindow)
         {
             EnableAutocomplete();
@@ -227,9 +227,15 @@ public sealed class RoundManager : MonoBehaviour
             return;
         }
 
+        // Reset buffered inputs if the player has ended their turn
+        //if (next is TurnState.Enemy)
+        //{
+        //    _inputBuffered = false;
+        //}
+
         //begin the next group's turns.
         _turnState = next.Value;
-
+        
         while (_turnListeners[_turnState].Count == 0 && _turnState != TurnState.None)
         {
             next = GetNextTurn(_turnState);
@@ -240,6 +246,13 @@ public sealed class RoundManager : MonoBehaviour
             }
             _turnState = next.Value;
         }
+
+        //if (_turnState == TurnState.None && _inputBuffered)
+        //{
+        //    //_inputBuffered = false;
+        //    PerformMovement();
+        //    return;
+        //}
 
         if (_turnState != TurnState.None && SceneController.Instance != null &&
             !SceneController.Instance.Transitioning)
@@ -258,7 +271,8 @@ public sealed class RoundManager : MonoBehaviour
     public void RequestRepeatTurnStateRepeat(ITurnListener listener)
     {
         //Stops Held Movement
-        _movementRegistered = false;
+        //if (!_inputBuffered)
+            _movementRegistered = false;
 
         // Returns if it's not the listener's turn
         if (listener.TurnState != _turnState &&
