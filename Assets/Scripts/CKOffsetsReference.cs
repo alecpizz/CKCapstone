@@ -59,7 +59,6 @@ public class CKOffsetsReference : ScriptableObjectSingleton<CKOffsetsReference>
     public static Vector3 DoorOffsetDown => Instance._doorOffsetDown;
     public static Vector3 DoorOffsetUp => Instance._doorOffsetUp;
 
-    public static Vector3 EnemyOffset(bool isSon) => isSon ? Instance._sonOffset : Instance._enemyOffset;
     public static Vector3 SwitchOffset => Instance._switchOffset;
     public static Vector3 MovingWallOffset => Instance._movingWallOffset;
 
