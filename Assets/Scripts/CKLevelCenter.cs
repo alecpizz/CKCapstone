@@ -150,6 +150,16 @@ public static class CKLevelCenter
         CenterDoors();
     }
 
+    [MenuItem("Tools/Crowded Kitchen/Center/Center Notes")]
+    public static void CenterNotes()
+    {
+        var notes = Object.FindObjectsOfType<Collectibles>();
+        foreach (var note in notes)
+        {
+            CenterGridEntry(note);
+        }
+    }
+
     [MenuItem("Tools/Crowded Kitchen/Pivot/Rotate Mother 90")]
     public static void RotateMother()
     {

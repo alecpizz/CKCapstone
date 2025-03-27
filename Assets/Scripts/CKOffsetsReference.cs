@@ -46,7 +46,13 @@ public class CKOffsetsReference : ScriptableObjectSingleton<CKOffsetsReference>
  [SerializeField] [OnValueChanged(nameof(DoorOffsetChanged))]
     private Vector3 _doorOffsetUp = new Vector3(0.0f, 0.0f);
 
+    [SerializeField] [OnValueChanged(nameof(NoteOffsetChanged))]
+    private Vector3 _noteOffset = new Vector3(0f, 0f, 0f);
+
     public static Vector3 MotherOffset => Instance._motherOffset;
+    public static Vector3 NoteOffset => Instance._noteOffset;
+
+    public static Vector3 EnemyOffset(bool isSon) => isSon ? Instance._sonOffset : Instance._enemyOffset;
 
     public static Vector3 DoorOffsetLeft => Instance._doorOffsetLeft;
     public static Vector3 DoorOffsetRight => Instance._doorOffsetRight;
@@ -112,5 +118,12 @@ public class CKOffsetsReference : ScriptableObjectSingleton<CKOffsetsReference>
 #if UNITY_EDITOR
         CKLevelCenter.CenterMother();
 #endif
+    }
+
+    private void NoteOffsetChanged()
+    {
+        #if UNITY_EDITOR
+        CKLevelCenter.CenterNotes();
+        #endif
     }
 }
