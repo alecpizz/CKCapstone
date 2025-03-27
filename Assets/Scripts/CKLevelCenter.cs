@@ -7,7 +7,7 @@ using UnityEngine;
 
 public static class CKLevelCenter
 {
-    [MenuItem("Tools/Crowded Kitchen/Center/Center Selected")]
+    [MenuItem("Tools/Crowded Kitchen/Center/Center Mother")]
     public static void CenterMother()
     {
         var player = Object.FindObjectOfType<PlayerMovement>();
