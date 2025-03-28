@@ -217,17 +217,14 @@ using UnityEditor;
 // }
 
 
-
-
-
-
 [Overlay(typeof(SceneView), "Level Centering")]
-public class CKLevelCenterToolbar : Overlay, ICreateVerticalToolbar, ICreateHorizontalToolbar
+public class CKLevelCenterToolbar : Overlay, ICreateVerticalToolbar
 {
     [EditorToolbarElement(id, typeof(SceneView))]
     private class CenterMother : EditorToolbarButton
     {
         public const string id = nameof(CenterMother);
+
         public CenterMother()
         {
             text = id;
@@ -237,11 +234,12 @@ public class CKLevelCenterToolbar : Overlay, ICreateVerticalToolbar, ICreateHori
             clicked += CKLevelCenter.CenterMother;
         }
     }
-    
+
     [EditorToolbarElement(id, typeof(SceneView))]
     private class CenterSelected : EditorToolbarButton
     {
         public const string id = nameof(CenterSelected);
+
         public CenterSelected()
         {
             text = id;
@@ -251,11 +249,12 @@ public class CKLevelCenterToolbar : Overlay, ICreateVerticalToolbar, ICreateHori
             clicked += CKLevelCenter.CenterSelected;
         }
     }
- 
+
     [EditorToolbarElement(id, typeof(SceneView))]
     private class CenterEnemies : EditorToolbarButton
     {
         public const string id = nameof(CenterEnemies);
+
         public CenterEnemies()
         {
             text = id;
@@ -274,21 +273,59 @@ public class CKLevelCenterToolbar : Overlay, ICreateVerticalToolbar, ICreateHori
     public OverlayToolbar CreateVerticalToolbarContent()
     {
         var toolbar = new OverlayToolbar();
-        toolbar.Add(new Button(CKLevelCenter.CenterEnemies)
+        toolbar.style.alignItems = Align.FlexStart;
+        toolbar.Add(new Label("Centering Tool"));
+        toolbar.Add(new Button(CKLevelCenter.CenterAll)
         {
-            text = "CenterEnemies"
+            text = "Center ALL",
         });
         toolbar.Add(new Button(CKLevelCenter.CenterEnemies)
         {
-            text = "CenterEnemies"
+            text = "Enemies",
         });
-        toolbar.Add(new Button(CKLevelCenter.CenterEnemies)
+        toolbar.Add(new Button(CKLevelCenter.CenterSelected)
         {
-            text = "CenterEnemies"
+            text = "Selected Object",
         });
-        toolbar.Add(new Button(CKLevelCenter.CenterEnemies)
+        toolbar.Add(new Button(CKLevelCenter.CenterMother)
         {
-            text = "CenterEnemies"
+            text = "Mother",
+        });
+        toolbar.Add(new Button(CKLevelCenter.CenterSwitches)
+        {
+            text = "Switches",
+        });
+        toolbar.Add(new Button(CKLevelCenter.CenterMovingWalls)
+        {
+            text = "Moving Walls",
+        });
+        toolbar.Add(new Button(CKLevelCenter.CenterHarmonyBeams)
+        {
+            text = "Harmony Beams/Reflectors",
+        });
+        toolbar.Add(new Button(CKLevelCenter.CenterMetronomes)
+        {
+            text = "Metronomes",
+        });
+        toolbar.Add(new Button(CKLevelCenter.CenterDoors)
+        {
+            text = "Doors",
+        });
+        toolbar.Add(new Button(CKLevelCenter.CenterNotes)
+        {
+            text = "Notes",
+        });
+        toolbar.Add(new Button(CKLevelCenter.RotateSelectedDoor)
+        {
+            text = "Rotate Selected Door"
+        });
+        toolbar.Add(new Button(CKLevelCenter.RotateMother)
+        {
+            text = "Rotate Mother"
+        });
+        toolbar.Add(new Button(CKLevelCenter.RotateSelected90)
+        {
+            text = "Rotate Selected"
         });
         return toolbar;
     }

@@ -160,6 +160,19 @@ public static class CKLevelCenter
         }
     }
 
+    [MenuItem("Tools/Crowded Kitchen/Center/Center ALL")]
+    public static void CenterAll()
+    {
+        CenterEnemies();
+        CenterMother();
+        CenterSwitches();
+        CenterMovingWalls();
+        CenterHarmonyBeams();
+        CenterMetronomes();
+        CenterDoors();
+        CenterNotes();
+    }
+
     [MenuItem("Tools/Crowded Kitchen/Pivot/Rotate Mother 90")]
     public static void RotateMother()
     {
