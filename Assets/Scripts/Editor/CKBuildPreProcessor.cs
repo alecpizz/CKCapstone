@@ -286,8 +286,31 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 }
 
                 SetDoorExitScene(endLevelDoor, index);
+                
+                
 
                 EditorUtility.SetDirty(endLevelDoor);
+            }
+            
+            var cutsceneFrameWork = Object.FindObjectOfType<CutsceneFramework>();
+            if (cutsceneFrameWork != null)
+            {
+                var field = cutsceneFrameWork.GetType().GetField("_loadingLevelIndex",
+                    BindingFlags.Instance | BindingFlags.NonPublic);
+                if (field != null)
+                {
+                    field.SetValue(cutsceneFrameWork,
+                        SceneUtility.GetBuildIndexByScenePath(
+                            AssetDatabase.GetAssetPath(nextScene)));
+                }
+                else
+                {
+                    Debug.LogError("Field _loadingLevelIndex not found on cutsceneFramework!");
+                }
+            }
+            else
+            {
+                Debug.Log($"NO CUTSCENE FRAMEWORK IN SCENE {currScene.name}");
             }
             
             lightingDataApply?.Invoke(currentLevel.LightingData);
@@ -346,6 +369,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                     AssetDatabase.GetAssetPath(chapter.Intro.Scene),
                     true));
+                chapter.Intro.ScenePath = editorBuildSettingsScenes[^1].path;
                 levelData.PrettySceneNames.Add(new LevelOrder.PrettyData
                     { PrettyName = chapter.Intro.LevelName, showUp = false });
             }
@@ -357,6 +381,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                     AssetDatabase.GetAssetPath(level.Scene),
                     true));
+                level.ScenePath = editorBuildSettingsScenes[^1].path;
                 levelData.PrettySceneNames.Add(
                     new LevelOrder.PrettyData { PrettyName = level.LevelName, showUp = true });
             }
@@ -367,6 +392,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                     AssetDatabase.GetAssetPath(chapter.Outro.Scene),
                     true));
+                chapter.Outro.ScenePath = editorBuildSettingsScenes[^1].path;
                 levelData.PrettySceneNames.Add(new LevelOrder.PrettyData
                     { PrettyName = chapter.Outro.LevelName, showUp = true });
             }

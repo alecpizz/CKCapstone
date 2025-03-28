@@ -1071,6 +1071,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1306577878}
+        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
+        m_MethodName: OptionsMainMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &562548440
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1496,6 +1508,18 @@ MonoBehaviour:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 4
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1306577878}
+        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
+        m_MethodName: OptionsMainMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -2582,12 +2606,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 390cb390582593940b85984c7b61a5de, type: 3}
---- !u!1 &1043149804 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 85656130299466612, guid: 6a8517eb504a3dc4f90bc546f81eaf46,
-    type: 3}
-  m_PrefabInstance: {fileID: 1447829816}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &1043149805 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1838231989009249964, guid: 6a8517eb504a3dc4f90bc546f81eaf46,
@@ -2977,7 +2995,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1306577878}
         m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
-        m_MethodName: ContinueGame
+        m_MethodName: StartGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3022,7 +3040,7 @@ GameObject:
   - component: {fileID: 1300315849}
   - component: {fileID: 1300315853}
   m_Layer: 5
-  m_Name: Options
+  m_Name: New Game
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3269,7 +3287,7 @@ MonoBehaviour:
   _tutorialCanvas: {fileID: 885715517}
   _optionsScreen: {fileID: 2839288372686986014}
   _confirmQuit: {fileID: 665595967}
-  _mainMenu: {fileID: 1043149804}
+  _mainMenu: {fileID: 997577393}
   _firstLevelIndex: 1
   _mainMenuFirst: {fileID: 1798851191}
   _settingsMenuFirst: {fileID: 2081803080}
@@ -3383,6 +3401,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 19
+      objectReference: {fileID: 0}
+    - target: {fileID: 1503455431140036358, guid: 6a8517eb504a3dc4f90bc546f81eaf46,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1636395213495245940, guid: 6a8517eb504a3dc4f90bc546f81eaf46,
         type: 3}
@@ -3622,7 +3645,7 @@ PrefabInstance:
     - target: {fileID: 4580356570353798759, guid: 6a8517eb504a3dc4f90bc546f81eaf46,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -26.410156
+      value: -26.409973
       objectReference: {fileID: 0}
     - target: {fileID: 4580356570353798759, guid: 6a8517eb504a3dc4f90bc546f81eaf46,
         type: 3}
@@ -3819,6 +3842,11 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1306577878}
+    - target: {fileID: 6446908321696922586, guid: 6a8517eb504a3dc4f90bc546f81eaf46,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OptionsMainMenuClose
+      objectReference: {fileID: 0}
     - target: {fileID: 6628743725317753186, guid: 6a8517eb504a3dc4f90bc546f81eaf46,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -4301,7 +4329,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1306577878}
         m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
-        m_MethodName: StartGame
+        m_MethodName: ContinueGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -542,6 +542,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).ToYieldInstruction();
                 _endRotate = false;
             }
+            if (_animator != null)
+            {
+                _animator.ResetTrigger(Turn);
+            }
         }
         if (!blocked)
         {
@@ -860,6 +864,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     {
         Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
         Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos);
-        transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z);
+        transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z) + _positionOffset;
     }
 }

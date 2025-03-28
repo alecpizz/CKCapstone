@@ -68,6 +68,8 @@ public class SceneController : MonoBehaviour
     /// </summary>
     public void ReloadCurrentScene()
     {
+        if (Transitioning) { return; }
+
         StopAllCoroutines();
         _currentFadeColor = Color.black;
         int sceneIndex = SceneManager.GetActiveScene().buildIndex;
@@ -80,6 +82,8 @@ public class SceneController : MonoBehaviour
     /// <param name="sceneBuildIndex">Build index of the scene to load</param>
     public void LoadNewScene(int sceneBuildIndex)
     {
+        if (Transitioning) { return; }
+
         StopAllCoroutines();
         _currentFadeColor = Color.white;
         StartCoroutine(CircleWipeTransition(false, _currentFadeColor, sceneBuildIndex));
