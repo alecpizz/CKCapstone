@@ -200,7 +200,11 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                 _animator.SetTrigger(Forward);
                 yield return Tween.Position(transform,
                     move + CKOffsetsReference.MotherOffset, duration: modifiedMovementTime, 
-                    _movementEase).ToYieldInstruction();
+                    _movementEase).OnUpdate(target: this, (_, _) =>
+                    {
+                        CheckForEnemyCollision(move);
+                    }).ToYieldInstruction();
+                    _animator.ResetTrigger(Forward);
             }
 
             if (_playerMovementTiming > 1)
@@ -210,6 +214,24 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         }
 
         _canMove = true;
+    }
+
+    /// <summary>
+    /// Allows the player to check if they hit an enemy while moving
+    /// </summary>
+    /// <param name="move">Where the player is moving to</param>
+    private void CheckForEnemyCollision(Vector3 move)
+    {
+        var gridEntries = GridBase.Instance.GetCellEntries(move);
+
+        foreach (var gridEntry in gridEntries)
+        {
+            if (gridEntry as EnemyBehavior || gridEntry as MirrorAndCopyBehavior)
+            {
+                OnDeath();
+                SceneController.Instance.ReloadCurrentScene();
+            }
+        }
     }
 
     /// <summary>
