@@ -16,6 +16,9 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using TMPro;
 using UnityEngine.Rendering.UI;
+using UnityEngine.InputSystem.DualShock;
+using UnityEngine.InputSystem.Layouts;
+using UnityEngine.InputSystem.Switch;
 
 public class DebugMenuManager : MonoBehaviour
 {
@@ -56,6 +59,7 @@ public class DebugMenuManager : MonoBehaviour
     private DebugInputActions _playerInput;
     private InputAction _debugInput;
     private InputAction _restartInput;
+
 
     /// <summary>
     /// Does the calculation for determining the game's frame rate.
@@ -113,7 +117,7 @@ public class DebugMenuManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         //Sets an default game object for the event system to hold on to for menuing
-        EventSystem.current.SetSelectedGameObject(_mainMenuFirst);   
+        EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
     }
  
     /// <summary>
@@ -137,6 +141,23 @@ public class DebugMenuManager : MonoBehaviour
         _frameDeltaTimeArray[_lastFrameIndex] = Time.unscaledDeltaTime;
         _lastFrameIndex = (_lastFrameIndex + 1) % _frameDeltaTimeArray.Length;
         _fpsText.text = (Mathf.RoundToInt(FpsCalculation()).ToString() + " FPS");
+
+        if (Gamepad.current is DualSenseGamepadHID || Gamepad.current is DualShock4GamepadHID)
+        {
+            Debug.Log("Playstation Controller in use");
+        }
+        else if (Gamepad.current is SwitchProControllerHID)
+        {
+            Debug.Log("ProCon in use");
+        }
+        else if (Gamepad.current is null)
+        {
+            Debug.Log("Keyboard and Mouse in use");
+        }
+        else
+        {
+            Debug.Log("Xbox Controller in use");
+        }
     }
 
     /// <summary>
