@@ -96,8 +96,6 @@ public class CutsceneFramework : MonoBehaviour
 
     private MenuManager _menuManager = new MenuManager();
 
-    [SerializeField] private GameObject _optionsScreen;
-
     /// <summary>
     /// Determines whether to play the Challenge or End Chapter Cutscene
     /// </summary>

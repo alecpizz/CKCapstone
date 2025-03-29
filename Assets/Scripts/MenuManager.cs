@@ -121,7 +121,7 @@ public class MenuManager : MonoBehaviour
             EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
             Time.timeScale = 0f;
         }
-        else if (_optionsScreen.activeInHierarchy)
+        else if (_optionsScreen != null && _optionsScreen.activeInHierarchy)
         {
             OptionsClose();
             _mainMenu.SetActive(true);
