@@ -42,6 +42,10 @@ public sealed class RoundManager : MonoBehaviour
     private bool _autocompleteActive = false;
     private float _movementRegisteredTime = -1;
     [SerializeField] private float _inputBufferWindow = 0.5f;
+    // This second buffer window helps prevent double movements in scenes with no enemies
+    [SerializeField] private float _noEnemiesBufferWindow = 0.25f;
+
+    private const float _turnRepeatDelay = 0.01f;
 
     [Header("Autocomplete Mechanic")]
     [SerializeField, Tooltip("Timescale during autocomplete dash")] private float _autocompleteSpeed = 3;
@@ -129,6 +133,18 @@ public sealed class RoundManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Called when the turn state returns to None to check if the player buffered an input
+    /// </summary>
+    private void CheckForBufferedInput()
+    {
+        if (Time.unscaledTime - _movementRegisteredTime <= 
+            (EnemiesPresent ? _inputBufferWindow : _noEnemiesBufferWindow))
+        {
+            PerformMovement();
+        }
+    }
+
+    /// <summary>
     /// Invoked when a movement input is pressed.
     /// Will attempt to move if possible, but if it's not the player's turn
     /// the movement will be rejected.
@@ -136,7 +152,7 @@ public sealed class RoundManager : MonoBehaviour
     /// <param name="obj"></param>
     private void RegisterMovementInput(InputAction.CallbackContext obj)
     {
-        if (_turnState != TurnState.None && Time.timeScale > 1)
+        if (Time.timeScale > 1)
             return;
 
         var dir = GetNormalizedInput();
@@ -169,15 +185,15 @@ public sealed class RoundManager : MonoBehaviour
     /// </summary>
     private void PerformMovement()
     {
-        if (!_movementRegistered || DebugMenuManager.Instance.PauseMenu) return;
+        // Return if no movement is registered or if the game is paused
+        if ((!_movementRegistered && !_inputBuffered) || DebugMenuManager.Instance.PauseMenu) return;
 
+        // Stop moving if no movement input was pressed
         if (!_playerControls.InGame.Movement.IsPressed() && !_inputBuffered)
         {
             _movementRegistered = false;
             return;
         }
-
-        _inputBuffered = false;
 
         _turnState = TurnState.Player;
 
@@ -212,26 +228,22 @@ public sealed class RoundManager : MonoBehaviour
         if (_completedTurnCounts[listenerTurnState] < _turnListeners[listenerTurnState].Count) return;
         _completedTurnCounts[listenerTurnState] = 0;
 
+        // Clears buffered input once player has successfully moved
+        if (_turnState == TurnState.Player)
+        {
+            _inputBuffered = false;
+        }
+
         //find out who's turn is next, if it's nobody's, stop.
         var next = GetNextTurn(_turnState);
         if (next is null or TurnState.None)
         {
             _turnState = TurnState.None;
-            // Attempts to move player if they buffered an input
-            if (Time.unscaledTime - _movementRegisteredTime <= _inputBufferWindow)
-            {
-                PerformMovement();
-            }
+            CheckForBufferedInput();
 
             DisableAutocomplete();
             return;
         }
-
-        // Reset buffered inputs if the player has ended their turn
-        //if (next is TurnState.Enemy)
-        //{
-        //    _inputBuffered = false;
-        //}
 
         //begin the next group's turns.
         _turnState = next.Value;
@@ -246,13 +258,6 @@ public sealed class RoundManager : MonoBehaviour
             }
             _turnState = next.Value;
         }
-
-        //if (_turnState == TurnState.None && _inputBuffered)
-        //{
-        //    //_inputBuffered = false;
-        //    PerformMovement();
-        //    return;
-        //}
 
         if (_turnState != TurnState.None && SceneController.Instance != null &&
             !SceneController.Instance.Transitioning)
@@ -271,7 +276,7 @@ public sealed class RoundManager : MonoBehaviour
     public void RequestRepeatTurnStateRepeat(ITurnListener listener)
     {
         //Stops Held Movement
-        //if (!_inputBuffered)
+        if (!_inputBuffered)
             _movementRegistered = false;
 
         // Returns if it's not the listener's turn
@@ -290,6 +295,8 @@ public sealed class RoundManager : MonoBehaviour
         if (prev is null or TurnState.None)
         {
             _turnState = TurnState.None;
+            // Delaying this call so the stack doesn't explode
+            Invoke(nameof(CheckForBufferedInput), _turnRepeatDelay);
             return;
         }
 
