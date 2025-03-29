@@ -542,6 +542,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).ToYieldInstruction();
                 _endRotate = false;
             }
+            if (_animator != null)
+            {
+                _animator.ResetTrigger(Turn);
+            }
         }
         if (!blocked)
         {
