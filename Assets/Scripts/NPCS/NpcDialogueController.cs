@@ -240,6 +240,13 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
             {
                 _currentDialogue = 0;
                 HideDialogue();
+
+                if(gameObject.tag == "Collectable")
+                {
+                    Debug.Log("Collectable get!");
+                    SaveDataManager.SetCollectableFound(gameObject.name, true);
+                }
+
                 return;
             }
 
