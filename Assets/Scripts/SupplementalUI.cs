@@ -124,15 +124,12 @@ public class SupplementalUI : MonoBehaviour
     /// <returns></returns>
     private IEnumerator FadingIn()
     {
-        while (_panelColor.a < 0.9f)
+        while (_panelColor.a < 0.9f && _arrowColor.a < 0.9f)
         {
             _panelColor.a += (Time.deltaTime * _textFadeSpeed);
-            yield return null;
-        }
 
-        while (_arrowColor.a < 0.9f)
-        {
             _arrowColor.a += (Time.deltaTime * _textFadeSpeed);
+
             yield return null;
         }
 
@@ -155,15 +152,12 @@ public class SupplementalUI : MonoBehaviour
             yield return null;
         }
 
-        while (_panelColor.a > 0)
+        while (_panelColor.a > 0 && _arrowColor.a > 0)
         {
             _panelColor.a -= (Time.deltaTime * _textFadeSpeed);
-            yield return null;
-        }
 
-        while (_arrowColor.a > 0)
-        {
             _arrowColor.a -= (Time.deltaTime * _textFadeSpeed);
+
             yield return null;
         }
     }
