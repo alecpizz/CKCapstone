@@ -38,6 +38,9 @@ public class SupplementalUI : MonoBehaviour
     //image component of the UI panel
     private Image _panelBackground;
 
+    //color variable for the arrow
+    private Color _arrowColor;
+
     //image for arrow attatched to the panel
     private Image _arrowImage;
 
@@ -59,6 +62,8 @@ public class SupplementalUI : MonoBehaviour
         _arrowImage = _arrow.GetComponent<Image>();
         _panelColor = _panelBackground.color;
         _panelColor.a = 0;
+        _arrowColor = _arrowImage.color;
+        _arrowColor.a = 0;
 
         if (_hasDelay)
         {
@@ -125,6 +130,12 @@ public class SupplementalUI : MonoBehaviour
             yield return null;
         }
 
+        while (_arrowColor.a < 0.9f)
+        {
+            _arrowColor.a += (Time.deltaTime * _textFadeSpeed);
+            yield return null;
+        }
+
         while (_textColor.a < 1)
         {
             _textColor.a += (Time.deltaTime * _textFadeSpeed);
@@ -147,6 +158,12 @@ public class SupplementalUI : MonoBehaviour
         while (_panelColor.a > 0)
         {
             _panelColor.a -= (Time.deltaTime * _textFadeSpeed);
+            yield return null;
+        }
+
+        while (_arrowColor.a > 0)
+        {
+            _arrowColor.a -= (Time.deltaTime * _textFadeSpeed);
             yield return null;
         }
     }
@@ -187,6 +204,9 @@ public class SupplementalUI : MonoBehaviour
 
         //updates background panel color
         _panelBackground.color = _panelColor;
+
+        //updates arrow color
+        _arrowImage.color = _arrowColor;
 
         //the function that delays the text blurb from showing up instantly
         if (_hasDelay && _delayTimer != 0)
