@@ -23,6 +23,8 @@ using EventInstance = FMOD.Studio.EventInstance;
 
 public class NpcDialogueController : MonoBehaviour, IInteractable
 {
+    public static NpcDialogueController Instance { get; private set; }
+
     [SerializeField] private TMP_Text _dialogueBox;
     [SerializeField] private Image _background;
     [SerializeField] private EndLevelDoor[] _doors;
@@ -126,6 +128,14 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
     }
 
     /// <summary>
+    /// sets the current instance
+    /// </summary>
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    /// <summary>
     /// Start is called before the first frame update
     /// used here to grabe the dialogue ui item and to set the occupied variable
     /// </summary>
@@ -156,46 +166,6 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
         if (SaveDataManager.GetNpcProgressionCurrentScene() >=  _totalNpcs)
         {
             UnlockDoors();
-        }
-    }
-
-    private void Update()
-    {
-        if (DebugMenuManager.Instance.PlayStationController)
-        {
-            _eKey.sprite = _playstationButtonPrompt;
-            if (gameObject.name == "TextInteractablePrefab")
-            {
-                _tutorialHint = "Press X to Talk";
-            }
-            else
-            {
-                _tutorialHint = "Press X to Interact";
-            }
-        }
-        else if (DebugMenuManager.Instance.SwitchController || DebugMenuManager.Instance.XboxController)
-        {
-            _eKey.sprite = _letterButtonPrompt;
-            if (gameObject.name == "TextInteractablePrefab")
-            {
-                _tutorialHint = "Press A to Talk";
-            }
-            else
-            {
-                _tutorialHint = "Press A to Interact";
-            }
-        }
-        else
-        {
-            _eKey.sprite = _keyboardPrompt;
-            if (gameObject.name == "TextInteractablePrefab")
-            {
-                _tutorialHint = "Press E to Talk";
-            }
-            else
-            {
-                _tutorialHint = "Press E to Interact";
-            }
         }
     }
 
@@ -473,6 +443,50 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
         }
 
         _isTyping = false;
+    }
+
+    public void ControllerText()
+    {
+        if (DebugMenuManager.Instance.PlayStationController)
+        {
+            _eKey.sprite = _playstationButtonPrompt;
+            if (gameObject.name == "TextInteractablePrefab")
+            {
+                _tutorialHint = "Press X to Talk";
+            }
+            else
+            {
+                _tutorialHint = "Press X to Interact";
+            }
+        }
+        else if (DebugMenuManager.Instance.SwitchController || DebugMenuManager.Instance.XboxController)
+        {
+            _eKey.sprite = _letterButtonPrompt;
+            if (gameObject.name == "TextInteractablePrefab")
+            {
+                _tutorialHint = "Press A to Talk";
+            }
+            else
+            {
+                _tutorialHint = "Press A to Interact";
+            }
+        }
+        else if (gameObject is null)
+        {
+            return;
+        }
+        else
+        {
+            _eKey.sprite = _keyboardPrompt;
+            if (gameObject.name == "TextInteractablePrefab") 
+            {
+                _tutorialHint = "Press E to Talk";
+            }
+            else
+            {
+                _tutorialHint = "Press E to Interact";
+            }
+        }
     }
 
     /// <summary>

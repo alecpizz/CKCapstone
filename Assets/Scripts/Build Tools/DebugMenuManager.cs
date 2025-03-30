@@ -14,6 +14,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Users;
 using TMPro;
 using UnityEngine.Rendering.UI;
 using UnityEngine.InputSystem.DualShock;
@@ -54,6 +55,8 @@ public class DebugMenuManager : MonoBehaviour
     private bool _qMenu = false;
     private bool _pMenu = false;
     private bool _fpsCount = false;
+    private bool _areInteractables = false;
+    private bool _areTextBlurbs = false;
 
     private const string MainMenuSceneName = "MainMenu2";
 
@@ -79,6 +82,9 @@ public class DebugMenuManager : MonoBehaviour
         return _frameDeltaTimeArray.Length / total;
     }
 
+    /// <summary>
+    /// sets up variables when first possible
+    /// </summary>
     private void Awake()
     {
         //sets the current instance
@@ -122,29 +128,9 @@ public class DebugMenuManager : MonoBehaviour
         Cursor.visible = true;
         //Sets an default game object for the event system to hold on to for menuing
         EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
-    }
- 
-    /// <summary>
-    /// Updates the frame rate counter and makes sure debug unputs execute their code when pressed
-    /// </summary>
-    private void Update()
-    {   
-        //handles opening and closing the debug menu
-        if (_debugInput.WasPressedThisFrame() && Debug.isDebugBuild == true)
-        {
-            ToggleDebugMenu();
-        }       
 
-        //restarts the current scene if the restart input is pressed
-        if (_restartInput.WasPressedThisFrame())
-        {
-            RestartLevel();
-        }
-
-        //updates the FPS Counter
-        _frameDeltaTimeArray[_lastFrameIndex] = Time.unscaledDeltaTime;
-        _lastFrameIndex = (_lastFrameIndex + 1) % _frameDeltaTimeArray.Length;
-        _fpsText.text = (Mathf.RoundToInt(FpsCalculation()).ToString() + " FPS");
+        InputSystem.onDeviceChange += ControllerDetection;
+        
 
         if (Gamepad.current is DualSenseGamepadHID || Gamepad.current is DualShock4GamepadHID)
         {
@@ -173,6 +159,96 @@ public class DebugMenuManager : MonoBehaviour
             SwitchController = false;
             XboxController = true;
             KeyboardAndMouse = false;
+        }
+
+        NpcDialogueController _interactableCheck = FindAnyObjectByType<NpcDialogueController>();
+        if (_interactableCheck != null)
+        {
+            NpcDialogueController.Instance.ControllerText();
+            _areInteractables = true;
+        }
+        ControllerTextChecker _textBlurbCheck = FindAnyObjectByType<ControllerTextChecker>();
+        if (_textBlurbCheck != null)
+        {
+            ControllerTextChecker.Instance.TutorialTextChange();
+            _areTextBlurbs = true;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        InputSystem.onDeviceChange -= ControllerDetection;
+    }
+
+    /// <summary>
+    /// Updates the frame rate counter and makes sure debug unputs execute their code when pressed
+    /// </summary>
+    private void Update()
+    {   
+        //handles opening and closing the debug menu
+        if (_debugInput.WasPressedThisFrame() && Debug.isDebugBuild == true)
+        {
+            ToggleDebugMenu();
+        }       
+
+        //restarts the current scene if the restart input is pressed
+        if (_restartInput.WasPressedThisFrame())
+        {
+            RestartLevel();
+        }
+
+        //updates the FPS Counter
+        _frameDeltaTimeArray[_lastFrameIndex] = Time.unscaledDeltaTime;
+        _lastFrameIndex = (_lastFrameIndex + 1) % _frameDeltaTimeArray.Length;
+        _fpsText.text = (Mathf.RoundToInt(FpsCalculation()).ToString() + " FPS");
+    }
+
+    private void ControllerDetection(InputDevice device, InputDeviceChange change)
+    {
+        Debug.Log("test");
+        Debug.Log(Gamepad.current);
+        switch (change)
+        {
+            case InputDeviceChange.Added:
+                if (Gamepad.current is DualSenseGamepadHID || Gamepad.current is DualShock4GamepadHID)
+                {
+                    PlayStationController = true;
+                    SwitchController = false;
+                    XboxController = false;
+                    KeyboardAndMouse = false;
+                }
+                else if (Gamepad.current is SwitchProControllerHID)
+                {
+                    PlayStationController = false;
+                    SwitchController = true;
+                    XboxController = false;
+                    KeyboardAndMouse = false;
+                }
+                else
+                {
+                    PlayStationController = false;
+                    SwitchController = false;
+                    XboxController = true;
+                    KeyboardAndMouse = false;
+                }
+                break;
+            case InputDeviceChange.Removed:
+                PlayStationController = false;
+                SwitchController = false;
+                XboxController = false;
+                KeyboardAndMouse = true;
+                break;
+            case InputDeviceChange.ConfigurationChanged:
+                Debug.Log("Device configuration changed: " + device);
+                break;
+        }
+        if (_areInteractables)
+        {
+            NpcDialogueController.Instance.ControllerText();
+        }
+        if (_areTextBlurbs)
+        {
+            ControllerTextChecker.Instance.TutorialTextChange();
         }
     }
 
