@@ -26,6 +26,10 @@ public class DebugMenuManager : MonoBehaviour
 
     public bool GhostMode { get; private set; } = false;
     public bool Invincibility { get; private set; } = false;
+    public bool KeyboardAndMouse { get; private set; } = false;
+    public bool PlayStationController { get; private set; } = false;
+    public bool SwitchController { get; private set; } = false;
+    public bool XboxController { get; private set; } = false;
     public bool PauseMenu { get; set; } = false;
 
     [SerializeField] private GameObject _debugMenuFirst;
@@ -144,19 +148,31 @@ public class DebugMenuManager : MonoBehaviour
 
         if (Gamepad.current is DualSenseGamepadHID || Gamepad.current is DualShock4GamepadHID)
         {
-            Debug.Log("Playstation Controller in use");
+            PlayStationController = true;
+            SwitchController = false;
+            XboxController = false;
+            KeyboardAndMouse = false;
         }
         else if (Gamepad.current is SwitchProControllerHID)
         {
-            Debug.Log("ProCon in use");
+            PlayStationController = false;
+            SwitchController = true;
+            XboxController = false;
+            KeyboardAndMouse = false;
         }
         else if (Gamepad.current is null)
         {
-            Debug.Log("Keyboard and Mouse in use");
+            PlayStationController = false;
+            SwitchController = false;
+            XboxController = false;
+            KeyboardAndMouse = true;
         }
         else
         {
-            Debug.Log("Xbox Controller in use");
+            PlayStationController = false;
+            SwitchController = false;
+            XboxController = true;
+            KeyboardAndMouse = false;
         }
     }
 

@@ -29,6 +29,9 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
     [SerializeField] public Image _eKey;
     [SerializeField] public Image _nameBox;
     [SerializeField] public TMP_Text _nameText;
+    [SerializeField] private Sprite _keyboardPrompt;
+    [SerializeField] private Sprite _playstationButtonPrompt;
+    [SerializeField] private Sprite _letterButtonPrompt; //Switch and Xbox sprite
 
     [Serializable]
     public struct DialogueEntry
@@ -153,6 +156,46 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
         if (SaveDataManager.GetNpcProgressionCurrentScene() >=  _totalNpcs)
         {
             UnlockDoors();
+        }
+    }
+
+    private void Update()
+    {
+        if (DebugMenuManager.Instance.PlayStationController)
+        {
+            _eKey.sprite = _playstationButtonPrompt;
+            if (gameObject.name == "TextInteractablePrefab")
+            {
+                _tutorialHint = "Press X to Talk";
+            }
+            else
+            {
+                _tutorialHint = "Press X to Interact";
+            }
+        }
+        else if (DebugMenuManager.Instance.SwitchController || DebugMenuManager.Instance.XboxController)
+        {
+            _eKey.sprite = _letterButtonPrompt;
+            if (gameObject.name == "TextInteractablePrefab")
+            {
+                _tutorialHint = "Press A to Talk";
+            }
+            else
+            {
+                _tutorialHint = "Press A to Interact";
+            }
+        }
+        else
+        {
+            _eKey.sprite = _keyboardPrompt;
+            if (gameObject.name == "TextInteractablePrefab")
+            {
+                _tutorialHint = "Press E to Talk";
+            }
+            else
+            {
+                _tutorialHint = "Press E to Interact";
+            }
         }
     }
 
