@@ -41,6 +41,7 @@ public sealed class RoundManager : MonoBehaviour
     private bool _inputBuffered = false;
     private bool _autocompleteActive = false;
     private float _movementRegisteredTime = -1;
+    private Vector2 _registeredInput = Vector2.zero;
     [SerializeField] private float _inputBufferWindow = 0.5f;
     // This second buffer window helps prevent double movements in scenes with no enemies
     [SerializeField] private float _noEnemiesBufferWindow = 0.25f;
@@ -105,7 +106,14 @@ public sealed class RoundManager : MonoBehaviour
     private void OnEnable()
     {
         _playerControls.Enable();
-        _playerControls.InGame.Movement.performed += RegisterMovementInput;
+        _playerControls.InGame.MoveUp.performed += ctx => _registeredInput = new Vector2(0, 1);
+        _playerControls.InGame.MoveUp.performed += RegisterMovementInput;
+        _playerControls.InGame.MoveDown.performed += ctx => _registeredInput = new Vector2(0, -1);
+        _playerControls.InGame.MoveDown.performed += RegisterMovementInput;
+        _playerControls.InGame.MoveRight.performed += ctx => _registeredInput = new Vector2(1, 0);
+        _playerControls.InGame.MoveRight.performed += RegisterMovementInput;
+        _playerControls.InGame.MoveLeft.performed += ctx => _registeredInput = new Vector2(-1, 0);
+        _playerControls.InGame.MoveLeft.performed += RegisterMovementInput;
     }
 
     /// <summary>
@@ -113,7 +121,14 @@ public sealed class RoundManager : MonoBehaviour
     /// </summary>
     private void OnDisable()
     {
-        _playerControls.InGame.Movement.performed -= RegisterMovementInput;
+        _playerControls.InGame.MoveUp.performed -= ctx => _registeredInput = new Vector2(0, 1);
+        _playerControls.InGame.MoveUp.performed -= RegisterMovementInput;
+        _playerControls.InGame.MoveDown.performed -= ctx => _registeredInput = new Vector2(0, -1);
+        _playerControls.InGame.MoveDown.performed -= RegisterMovementInput;
+        _playerControls.InGame.MoveRight.performed -= ctx => _registeredInput = new Vector2(1, 0);
+        _playerControls.InGame.MoveRight.performed -= RegisterMovementInput;
+        _playerControls.InGame.MoveLeft.performed -= ctx => _registeredInput = new Vector2(-1, 0);
+        _playerControls.InGame.MoveLeft.performed -= RegisterMovementInput;
         _playerControls.Disable();
     }
 
@@ -157,7 +172,8 @@ public sealed class RoundManager : MonoBehaviour
 
         var dir = GetNormalizedInput();
 
-        if (EnemiesPresent && _turnState != TurnState.None && _lastMovementInput == dir && 
+        if (EnemiesPresent && Time.timeScale == 1 && _turnState != TurnState.None && 
+            _lastMovementInput == dir && 
             Time.unscaledTime - _movementRegisteredTime <= _autocompleteWindow)
         {
             EnableAutocomplete();
@@ -385,7 +401,7 @@ public sealed class RoundManager : MonoBehaviour
     /// <returns>Normalized input vector</returns>
     private Vector3 GetNormalizedInput()
     {
-        Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>();
+        Vector2 input = _registeredInput;
         if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
         {
             input.y = 0;
