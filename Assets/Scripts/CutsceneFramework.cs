@@ -208,7 +208,7 @@ public class CutsceneFramework : MonoBehaviour
 
         if (scene.Substring(0, 2).Equals("CS"))
         {
-            Debug.Log("Press the Space bar to skip!");
+            Debug.Log("Hold the Space bar to skip!");
         }
     }
 
@@ -347,6 +347,7 @@ public class CutsceneFramework : MonoBehaviour
         if (_inputActions.UI.SkipCutscene.IsPressed())
         {
             _timer += Time.deltaTime;
+            
             if(_timer > _skipHoldTime)
             {
                 SkipCutscene();
