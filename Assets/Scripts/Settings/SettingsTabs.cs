@@ -22,6 +22,7 @@ public class SettingsTabs : MonoBehaviour
         HowToPlay,
         LevelSelect,
         Cutscenes,
+        CutscenesText,
         Collectables
     }
 
@@ -33,6 +34,7 @@ public class SettingsTabs : MonoBehaviour
     [SerializeField] private GameObject _howToPlayPanel;
     [SerializeField] private GameObject _levelSelectPanel;
     [SerializeField] private GameObject _cutscenesPanel;
+    [SerializeField] private GameObject _cutscenesTextPanel;
     [SerializeField] private GameObject _collectablesPanel;
 
     [Header("Tab Buttons")]
@@ -118,6 +120,7 @@ public class SettingsTabs : MonoBehaviour
             { Tab.HowToPlay, _howToPlayPanel },
             { Tab.LevelSelect, _levelSelectPanel },
             { Tab.Cutscenes, _cutscenesPanel },
+            { Tab.CutscenesText, _cutscenesTextPanel },
             { Tab.Collectables, _collectablesPanel }
         };
 
@@ -212,6 +215,7 @@ public class SettingsTabs : MonoBehaviour
 
         //cutscenes events
         _cutscenesButton.onClick.AddListener(() => OpenTab(Tab.Cutscenes));
+        //_cutscenesButton.onClick.AddListener(() => OpenTab(Tab.CutscenesText));
         _cutscenesButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_cutscenesButtonGameObject));
         _cutscenesButton.onClick.AddListener(() => ChangeImage(_cutscenesButton));
 
