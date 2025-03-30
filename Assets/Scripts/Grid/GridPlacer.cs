@@ -35,6 +35,7 @@ public class GridPlacer : MonoBehaviour, IGridEntry
     [Space] [SerializeField] private bool _snapToGrid = true;
 
     [FormerlySerializedAs("offset")] [SerializeField]
+    [OnValueChanged(nameof(SnapToGridSpace))]
     private Vector3 _offset = Vector3.zero;
 
     [Space] [SerializeField] private bool _disableGridCell = false;
@@ -102,6 +103,6 @@ public class GridPlacer : MonoBehaviour, IGridEntry
     public void SnapToGridSpace()
     {
         Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
-        transform.position = GridBase.Instance.CellToWorld(cellPos);
+        transform.position = GridBase.Instance.CellToWorld(cellPos) + _offset;
     }
 }
