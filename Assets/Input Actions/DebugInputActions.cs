@@ -53,6 +53,15 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SceneView"",
+                    ""type"": ""Button"",
+                    ""id"": ""868c420a-c413-437f-9da8-06b2bf727e7b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -198,6 +207,17 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Quit"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0d822cd4-b32e-4958-9d95-af707418cdd4"",
+                    ""path"": ""<Keyboard>/#(N)"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SceneView"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -248,6 +268,7 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
         m_Player_Debug = m_Player.FindAction("Debug", throwIfNotFound: true);
         m_Player_Restart = m_Player.FindAction("Restart", throwIfNotFound: true);
         m_Player_Quit = m_Player.FindAction("Quit", throwIfNotFound: true);
+        m_Player_SceneView = m_Player.FindAction("SceneView", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_SkipCutscene = m_UI.FindAction("SkipCutscene", throwIfNotFound: true);
@@ -315,6 +336,7 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Debug;
     private readonly InputAction m_Player_Restart;
     private readonly InputAction m_Player_Quit;
+    private readonly InputAction m_Player_SceneView;
     public struct PlayerActions
     {
         private @DebugInputActions m_Wrapper;
@@ -322,6 +344,7 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
         public InputAction @Debug => m_Wrapper.m_Player_Debug;
         public InputAction @Restart => m_Wrapper.m_Player_Restart;
         public InputAction @Quit => m_Wrapper.m_Player_Quit;
+        public InputAction @SceneView => m_Wrapper.m_Player_SceneView;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -340,6 +363,9 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
             @Quit.started += instance.OnQuit;
             @Quit.performed += instance.OnQuit;
             @Quit.canceled += instance.OnQuit;
+            @SceneView.started += instance.OnSceneView;
+            @SceneView.performed += instance.OnSceneView;
+            @SceneView.canceled += instance.OnSceneView;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -353,6 +379,9 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
             @Quit.started -= instance.OnQuit;
             @Quit.performed -= instance.OnQuit;
             @Quit.canceled -= instance.OnQuit;
+            @SceneView.started -= instance.OnSceneView;
+            @SceneView.performed -= instance.OnSceneView;
+            @SceneView.canceled -= instance.OnSceneView;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -421,6 +450,7 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
         void OnDebug(InputAction.CallbackContext context);
         void OnRestart(InputAction.CallbackContext context);
         void OnQuit(InputAction.CallbackContext context);
+        void OnSceneView(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
