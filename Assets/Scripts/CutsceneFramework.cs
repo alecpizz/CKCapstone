@@ -217,7 +217,7 @@ public class CutsceneFramework : MonoBehaviour
         // Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement the
         // functionality for playing a video, particularly for the End Chapter Cutscene)
         // Permits the cutscene to play for a specified amount of time
-        yield return new WaitForSecondsRealtime(_cutsceneDuration);
+        yield return new WaitForSeconds(_cutsceneDuration);
 
         // Loads the next level, marked by a specified index
         SceneController.Instance.LoadNewScene(_loadingLevelIndex);
