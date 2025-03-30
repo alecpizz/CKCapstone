@@ -96,6 +96,9 @@ public class CutsceneFramework : MonoBehaviour
 
     private MenuManager _menuManager = new MenuManager();
 
+    private float _timer = 0f;
+    [SerializeField] float _skipHoldTime = 2f;
+
     /// <summary>
     /// Determines whether to play the Challenge or End Chapter Cutscene
     /// </summary>
@@ -164,11 +167,14 @@ public class CutsceneFramework : MonoBehaviour
     /// </summary>
     public void SkipCutscene()
     {
-        StopAllCoroutines();
-        string scenePath = SceneUtility.GetScenePathByBuildIndex(_loadingLevelIndex);
-        SaveDataManager.SetLastFinishedLevel(scenePath);
-        SaveDataManager.SetLevelCompleted(SceneManager.GetActiveScene().path);
-        SceneController.Instance.LoadNewScene(_loadingLevelIndex);
+        if(_timer > _skipHoldTime)
+        {
+            StopAllCoroutines();
+            string scenePath = SceneUtility.GetScenePathByBuildIndex(_loadingLevelIndex);
+            SaveDataManager.SetLastFinishedLevel(scenePath);
+            SaveDataManager.SetLevelCompleted(SceneManager.GetActiveScene().path);
+            SceneController.Instance.LoadNewScene(_loadingLevelIndex);
+        }                
     }
     
     /// <summary>
@@ -338,6 +344,19 @@ public class CutsceneFramework : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        if (_inputActions.UI.SkipCutscene.IsPressed())
+        {
+            _timer += Time.deltaTime;
+            if(_timer > _skipHoldTime)
+            {
+                SkipCutscene();
+            }
+        }
+        else
+        {
+            _timer = 0f;
+        }
+
         if (_isEndChapterCutscene)
         {
             //Checks for an availale cutscene
