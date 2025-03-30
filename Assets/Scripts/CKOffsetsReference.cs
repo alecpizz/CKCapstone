@@ -1,3 +1,10 @@
+/******************************************************************
+ *    Author: Alec Pizziferro
+ *    Contributors:  nullptr
+ *    Date Created: 3/30/2025
+ *    Description: Scriptable object singleton for referencing offsets
+ *    within the game.
+ *******************************************************************/
 using SaintsField;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -69,6 +76,9 @@ public class CKOffsetsReference : ScriptableObjectSingleton<CKOffsetsReference>
     public static Vector3 MetronomePredictorOffset => Instance._metronomePredictorOffset;
     public static Vector3 MirrorCopyEnemyOffset(bool isCopy) => isCopy ? Instance._copyEnemyOffset : Instance._mirrorEnemyOffset;
 
+    /// <summary>
+    /// Calls the center door method when changed.
+    /// </summary>
     private void DoorOffsetChanged()
     {
 #if UNITY_EDITOR
@@ -76,7 +86,9 @@ public class CKOffsetsReference : ScriptableObjectSingleton<CKOffsetsReference>
 #endif
     }
 
-    
+    /// <summary>
+    /// Calls the center metronome method when changed.
+    /// </summary>
     private void MetronomeOffsetChanged()
     {
 #if UNITY_EDITOR
@@ -84,6 +96,9 @@ public class CKOffsetsReference : ScriptableObjectSingleton<CKOffsetsReference>
 #endif
     }
     
+    /// <summary>
+    /// Calls the center harmony beams method when changed.
+    /// </summary>
     private void HarmonyBeamOffsetChanged()
     {
 #if UNITY_EDITOR
@@ -91,6 +106,9 @@ public class CKOffsetsReference : ScriptableObjectSingleton<CKOffsetsReference>
 #endif
     }
 
+    /// <summary>
+    /// Calls the center moving walls method when changed.
+    /// </summary>
     private void MovingWallOffsetChanged()
     {
 #if UNITY_EDITOR
@@ -98,6 +116,9 @@ public class CKOffsetsReference : ScriptableObjectSingleton<CKOffsetsReference>
 #endif
     }
 
+    /// <summary>
+    /// Calls the center switches method when changed.
+    /// </summary>
     private void SwitchOffsetChanged()
     {
 #if UNITY_EDITOR
@@ -105,6 +126,9 @@ public class CKOffsetsReference : ScriptableObjectSingleton<CKOffsetsReference>
 #endif
     }
 
+    /// <summary>
+    /// Calls the center enemy offset method when changed.
+    /// </summary>
     private void EnemyOffsetChanged()
     {
 #if UNITY_EDITOR
@@ -112,6 +136,9 @@ public class CKOffsetsReference : ScriptableObjectSingleton<CKOffsetsReference>
 #endif
     }
 
+    /// <summary>
+    /// Calls the center mother offset method when changed.
+    /// </summary>
     private void MotherOffsetChanged()
     {
 #if UNITY_EDITOR
@@ -119,6 +146,9 @@ public class CKOffsetsReference : ScriptableObjectSingleton<CKOffsetsReference>
 #endif
     }
 
+    /// <summary>
+    /// Calls the center note offset method when changed.
+    /// </summary>
     private void NoteOffsetChanged()
     {
         #if UNITY_EDITOR
