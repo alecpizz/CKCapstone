@@ -19,7 +19,7 @@ using FMOD.Studio;
 /// <summary>
 /// Class for actions taken once switch is triggered
 /// </summary>
-public class SwitchTrigger : MonoBehaviour
+public class SwitchTrigger : MonoBehaviour, IGridEntry
 {
     // for registering mechanics to a switch
     [SerializeReference] private List<MovingWall> _affectedWalls = new List<MovingWall>();
@@ -32,15 +32,12 @@ public class SwitchTrigger : MonoBehaviour
     //reference for sound of switch
     [SerializeField] private EventReference _switchSound = default;
 
-    private const float yOffset = 0.86f;
-
     /// <summary>
     /// Positions the switch to be at a height where it doesn't clip into the ground
     /// </summary>
     private void Awake()
     {
-        transform.localPosition = 
-            new Vector3(transform.localPosition.x, yOffset, transform.localPosition.z);
+        SnapToGridSpace();
     }
 
     /// <summary>
@@ -96,6 +93,17 @@ public class SwitchTrigger : MonoBehaviour
                 _animator.SetTrigger("Pressed");
             }
         }
+    }
+
+    public bool IsTransparent => true;
+    public bool BlocksHarmonyBeam => false;
+    public Vector3 Position => transform.position;
+    public GameObject EntryObject => gameObject;
+    public void SnapToGridSpace()
+    {
+        Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
+        Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos);
+        transform.position = worldPos + CKOffsetsReference.SwitchOffset;
     }
 }
 
