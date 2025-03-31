@@ -248,6 +248,7 @@ public sealed class RoundManager : MonoBehaviour
         if (_turnState == TurnState.Player)
         {
             _inputBuffered = false;
+            DisableAutocomplete();
         }
 
         //find out who's turn is next, if it's nobody's, stop.
