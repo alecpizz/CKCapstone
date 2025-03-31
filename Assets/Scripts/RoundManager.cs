@@ -182,7 +182,7 @@ public sealed class RoundManager : MonoBehaviour
 
         var dir = GetNormalizedInput();
 
-        if (EnemiesPresent && Time.timeScale == 1 && _turnState != TurnState.None && 
+        if (EnemiesPresent && !_autocompleteActive && _turnState != TurnState.None && 
             _lastMovementInput == dir && 
             Time.unscaledTime - _movementRegisteredTime <= _autocompleteWindow)
         {
@@ -212,7 +212,9 @@ public sealed class RoundManager : MonoBehaviour
     private void PerformMovement()
     {
         // Return if no movement is registered or if the game is paused
-        if ((!_movementRegistered && !_inputBuffered) || DebugMenuManager.Instance.PauseMenu) return;
+        if (_turnState != TurnState.None ||
+            (!_movementRegistered && !_inputBuffered) ||
+            DebugMenuManager.Instance.PauseMenu) { return; }
 
         // Stop moving if no movement input was pressed
         if (!_playerControls.InGame.Movement.IsPressed() && !_inputBuffered)
