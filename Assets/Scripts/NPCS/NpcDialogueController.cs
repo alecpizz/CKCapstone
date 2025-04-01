@@ -243,8 +243,15 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
 
                 if(gameObject.tag == "Collectable")
                 {
-                    Debug.Log("Collectable get!");
-                    SaveDataManager.SetCollectableFound(gameObject.name, true);
+                    for(int i = 0; i <= CollectableManager.Instance.collectables.Length - 1; i++)
+                    {
+                        if(gameObject.name.Equals(CollectableManager.Instance.collectables[i].name))
+                        {
+                            Debug.Log("Collectable get!");
+                            SaveDataManager.SetCollectableFound(gameObject.name, true);
+                            CollectableManager.Instance.UnlockCollectable(gameObject.name);
+                        }
+                    }
                 }
 
                 return;
