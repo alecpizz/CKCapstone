@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: David Galmines
-*    Contributors: ...
+*    Contributors: Rider Hagen
 *    Date Created: 10/23/24
 *    Description: This is a trigger for supplemental UI to show up 
 *    whenever the player comes into contact.
@@ -26,6 +26,9 @@ public class SupplementalUI : MonoBehaviour
     //background panel
     [SerializeField] private GameObject _panel;
 
+    //arrow attatched to the panel
+    [SerializeField] private GameObject _arrow;
+
     //color variable for making the text fade in and out
     private Color _textColor;
 
@@ -34,6 +37,12 @@ public class SupplementalUI : MonoBehaviour
 
     //image component of the UI panel
     private Image _panelBackground;
+
+    //color variable for the arrow
+    private Color _arrowColor;
+
+    //image for arrow attatched to the panel
+    private Image _arrowImage;
 
     //does the text blurb need to appear on a delay?
     [SerializeField] private bool _hasDelay;
@@ -50,8 +59,11 @@ public class SupplementalUI : MonoBehaviour
         _textColor = _text.color;
         _textColor.a = 0;
         _panelBackground = _panel.GetComponent<Image>();
+        _arrowImage = _arrow.GetComponent<Image>();
         _panelColor = _panelBackground.color;
         _panelColor.a = 0;
+        _arrowColor = _arrowImage.color;
+        _arrowColor.a = 0;
 
         if (_hasDelay)
         {
@@ -112,9 +124,12 @@ public class SupplementalUI : MonoBehaviour
     /// <returns></returns>
     private IEnumerator FadingIn()
     {
-        while (_panelColor.a < 0.9f)
+        while (_panelColor.a < 0.9f && _arrowColor.a < 0.9f)
         {
             _panelColor.a += (Time.deltaTime * _textFadeSpeed);
+
+            _arrowColor.a += (Time.deltaTime * _textFadeSpeed);
+
             yield return null;
         }
 
@@ -137,9 +152,12 @@ public class SupplementalUI : MonoBehaviour
             yield return null;
         }
 
-        while (_panelColor.a > 0)
+        while (_panelColor.a > 0 && _arrowColor.a > 0)
         {
             _panelColor.a -= (Time.deltaTime * _textFadeSpeed);
+
+            _arrowColor.a -= (Time.deltaTime * _textFadeSpeed);
+
             yield return null;
         }
     }
@@ -168,11 +186,21 @@ public class SupplementalUI : MonoBehaviour
                 _camera.transform.eulerAngles;
         }
 
-        //updates the UI text color
-        _text.color = _textColor;
+        if (_arrow.transform.localEulerAngles !=
+    _camera.transform.eulerAngles)
+        {
+            _arrow.transform.localEulerAngles =
+                _camera.transform.eulerAngles;
+        }
+
+            //updates the UI text color
+            _text.color = _textColor;
 
         //updates background panel color
         _panelBackground.color = _panelColor;
+
+        //updates arrow color
+        _arrowImage.color = _arrowColor;
 
         //the function that delays the text blurb from showing up instantly
         if (_hasDelay && _delayTimer != 0)
