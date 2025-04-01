@@ -20,6 +20,7 @@ using UnityEngine.Rendering.UI;
 using UnityEngine.InputSystem.DualShock;
 using UnityEngine.InputSystem.Layouts;
 using UnityEngine.InputSystem.Switch;
+using UnityEngine.InputSystem.UI;
 
 public class DebugMenuManager : MonoBehaviour
 {
@@ -57,6 +58,7 @@ public class DebugMenuManager : MonoBehaviour
     private bool _fpsCount = false;
     private bool _areInteractables = false;
     private bool _areTextBlurbs = false;
+    private bool _areSettings = false;
 
     private const string MainMenuSceneName = "MainMenu2";
 
@@ -64,6 +66,7 @@ public class DebugMenuManager : MonoBehaviour
     private float[] _frameDeltaTimeArray;
 
     private DebugInputActions _playerInput;
+    private PlayerControls _playerControls;
     private InputAction _debugInput;
     private InputAction _restartInput;
 
@@ -92,6 +95,7 @@ public class DebugMenuManager : MonoBehaviour
 
         //enables player input
         _playerInput = new DebugInputActions();
+        _playerControls = new PlayerControls();
         _debugInput = _playerInput.Player.Debug;
         _restartInput = _playerInput.Player.Restart;
 
@@ -106,6 +110,8 @@ public class DebugMenuManager : MonoBehaviour
     {
         _debugInput.Enable();
         _restartInput.Enable();
+        _playerControls.Enable();
+        _playerControls.InGame.Movement.performed += DetectInputType;
     }
 
     /// <summary>
@@ -115,6 +121,8 @@ public class DebugMenuManager : MonoBehaviour
     {
         _debugInput.Disable();
         _restartInput.Disable();
+        _playerControls.InGame.Movement.performed -= DetectInputType;
+        _playerControls.Disable();
     }
 
     /// <summary>
@@ -130,7 +138,6 @@ public class DebugMenuManager : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
 
         InputSystem.onDeviceChange += ControllerDetection;
-        
 
         if (Gamepad.current is DualSenseGamepadHID || Gamepad.current is DualShock4GamepadHID)
         {
@@ -173,6 +180,13 @@ public class DebugMenuManager : MonoBehaviour
             ControllerTextChecker.Instance.TutorialTextChange();
             _areTextBlurbs = true;
         }
+        //The settings should be in about every scene but this is here just in case
+        HowToPlayControllerChecker _SettingsCheck = FindAnyObjectByType<HowToPlayControllerChecker>();
+        if (_SettingsCheck != null)
+        {
+            ControllerTextChecker.Instance.TutorialTextChange();
+            _areSettings = true;
+        }
     }
 
     private void OnDestroy()
@@ -205,8 +219,6 @@ public class DebugMenuManager : MonoBehaviour
 
     private void ControllerDetection(InputDevice device, InputDeviceChange change)
     {
-        Debug.Log("test");
-        Debug.Log(Gamepad.current);
         switch (change)
         {
             case InputDeviceChange.Added:
@@ -249,6 +261,42 @@ public class DebugMenuManager : MonoBehaviour
         if (_areTextBlurbs)
         {
             ControllerTextChecker.Instance.TutorialTextChange();
+        }
+        if (_areSettings)
+        {
+            ControllerTextChecker.Instance.TutorialTextChange();
+        }
+    }
+
+    private void DetectInputType(InputAction.CallbackContext context)
+    {
+        if (Gamepad.current is DualSenseGamepadHID || Gamepad.current is DualShock4GamepadHID)
+        {
+            PlayStationController = true;
+            SwitchController = false;
+            XboxController = false;
+            KeyboardAndMouse = false;
+        }
+        else if (Gamepad.current is SwitchProControllerHID)
+        {
+            PlayStationController = false;
+            SwitchController = true;
+            XboxController = false;
+            KeyboardAndMouse = false;
+        }
+        else if (Gamepad.current is null)
+        {
+            PlayStationController = false;
+            SwitchController = false;
+            XboxController = false;
+            KeyboardAndMouse = true;
+        }
+        else
+        {
+            PlayStationController = false;
+            SwitchController = false;
+            XboxController = true;
+            KeyboardAndMouse = false;
         }
     }
 
