@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Taylor Sims
-*    Contributors: Alex Laubenstein
+*    Contributors: Alex Laubenstein, Alec Pizziferro
 *    Date Created: 09-24-24
 *    Description: This script is the collection system for Notes.
 *******************************************************************/
@@ -12,7 +12,7 @@ using SaintsField;
 using FMODUnity;
 using UnityEngine.Serialization;
 
-public class Collectibles : MonoBehaviour
+public class Collectibles : MonoBehaviour, IGridEntry
 {
 
     // variables
@@ -41,7 +41,7 @@ public class Collectibles : MonoBehaviour
     /// </summary>
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Player" && WinChecker.Instance.CheckForCollection(_collectibleNumber)) 
+        if (other.CompareTag("Player") && WinChecker.Instance.CheckForCollection(_collectibleNumber)) 
         {
             Collect();
         }        
@@ -56,8 +56,6 @@ public class Collectibles : MonoBehaviour
     /// </summary>
     private void Collect() 
     {
-        Debug.Log("You got a collectible!");
-
         if (AudioManager.Instance != null)
         {
             AudioManager.Instance.PlaySound(_sound);
@@ -79,5 +77,16 @@ public class Collectibles : MonoBehaviour
         {
             _noteGlow.SetActive(false);
         }
+    }
+
+    public bool IsTransparent => true;
+    public bool BlocksHarmonyBeam => false;
+    public Vector3 Position => transform.position;
+    public GameObject EntryObject => gameObject;
+    public void SnapToGridSpace()
+    {
+        Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
+        Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos) + CKOffsetsReference.NoteOffset;
+        transform.position = worldPos;
     }
 }

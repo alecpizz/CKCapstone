@@ -15,11 +15,6 @@ using UnityEngine.Events;
 public class MetronomeBehavior : MonoBehaviour, ITimeListener
 {
     public UnityEvent MetronomeTriggered;
-
-    //animations for the weight on the metronome moving up and down
-    private const string _WEIGHT_ANIM_UP = "Armature|WeightSlide_Up";
-    private const string _WEIGHT_ANIM_DOWN = "Armature|WeightSlide_Down";
-
     //the ripple effect when touching the metronome
     [SerializeField] private ParticleSystem _contactIndicator;
     //the circle that flashes around the HUD time signature
@@ -47,7 +42,6 @@ public class MetronomeBehavior : MonoBehaviour, ITimeListener
     private bool _isSlow = true;
     private static readonly int GoFaster = Animator.StringToHash("GoFaster");
 
-    private PlayerMovement _player;
 
     [SerializeField]
     private TMP_Text _metronomePredictor;
@@ -57,7 +51,6 @@ public class MetronomeBehavior : MonoBehaviour, ITimeListener
     /// </summary>
     private void Awake()
     {
-        _player = PlayerMovement.Instance;
         _contactIndicator.Pause();
         //_anim = GetComponentInParent<Animator>();
 
