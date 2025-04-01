@@ -46,7 +46,7 @@ public sealed class RoundManager : MonoBehaviour
     // This second buffer window helps prevent double movements in scenes with no enemies
     [SerializeField] private float _noEnemiesBufferWindow = 0.25f;
 
-    private const float _turnRepeatDelay = 0.01f;
+    private bool _isListeningForMoveEnd = false;
 
     [Header("Autocomplete Mechanic")]
     [SerializeField, Tooltip("Timescale during autocomplete dash")] private float _autocompleteSpeed = 3;
@@ -130,6 +130,11 @@ public sealed class RoundManager : MonoBehaviour
         _playerControls.InGame.MoveLeft.performed -= ctx => _registeredInput = new Vector2(-1, 0);
         _playerControls.InGame.MoveLeft.performed -= RegisterMovementInput;
         _playerControls.Disable();
+
+        if (_isListeningForMoveEnd)
+        {
+            PlayerMovement.Instance.OnPlayerMoveComplete -= CheckForBufferedInput;
+        }
     }
 
     /// <summary>
@@ -155,6 +160,11 @@ public sealed class RoundManager : MonoBehaviour
         if (Time.unscaledTime - _movementRegisteredTime <= 
             (EnemiesPresent ? _inputBufferWindow : _noEnemiesBufferWindow))
         {
+            if (_isListeningForMoveEnd)
+            {
+                PlayerMovement.Instance.OnPlayerMoveComplete -= CheckForBufferedInput;
+                _isListeningForMoveEnd = false;
+            }
             PerformMovement();
         }
     }
@@ -172,7 +182,7 @@ public sealed class RoundManager : MonoBehaviour
 
         var dir = GetNormalizedInput();
 
-        if (EnemiesPresent && Time.timeScale == 1 && _turnState != TurnState.None && 
+        if (EnemiesPresent && !_autocompleteActive && _turnState != TurnState.None && 
             _lastMovementInput == dir && 
             Time.unscaledTime - _movementRegisteredTime <= _autocompleteWindow)
         {
@@ -202,7 +212,9 @@ public sealed class RoundManager : MonoBehaviour
     private void PerformMovement()
     {
         // Return if no movement is registered or if the game is paused
-        if ((!_movementRegistered && !_inputBuffered) || DebugMenuManager.Instance.PauseMenu) return;
+        if (_turnState != TurnState.None ||
+            (!_movementRegistered && !_inputBuffered) ||
+            DebugMenuManager.Instance.PauseMenu) { return; }
 
         // Stop moving if no movement input was pressed
         if (!_playerControls.InGame.Movement.IsPressed() && !_inputBuffered)
@@ -248,6 +260,7 @@ public sealed class RoundManager : MonoBehaviour
         if (_turnState == TurnState.Player)
         {
             _inputBuffered = false;
+            DisableAutocomplete();
         }
 
         //find out who's turn is next, if it's nobody's, stop.
@@ -311,8 +324,11 @@ public sealed class RoundManager : MonoBehaviour
         if (prev is null or TurnState.None)
         {
             _turnState = TurnState.None;
-            // Delaying this call so the stack doesn't explode
-            Invoke(nameof(CheckForBufferedInput), _turnRepeatDelay);
+            if (!_isListeningForMoveEnd)
+            {
+                _isListeningForMoveEnd = true;
+                PlayerMovement.Instance.OnPlayerMoveComplete += CheckForBufferedInput;
+            }
             return;
         }
 

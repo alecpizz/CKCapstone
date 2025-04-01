@@ -13,12 +13,9 @@ using SaintsField;
 using SaintsField.Playa;
 using System;
 
-public class VignetteController : MonoBehaviour, ITurnListener
+public class VignetteController : MonoBehaviour
 {
     public static Action<bool> InteractionTriggered;
-
-    public TurnState TurnState => TurnState.Player;
-    public TurnState SecondaryTurnState => TurnState.Enemy;
 
     private Vignette _vignette;
 
@@ -75,11 +72,6 @@ public class VignetteController : MonoBehaviour, ITurnListener
     {
         if (RoundManager.Instance == null)
             return;
-
-        bool enemies = RoundManager.Instance.EnemiesPresent;
-        _vignette.active = enemies;
-        if (!enemies) return;
-            RoundManager.Instance.RegisterListener(this);
     }
 
     /// <summary>
@@ -88,63 +80,6 @@ public class VignetteController : MonoBehaviour, ITurnListener
     private void OnDisable()
     {
         InteractionTriggered -= ToggleInteractableVignette;
-
-        if (RoundManager.Instance == null)
-            return;
-
-        RoundManager.Instance.UnRegisterListener(this);
-    }
-
-    /// <summary>
-    /// Tweens vignette intensity in or out based on turn state
-    /// </summary>
-    /// <param name="direction"></param>
-    public void BeginTurn(Vector3 direction)
-    {
-        if (!_shouldPlayMoveVignette)
-        {
-            RoundManager.Instance.CompleteTurn(this);
-            return;
-        }
-
-        if (RoundManager.Instance.IsPlayerTurn)
-        {
-            Tween.Custom(_vignette.intensity.value, _vignetteIntensity, _vignetteFadeInTime,
-                newValue => _vignette.intensity.value = newValue,
-                _vignetteStartEasing, 1, CycleMode.Restart,
-                0.0f, _vignetteEndDelay)
-                .OnComplete(() => ToggleTurnState());
-        }
-        else
-        {
-            ToggleTurnState();
-            Tween.Custom(_vignette.intensity.value, 0f, _vignetteFadeOutTime,
-                newValue => _vignette.intensity.value = newValue,
-                _vignetteEndEasing, 1, CycleMode.Restart,
-                _vignetteEndDelay, 0.0f);
-        }
-    }
-
-    /// <summary>
-    /// Ends the current turn before re-registering to RoundManager as a new turn state.
-    /// </summary>
-    private void ToggleTurnState()
-    {
-        if (RoundManager.Instance == null)
-            return;
-
-        RoundManager.Instance.CompleteTurn(this);
-    }
-
-    /// <summary>
-    /// Completes turn early
-    /// </summary>
-    public void ForceTurnEnd()
-    {
-        if (RoundManager.Instance == null)
-            return;
-
-        RoundManager.Instance.CompleteTurn(this);
     }
 
     /// <summary>
