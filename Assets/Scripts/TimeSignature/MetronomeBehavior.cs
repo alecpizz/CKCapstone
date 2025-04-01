@@ -15,7 +15,7 @@ using UnityEngine.Events;
 public class MetronomeBehavior : MonoBehaviour, ITimeListener
 {
     public UnityEvent MetronomeTriggered;
-
+    
     //animations for the weight on the metronome moving up and down
     private const string _WEIGHT_ANIM_UP = "Armature|WeightSlide_Up";
     private const string _WEIGHT_ANIM_DOWN = "Armature|WeightSlide_Down";
@@ -159,9 +159,10 @@ public class MetronomeBehavior : MonoBehaviour, ITimeListener
         }
 
         _contactIndicator.Play();
+        if(_HUDEffect != null)
         _HUDEffect.SetActive(false);
 
-        PlayerMovement playerMovement;
+       /* PlayerMovement playerMovement;
         if (other.gameObject.TryGetComponent<PlayerMovement>(out  playerMovement))
         {
             playerMovement.ForceTurnEnd();
@@ -177,7 +178,7 @@ public class MetronomeBehavior : MonoBehaviour, ITimeListener
         if (other.gameObject.TryGetComponent<MirrorAndCopyBehavior>(out mirrorAndCopyBehavior))
         {
             mirrorAndCopyBehavior.ForceTurnEnd();
-        }
+        }*/
     }
 
     /// <summary>
