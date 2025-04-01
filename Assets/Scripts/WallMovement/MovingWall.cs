@@ -127,8 +127,8 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     public void SnapToGridSpace()
     {
         Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
-        Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos);
-        transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z);
+        Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos) + CKOffsetsReference.MovingWallOffset;
+        transform.position = worldPos;
     }
 
     /// <summary>
