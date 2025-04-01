@@ -74,7 +74,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     private WaitForSeconds _waitForSeconds;
 
     //to tell when player finishes a move
-    public UnityEvent OnPlayerMoveComplete;
+    public Action OnPlayerMoveComplete;
 
     // Event references for the player movement sounds
     [SerializeField] private EventReference _playerMove = default;
@@ -214,6 +214,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         }
 
         _canMove = true;
+        OnPlayerMoveComplete?.Invoke();
     }
 
     /// <summary>
@@ -278,7 +279,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                         AudioManager.Instance.PlaySound(_playerMove);
                         StartCoroutine(MovePlayer(direction));
                         RoundManager.Instance.CompleteTurn(this);
-                        OnPlayerMoveComplete?.Invoke(); //keeps track of movement completion
                     }
                     else
                     {
