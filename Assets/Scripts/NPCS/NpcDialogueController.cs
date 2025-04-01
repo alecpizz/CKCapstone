@@ -249,7 +249,6 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
                         {
                             Debug.Log("Collectable get!");
                             SaveDataManager.SetCollectableFound(gameObject.name, true);
-                            CollectableManager.Instance.UnlockCollectable(gameObject.name);
                         }
                     }
                 }

@@ -5,9 +5,15 @@ using UnityEngine;
 
 public class CollectableManager : MonoBehaviour
 {
+    private PlayerControls _playerControls;
+
+    [SerializeField] private GameObject _collectibleMenu;
+    [SerializeField] private bool collectibleMenuOn;
+
     public GameObject[] collectables;
     public GameObject[] collectableImages;
 
+    #region Collectible Game Objects
     [SerializeField] GameObject cardinalPlush;
     [SerializeField] GameObject agedCardinalPlush;
     [SerializeField] GameObject collegeAcceptanceLetter;
@@ -20,15 +26,16 @@ public class CollectableManager : MonoBehaviour
     [SerializeField] GameObject unfinishedLetter;
 
     [SerializeField] GameObject cardinalPlushImage;
-    //[SerializeField] GameObject agedCardinalPlushImage;
-    //[SerializeField] GameObject collegeAcceptanceLetterImage;
-    //[SerializeField] GameObject crochetShtuffImage;
-    //[SerializeField] GameObject electricBassImage;
-    //[SerializeField] GameObject medicineCabinetImage;
-    //[SerializeField] GameObject cassetteStack1Image;
-    //[SerializeField] GameObject cassetteStack2Image;
-    //[SerializeField] GameObject xylophoneImage;
-    //[SerializeField] GameObject unfinishedLetterImage;
+    [SerializeField] GameObject agedCardinalPlushImage;
+    [SerializeField] GameObject collegeAcceptanceLetterImage;
+    [SerializeField] GameObject crochetShtuffImage;
+    [SerializeField] GameObject electricBassImage;
+    [SerializeField] GameObject medicineCabinetImage;
+    [SerializeField] GameObject cassetteStack1Image;
+    [SerializeField] GameObject cassetteStack2Image;
+    [SerializeField] GameObject xylophoneImage;
+    [SerializeField] GameObject unfinishedLetterImage;
+    #endregion
 
     public static CollectableManager Instance;
 
@@ -37,9 +44,29 @@ public class CollectableManager : MonoBehaviour
         Instance = this;
     }
 
+    /// <summary>
+    /// Initializes and turns on the controls for the player when the scene loads
+    /// </summary>
+    private void OnEnable()
+    {
+        _playerControls = new PlayerControls();
+        _playerControls.InGame.CollectibleMenu.Enable();
+    }
+
+    /// <summary>
+    /// Turns off the controls for the player when the scene is no longer active
+    /// </summary>
+    private void OnDisable()
+    {
+        _playerControls.InGame.CollectibleMenu.Disable();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
+        collectibleMenuOn = false;
+
+        #region Array Assignment
         collectables = new GameObject[10];
         collectables[0] = cardinalPlush;
         collectables[1] = agedCardinalPlush;
@@ -54,15 +81,18 @@ public class CollectableManager : MonoBehaviour
 
         collectableImages = new GameObject[10];
         collectableImages[0] = cardinalPlushImage;
-        //collectableImages[1] = agedCardinalPlushImage;
-        //collectableImages[2] = collegeAcceptanceLetterImage;
-        //collectableImages[3] = crochetShtuffImage;
-        //collectableImages[4] = electricBassImage;
-        //collectableImages[5] = medicineCabinetImage;
-        //collectableImages[6] = cassetteStack1Image;
-        //collectableImages[7] = cassetteStack2Image;
-        //collectableImages[8] = xylophoneImage;
-        //collectableImages[9] = unfinishedLetterImage;
+        collectableImages[1] = agedCardinalPlushImage;
+        collectableImages[2] = collegeAcceptanceLetterImage;
+        collectableImages[3] = crochetShtuffImage;
+        collectableImages[4] = electricBassImage;
+        collectableImages[5] = medicineCabinetImage;
+        collectableImages[6] = cassetteStack1Image;
+        collectableImages[7] = cassetteStack2Image;
+        collectableImages[8] = xylophoneImage;
+        collectableImages[9] = unfinishedLetterImage;
+        #endregion
+
+        _playerControls.InGame.CollectibleMenu.performed += ctx => CollectibleMenuToggle();
 
 
         for (int i = 0; i <= collectables.Length - 1; i++)
@@ -76,13 +106,28 @@ public class CollectableManager : MonoBehaviour
         }
     }
 
-    public void UnlockCollectable(string unlockedCollectable)
+    private void CollectibleMenuToggle()
+    {
+        if(collectibleMenuOn)
+        {
+            collectibleMenuOn = false;
+            _collectibleMenu.SetActive(false);
+        }
+        else
+        {
+            collectibleMenuOn = true;
+            _collectibleMenu.SetActive(true);
+            SetFoundCollectibles();
+        }
+    }
+
+    private void SetFoundCollectibles()
     {
         for (int i = 0; i <= collectables.Length - 1; i++)
         {
-            if (collectables[i].name == unlockedCollectable)
+            if (SaveDataManager.GetCollectableFound(collectables[i].name))
             {
-                UnlockCollectableImage(unlockedCollectable);
+                UnlockCollectableImage(collectables[i].name);
             }
         }
     }
