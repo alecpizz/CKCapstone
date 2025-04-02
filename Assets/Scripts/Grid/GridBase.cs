@@ -44,7 +44,7 @@ public class GridBase : MonoBehaviour
 
     private Dictionary<Vector3Int, HashSet<IGridEntry>> _gridEntries = new();
     private Dictionary<IGridEntry, Vector3Int> _gameObjectToGridMap = new();
-    [SerializeField] [HideInInspector] private GameObject _gridMeshHolder;
+    [SerializeField] private GameObject _gridMeshHolder;
     private Dictionary<Vector3Int, GameObject> _gridObjects = new();
 
     private const string GridMeshName = "Grid Mesh Holder";
@@ -67,7 +67,26 @@ public class GridBase : MonoBehaviour
         }
 
         _grid = GetComponent<Grid>();
-        GenerateMesh();
+        // GenerateMesh();
+        _gridMeshHolder = transform.Find(GridMeshName).gameObject;
+        if (_gridMeshHolder != null)
+        {
+            _gridObjects.Clear();
+            int row = 0;
+            int col = 0;
+            for (int i = 0; i < _gridMeshHolder.transform.childCount; i++)
+            {
+                var tile = _gridMeshHolder.transform.GetChild(i);
+                _gridObjects.Add(new Vector3Int(row, 0, col), tile.gameObject);
+                Debug.Log(new Vector3Int(row, 0, col).ToString());
+                col++;
+                if (col == _gridSize)
+                {
+                    row++;
+                    col = 0;
+                }
+            }
+        }
     }
 
     
@@ -421,6 +440,7 @@ public class GridBase : MonoBehaviour
     /// </summary>
     private void OnDrawMeshChanged()
     {
+        return;
         if (_drawGridMesh)
         {
             GenerateMesh();

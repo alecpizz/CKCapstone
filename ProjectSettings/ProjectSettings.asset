@@ -107,7 +107,7 @@ PlayerSettings:
   xboxEnableFitness: 0
   visibleInBackground: 1
   allowFullscreenSwitch: 1
-  fullscreenMode: 1
+  fullscreenMode: 0
   xboxSpeechDB: 0
   xboxEnableHeadOrientation: 0
   xboxEnableGuest: 0
@@ -528,6 +528,9 @@ PlayerSettings:
   - m_BuildTarget: AndroidPlayer
     m_APIs: 150000000b000000
     m_Automatic: 0
+  - m_BuildTarget: WindowsStandaloneSupport
+    m_APIs: 02000000
+    m_Automatic: 1
   m_BuildTargetVRSettings: []
   m_DefaultShaderChunkSizeInMB: 16
   m_DefaultShaderChunkCount: 0
@@ -821,7 +824,7 @@ PlayerSettings:
     PS5: SAINTSFIELD_SAINTS_EDITOR_APPLY
     QNX: SAINTSFIELD_SAINTS_EDITOR_APPLY
     Stadia: SAINTSFIELD_SAINTS_EDITOR_APPLY
-    Standalone: SAINTSFIELD_SAINTS_EDITOR_APPLY;MAGICACLOTH2
+    Standalone: SAINTSFIELD_SAINTS_EDITOR_APPLY;MAGICACLOTH2;OVERRIDE_LEVEL
     VisionOS: SAINTSFIELD_SAINTS_EDITOR_APPLY
     WebGL: SAINTSFIELD_SAINTS_EDITOR_APPLY
     Windows Store Apps: SAINTSFIELD_SAINTS_EDITOR_APPLY
