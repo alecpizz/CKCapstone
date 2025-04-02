@@ -32,7 +32,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
 
     [PlayaInfoBox("Time delay from when an enemy starts their turn and actually begins moving." +
       "\n This is meant to prevent enemies from moving before the player starts to move.")]
-    [PropRange(0f, 0.5f)]
+    [PropRange(0f, 0.2f)]
     [SerializeField]
     private float _timeBeforeTurn = 0.1f;
 
