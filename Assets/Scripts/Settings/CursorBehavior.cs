@@ -107,7 +107,7 @@ public class CursorManager : MonoBehaviour
     /// <summary>
     /// Reverts to the default cursor when the pointer exits a UI element.
     /// </summary>
-    private void OnPointerExit()
+    public void OnPointerExit()
     {
         Cursor.SetCursor(_cursor, Vector2.zero, CursorMode.Auto);
     }
