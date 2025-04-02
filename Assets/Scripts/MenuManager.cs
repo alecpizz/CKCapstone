@@ -32,6 +32,8 @@ public class MenuManager : MonoBehaviour
 
     private DebugInputActions _inputActions;
 
+    [SerializeField] private CursorManager _cursorManager;
+
     /// <summary>
     /// Enables player input for opening the pause menu
     /// </summary>
@@ -59,6 +61,7 @@ public class MenuManager : MonoBehaviour
         DebugMenuManager.Instance.PauseMenu = false;
         _pauseScreen.SetActive(false);
         _restartButton.SetActive(true);
+        _cursorManager.OnPointerExit();
         Time.timeScale = 1f;
     }
 
