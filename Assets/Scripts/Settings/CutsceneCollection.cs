@@ -25,10 +25,6 @@ public class CutsceneCollection : MonoBehaviour
         {
             unlocked = true;
         }
-        else
-        {
-            Debug.Log(cutsceneName + " is still locked!");
-        }
         if (unlocked)
         {
             gameObject.GetComponent<Image>().color = new Color(1, 1, 1, 1);
