@@ -233,13 +233,22 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""6cce9310-49d9-4d9a-a127-4c4f6429465c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
                 {
                     ""name"": """",
                     ""id"": ""4f72a434-42ca-4a2b-8688-8adc4b71f0a1"",
-                    ""path"": ""<Keyboard>/escape"",
+                    ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -250,11 +259,33 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""13502dc1-0609-44fe-a39f-5a79c65df465"",
-                    ""path"": ""<Gamepad>/start"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""SkipCutscene"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4e36a0df-8f6a-4c85-9788-1adda01599bf"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3dbedcb2-d1bf-417e-a964-b2f4765e5936"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -272,6 +303,7 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_SkipCutscene = m_UI.FindAction("SkipCutscene", throwIfNotFound: true);
+        m_UI_Pause = m_UI.FindAction("Pause", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -404,11 +436,13 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_UI;
     private List<IUIActions> m_UIActionsCallbackInterfaces = new List<IUIActions>();
     private readonly InputAction m_UI_SkipCutscene;
+    private readonly InputAction m_UI_Pause;
     public struct UIActions
     {
         private @DebugInputActions m_Wrapper;
         public UIActions(@DebugInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @SkipCutscene => m_Wrapper.m_UI_SkipCutscene;
+        public InputAction @Pause => m_Wrapper.m_UI_Pause;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -421,6 +455,9 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
             @SkipCutscene.started += instance.OnSkipCutscene;
             @SkipCutscene.performed += instance.OnSkipCutscene;
             @SkipCutscene.canceled += instance.OnSkipCutscene;
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
         }
 
         private void UnregisterCallbacks(IUIActions instance)
@@ -428,6 +465,9 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
             @SkipCutscene.started -= instance.OnSkipCutscene;
             @SkipCutscene.performed -= instance.OnSkipCutscene;
             @SkipCutscene.canceled -= instance.OnSkipCutscene;
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
         }
 
         public void RemoveCallbacks(IUIActions instance)
@@ -455,5 +495,6 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
     public interface IUIActions
     {
         void OnSkipCutscene(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
     }
 }
