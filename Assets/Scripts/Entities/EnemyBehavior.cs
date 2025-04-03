@@ -42,7 +42,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         get => transform; 
     }
 
-    [SerializeField] private Vector3 _positionOffset;
 
     public GameObject EntryObject
     {
@@ -485,13 +484,14 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             }
             var dist = Vector3Int.Distance(currCell, goalCell);
             var rotationDir = (GridBase.Instance.CellToWorld(goalCell) - transform.position).normalized;
+            rotationDir.y = 0f;
             var moveWorld = GridBase.Instance.CellToWorld(goalCell);
 
             dist = Mathf.Max(dist, 1f);
             float movementTime = Mathf.Clamp((_waitTime / _enemyMovementTime) * dist,
                 _minMoveTime, float.MaxValue);
             var tween = Tween
-                .Position(transform, endValue: moveWorld + _positionOffset,
+                .Position(transform, endValue: moveWorld + CKOffsetsReference.EnemyOffset(_isSonEnemy),
                     duration: movementTime, _movementEase).OnUpdate(
                     target: this,
                     (_, _) =>
@@ -865,6 +865,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     {
         Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
         Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos);
-        transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z) + _positionOffset;
+        transform.position = worldPos + CKOffsetsReference.EnemyOffset(_isSonEnemy);
     }
 }

@@ -50,7 +50,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         get => _canMove;
     }
 
-    [SerializeField] private Vector3 _positionOffset;
     [SerializeField] private PlayerInteraction _playerInteraction;
 
     [SerializeField] private float _delayTime = 0.1f;
@@ -75,7 +74,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     private WaitForSeconds _waitForSeconds;
 
     //to tell when player finishes a move
-    public UnityEvent OnPlayerMoveComplete;
+    public Action OnPlayerMoveComplete;
 
     // Event references for the player movement sounds
     [SerializeField] private EventReference _playerMove = default;
@@ -200,7 +199,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                 GridBase.Instance.UpdateEntryAtPosition(this, move);
                 _animator.SetBool(Forward, true);
                 yield return Tween.Position(transform,
-                    move + _positionOffset, duration: modifiedMovementTime, 
+                    move + CKOffsetsReference.MotherOffset, duration: modifiedMovementTime, 
                     _movementEase).OnUpdate(target: this, (_, _) =>
                     {
                         CheckForEnemyCollision(move);
@@ -215,6 +214,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         }
 
         _canMove = true;
+        OnPlayerMoveComplete?.Invoke();
     }
 
     /// <summary>
@@ -279,7 +279,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                         AudioManager.Instance.PlaySound(_playerMove);
                         StartCoroutine(MovePlayer(direction));
                         RoundManager.Instance.CompleteTurn(this);
-                        OnPlayerMoveComplete?.Invoke(); //keeps track of movement completion
                     }
                     else
                     {
@@ -314,8 +313,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     public void SnapToGridSpace()
     {
         Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
-        Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos);
-        transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z);
+        Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos) + CKOffsetsReference.MotherOffset;
+        transform.position = worldPos;
     }
 
     /// <summary>
