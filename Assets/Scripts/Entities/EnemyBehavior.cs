@@ -147,6 +147,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     // Timing from metronome
     private int _enemyMovementTime = 1;
+    private int _prevMovementTime = 1;
 
     private Rigidbody _rb;
 
@@ -155,6 +156,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private int _indicatorIndex = 0;
     private bool _indicatorReturningToStart = false;
     private int _currentEnemyIndex = 0;
+    private Vector3 _lastPosition;
 
     //public static PlayerMovement Instance;
     private static readonly int Forward = Animator.StringToHash("Forward");
@@ -185,6 +187,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
         _rb = GetComponent<Rigidbody>();
         _rb.isKinematic = true;
+
+        _lastPosition = transform.position;
 
         _destinationMarker.transform.SetParent(null);
 
@@ -363,8 +367,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private void UpdateDestinationMarker()
     {
         //Sets the _destinationMarker object to the enemy's current position
-        _destinationMarker.transform.position = transform.position;
-        Vector3 linePos = transform.position;
+        _destinationMarker.transform.position = _lastPosition;
+        Vector3 linePos = _lastPosition;
         linePos.y = _lineYPosOffset;
         //Looks at the time signature for the enemy so it can place multiple moves in advance
 
@@ -401,6 +405,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             _metronomeTriggered = true;
         }
         
+        _prevMovementTime = !_notFirstCheck ? newTimeSignature.y : _enemyMovementTime;
+
         if (!_notFirstCheck)
         {
             _notFirstCheck = true;
@@ -411,6 +417,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         if (_enemyMovementTime <= 0)
         {
             _enemyMovementTime = 1;
+        }
+
+        if (_metronomeTriggered)
+        {
+            UpdateDestinationMarker();
         }
     }
 
@@ -431,6 +442,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             return;
         }
 
+        _lastPosition = transform.position;
         StartCoroutine(MovementRoutine());
     }
 
@@ -553,7 +565,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         }
         
         RoundManager.Instance.CompleteTurn(this);
-
     }
 
     /// <summary>
@@ -672,143 +683,64 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// <param name="looped">Reference to the evaluated loop state.</param>
     private void NextMarkerDestination(ref int moveIndex, ref bool looped)
     {
-        //if the time signature changes the destination marker position changes
-        //based on current enemy position
-        if (_metronomeTriggered)
-        {
-            _signatureIsChanged = !_signatureIsChanged;
-            if (!looped)
-            {
-                moveIndex = _moveDestinations.Count - 1;
-            }
-            else
-            {
-                moveIndex = 0;
-            }
+        int changeInIndex = _metronomeTriggered ? _enemyMovementTime - _prevMovementTime :
+            _enemyMovementTime;
 
-            if (!_signatureIsChanged)
+        _metronomeTriggered = false;
+
+        if (_circularMovement)
+        {
+            moveIndex += changeInIndex;
+
+            if (moveIndex < 0)
             {
-                _firstTurnBack = true;
+                moveIndex = _moveDestinations.Count - -moveIndex;
             }
-            _metronomeTriggered = false;
+            
+            if (moveIndex > _moveDestinations.Count - 1)
+            {
+                moveIndex %= _moveDestinations.Count - 1;
+            }
         }
-
-        //not at the end of our list of moves.
-        if (moveIndex < _moveDestinations.Count - 1)
+        else
         {
-            if (!looped)
+            if (changeInIndex < 0)
             {
-                //move forward according to time signature
-                moveIndex += _enemyMovementTime;
+                looped = !looped;
+            }
 
-                //if time signature exceeds enemy position count start reversing
-                HandleOverflow(ref _indicatorIndex, ref looped);
+            if (looped)
+            {
+                moveIndex -= changeInIndex;
             }
             else
             {
-                moveIndex-=_enemyMovementTime;
-                //we've returned to the start, so reset everything to be back as normal
-                if (moveIndex <= 0)
+                moveIndex += changeInIndex;
+            }
+
+            int offsetIndex;
+
+            while (moveIndex < 0 || moveIndex > _moveDestinations.Count - 1)
+            {
+                if (moveIndex < 0)
                 {
-                    if (_signatureIsChanged)
-                    {
-                        moveIndex = _moveDestinations.Count - 1;
-                    }
-                    else
-                    {
-                        moveIndex = 0;
-                    }
+                    moveIndex = -moveIndex;
                     looped = false;
                 }
-            }
-        }
-        else
-        {
-            //we're at the end of our potential moves, so let's determine how we're gonna get back.
-
-            if (!_circularMovement)
-            {
-                //we're not using circular movement, so for future turns we need to move backwards until we reach 
-                // the start again.
-                moveIndex -= _enemyMovementTime;
-                if (!_firstTurnBack)
+                else if (moveIndex > _moveDestinations.Count - 1)
                 {
+                    offsetIndex = moveIndex % (_moveDestinations.Count - 1);
+                    moveIndex = (_moveDestinations.Count - 1) - offsetIndex;
                     looped = true;
                 }
-                else
-                {
-                    moveIndex += _enemyMovementTime;
-                    _firstTurnBack = false;
-                }
-
-                //if time signature exceeds enemy position count start reversing
-                HandleOverflow(ref _indicatorIndex, ref looped);
             }
-            else
-            {
-                //our moves will start with the enemy time signature since we're circularly repeating our movement.
-                moveIndex = _currentEnemyIndex + _enemyMovementTime;
 
-                //if the number of moves exceeds the list count start from 0 and then add the amount remaining.
-                if (moveIndex > _moveDestinations.Count - 1)
-                {
-                    int offsetCircular = moveIndex - (_moveDestinations.Count - 1);
-                    moveIndex = 0;
-                    moveIndex += offsetCircular;
-                }
+            if (moveIndex == 0 || moveIndex == _moveDestinations.Count - 1)
+            {
+                looped = !looped;
             }
         }
     }
-
-    /// <summary>
-    /// Handles moveIndex for the NextMarkerDestination function if the
-    /// time signature movement exceeds the boundaries of 0 or the
-    /// _moveDestinations list count.
-    /// </summary>
-    /// <param name="moveIndex">Reference to the evaluated move index.</param>
-    /// <param name="looped">Reference to the evaluated loop state.</param>
-    private void HandleOverflow(ref int moveIndex, ref bool looped)
-    {
-        //If going back through the list check for less than before
-        //greater than.
-        if (looped)
-        {
-            //Increases if below 0
-            if (moveIndex < 0)
-            {
-                _offsetDestCount = -moveIndex;
-                moveIndex = 0;
-                moveIndex += _offsetDestCount;
-            }
-            //Decreases if over _moveDestinations count
-            if (moveIndex > _moveDestinations.Count - 1)
-            {
-                _offsetDestCount = -moveIndex;
-                moveIndex = _moveDestinations.Count - 1;
-                moveIndex += _offsetDestCount;
-            }
-        }
-        //If going normally through the list check for greater than before
-        //less than.
-        else
-        {
-            //Decreases if over _moveDestinations count
-            if (moveIndex > _moveDestinations.Count - 1)
-            {
-                _offsetDestCount = -moveIndex;
-                moveIndex = _moveDestinations.Count - 1;
-                moveIndex += _offsetDestCount;
-            }
-            //Increases if below 0
-            if (moveIndex < 0)
-            {
-                _offsetDestCount = -moveIndex;
-                moveIndex = 0;
-                moveIndex += _offsetDestCount;
-            }
-        }
-    }
-
 
     /// <summary>
     /// Can force enemy turn to end early
