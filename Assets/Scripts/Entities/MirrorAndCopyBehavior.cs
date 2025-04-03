@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Mitchell Young
-*    Contributors: Mitchell Young, Nick Grinstead, Jamison Parks
+*    Contributors: Mitchell Young, Nick Grinstead, Jamison Parks, Alec Pizziferro
 *    Date Created: 10/27/24
 *    Description: Script that handles the behavior of the mirror and
 *    copy enemy that mirrors or copies player movement.
@@ -24,20 +24,15 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     public GameObject EntryObject { get => gameObject; }
 
     public bool EnemyFrozen { get; private set; } = false;
-
-    [SerializeField]
-    private Vector3 _positionOffset;
-    [SerializeField]
-    private PlayerInteraction _playerInteraction;
+    
     private GameObject _player;
-    private PlayerMovement _playerMove;
 
     //Determines whether or not the enemy's movement is reversed
     [SerializeField] private bool _mirrored;
 
     [PlayaInfoBox("Time delay from when an enemy starts their turn and actually begins moving." +
       "\n This is meant to prevent enemies from moving before the player starts to move.")]
-    [PropRange(0f, 0.5f)]
+    [PropRange(0f, 0.2f)]
     [SerializeField]
     private float _timeBeforeTurn = 0.1f;
 
@@ -87,7 +82,6 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
         GridBase.Instance.AddEntry(this);
 
         _player = PlayerMovement.Instance.gameObject;
-        _playerMove = PlayerMovement.Instance;
         _rb = GetComponent<Rigidbody>();
 
         if (TimeSignatureManager.Instance != null)
@@ -193,7 +187,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                     }
                     
                     yield return Tween.Position(transform,
-                        move + _positionOffset, modifiedMovementTime, ease: _movementEase).OnUpdate<MirrorAndCopyBehavior>(target: this, (target, tween) =>
+                        move + CKOffsetsReference.MirrorCopyEnemyOffset(_mirrored), modifiedMovementTime, ease: _movementEase).OnUpdate<MirrorAndCopyBehavior>(target: this, (target, tween) =>
                         {
                             GridBase.Instance.UpdateEntry(this);
                         }).ToYieldInstruction();
@@ -313,7 +307,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     public void SnapToGridSpace()
     {
         Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
-        Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos);
-        transform.position = new Vector3(worldPos.x, transform.position.y, worldPos.z);
+        Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos) + CKOffsetsReference.MirrorCopyEnemyOffset(_mirrored);
+        transform.position = worldPos;
     }
 }
