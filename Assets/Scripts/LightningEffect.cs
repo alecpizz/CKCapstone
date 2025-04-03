@@ -19,7 +19,7 @@ public class LightningEffect : MonoBehaviour
 
     [Tooltip("Set how long the lightning takes to fade out.")]
     [SerializeField] private float _fadeInDuration = .2f;
-    [SerializeField] private float _fadeOutDuration = 1f;
+    [SerializeField] private float _fadeOutDuration = 1.5f;
 
     /// <summary>
     /// Allows the user to test the lightning strike in editor using _testLightning
