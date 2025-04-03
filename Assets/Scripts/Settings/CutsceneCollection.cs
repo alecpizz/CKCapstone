@@ -16,8 +16,6 @@ public class CutsceneCollection : MonoBehaviour
     [SerializeField] private bool unlocked = false;
     [SerializeField] private string cutsceneName = "";
 
-    private int _levelIndexToLoad = 0;
-
     /// <summary>
     /// Sets unlocked to true if the cutscene has been seen
     /// </summary>
@@ -26,6 +24,10 @@ public class CutsceneCollection : MonoBehaviour
         if (SaveDataManager.GetLevelCompleted(cutsceneName))
         {
             unlocked = true;
+        }
+        else
+        {
+            Debug.Log(cutsceneName + " is still locked!");
         }
         if (unlocked)
         {
@@ -36,7 +38,6 @@ public class CutsceneCollection : MonoBehaviour
             gameObject.GetComponent<Image>().color = new Color(0, 0, 0, 1);
         }
 
-        _levelIndexToLoad = SceneManager.GetActiveScene().buildIndex;
     }
 
     /// <summary>
@@ -49,15 +50,9 @@ public class CutsceneCollection : MonoBehaviour
             return;
         }
         SaveDataManager.SetLoadedFromPause(true);
-        string scenePath = SceneUtility.GetScenePathByBuildIndex(_levelIndexToLoad);
-        SaveDataManager.SetSceneLoadedFrom(scenePath);
-        SaveDataManager.SetLastFinishedLevel(scenePath);
+        SaveDataManager.SetSceneLoadedFrom(SceneManager.GetActiveScene().name);
 
-        Debug.Log(SaveDataManager.GetLastFinishedLevel());
-        Debug.Log(SaveDataManager.GetLoadedFromPause());
-        Debug.Log(SaveDataManager.GetSceneLoadedFrom());
-
-        //SceneManager.LoadScene(cutsceneName);
+        SceneManager.LoadScene(cutsceneName);
     }
 
 }

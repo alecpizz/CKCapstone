@@ -316,7 +316,7 @@ public static class SaveDataManager
     {
         bool foundData = _persistentDataObject.TryGetData(CKSaveData_KEYS.Progression.TableName,
             CKSaveData_KEYS.Progression.Loaded_From_Pause.EntryName,
-            CKSaveData_KEYS.Progression.Loaded_From_Pause._Loaded_From_Pause, out BoolType data);
+            CKSaveData_KEYS.Progression.Loaded_From_Pause._Loaded_From_Pause, true, out BoolType data);
         return foundData ? data.Value : false;
     }
 

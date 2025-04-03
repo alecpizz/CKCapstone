@@ -103,8 +103,7 @@ public class CutsceneFramework : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        Debug.Log(SaveDataManager.GetSceneLoadedFrom());
-        //Debug.Log(SaveDataManager.GetLoadedFromPause());
+        SaveDataManager.SetLevelCompleted(SceneManager.GetActiveScene().name);
         _inputActions = new DebugInputActions();
         _inputActions.UI.Enable();
         _inputActions.UI.SkipCutscene.performed += ctx => SkipCutscene();    
@@ -173,7 +172,11 @@ public class CutsceneFramework : MonoBehaviour
             StopAllCoroutines();
             string scenePath = SceneUtility.GetScenePathByBuildIndex(_loadingLevelIndex);
             SaveDataManager.SetLastFinishedLevel(scenePath);
-            SaveDataManager.SetLevelCompleted(SceneManager.GetActiveScene().path);
+            if (SaveDataManager.GetLoadedFromPause())
+            {
+                SaveDataManager.SetLoadedFromPause(false);
+                SceneManager.LoadScene(SaveDataManager.GetSceneLoadedFrom());
+            }
             SceneController.Instance.LoadNewScene(_loadingLevelIndex);
         }                
     }
