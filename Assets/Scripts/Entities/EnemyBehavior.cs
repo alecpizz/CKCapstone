@@ -480,7 +480,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             if (_animator != null)
             {
                 _animator.SetBool(Frozen, false);
-                _animator.SetTrigger(Forward);
+                _animator.SetBool(Forward, true);
             }
             var dist = Vector3Int.Distance(currCell, goalCell);
             var rotationDir = (GridBase.Instance.CellToWorld(goalCell) - transform.position).normalized;
@@ -509,43 +509,44 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                             PlayerMovement.Instance.OnDeath();
                             if (_animator != null)
                             {
-                                _animator.SetTrigger(Attack);
+                                _animator.SetBool(Attack, true);
                             }
                             SceneController.Instance.ReloadCurrentScene();
                         }
                     });
             AudioManager.Instance.PlaySound(_enemyMove);
-            if (rotationDir != transform.forward)
+            /*if (rotationDir != transform.forward && _animator != null)
             {
-                if (_animator != null)
-                {
-                    _animator.SetTrigger(Turn);
-                }
-            }
+                _animator.SetBool(Turn, true);
+            }*/
             yield return Tween.Rotation(transform, endValue: Quaternion.LookRotation(rotationDir),
                 duration: _rotationTime,
                 ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).Chain(tween).ToYieldInstruction();
+            /*if (_animator != null)
+            {
+                _animator.SetBool(Turn, false);
+            }*/
             if (_animator != null)
             {
-                _animator.ResetTrigger(Turn);
+                _animator.SetBool(Forward, false);
             }
             GridBase.Instance.UpdateEntry(this);
 
             if (_endRotate)
             {
-                if (_animator != null)
+                /*if (_animator != null)
                 {
-                    _animator.SetTrigger(Turn);
-                }
+                    _animator.SetBool(Turn, false);
+                }*/
                 yield return Tween.Rotation(transform, endValue: Quaternion.LookRotation(-rotationDir),
                 duration: _rotationTime,
                 ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).ToYieldInstruction();
                 _endRotate = false;
             }
-            if (_animator != null)
+            /*if (_animator != null)
             {
-                _animator.ResetTrigger(Turn);
-            }
+                _animator.SetBool(Turn, false);
+            }*/
         }
         if (!blocked)
         {
