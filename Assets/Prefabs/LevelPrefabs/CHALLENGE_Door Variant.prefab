@@ -79,6 +79,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 3791413589607821612}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &8101644283810247193 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4968345734131532597, guid: 7cab6882d4c31814a9243292c5ca475b,
+    type: 3}
+  m_PrefabInstance: {fileID: 3791413589607821612}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5351914001084542393
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -156,6 +162,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: DoorPortal_Challenge (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4968345734131532597, guid: 7cab6882d4c31814a9243292c5ca475b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -246,6 +257,11 @@ PrefabInstance:
       propertyPath: _isUnlocked
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2136362874793484460, guid: dda7842c0387e794a8c66ddc56220932,
+        type: 3}
+      propertyPath: _doorPortalVFX
+      value: 
+      objectReference: {fileID: 8101644283810247193}
     - target: {fileID: 2136362874793484460, guid: dda7842c0387e794a8c66ddc56220932,
         type: 3}
       propertyPath: _lanternScript
@@ -403,11 +419,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4326453113173938672, guid: 27adc8880e687af4cb313054fbd0bf7d,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4326453113173938672, guid: 27adc8880e687af4cb313054fbd0bf7d,
         type: 3}

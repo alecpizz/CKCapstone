@@ -38,11 +38,19 @@ public sealed class RoundManager : MonoBehaviour
     private PlayerControls _playerControls;
     private Vector3 _lastMovementInput;
     private bool _movementRegistered = false;
+    private bool _inputBuffered = false;
+    private bool _autocompleteActive = false;
     private float _movementRegisteredTime = -1;
+    private Vector2 _registeredInput = Vector2.zero;
     [SerializeField] private float _inputBufferWindow = 0.5f;
+    // This second buffer window helps prevent double movements in scenes with no enemies
+    [SerializeField] private float _noEnemiesBufferWindow = 0.25f;
+
+    private bool _isListeningForMoveEnd = false;
 
     [Header("Autocomplete Mechanic")]
     [SerializeField, Tooltip("Timescale during autocomplete dash")] private float _autocompleteSpeed = 3;
+    [SerializeField] private float _autocompleteWindow = 0.2f;
     [SerializeField] private Image _speedUI;
 
     public event Action<bool> AutocompleteToggled;
@@ -98,7 +106,14 @@ public sealed class RoundManager : MonoBehaviour
     private void OnEnable()
     {
         _playerControls.Enable();
-        _playerControls.InGame.Movement.performed += RegisterMovementInput;
+        _playerControls.InGame.MoveUp.performed += ctx => _registeredInput = new Vector2(0, 1);
+        _playerControls.InGame.MoveUp.performed += RegisterMovementInput;
+        _playerControls.InGame.MoveDown.performed += ctx => _registeredInput = new Vector2(0, -1);
+        _playerControls.InGame.MoveDown.performed += RegisterMovementInput;
+        _playerControls.InGame.MoveRight.performed += ctx => _registeredInput = new Vector2(1, 0);
+        _playerControls.InGame.MoveRight.performed += RegisterMovementInput;
+        _playerControls.InGame.MoveLeft.performed += ctx => _registeredInput = new Vector2(-1, 0);
+        _playerControls.InGame.MoveLeft.performed += RegisterMovementInput;
     }
 
     /// <summary>
@@ -106,8 +121,20 @@ public sealed class RoundManager : MonoBehaviour
     /// </summary>
     private void OnDisable()
     {
-        _playerControls.InGame.Movement.performed -= RegisterMovementInput;
+        _playerControls.InGame.MoveUp.performed -= ctx => _registeredInput = new Vector2(0, 1);
+        _playerControls.InGame.MoveUp.performed -= RegisterMovementInput;
+        _playerControls.InGame.MoveDown.performed -= ctx => _registeredInput = new Vector2(0, -1);
+        _playerControls.InGame.MoveDown.performed -= RegisterMovementInput;
+        _playerControls.InGame.MoveRight.performed -= ctx => _registeredInput = new Vector2(1, 0);
+        _playerControls.InGame.MoveRight.performed -= RegisterMovementInput;
+        _playerControls.InGame.MoveLeft.performed -= ctx => _registeredInput = new Vector2(-1, 0);
+        _playerControls.InGame.MoveLeft.performed -= RegisterMovementInput;
         _playerControls.Disable();
+
+        if (_isListeningForMoveEnd)
+        {
+            PlayerMovement.Instance.OnPlayerMoveComplete -= CheckForBufferedInput;
+        }
     }
 
     /// <summary>
@@ -126,6 +153,23 @@ public sealed class RoundManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Called when the turn state returns to None to check if the player buffered an input
+    /// </summary>
+    private void CheckForBufferedInput()
+    {
+        if (Time.unscaledTime - _movementRegisteredTime <= 
+            (EnemiesPresent ? _inputBufferWindow : _noEnemiesBufferWindow))
+        {
+            if (_isListeningForMoveEnd)
+            {
+                PlayerMovement.Instance.OnPlayerMoveComplete -= CheckForBufferedInput;
+                _isListeningForMoveEnd = false;
+            }
+            PerformMovement();
+        }
+    }
+
+    /// <summary>
     /// Invoked when a movement input is pressed.
     /// Will attempt to move if possible, but if it's not the player's turn
     /// the movement will be rejected.
@@ -133,17 +177,25 @@ public sealed class RoundManager : MonoBehaviour
     /// <param name="obj"></param>
     private void RegisterMovementInput(InputAction.CallbackContext obj)
     {
-        if (_turnState != TurnState.None && Time.timeScale > 1)
+        if (Time.timeScale > 1)
             return;
 
         var dir = GetNormalizedInput();
 
-        if(_turnState != TurnState.None && _lastMovementInput == dir)
+        if (EnemiesPresent && !_autocompleteActive && _turnState != TurnState.None && 
+            _lastMovementInput == dir && 
+            Time.unscaledTime - _movementRegisteredTime <= _autocompleteWindow)
         {
             EnableAutocomplete();
         }
 
         _lastMovementInput = dir;
+
+        // If a movement is already registered, then flag as buffered
+        if (_movementRegistered && !_autocompleteActive)
+        {
+            _inputBuffered = true;
+        }
 
         _movementRegistered = true;
         _movementRegisteredTime = Time.unscaledTime;
@@ -159,9 +211,13 @@ public sealed class RoundManager : MonoBehaviour
     /// </summary>
     private void PerformMovement()
     {
-        if (!_movementRegistered || DebugMenuManager.Instance.PauseMenu) return;
+        // Return if no movement is registered or if the game is paused
+        if (_turnState != TurnState.None ||
+            (!_movementRegistered && !_inputBuffered) ||
+            DebugMenuManager.Instance.PauseMenu) { return; }
 
-        if (!_playerControls.InGame.Movement.IsPressed())
+        // Stop moving if no movement input was pressed
+        if (!_playerControls.InGame.Movement.IsPressed() && !_inputBuffered)
         {
             _movementRegistered = false;
             return;
@@ -200,35 +256,27 @@ public sealed class RoundManager : MonoBehaviour
         if (_completedTurnCounts[listenerTurnState] < _turnListeners[listenerTurnState].Count) return;
         _completedTurnCounts[listenerTurnState] = 0;
 
+        // Clears buffered input once player has successfully moved
+        if (_turnState == TurnState.Player)
+        {
+            _inputBuffered = false;
+            DisableAutocomplete();
+        }
+
         //find out who's turn is next, if it's nobody's, stop.
         var next = GetNextTurn(_turnState);
         if (next is null or TurnState.None)
         {
             _turnState = TurnState.None;
-            // Attempts to move player if they buffered an input
-            /*bool doAutocomplete = false;
-            if(Time.unscaledTime - _movementRegisteredTime <= _inputBufferWindow)
-            {
-                if (_lastMovementInput == GetNormalizedInput())
-                {
-                    doAutocomplete = true;
-                    EnableAutocomplete();
-                }
-                    
+            CheckForBufferedInput();
 
-                PerformMovement();
-            }
-                
-            if(!doAutocomplete)
-                DisableAutocomplete();
-            */
             DisableAutocomplete();
             return;
         }
 
         //begin the next group's turns.
         _turnState = next.Value;
-
+        
         while (_turnListeners[_turnState].Count == 0 && _turnState != TurnState.None)
         {
             next = GetNextTurn(_turnState);
@@ -257,7 +305,8 @@ public sealed class RoundManager : MonoBehaviour
     public void RequestRepeatTurnStateRepeat(ITurnListener listener)
     {
         //Stops Held Movement
-        _movementRegistered = false;
+        if (!_inputBuffered)
+            _movementRegistered = false;
 
         // Returns if it's not the listener's turn
         if (listener.TurnState != _turnState &&
@@ -275,6 +324,11 @@ public sealed class RoundManager : MonoBehaviour
         if (prev is null or TurnState.None)
         {
             _turnState = TurnState.None;
+            if (!_isListeningForMoveEnd)
+            {
+                _isListeningForMoveEnd = true;
+                PlayerMovement.Instance.OnPlayerMoveComplete += CheckForBufferedInput;
+            }
             return;
         }
 
@@ -339,6 +393,7 @@ public sealed class RoundManager : MonoBehaviour
     /// </summary>
     private void EnableAutocomplete()
     {
+        _autocompleteActive = true;
         Time.timeScale = _autocompleteSpeed;
         AutocompleteToggled?.Invoke(true);
 
@@ -350,6 +405,7 @@ public sealed class RoundManager : MonoBehaviour
     /// </summary>
     private void DisableAutocomplete()
     {
+        _autocompleteActive = false;
         Time.timeScale = 1;
         AutocompleteToggled?.Invoke(false);
         Tween.Alpha(_speedUI, 0, 0.4f, Ease.OutSine).OnComplete(()=> { _speedUI.gameObject.SetActive(false); });
@@ -361,7 +417,7 @@ public sealed class RoundManager : MonoBehaviour
     /// <returns>Normalized input vector</returns>
     private Vector3 GetNormalizedInput()
     {
-        Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>();
+        Vector2 input = _registeredInput;
         if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
         {
             input.y = 0;
