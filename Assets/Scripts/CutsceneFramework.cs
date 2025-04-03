@@ -176,6 +176,7 @@ public class CutsceneFramework : MonoBehaviour
             {
                 SaveDataManager.SetLoadedFromPause(false);
                 SceneManager.LoadScene(SaveDataManager.GetSceneLoadedFrom());
+                return;
             }
             SceneController.Instance.LoadNewScene(_loadingLevelIndex);
         }                
@@ -234,6 +235,7 @@ public class CutsceneFramework : MonoBehaviour
         {
             SaveDataManager.SetLoadedFromPause(false);
             SceneManager.LoadScene(SaveDataManager.GetSceneLoadedFrom());
+            yield break;
         }
         SceneController.Instance.LoadNewScene(_loadingLevelIndex);
     }
@@ -276,6 +278,7 @@ public class CutsceneFramework : MonoBehaviour
         {
             SaveDataManager.SetLoadedFromPause(false);
             SceneManager.LoadScene(SaveDataManager.GetSceneLoadedFrom());
+            return;
         }
         SceneController.Instance.LoadNewScene(_loadingLevelIndex);
         //if video isn't looping pause the video

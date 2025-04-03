@@ -248,11 +248,9 @@ public static class SaveDataManager
     /// <param name="sceneName">The name of the scene that was finished.</param>
     public static void SetLastFinishedLevel(string sceneName)
     {
-        Debug.Log($"SAVING {sceneName}");
         _persistentDataObject.SetData<StringType>(CKSaveData_KEYS.Progression.TableName,
             CKSaveData_KEYS.Progression.Last_Level_Completed.EntryName,
             CKSaveData_KEYS.Progression.Last_Level_Completed._Scene_Name, new StringType(sceneName));
-        Debug.Log(_persistentDataObject.errors);
         SaveData();
     }
 
@@ -274,11 +272,9 @@ public static class SaveDataManager
     /// <param name="sceneLoadedFrom">The name of the last loaded scene.</param>
     public static void SetSceneLoadedFrom(string sceneName)
     {
-        Debug.Log($"SAVING {sceneName}");
         _persistentDataObject.SetData<StringType>(CKSaveData_KEYS.Progression.TableName,
             CKSaveData_KEYS.Progression.Scene_Loaded_From.EntryName,
             CKSaveData_KEYS.Progression.Scene_Loaded_From._Scene_Name, new StringType(sceneName));
-        Debug.Log(_persistentDataObject.errors);
         SaveData();
     }
 
@@ -300,11 +296,9 @@ public static class SaveDataManager
     /// <param name="loadedFromPause">saves as True or False</param>
     public static void SetLoadedFromPause(bool loadedFromPause)
     {
-        Debug.Log($"SAVING {loadedFromPause}");
         _persistentDataObject.SetData<BoolType>(CKSaveData_KEYS.Progression.TableName,
              CKSaveData_KEYS.Progression.Loaded_From_Pause.EntryName,
              CKSaveData_KEYS.Progression.Loaded_From_Pause._Loaded_From_Pause, new BoolType(loadedFromPause));
-        Debug.Log(_persistentDataObject.errors);
         SaveData();
     }
 
