@@ -72,6 +72,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     // Timing from metronome
     private int _playerMovementTiming = 1;
     private WaitForSeconds _waitForSeconds;
+    private WaitForEndOfFrame _waitForEndOfFrame;
 
     //to tell when player finishes a move
     public Action OnPlayerMoveComplete;
@@ -121,6 +122,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             TimeSignatureManager.Instance.RegisterTimeListener(this);
 
         _waitForSeconds = new WaitForSeconds(_delayTime);
+        _waitForEndOfFrame = new WaitForEndOfFrame();
 
         _movementTime = RoundManager.Instance.EnemiesPresent ? 
             _withEnemiesMovementTime : _noEnemiesMovementTime;
@@ -198,6 +200,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             {
                 GridBase.Instance.UpdateEntryAtPosition(this, move);
                 _animator.SetBool(Forward, true);
+                yield return _waitForEndOfFrame;
+                yield return _waitForEndOfFrame;
                 yield return Tween.Position(transform,
                     move + CKOffsetsReference.MotherOffset, duration: modifiedMovementTime, 
                     _movementEase).OnUpdate(target: this, (_, _) =>
