@@ -285,25 +285,18 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                     else
                     {
                         _animator.SetBool(Wall, true);
-                        Invoke("EndWall", 0.01f);
                         _canMove = true;
                         AudioManager.Instance.PlaySound(_playerCantMove);
                         RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
                     }
-                });
+                }).Chain(Tween.Delay(0.01f, () => {
+                    _animator.SetBool(Wall, false);
+                }));
         }
         else
         {
             RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
         }
-    }
-
-    /// <summary>
-    /// Just used to set the Wall animation bool false a frame after it is set to true.
-    /// </summary>
-    public void EndWall()
-    {
-        _animator.SetBool(Wall, false);
     }
 
     /// <summary>
