@@ -12,6 +12,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using static UnityEngine.Rendering.DebugUI;
 
 public class MenuManager : MonoBehaviour
 {
@@ -123,6 +124,15 @@ public class MenuManager : MonoBehaviour
             _restartButton.SetActive(false);
             EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
             Time.timeScale = 0f;
+
+            //Gets the path to a scene
+            string path = SceneManager.GetActiveScene().path;
+            //Uses the path to get the full name of the scene in the build
+            //string sceneName = System.IO.Path.GetFileNameWithoutExtension(path);
+            if (path.Contains("CS"))
+            {
+                //code to bring up skip posibility
+            }
         }
         else if (_optionsScreen != null && _optionsScreen.activeInHierarchy)
         {
