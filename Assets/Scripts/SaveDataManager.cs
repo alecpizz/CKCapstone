@@ -1,6 +1,6 @@
 /******************************************************************
  *    Author: Alec Pizziferro
- *    Contributors: nullptr
+ *    Contributors: nullptr, Mitchell Young
  *    Date Created: 2/24/2025
  *    Description: Singleton instance/Abstraction for interacting with
  *    DataBox save data.
@@ -266,6 +266,58 @@ public static class SaveDataManager
             CKSaveData_KEYS.Progression.Last_Level_Completed.EntryName,
             CKSaveData_KEYS.Progression.Last_Level_Completed._Scene_Name, out StringType data);
         return foundData ? data.Value : string.Empty;
+    }
+
+    /// <summary>
+    /// Saves the name of last scene loaded from.
+    /// </summary>
+    /// <param name="sceneLoadedFrom">The name of the last loaded scene.</param>
+    public static void SetSceneLoadedFrom(string sceneName)
+    {
+        Debug.Log($"SAVING {sceneName}");
+        _persistentDataObject.SetData<StringType>(CKSaveData_KEYS.Progression.TableName,
+            CKSaveData_KEYS.Progression.Scene_Loaded_From.EntryName,
+            CKSaveData_KEYS.Progression.Scene_Loaded_From._Scene_Name, new StringType(sceneName));
+        Debug.Log(_persistentDataObject.errors);
+        SaveData();
+    }
+
+    /// <summary>
+    /// Gets the name of the last scene loaded from.
+    /// </summary>
+    /// /// <returns>Last loaded scene name.</returns>
+    public static string GetSceneLoadedFrom()
+    {
+        bool foundData = _persistentDataObject.TryGetData(CKSaveData_KEYS.Progression.TableName,
+            CKSaveData_KEYS.Progression.Scene_Loaded_From.EntryName,
+            CKSaveData_KEYS.Progression.Scene_Loaded_From._Scene_Name, out StringType data);
+        return foundData ? data.Value : string.Empty;
+    }
+
+    /// <summary>
+    /// Saves loaded from pause as true or false.
+    /// </summary>
+    /// <param name="loadedFromPause">saves as True or False</param>
+    public static void SetLoadedFromPause(bool loadedFromPause)
+    {
+        Debug.Log($"SAVING {loadedFromPause}");
+        _persistentDataObject.SetData<BoolType>(CKSaveData_KEYS.Progression.TableName,
+             CKSaveData_KEYS.Progression.Loaded_From_Pause.EntryName,
+             CKSaveData_KEYS.Progression.Loaded_From_Pause._Loaded_From_Pause, new BoolType(loadedFromPause));
+        Debug.Log(_persistentDataObject.errors);
+        SaveData();
+    }
+
+    /// <summary>
+    /// Gets loaded from pause as true or false.
+    /// </summary>
+    /// <returns>True or false.</returns>
+    public static bool GetLoadedFromPause()
+    {
+        bool foundData = _persistentDataObject.TryGetData(CKSaveData_KEYS.Progression.TableName,
+            CKSaveData_KEYS.Progression.Loaded_From_Pause.EntryName,
+            CKSaveData_KEYS.Progression.Loaded_From_Pause._Loaded_From_Pause, out BoolType data);
+        return foundData ? data.Value : false;
     }
 
     /// <summary>

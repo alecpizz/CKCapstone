@@ -14,13 +14,15 @@ using UnityEngine.SceneManagement;
 public class CutsceneCollection : MonoBehaviour
 {
     [SerializeField] private bool unlocked = false;
-    [SerializeField] private int cutsceneNumber = 0;
+    [SerializeField] private string cutsceneName = "";
 
-    private bool loadLastScene = false;
+    private int _levelIndexToLoad = 0;
 
+    /// <summary>
+    /// Sets unlocked to true if the cutscene has been seen
+    /// </summary>
     private void Start()
     {
-        string cutsceneName = SceneUtility.GetScenePathByBuildIndex(cutsceneNumber);
         if (SaveDataManager.GetLevelCompleted(cutsceneName))
         {
             unlocked = true;
@@ -33,6 +35,8 @@ public class CutsceneCollection : MonoBehaviour
         {
             gameObject.GetComponent<Image>().color = new Color(0, 0, 0, 1);
         }
+
+        _levelIndexToLoad = SceneManager.GetActiveScene().buildIndex;
     }
 
     /// <summary>
@@ -44,8 +48,16 @@ public class CutsceneCollection : MonoBehaviour
         {
             return;
         }
-        SceneController.Instance.LoadNewScene(cutsceneNumber);
-        loadLastScene = true;
+        SaveDataManager.SetLoadedFromPause(true);
+        string scenePath = SceneUtility.GetScenePathByBuildIndex(_levelIndexToLoad);
+        SaveDataManager.SetSceneLoadedFrom(scenePath);
+        SaveDataManager.SetLastFinishedLevel(scenePath);
+
+        Debug.Log(SaveDataManager.GetLastFinishedLevel());
+        Debug.Log(SaveDataManager.GetLoadedFromPause());
+        Debug.Log(SaveDataManager.GetSceneLoadedFrom());
+
+        //SceneManager.LoadScene(cutsceneName);
     }
 
 }
