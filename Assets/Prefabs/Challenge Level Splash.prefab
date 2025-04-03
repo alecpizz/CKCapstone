@@ -76,6 +76,21 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1405354058083334863, guid: a87e8da63bf110645986eea9bf9d904e,
         type: 3}
+      propertyPath: m_fontColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405354058083334863, guid: a87e8da63bf110645986eea9bf9d904e,
+        type: 3}
+      propertyPath: m_fontColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405354058083334863, guid: a87e8da63bf110645986eea9bf9d904e,
+        type: 3}
+      propertyPath: m_fontColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405354058083334863, guid: a87e8da63bf110645986eea9bf9d904e,
+        type: 3}
       propertyPath: m_fontSizeBase
       value: 60
       objectReference: {fileID: 0}
@@ -83,8 +98,12 @@ PrefabInstance:
         type: 3}
       propertyPath: m_sharedMaterial
       value: 
-      objectReference: {fileID: -7682226728210173025, guid: 948c848aed13a7841828f936b880534b,
-        type: 2}
+      objectReference: {fileID: 2100000, guid: 7f15aa283da72b642ac717a91dbb6416, type: 2}
+    - target: {fileID: 1405354058083334863, guid: a87e8da63bf110645986eea9bf9d904e,
+        type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294967295
+      objectReference: {fileID: 0}
     - target: {fileID: 1405354058083334863, guid: a87e8da63bf110645986eea9bf9d904e,
         type: 3}
       propertyPath: m_hasFontAssetChanged
@@ -255,6 +274,8 @@ PrefabInstance:
     - {fileID: 8505611777935228962, guid: a87e8da63bf110645986eea9bf9d904e, type: 3}
     m_RemovedGameObjects:
     - {fileID: 5832239583213999933, guid: a87e8da63bf110645986eea9bf9d904e, type: 3}
+    - {fileID: 4030918389095033979, guid: a87e8da63bf110645986eea9bf9d904e, type: 3}
+    - {fileID: 6382207257693311866, guid: a87e8da63bf110645986eea9bf9d904e, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 5128590382313980514, guid: a87e8da63bf110645986eea9bf9d904e,
@@ -262,12 +283,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 723140461023437235}
   m_SourcePrefab: {fileID: 100100000, guid: a87e8da63bf110645986eea9bf9d904e, type: 3}
---- !u!1 &225994994057096300 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4030918389095033979, guid: a87e8da63bf110645986eea9bf9d904e,
-    type: 3}
-  m_PrefabInstance: {fileID: 3806201206906503191}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2833474196840299224 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1405354058083334863, guid: a87e8da63bf110645986eea9bf9d904e,
@@ -301,4 +316,5 @@ MonoBehaviour:
   _text: {fileID: 2833474196840299224}
   _camera: {fileID: 0}
   _textFadeSpeed: 1
-  _panel: {fileID: 225994994057096300}
+  _panel: {fileID: 0}
+  _fadeTime: 0
