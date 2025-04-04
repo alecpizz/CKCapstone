@@ -86,6 +86,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private bool _firstTurnBack = false;
     private bool _metronomeTriggered = false;
     private bool _notFirstCheck = false;
+    private bool _isMoving = false;
 
     /// <summary>
     /// Helper enum for enemy directions.
@@ -442,6 +443,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             return;
         }
 
+        _isMoving = true;
         _lastPosition = transform.position;
         StartCoroutine(MovementRoutine());
     }
@@ -454,7 +456,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private IEnumerator MovementRoutine()
     {
         yield return new WaitForSeconds(_timeBeforeTurn);
-
+        
         bool blocked = false;
         for (int i = 0; i < _enemyMovementTime; i++)
         {
@@ -560,6 +562,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 _animator.SetBool(Turn, false);
             }*/
         }
+
+        _isMoving = false;
+
         if (!blocked)
         {
             UpdateDestinationMarker();
@@ -702,6 +707,16 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             {
                 moveIndex %= _moveDestinations.Count - 1;
             }
+
+            if (moveIndex < _currentEnemyIndex && _isMoving)
+            {
+                moveIndex = _currentEnemyIndex;
+            }
+            else if (moveIndex < _currentEnemyIndex)
+            {
+                moveIndex = _currentEnemyIndex + changeInIndex;
+                moveIndex %= _moveDestinations.Count - 1;
+            }
         }
         else
         {
@@ -713,10 +728,20 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             if (looped)
             {
                 moveIndex -= changeInIndex;
+
+                if (moveIndex > _currentEnemyIndex && _isMoving)
+                {
+                    moveIndex = _currentEnemyIndex;
+                }
             }
             else
             {
                 moveIndex += changeInIndex;
+
+                if (moveIndex < _currentEnemyIndex && _isMoving)
+                {
+                    moveIndex = _currentEnemyIndex;
+                }
             }
 
             int offsetIndex;
