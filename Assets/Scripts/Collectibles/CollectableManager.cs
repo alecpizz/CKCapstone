@@ -123,24 +123,24 @@ public class CollectableManager : MonoBehaviour
         }
     }
 
-    public void Collection()
+    public void Collection(GameObject collected)
     {
-        GameObject objectName = 
+        Debug.Log("Collecting " + collected.name);
 
-        if(collectiblesDict.ContainsKey(objectName))
+        if (collectiblesDict.ContainsKey(collected))
         {
-            Debug.Log("Collectable get!");
-            SaveDataManager.SetCollectableFound(objectName.name, true);
+            Debug.Log(collected + " get!");
+            SaveDataManager.SetCollectableFound(collected.name, true);
         }
 
-        for (int i = 0; i <= collectables.Length - 1; i++)
-        {
-            if (gameObject.name.Equals(collectables[i].name))
-            {
-                Debug.Log("Collectable get!");
-                SaveDataManager.SetCollectableFound(gameObject.name, true);
-            }
-        }
+        //for (int i = 0; i <= collectables.Length - 1; i++)
+        //{
+        //    if (gameObject.name.Equals(collectables[i].name))
+        //    {
+        //        Debug.Log("Collectable get!");
+        //        SaveDataManager.SetCollectableFound(gameObject.name, true);
+        //    }
+        //}
     }
 
     /// <summary>

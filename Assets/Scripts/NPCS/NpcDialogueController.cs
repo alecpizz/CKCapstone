@@ -243,7 +243,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
 
                 if (gameObject.tag == "Collectable")
                 {
-                    CollectableManager.Instance.Collection();
+                    CollectableManager.Instance.Collection(gameObject);
                 }
 
                 return;
