@@ -166,14 +166,15 @@ public class CutsceneFramework : MonoBehaviour
     /// </summary>
     public void SkipCutscene()
     {
-        if(_timer > _skipHoldTime)
+        if(_timer > _skipHoldTime || _menuManager.GetSkipInPause())
         {
             StopAllCoroutines();
             string scenePath = SceneUtility.GetScenePathByBuildIndex(_loadingLevelIndex);
             SaveDataManager.SetLastFinishedLevel(scenePath);
             SaveDataManager.SetLevelCompleted(SceneManager.GetActiveScene().path);
             SceneController.Instance.LoadNewScene(_loadingLevelIndex);
-        }                
+            Debug.Log("Skipped");
+        }              
     }
     
     /// <summary>

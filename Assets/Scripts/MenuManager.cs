@@ -35,6 +35,9 @@ public class MenuManager : MonoBehaviour
 
     [SerializeField] private CursorManager _cursorManager;
 
+    [SerializeField] private GameObject _skipWhilePaused;
+    private bool _skipInPause = false;
+
     /// <summary>
     /// Enables player input for opening the pause menu
     /// </summary>
@@ -127,11 +130,12 @@ public class MenuManager : MonoBehaviour
 
             //Gets the path to a scene
             string path = SceneManager.GetActiveScene().path;
-            //Uses the path to get the full name of the scene in the build
-            //string sceneName = System.IO.Path.GetFileNameWithoutExtension(path);
+
             if (path.Contains("CS"))
             {
-                //code to bring up skip posibility
+                _skipWhilePaused.SetActive(true);
+                _skipInPause = true;
+                Debug.Log("Skip true");
             }
         }
         else if (_optionsScreen != null && _optionsScreen.activeInHierarchy)
@@ -143,6 +147,16 @@ public class MenuManager : MonoBehaviour
         {
             Unpause();
         }
+    }
+
+    /// <summary>
+    /// Getter method to tell if the button to skip a cutscene in pause menu is used.
+    /// </summary>
+    /// <returns></returns>
+    public bool GetSkipInPause()
+    {
+        Debug.Log("Pressed");
+        return _skipInPause;
     }
 
     /// <summary>
