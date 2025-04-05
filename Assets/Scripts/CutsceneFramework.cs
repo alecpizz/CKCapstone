@@ -103,6 +103,7 @@ public class CutsceneFramework : MonoBehaviour
     /// </summary>
     private void Start()
     {
+        SaveDataManager.SetLevelCompleted(SceneManager.GetActiveScene().name);
         _inputActions = new DebugInputActions();
         _inputActions.UI.Enable();
         _inputActions.UI.SkipCutscene.performed += ctx => SkipCutscene();    
@@ -171,7 +172,12 @@ public class CutsceneFramework : MonoBehaviour
             StopAllCoroutines();
             string scenePath = SceneUtility.GetScenePathByBuildIndex(_loadingLevelIndex);
             SaveDataManager.SetLastFinishedLevel(scenePath);
-            SaveDataManager.SetLevelCompleted(SceneManager.GetActiveScene().path);
+            if (SaveDataManager.GetLoadedFromPause())
+            {
+                SaveDataManager.SetLoadedFromPause(false);
+                SceneManager.LoadScene(SaveDataManager.GetSceneLoadedFrom());
+                return;
+            }
             SceneController.Instance.LoadNewScene(_loadingLevelIndex);
         }              
     }
@@ -225,6 +231,12 @@ public class CutsceneFramework : MonoBehaviour
         yield return new WaitForSeconds(_cutsceneDuration);
 
         // Loads the next level, marked by a specified index
+        if (SaveDataManager.GetLoadedFromPause())
+        {
+            SaveDataManager.SetLoadedFromPause(false);
+            SceneManager.LoadScene(SaveDataManager.GetSceneLoadedFrom());
+            yield break;
+        }
         SceneController.Instance.LoadNewScene(_loadingLevelIndex);
     }
 
@@ -262,6 +274,12 @@ public class CutsceneFramework : MonoBehaviour
     /// <param name="vp"></param>
     private void VideoEnded(VideoPlayer vp)
     {
+        if (SaveDataManager.GetLoadedFromPause())
+        {
+            SaveDataManager.SetLoadedFromPause(false);
+            SceneManager.LoadScene(SaveDataManager.GetSceneLoadedFrom());
+            return;
+        }
         SceneController.Instance.LoadNewScene(_loadingLevelIndex);
         //if video isn't looping pause the video
         if (!vp.isLooping)
