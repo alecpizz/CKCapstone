@@ -91,7 +91,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     private static readonly int Left = Animator.StringToHash("Left");
     private static readonly int Backward = Animator.StringToHash("Backward");
 
-    private bool _playerDied = false;
+    private bool _playerDied;
 
     [SerializeField] private Animator _animator;
 
@@ -106,7 +106,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     {
         Instance = this;
         PrimeTweenConfig.warnEndValueEqualsCurrent = false;
-        _playerDied = false;
     }
 
     /// <summary>
@@ -115,7 +114,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     private void Start()
     {
         _canMove = true;
-
         FacingDirection = new Vector3(0, 0, 0);
         if (RoundManager.Instance.EnemiesPresent)
         {
@@ -134,6 +132,11 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             _withEnemiesMovementTime : _noEnemiesMovementTime;
 
         RoundManager.Instance.AutocompleteToggled += OnAutocompleteToggledEvent;
+    }
+
+    void Update()
+    {
+        Debug.Log(_playerDied);
     }
 
     /// <summary>
@@ -157,6 +160,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// </summary>
     private void OnDisable()
     {
+        _playerDied = false;
         if (RoundManager.Instance != null)
         {
             RoundManager.Instance.UnRegisterListener(this);
