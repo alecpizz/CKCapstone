@@ -50,6 +50,11 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         get => _canMove;
     }
 
+    public bool PlayerDied
+    {
+        get => _playerDied;
+    }
+
     [SerializeField] private PlayerInteraction _playerInteraction;
 
     [SerializeField] private float _delayTime = 0.1f;
@@ -86,6 +91,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     private static readonly int Left = Animator.StringToHash("Left");
     private static readonly int Backward = Animator.StringToHash("Backward");
 
+    private bool _playerDied = false;
+
     [SerializeField] private Animator _animator;
 
     [Header("Dash")]
@@ -99,6 +106,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     {
         Instance = this;
         PrimeTweenConfig.warnEndValueEqualsCurrent = false;
+        _playerDied = false;
     }
 
     /// <summary>
@@ -164,12 +172,13 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// </summary>
     public void OnDeath()
     {
+        _playerDied = true;
+        _canMove = false;
         if (RoundManager.Instance != null)
         {
             RoundManager.Instance.UnRegisterListener(this);
             RoundManager.Instance.AutocompleteToggled -= OnAutocompleteToggledEvent;
         }
-
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.UnregisterTimeListener(this);
     }

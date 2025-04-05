@@ -30,6 +30,7 @@ public class SceneController : MonoBehaviour
     [SerializeField] private float _timeForScreenWipe;
     [SerializeField] private bool _shouldFadeInOnLoad;
     [SerializeField] private EventReference _endSound;
+    [SerializeField] private EventReference _deathSound;
     [SerializeField] private bool _playSoundOnSceneChange = true;
 
     private readonly int _circleSizePropId = Shader.PropertyToID("_CircleSize");
@@ -135,9 +136,13 @@ public class SceneController : MonoBehaviour
         Transitioning = true;
         
         RepositionCircleWipe();
-        if (AudioManager.Instance != null && _playSoundOnSceneChange)
+        if (AudioManager.Instance != null && _playSoundOnSceneChange && !PlayerMovement.Instance.PlayerDied)
         {
             AudioManager.Instance.PlaySound(_endSound);
+        }
+        else if (AudioManager.Instance != null && _playSoundOnSceneChange && PlayerMovement.Instance.PlayerDied)
+        {
+            AudioManager.Instance.PlaySound(_deathSound);
         }
         yield return new WaitForEndOfFrame();
         
