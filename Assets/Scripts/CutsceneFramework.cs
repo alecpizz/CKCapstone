@@ -93,7 +93,7 @@ public class CutsceneFramework : MonoBehaviour
 
     private IDisposable _mAnyButtonPressedListener;
 
-    private MenuManager _menuManager = new MenuManager();
+    [SerializeField] private MenuManager _menuManager;
 
     private float _timer = 0f;
     [SerializeField] float _skipHoldTime = 2f;
@@ -106,7 +106,7 @@ public class CutsceneFramework : MonoBehaviour
         _inputActions = new DebugInputActions();
         _inputActions.UI.Enable();
         _inputActions.UI.SkipCutscene.performed += ctx => SkipCutscene();    
-        _inputActions.UI.Pause.performed += ctx => _menuManager.Pause();
+        //_inputActions.UI.Pause.performed += ctx => _menuManager.Pause();
         //_endChapterCutsceneVideo.loopPointReached += CheckEnd;
 
         //Registers is button is pressed
@@ -152,7 +152,7 @@ public class CutsceneFramework : MonoBehaviour
     {
         _inputActions.UI.Disable();
         _inputActions.UI.SkipCutscene.performed -= ctx => SkipCutscene();
-        _inputActions.UI.Pause.performed -= ctx => _menuManager.Pause();
+        //_inputActions.UI.Pause.performed -= ctx => _menuManager.Pause();
 
         if(_mAnyButtonPressedListener != null)
         {
@@ -173,7 +173,6 @@ public class CutsceneFramework : MonoBehaviour
             SaveDataManager.SetLastFinishedLevel(scenePath);
             SaveDataManager.SetLevelCompleted(SceneManager.GetActiveScene().path);
             SceneController.Instance.LoadNewScene(_loadingLevelIndex);
-            Debug.Log("Skipped");
         }              
     }
     

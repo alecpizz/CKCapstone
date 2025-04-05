@@ -36,7 +36,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private CursorManager _cursorManager;
 
     [SerializeField] private GameObject _skipWhilePaused;
-    private bool _skipInPause = false;
+    private bool _skipInPause;
 
     /// <summary>
     /// Enables player input for opening the pause menu
@@ -135,7 +135,6 @@ public class MenuManager : MonoBehaviour
             {
                 _skipWhilePaused.SetActive(true);
                 _skipInPause = true;
-                Debug.Log("Skip true");
             }
         }
         else if (_optionsScreen != null && _optionsScreen.activeInHierarchy)
@@ -155,7 +154,6 @@ public class MenuManager : MonoBehaviour
     /// <returns></returns>
     public bool GetSkipInPause()
     {
-        Debug.Log("Pressed");
         return _skipInPause;
     }
 

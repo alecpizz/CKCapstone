@@ -170,6 +170,16 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4302793240257533961, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 857533593}
+    - target: {fileID: 4302793240257533961, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SkipCutscene
+      objectReference: {fileID: 0}
     - target: {fileID: 7757164700761813088, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -255,6 +265,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 296463431}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &296463433 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 568816946503938640, guid: dbb0dd27c6fab3344aab4441094b0849,
+    type: 3}
+  m_PrefabInstance: {fileID: 296463431}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f61e032f6da43a04f9aaa88d67405bb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &857533591
 GameObject:
   m_ObjectHideFlags: 0
@@ -327,6 +349,8 @@ MonoBehaviour:
     Path: 
   _loadingLevelIndex: 25
   _audioVolumeOverride: 0
+  _menuManager: {fileID: 296463433}
+  _skipHoldTime: 2
 --- !u!4 &857533594
 Transform:
   m_ObjectHideFlags: 0
