@@ -1,3 +1,10 @@
+/******************************************************************
+*    Author: Cole Stranczek
+*    Contributors: 
+*    Date Created: 3/25/25
+*    Description: Script that handles the collectible menu
+*******************************************************************/
+
 using PrimeTween;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,6 +19,9 @@ public class CollectableManager : MonoBehaviour
 
     public GameObject[] collectables;
     public GameObject[] collectableImages;
+
+    Dictionary<GameObject, GameObject> collectiblesDict = 
+        new Dictionary<GameObject, GameObject>();
 
     #region Collectible Game Objects
     [SerializeField] GameObject cardinalPlush;
@@ -66,6 +76,19 @@ public class CollectableManager : MonoBehaviour
     {
         collectibleMenuOn = false;
 
+        #region Dictionary Assignment
+        collectiblesDict.Add(cardinalPlush, cardinalPlushImage);
+        collectiblesDict.Add(agedCardinalPlush, agedCardinalPlushImage);
+        collectiblesDict.Add(collegeAcceptanceLetter, collegeAcceptanceLetterImage);
+        collectiblesDict.Add(crochetShtuff, crochetShtuffImage);
+        collectiblesDict.Add(electricBass, electricBassImage);
+        collectiblesDict.Add(medicineCabinet, medicineCabinetImage);
+        collectiblesDict.Add(cassetteStack1, cassetteStack1Image);
+        collectiblesDict.Add(cassetteStack2, cassetteStack2Image);
+        collectiblesDict.Add(xylophone, xylophoneImage);
+        collectiblesDict.Add(unfinishedLetter, unfinishedLetterImage);
+        #endregion
+
         #region Array Assignment
         collectables = new GameObject[10];
         collectables[0] = cardinalPlush;
@@ -94,18 +117,35 @@ public class CollectableManager : MonoBehaviour
 
         _playerControls.InGame.CollectibleMenu.performed += ctx => CollectibleMenuToggle();
 
-
-        for (int i = 0; i <= collectables.Length - 1; i++)
-        {
-            SaveDataManager.SetCollectableFound(collectables[i].name, false);
-        }
-
         for (int i = 0; i <= collectableImages.Length - 1; i++)
         {
             collectableImages[i].SetActive(false);
         }
     }
 
+    public void Collection()
+    {
+        GameObject objectName = 
+
+        if(collectiblesDict.ContainsKey(objectName))
+        {
+            Debug.Log("Collectable get!");
+            SaveDataManager.SetCollectableFound(objectName.name, true);
+        }
+
+        for (int i = 0; i <= collectables.Length - 1; i++)
+        {
+            if (gameObject.name.Equals(collectables[i].name))
+            {
+                Debug.Log("Collectable get!");
+                SaveDataManager.SetCollectableFound(gameObject.name, true);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Handles turning on and off the collectible menu
+    /// </summary>
     private void CollectibleMenuToggle()
     {
         if(collectibleMenuOn)
@@ -121,6 +161,9 @@ public class CollectableManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Finds the right collectible to run through the UnlockCollectableImage function
+    /// </summary>
     private void SetFoundCollectibles()
     {
         for (int i = 0; i <= collectables.Length - 1; i++)
@@ -132,6 +175,10 @@ public class CollectableManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Makes the paramenter text in the menu for the proper collectible appear
+    /// </summary>
+    /// <param name="unlockedImage"></param>
     private void UnlockCollectableImage(string unlockedImage)
     {
         for (int i = 0; i <= collectableImages.Length - 1; i++)
