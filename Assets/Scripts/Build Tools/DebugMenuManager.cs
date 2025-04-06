@@ -62,7 +62,7 @@ public class DebugMenuManager : MonoBehaviour
     private bool _areTextBlurbs = false;
     private bool _areSettings = false;
 
-    private const string MainMenuSceneName = "MainMenu2";
+    private const string MainMenuSceneName = "MainMenutest";
 
     private int _lastFrameIndex;
     private float[] _frameDeltaTimeArray;
