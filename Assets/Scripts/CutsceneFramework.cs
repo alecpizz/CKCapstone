@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Madison Gorman
-*    Contributors: Nick Grinstead, Alex Laubenstein
+*    Contributors: Nick Grinstead, Alex Laubenstein, Josephine Qualls
 *    Date Created: 11/07/24
 *    Description: Permits one of two cutscene types to play; either after 
 *    the completion of a challenge level (comprised of a static image, 
@@ -26,6 +26,13 @@ using SaintsField;
 using System.Runtime.InteropServices;
 
 using Unity.Collections;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
+using UnityEngine.InputSystem.Controls;
+
+
+
+
 
 
 #if UNITY_EDITOR
@@ -84,15 +91,27 @@ public class CutsceneFramework : MonoBehaviour
 
     private uint _mLastReadPositionBytes;
 
+    private IDisposable _mAnyButtonPressedListener;
+
+    private MenuManager _menuManager = new MenuManager();
+
+    private float _timer = 0f;
+    [SerializeField] float _skipHoldTime = 2f;
+
     /// <summary>
     /// Determines whether to play the Challenge or End Chapter Cutscene
     /// </summary>
     private void Start()
     {
+        SaveDataManager.SetLevelCompleted(SceneManager.GetActiveScene().name);
         _inputActions = new DebugInputActions();
         _inputActions.UI.Enable();
-        _inputActions.UI.SkipCutscene.performed += ctx => SkipCutscene();
+        _inputActions.UI.SkipCutscene.performed += ctx => SkipCutscene();    
+        _inputActions.UI.Pause.performed += ctx => _menuManager.Pause();
         //_endChapterCutsceneVideo.loopPointReached += CheckEnd;
+
+        //Registers is button is pressed
+        _mAnyButtonPressedListener = InputSystem.onAnyButtonPress.Call(ButtonIsPressed);
 
         // Plays the Challenge Cutscene, provided that only the corresponding boolean
         // (_isChallengeCutscene) is true
@@ -115,7 +134,7 @@ public class CutsceneFramework : MonoBehaviour
                 return;
             }
 
-            //Sets up the video to play it in the scenw
+            //Sets up the video to play it in the scene
             _endChapterCutsceneVideo.audioOutputMode = VideoAudioOutputMode.APIOnly;
             _endChapterCutsceneVideo.prepareCompleted += Prepared;
             _endChapterCutsceneVideo.loopPointReached += VideoEnded;
@@ -134,6 +153,13 @@ public class CutsceneFramework : MonoBehaviour
     {
         _inputActions.UI.Disable();
         _inputActions.UI.SkipCutscene.performed -= ctx => SkipCutscene();
+        _inputActions.UI.Pause.performed -= ctx => _menuManager.Pause();
+
+        if(_mAnyButtonPressedListener != null)
+        {
+            _mAnyButtonPressedListener.Dispose();
+            _mAnyButtonPressedListener = null;
+        }
     }
 
     /// <summary>
@@ -141,11 +167,19 @@ public class CutsceneFramework : MonoBehaviour
     /// </summary>
     public void SkipCutscene()
     {
-        StopAllCoroutines();
-        string scenePath = SceneUtility.GetScenePathByBuildIndex(_loadingLevelIndex);
-        SaveDataManager.SetLastFinishedLevel(scenePath);
-        SaveDataManager.SetLevelCompleted(SceneManager.GetActiveScene().path);
-        SceneController.Instance.LoadNewScene(_loadingLevelIndex);
+        if(_timer > _skipHoldTime)
+        {
+            StopAllCoroutines();
+            string scenePath = SceneUtility.GetScenePathByBuildIndex(_loadingLevelIndex);
+            SaveDataManager.SetLastFinishedLevel(scenePath);
+            if (SaveDataManager.GetLoadedFromPause())
+            {
+                SaveDataManager.SetLoadedFromPause(false);
+                SceneManager.LoadScene(SaveDataManager.GetSceneLoadedFrom());
+                return;
+            }
+            SceneController.Instance.LoadNewScene(_loadingLevelIndex);
+        }                
     }
     
     /// <summary>
@@ -170,6 +204,20 @@ public class CutsceneFramework : MonoBehaviour
     }
 
     /// <summary>
+    /// Does an action any time a button is pressed within a Cutscene
+    /// </summary>
+    /// <param name="button"></param>
+    private void ButtonIsPressed(InputControl button)
+    {
+        var scene = SceneManager.GetActiveScene().name;
+
+        if (scene.Substring(0, 2).Equals("CS"))
+        {
+            Debug.Log("Hold the Space bar to skip!");
+        }
+    }
+
+    /// <summary>
     /// Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement the
     /// functionality for playing a video, particularly for the End Chapter Cutscene)
     /// The cutscene plays for a specified amount of time, before loading the next scene
@@ -180,9 +228,15 @@ public class CutsceneFramework : MonoBehaviour
         // Referenced https://www.youtube.com/watch?v=nt4qfbNAQqM (Used to implement the
         // functionality for playing a video, particularly for the End Chapter Cutscene)
         // Permits the cutscene to play for a specified amount of time
-        yield return new WaitForSecondsRealtime(_cutsceneDuration);
+        yield return new WaitForSeconds(_cutsceneDuration);
 
         // Loads the next level, marked by a specified index
+        if (SaveDataManager.GetLoadedFromPause())
+        {
+            SaveDataManager.SetLoadedFromPause(false);
+            SceneManager.LoadScene(SaveDataManager.GetSceneLoadedFrom());
+            yield break;
+        }
         SceneController.Instance.LoadNewScene(_loadingLevelIndex);
     }
 
@@ -220,6 +274,12 @@ public class CutsceneFramework : MonoBehaviour
     /// <param name="vp"></param>
     private void VideoEnded(VideoPlayer vp)
     {
+        if (SaveDataManager.GetLoadedFromPause())
+        {
+            SaveDataManager.SetLoadedFromPause(false);
+            SceneManager.LoadScene(SaveDataManager.GetSceneLoadedFrom());
+            return;
+        }
         SceneController.Instance.LoadNewScene(_loadingLevelIndex);
         //if video isn't looping pause the video
         if (!vp.isLooping)
@@ -301,6 +361,20 @@ public class CutsceneFramework : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        if (_inputActions.UI.SkipCutscene.IsPressed())
+        {
+            _timer += Time.deltaTime;
+            
+            if(_timer > _skipHoldTime)
+            {
+                SkipCutscene();
+            }
+        }
+        else
+        {
+            _timer = 0f;
+        }
+
         if (_isEndChapterCutscene)
         {
             //Checks for an availale cutscene
