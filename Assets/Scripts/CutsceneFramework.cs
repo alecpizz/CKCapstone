@@ -109,8 +109,8 @@ public class CutsceneFramework : MonoBehaviour
         _inputActions.UI.SkipCutscene.performed += ctx => SkipCutscene();
         //_inputActions.UI.Pause.performed += ctx => _menuManager.Pause();
         _inputActions.UI.Pause.performed += ctx => _mChannel.setPaused(true);
+        _menuManager.OnUnpause += setPaused;
         //_endChapterCutsceneVideo.loopPointReached += CheckEnd;
-
         //Registers is button is pressed
         _mAnyButtonPressedListener = InputSystem.onAnyButtonPress.Call(ButtonIsPressed);
 
@@ -147,6 +147,11 @@ public class CutsceneFramework : MonoBehaviour
         }
     }
 
+    private void setPaused(bool pause)
+    {
+        _mChannel.setPaused(pause);
+    }
+
     /// <summary>
     /// Unregister input actions
     /// </summary>
@@ -154,13 +159,15 @@ public class CutsceneFramework : MonoBehaviour
     {
         _inputActions.UI.Disable();
         _inputActions.UI.SkipCutscene.performed -= ctx => SkipCutscene();
-        //_inputActions.UI.Pause.performed -= ctx => _menuManager.Pause();
+        _inputActions.UI.Pause.performed -= ctx => _mChannel.setPaused(false);
 
         if(_mAnyButtonPressedListener != null)
         {
             _mAnyButtonPressedListener.Dispose();
             _mAnyButtonPressedListener = null;
         }
+
+        _menuManager.OnUnpause -= setPaused;
     }
 
     /// <summary>

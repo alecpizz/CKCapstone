@@ -13,6 +13,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using static UnityEngine.Rendering.DebugUI;
+using System;
 
 public class MenuManager : MonoBehaviour
 {
@@ -37,6 +38,8 @@ public class MenuManager : MonoBehaviour
 
     [SerializeField] private GameObject _skipWhilePaused;
     private bool _skipInPause;
+
+    public Action <bool> OnUnpause;
 
     /// <summary>
     /// Enables player input for opening the pause menu
@@ -67,6 +70,7 @@ public class MenuManager : MonoBehaviour
         _restartButton.SetActive(true);
         _cursorManager.OnPointerExit();
         Time.timeScale = 1f;
+        OnUnpause?.Invoke(false);
     }
 
     /// <summary>
@@ -128,6 +132,7 @@ public class MenuManager : MonoBehaviour
             EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
             Time.timeScale = 0f;
 
+            OnUnpause?.Invoke(true);
             //Gets the path to a scene
             string path = SceneManager.GetActiveScene().path;
 
