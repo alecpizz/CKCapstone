@@ -18,31 +18,31 @@ public class CollectableManager : MonoBehaviour
     [SerializeField] private GameObject _collectibleMenu;
     [SerializeField] private bool collectibleMenuOn;
 
-    Dictionary<string, GameObject> collectiblesDict = 
+    private Dictionary<string, GameObject> collectiblesDict = 
         new Dictionary<string, GameObject>();
 
     #region Collectible Game Objects
-    [SerializeField] GameObject cardinalPlush;
-    [SerializeField] GameObject agedCardinalPlush;
-    [SerializeField] GameObject collegeAcceptanceLetter;
-    [SerializeField] GameObject crochetShtuff;
-    [SerializeField] GameObject electricBass;
-    [SerializeField] GameObject medicineCabinet;
-    [SerializeField] GameObject cassetteStack1;
-    [SerializeField] GameObject cassetteStack2;
-    [SerializeField] GameObject xylophone;
-    [SerializeField] GameObject unfinishedLetter;
+    [SerializeField] private GameObject cardinalPlush;
+    [SerializeField] private GameObject agedCardinalPlush;
+    [SerializeField] private GameObject collegeAcceptanceLetter;
+    [SerializeField] private GameObject crochetShtuff;
+    [SerializeField] private GameObject electricBass;
+    [SerializeField] private GameObject medicineCabinet;
+    [SerializeField] private GameObject cassetteStack1;
+    [SerializeField] private GameObject cassetteStack2;
+    [SerializeField] private GameObject xylophone;
+    [SerializeField] private GameObject unfinishedLetter;
 
-    [SerializeField] GameObject cardinalPlushImage;
-    [SerializeField] GameObject agedCardinalPlushImage;
-    [SerializeField] GameObject collegeAcceptanceLetterImage;
-    [SerializeField] GameObject crochetShtuffImage;
-    [SerializeField] GameObject electricBassImage;
-    [SerializeField] GameObject medicineCabinetImage;
-    [SerializeField] GameObject cassetteStack1Image;
-    [SerializeField] GameObject cassetteStack2Image;
-    [SerializeField] GameObject xylophoneImage;
-    [SerializeField] GameObject unfinishedLetterImage;
+    [SerializeField] private GameObject cardinalPlushImage;
+    [SerializeField] private GameObject agedCardinalPlushImage;
+    [SerializeField] private GameObject collegeAcceptanceLetterImage;
+    [SerializeField] private GameObject crochetShtuffImage;
+    [SerializeField] private GameObject electricBassImage;
+    [SerializeField] private GameObject medicineCabinetImage;
+    [SerializeField] private GameObject cassetteStack1Image;
+    [SerializeField] private GameObject cassetteStack2Image;
+    [SerializeField] private GameObject xylophoneImage;
+    [SerializeField] private GameObject unfinishedLetterImage;
     #endregion
 
     public static CollectableManager Instance;
