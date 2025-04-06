@@ -77,6 +77,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     // Timing from metronome
     private int _playerMovementTiming = 1;
     private WaitForSeconds _waitForSeconds;
+    private WaitForEndOfFrame _waitForEndOfFrame;
 
     //to tell when player finishes a move
     public Action OnPlayerMoveComplete;
@@ -87,13 +88,17 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
     public static PlayerMovement Instance;
     private static readonly int Forward = Animator.StringToHash("Forward");
-    private static readonly int Right = Animator.StringToHash("Right");
-    private static readonly int Left = Animator.StringToHash("Left");
-    private static readonly int Backward = Animator.StringToHash("Backward");
+    private static readonly int Attacked = Animator.StringToHash("Attacked");
+    private static readonly int Wall = Animator.StringToHash("Wall");
+    private static readonly int Door = Animator.StringToHash("Door");
 
     private bool _playerDied;
 
     [SerializeField] private Animator _animator;
+    //How many frames the game will wait before starting the movement tween
+    [SerializeField] private int _walkFrameDelay = 2;
+    //How long of a delay is done between setting the wall bool true to false
+    [SerializeField] private float _wallAnimationDelay = 0.01f;
 
     [Header("Dash")]
     [SerializeField] private ParticleSystem _dashParticles;
@@ -115,10 +120,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     {
         _canMove = true;
         FacingDirection = new Vector3(0, 0, 0);
-        if (RoundManager.Instance.EnemiesPresent)
-        {
-            _animator.SetBool("Enemies", true);
-        }
 
         SnapToGridSpace();
         GridBase.Instance.AddEntry(this);
@@ -127,6 +128,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             TimeSignatureManager.Instance.RegisterTimeListener(this);
 
         _waitForSeconds = new WaitForSeconds(_delayTime);
+        _waitForEndOfFrame = new WaitForEndOfFrame();
 
         _movementTime = RoundManager.Instance.EnemiesPresent ? 
             _withEnemiesMovementTime : _noEnemiesMovementTime;
@@ -171,6 +173,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// </summary>
     public void OnDeath()
     {
+        _animator.SetBool(Attacked, true);
         _playerDied = true;
         _canMove = false;
         if (RoundManager.Instance != null)
@@ -197,6 +200,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             // Move if there is no wall below the player or if ghost mode is enabled
             var move = GridBase.Instance.GetCellPositionInDirection
                 (gameObject.transform.position, moveDirection);
+
             var readPos = move;
             readPos.y = gameObject.transform.position.y;
             
@@ -206,6 +210,10 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             {
                 GridBase.Instance.UpdateEntryAtPosition(this, move);
                 _animator.SetBool(Forward, true);
+                for (i = 0; i < _walkFrameDelay; i++)
+                {
+                    yield return _waitForEndOfFrame;
+                }
                 yield return Tween.Position(transform,
                     move + CKOffsetsReference.MotherOffset, duration: modifiedMovementTime, 
                     _movementEase).OnUpdate(target: this, (_, _) =>
@@ -290,11 +298,14 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                     }
                     else
                     {
+                        _animator.SetBool(Wall, true);
                         _canMove = true;
                         AudioManager.Instance.PlaySound(_playerCantMove);
                         RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
                     }
-                });
+                }).Chain(Tween.Delay(_wallAnimationDelay, () => {
+                    _animator.SetBool(Wall, false);
+                }));
         }
         else
         {
@@ -308,6 +319,17 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     public void ForceTurnEnd()
     {
         if (!RoundManager.Instance.IsPlayerTurn) {  return; }
+
+        StopAllCoroutines();
+        GridBase.Instance.UpdateEntry(this);
+        RoundManager.Instance.CompleteTurn(this);
+        _canMove = true;
+    }
+
+    public void DoorTurnEnd()
+    {
+        _animator.SetBool(Door, true);
+        if (!RoundManager.Instance.IsPlayerTurn) { return; }
 
         StopAllCoroutines();
         GridBase.Instance.UpdateEntry(this);
