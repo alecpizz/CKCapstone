@@ -86,5 +86,21 @@ public static class CKSaveData_KEYS
 			/// </summary>
 			public static string _Scene_Name_Found = "Scene Name Found";
 		}
+		public static class Scene_Loaded_From
+		{
+			public static string EntryName = "Scene Loaded From";
+			/// <summary>
+			/// Type of: StringType
+			/// </summary>
+			public static string _Scene_Name = "Scene Name";
+		}
+		public static class Loaded_From_Pause
+		{
+			public static string EntryName = "Loaded From Pause";
+			/// <summary>
+			/// Type of: BoolType
+			/// </summary>
+			public static string _Loaded_From_Pause = "Loaded From Pause";
+		}
 	}
 }
