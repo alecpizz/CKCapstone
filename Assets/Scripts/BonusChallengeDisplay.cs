@@ -42,7 +42,7 @@ public class BonusChallengeDisplay : MonoBehaviour
     private bool _readyToDestroy;
 
     //the particles for the background of the challenge level poppup
-    public ParticleSystem _challengeSplash;
+    [SerializeField] private ParticleSystem _challengeSplash;
 
     /// <summary>
     /// Assigns the color value based on the text UI, and makes it 
