@@ -102,7 +102,7 @@ public class CollectableManager : MonoBehaviour
             if (SaveDataManager.GetCollectableFound(data))
             {
                 SaveDataManager.SetCollectableFound(data, false);
-                ClearCollectableImage(data);
+                collectiblesDict[data].SetActive(false);
             }
         }
     }
@@ -142,30 +142,12 @@ public class CollectableManager : MonoBehaviour
         {
             if(SaveDataManager.GetCollectableFound(data))
             {
-                UnlockCollectableImage(data);
+                collectiblesDict[data].SetActive(true);
             }
             else
             {
-                ClearCollectableImage(data);
+                collectiblesDict[data].SetActive(false);
             }
         }
-    }
-
-    /// <summary>
-    /// Makes the paramenter text in the menu for the proper collectible appear
-    /// </summary>
-    /// <param name="unlockedImage"></param>
-    private void UnlockCollectableImage(string unlockedImage)
-    {
-        collectiblesDict[unlockedImage].SetActive(true);
-    }
-
-    /// <summary>
-    /// Makes the paramenter text in the menu for the proper collectible dissappear
-    /// </summary>
-    /// <param name="image"></param>
-    private void ClearCollectableImage(string image)
-    {
-        collectiblesDict[image].SetActive(false);
     }
 }
