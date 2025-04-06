@@ -1,3 +1,11 @@
+/******************************************************************
+*    Author: Alex Laubenstein
+*    Contributors: Alex Laubenstein
+*    Date Created: April 1st, 2025
+*    Description: This script is what changes the text in the How To Play
+*    section of the settings menu depending on what input device is
+*    currently being used
+*******************************************************************/
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

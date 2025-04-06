@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: David Henvick
-*    Contributors: Claire Noto, Alec Pizziferro, Mitchell Young, Jamison Parks
+*    Contributors: Claire Noto, Alec Pizziferro, Mitchell Young, Jamison Parks, Alex Laubenstein
 *    Date Created: 09/30/2024
 *    Description: this is the script that is used control an npc 
 *    and their dialogue
@@ -445,6 +445,10 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
         _isTyping = false;
     }
 
+    /// <summary>
+    /// Takes the reference of the current controller from the debug manager to make sure
+    /// text and input prompts lines up with your current input device
+    /// </summary>
     public void ControllerText()
     {
         if (DebugMenuManager.Instance.PlayStationController)

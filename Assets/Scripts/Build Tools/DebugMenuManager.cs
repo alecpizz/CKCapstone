@@ -67,6 +67,7 @@ public class DebugMenuManager : MonoBehaviour
 
     private DebugInputActions _playerInput;
     private PlayerControls _playerControls;
+    private DefaultInputActions _defaultControls;
     private InputAction _debugInput;
     private InputAction _restartInput;
 
@@ -96,6 +97,7 @@ public class DebugMenuManager : MonoBehaviour
         //enables player input
         _playerInput = new DebugInputActions();
         _playerControls = new PlayerControls();
+        _defaultControls = new DefaultInputActions();
         _debugInput = _playerInput.Player.Debug;
         _restartInput = _playerInput.Player.Restart;
 
@@ -112,6 +114,9 @@ public class DebugMenuManager : MonoBehaviour
         _restartInput.Enable();
         _playerControls.Enable();
         _playerControls.InGame.Movement.performed += DetectInputType;
+        _defaultControls.UI.Point.performed += DetectInputType;
+        _defaultControls.UI.Navigate.performed += DetectInputType;
+        _playerInput.Player.ControllerDetection.performed += DetectInputType;
     }
 
     /// <summary>
@@ -122,11 +127,15 @@ public class DebugMenuManager : MonoBehaviour
         _debugInput.Disable();
         _restartInput.Disable();
         _playerControls.InGame.Movement.performed -= DetectInputType;
+        _defaultControls.UI.Point.performed -= DetectInputType;
+        _defaultControls.UI.Navigate.performed -= DetectInputType;
+        _playerInput.Player.ControllerDetection.performed -= DetectInputType;
         _playerControls.Disable();
     }
 
     /// <summary>
-    /// Sets up pointers for code functionality and makes sure the cursor is unlocked if it is ever hidden
+    /// Sets up pointers for code functionality and makes sure the cursor is unlocked if it is ever hidden.
+    /// Also does the intial controller check for a level
     /// </summary>
     private void Start()
     {
@@ -139,6 +148,7 @@ public class DebugMenuManager : MonoBehaviour
 
         InputSystem.onDeviceChange += ControllerDetection;
 
+        //controller check at the start of the scene
         if (Gamepad.current is DualSenseGamepadHID || Gamepad.current is DualShock4GamepadHID)
         {
             PlayStationController = true;
@@ -168,6 +178,7 @@ public class DebugMenuManager : MonoBehaviour
             KeyboardAndMouse = false;
         }
 
+        //changes input related text depending on current input device
         NpcDialogueController _interactableCheck = FindAnyObjectByType<NpcDialogueController>();
         if (_interactableCheck != null)
         {
@@ -189,6 +200,9 @@ public class DebugMenuManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// If the debug manager is ever destroyed un attach controller detection
+    /// </summary>
     private void OnDestroy()
     {
         InputSystem.onDeviceChange -= ControllerDetection;
@@ -217,6 +231,11 @@ public class DebugMenuManager : MonoBehaviour
         _fpsText.text = (Mathf.RoundToInt(FpsCalculation()).ToString() + " FPS");
     }
 
+    /// <summary>
+    /// Detects the controller automatically when plugged into a device
+    /// </summary>
+    /// <param name="device"></param>
+    /// <param name="change"></param>
     private void ControllerDetection(InputDevice device, InputDeviceChange change)
     {
         switch (change)
@@ -254,6 +273,7 @@ public class DebugMenuManager : MonoBehaviour
                 Debug.Log("Device configuration changed: " + device);
                 break;
         }
+        //changes input related text depending on current input device
         if (_areInteractables)
         {
             NpcDialogueController.Instance.ControllerText();
@@ -268,28 +288,36 @@ public class DebugMenuManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles detecting if a different input device is being used when multiple input devices
+    /// are connected to the computer
+    /// </summary>
+    /// <param name="context"></param>
     private void DetectInputType(InputAction.CallbackContext context)
-    {
-        if (Gamepad.current is DualSenseGamepadHID || Gamepad.current is DualShock4GamepadHID)
+    {     
+        string controllerName = context.control.device.displayName.ToLower();
+        if (controllerName.Contains("keyboard"))
+        {
+            PlayStationController = false;
+            SwitchController = false;
+            XboxController = false;
+            KeyboardAndMouse = true;
+        }
+        else if (controllerName.Contains("dualshock") || controllerName.Contains("dualsense") ||
+            controllerName.Contains("playstation") || controllerName.Contains("wireless controller"))
         {
             PlayStationController = true;
             SwitchController = false;
             XboxController = false;
             KeyboardAndMouse = false;
         }
-        else if (Gamepad.current is SwitchProControllerHID)
+        else if (controllerName.Contains("pro controller") || controllerName.Contains("switch") ||
+            controllerName.Contains("nintendo"))
         {
             PlayStationController = false;
             SwitchController = true;
             XboxController = false;
             KeyboardAndMouse = false;
-        }
-        else if (Gamepad.current is null)
-        {
-            PlayStationController = false;
-            SwitchController = false;
-            XboxController = false;
-            KeyboardAndMouse = true;
         }
         else
         {
@@ -297,6 +325,19 @@ public class DebugMenuManager : MonoBehaviour
             SwitchController = false;
             XboxController = true;
             KeyboardAndMouse = false;
+        }
+        //changes input related text depending on current input device
+        if (_areInteractables)
+        {
+            NpcDialogueController.Instance.ControllerText();
+        }
+        if (_areTextBlurbs)
+        {
+            ControllerTextChecker.Instance.TutorialTextChange();
+        }
+        if (_areSettings)
+        {
+            ControllerTextChecker.Instance.TutorialTextChange();
         }
     }
 

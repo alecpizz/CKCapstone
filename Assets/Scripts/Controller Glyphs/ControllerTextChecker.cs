@@ -1,4 +1,10 @@
-
+/******************************************************************
+*    Author: Alex Laubenstein
+*    Contributors: Alex Laubenstein
+*    Date Created: April 1st, 2025
+*    Description: This script is what changes the text in levels of 
+*    the game depending on what input device is currently being used
+*******************************************************************/
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -18,13 +24,19 @@ public class ControllerTextChecker : MonoBehaviour
     [SerializeField] private string _playstationText; //Text for PS Controllers
     [SerializeField] private string _switchText; //Text for Switch Pro Controllers
 
+    /// <summary>
+    /// sets the instance for reference
+    /// </summary>
     private void Awake()
     {
         Instance = this;
     }
 
-    // Start is called before the first frame update
-    void Start()
+    /// <summary>
+    /// Start is called before the first frame update
+    /// grabs the current scene as a reference and changes the text in the scene if needed
+    /// </summary>
+    private void Start()
     {
         currentScene = SceneManager.GetActiveScene();
         TutorialTextChange();
@@ -35,7 +47,7 @@ public class ControllerTextChecker : MonoBehaviour
     /// </summary>
     public void TutorialTextChange()
     {
-        if (currentScene.name == "T_FirstDay")
+        if (currentScene.name == "T_FirstDay") //Movement tutorial
         {
             if (DebugMenuManager.Instance.KeyboardAndMouse)
             {
@@ -46,7 +58,7 @@ public class ControllerTextChecker : MonoBehaviour
                 _tutorialText.text = _controllerText;
             }
         }
-        if (currentScene.name == "T_SteerClear_Sp")
+        if (currentScene.name == "T_SteerClear_Sp") // Enemy path toggle tutorial
         {
             if (DebugMenuManager.Instance.KeyboardAndMouse)
             {
