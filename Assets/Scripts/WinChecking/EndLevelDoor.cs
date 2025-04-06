@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Nick Grinstead
-*    Contributors: David Galmines, Cole Stranczek
+*    Contributors: David Galmines, Cole Stranczek, Jamison Parks
 *    Date Created: 9/24/24
 *    Description: Door unlocks when action on WinChecker is invoked.
 *       If door is unlocked and player walks into it, a new scene will load.
@@ -112,7 +112,7 @@ public class EndLevelDoor : MonoBehaviour
             PlayerMovement playerMovement;
             if (other.gameObject.TryGetComponent<PlayerMovement>(out playerMovement))
             {
-                playerMovement.ForceTurnEnd();
+                playerMovement.DoorTurnEnd();
                 playerMovement.enabled = false;
             }
             string scenePath = SceneUtility.GetScenePathByBuildIndex(_levelIndexToLoad);
