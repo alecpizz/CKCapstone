@@ -686,14 +686,19 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             }
         }
 
+        _currentEnemyIndex = moveIndex;
+
+        if (_circularMovement)
+        {
+            return;
+        }
+
         //If moveIndex is at the first or last position the destination path vfx will reverse
         if (moveIndex == 0 || moveIndex == _moveDestinations.Count - 1)
         {
             _destPathVFXMatSpeed = -_destPathVFXMatSpeed;
             _destPathMaterial.SetFloat("_Speed", _destPathVFXMatSpeed);
         }
-
-        _currentEnemyIndex = moveIndex;
     }
 
 
