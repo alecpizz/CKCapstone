@@ -32,7 +32,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
 
     [PlayaInfoBox("Time delay from when an enemy starts their turn and actually begins moving." +
       "\n This is meant to prevent enemies from moving before the player starts to move.")]
-    [PropRange(0f, 0.5f)]
+    [PropRange(0f, 0.2f)]
     [SerializeField]
     private float _timeBeforeTurn = 0.1f;
 
@@ -125,7 +125,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
             if (_animator != null)
             {
                 _animator.SetBool(Frozen, false);
-                _animator.SetTrigger(Forward);
+                _animator.SetBool(Forward, true);
             }
 
             if (_mirrored)
@@ -171,14 +171,18 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                     {
                         if (_animator != null)
                         {
-                            _animator.SetTrigger(Turn);
+                            _animator.SetBool(Turn, true);
                         }
                     }
                     Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
                     ease: _rotationEase);
                     if (_animator != null)
                     {
-                        _animator.ResetTrigger(Turn);
+                        _animator.SetBool(Turn, false);
+                    }
+                    if (_animator != null)
+                    {
+                        _animator.SetBool(Forward, false);
                     }
 
                     if (AudioManager.Instance != null && _mirrored)
@@ -205,7 +209,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                         PlayerMovement.Instance.OnDeath();
                         if (_animator != null)
                         {
-                            _animator.SetTrigger(Attack);
+                            _animator.SetBool(Attack, true);
                         }
                         SceneController.Instance.ReloadCurrentScene();
                     }
