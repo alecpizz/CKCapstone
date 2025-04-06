@@ -44,7 +44,7 @@ public class GridBase : MonoBehaviour
 
     private Dictionary<Vector3Int, HashSet<IGridEntry>> _gridEntries = new();
     private Dictionary<IGridEntry, Vector3Int> _gameObjectToGridMap = new();
-    [SerializeField] private GameObject _gridMeshHolder;
+    [SerializeField] [HideInInspector] private GameObject _gridMeshHolder;
     private Dictionary<Vector3Int, GameObject> _gridObjects = new();
 
     private const string GridMeshName = "Grid Mesh Holder";
