@@ -87,6 +87,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private bool _metronomeTriggered = false;
     private bool _notFirstCheck = false;
     private bool _isMoving = false;
+    private bool _isCircling = false;
 
     /// <summary>
     /// Helper enum for enemy directions.
@@ -674,6 +675,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             {
                 //our moves will start with 1 since we're circularly repeating our movement.
                 moveIndex = 1;
+                _isCircling = false;
             }
         }
 
@@ -706,16 +708,18 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             if (moveIndex > _moveDestinations.Count - 1)
             {
                 moveIndex %= _moveDestinations.Count - 1;
+                _isCircling = true;
             }
 
-            if (moveIndex < _currentEnemyIndex && _isMoving)
+            if (moveIndex < _currentEnemyIndex && _isMoving && !_isCircling)
             {
                 moveIndex = _currentEnemyIndex;
             }
-            else if (moveIndex < _currentEnemyIndex)
+            else if (moveIndex < _currentEnemyIndex && !_isCircling)
             {
                 moveIndex = _currentEnemyIndex + changeInIndex;
                 moveIndex %= _moveDestinations.Count - 1;
+                _isCircling = true;
             }
         }
         else
