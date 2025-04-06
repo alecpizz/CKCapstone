@@ -452,7 +452,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1df8590b4d4f4434695a42b9278df198, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _positionOffset: {x: 0, y: 0.5, z: 0}
   _playerInteraction: {fileID: 6008091980421706137}
   _delayTime: 0.1
   _noEnemiesMovementTime: 0.4
@@ -461,21 +460,6 @@ MonoBehaviour:
   _rotationTime: 0.1
   _rotationEase: 4
   _movementEase: 4
-  OnPlayerMoveComplete:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MinimumTurnsDisplay, Assembly-CSharp
-        m_MethodName: TurnIncrementation
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 1
   _playerMove:
     Guid:
       Data1: -539797716
@@ -491,6 +475,8 @@ MonoBehaviour:
       Data4: 747975943
     Path: event:/Wall Bump
   _animator: {fileID: 8566832595312514844}
+  walkFrameDelay: 2
+  wallAnimationDelay: 0.01
   _dashParticles: {fileID: 2355947511800394892}
   _dashTrails:
   - {fileID: 5030490273679802288}
