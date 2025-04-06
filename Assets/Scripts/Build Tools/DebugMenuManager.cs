@@ -7,6 +7,7 @@
      on and off gameplay mechanics and also other game related tools
 *******************************************************************/
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -56,6 +57,7 @@ public class DebugMenuManager : MonoBehaviour
     private bool _qMenu = false;
     private bool _pMenu = false;
     private bool _fpsCount = false;
+    private bool _sceneNameVisible = false;
     private bool _areInteractables = false;
     private bool _areTextBlurbs = false;
     private bool _areSettings = false;
@@ -106,12 +108,28 @@ public class DebugMenuManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Unity callback. Draws scene view text
+    /// </summary>
+    private void OnGUI()
+    {
+        if (_sceneNameVisible)
+        {
+            GUI.skin.label.fontSize = 32;
+            GUI.color = Color.red;
+            GUI.Label(new Rect(20f, 400f, 800f, 200f), 
+                $"SCENE NAME: {SceneManager.GetActiveScene().name}");
+        }
+    }
+
+    /// <summary>
     /// Turns on the Debug Inputs
     /// </summary>
     private void OnEnable()
     {
         _debugInput.Enable();
         _restartInput.Enable();
+        _playerInput.Player.SceneView.Enable();
+        _playerInput.Player.SceneView.performed += ToggleSceneName;
         _playerControls.Enable();
         _playerControls.InGame.Movement.performed += DetectInputType;
         _defaultControls.UI.Point.performed += DetectInputType;
@@ -126,6 +144,8 @@ public class DebugMenuManager : MonoBehaviour
     {
         _debugInput.Disable();
         _restartInput.Disable();
+        _playerInput.Player.SceneView.Disable();
+        _playerInput.Player.SceneView.performed -= ToggleSceneName;
         _playerControls.InGame.Movement.performed -= DetectInputType;
         _defaultControls.UI.Point.performed -= DetectInputType;
         _defaultControls.UI.Navigate.performed -= DetectInputType;
@@ -360,6 +380,11 @@ public class DebugMenuManager : MonoBehaviour
             _dMenu = false;
             _pMenu = false;
         }
+    }
+
+    private void ToggleSceneName(InputAction.CallbackContext ctx)
+    {
+        _sceneNameVisible = !_sceneNameVisible;
     }
 
     /// <summary>
