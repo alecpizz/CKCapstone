@@ -154,9 +154,9 @@ public class DebugMenuManager : MonoBehaviour
         }
 
         //updates the FPS Counter
-        // _frameDeltaTimeArray[_lastFrameIndex] = Time.unscaledDeltaTime;
-        // _lastFrameIndex = (_lastFrameIndex + 1) % _frameDeltaTimeArray.Length;
-        // _fpsText.text = (Mathf.RoundToInt(FpsCalculation()).ToString() + " FPS");
+        _frameDeltaTimeArray[_lastFrameIndex] = Time.unscaledDeltaTime;
+        _lastFrameIndex = (_lastFrameIndex + 1) % _frameDeltaTimeArray.Length;
+        _fpsText.text = (Mathf.RoundToInt(FpsCalculation()).ToString() + " FPS");
     }
 
     /// <summary>
