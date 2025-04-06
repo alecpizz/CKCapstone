@@ -50,6 +50,11 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         get => _canMove;
     }
 
+    public bool PlayerDied
+    {
+        get => _playerDied;
+    }
+
     [SerializeField] private PlayerInteraction _playerInteraction;
 
     [SerializeField] private float _delayTime = 0.1f;
@@ -86,6 +91,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     private static readonly int Left = Animator.StringToHash("Left");
     private static readonly int Backward = Animator.StringToHash("Backward");
 
+    private bool _playerDied;
+
     [SerializeField] private Animator _animator;
 
     [Header("Dash")]
@@ -107,7 +114,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     private void Start()
     {
         _canMove = true;
-
         FacingDirection = new Vector3(0, 0, 0);
         if (RoundManager.Instance.EnemiesPresent)
         {
@@ -149,6 +155,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// </summary>
     private void OnDisable()
     {
+        _playerDied = false;
         if (RoundManager.Instance != null)
         {
             RoundManager.Instance.UnRegisterListener(this);
@@ -164,12 +171,13 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// </summary>
     public void OnDeath()
     {
+        _playerDied = true;
+        _canMove = false;
         if (RoundManager.Instance != null)
         {
             RoundManager.Instance.UnRegisterListener(this);
             RoundManager.Instance.AutocompleteToggled -= OnAutocompleteToggledEvent;
         }
-
         if (TimeSignatureManager.Instance != null)
             TimeSignatureManager.Instance.UnregisterTimeListener(this);
     }
