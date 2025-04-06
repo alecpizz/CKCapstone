@@ -9,6 +9,7 @@ using PrimeTween;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using SaintsField.Playa;
 
 public class CollectableManager : MonoBehaviour
 {
@@ -17,11 +18,8 @@ public class CollectableManager : MonoBehaviour
     [SerializeField] private GameObject _collectibleMenu;
     [SerializeField] private bool collectibleMenuOn;
 
-    public GameObject[] collectables;
-    public GameObject[] collectableImages;
-
-    Dictionary<GameObject, GameObject> collectiblesDict = 
-        new Dictionary<GameObject, GameObject>();
+    Dictionary<string, GameObject> collectiblesDict = 
+        new Dictionary<string, GameObject>();
 
     #region Collectible Game Objects
     [SerializeField] GameObject cardinalPlush;
@@ -72,75 +70,53 @@ public class CollectableManager : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         collectibleMenuOn = false;
 
         #region Dictionary Assignment
-        collectiblesDict.Add(cardinalPlush, cardinalPlushImage);
-        collectiblesDict.Add(agedCardinalPlush, agedCardinalPlushImage);
-        collectiblesDict.Add(collegeAcceptanceLetter, collegeAcceptanceLetterImage);
-        collectiblesDict.Add(crochetShtuff, crochetShtuffImage);
-        collectiblesDict.Add(electricBass, electricBassImage);
-        collectiblesDict.Add(medicineCabinet, medicineCabinetImage);
-        collectiblesDict.Add(cassetteStack1, cassetteStack1Image);
-        collectiblesDict.Add(cassetteStack2, cassetteStack2Image);
-        collectiblesDict.Add(xylophone, xylophoneImage);
-        collectiblesDict.Add(unfinishedLetter, unfinishedLetterImage);
-        #endregion
-
-        #region Array Assignment
-        collectables = new GameObject[10];
-        collectables[0] = cardinalPlush;
-        collectables[1] = agedCardinalPlush;
-        collectables[2] = collegeAcceptanceLetter;
-        collectables[3] = crochetShtuff;
-        collectables[4] = electricBass;
-        collectables[5] = medicineCabinet;
-        collectables[6] = cassetteStack1;
-        collectables[7] = cassetteStack2;
-        collectables[8] = xylophone;
-        collectables[9] = unfinishedLetter;
-
-        collectableImages = new GameObject[10];
-        collectableImages[0] = cardinalPlushImage;
-        collectableImages[1] = agedCardinalPlushImage;
-        collectableImages[2] = collegeAcceptanceLetterImage;
-        collectableImages[3] = crochetShtuffImage;
-        collectableImages[4] = electricBassImage;
-        collectableImages[5] = medicineCabinetImage;
-        collectableImages[6] = cassetteStack1Image;
-        collectableImages[7] = cassetteStack2Image;
-        collectableImages[8] = xylophoneImage;
-        collectableImages[9] = unfinishedLetterImage;
+        collectiblesDict.Add("Cardinal Plush", cardinalPlushImage);
+        collectiblesDict.Add("Aged Cardinal Plush", agedCardinalPlushImage);
+        collectiblesDict.Add("College Acceptance Letter", collegeAcceptanceLetterImage);
+        collectiblesDict.Add("Crochet Shtuff", crochetShtuffImage);
+        collectiblesDict.Add("Electric Bass", electricBassImage);
+        collectiblesDict.Add("Medicine Cabinet", medicineCabinetImage);
+        collectiblesDict.Add("Stack of Cassette Tapes", cassetteStack1Image);
+        collectiblesDict.Add("Stack of Cassette Tapes 2", cassetteStack2Image);
+        collectiblesDict.Add("Toy Xylophone", xylophoneImage);
+        collectiblesDict.Add("Unfinished Letter", unfinishedLetterImage);
         #endregion
 
         _playerControls.InGame.CollectibleMenu.performed += ctx => CollectibleMenuToggle();
+    }
 
-        for (int i = 0; i <= collectableImages.Length - 1; i++)
+    /// <summary>
+    /// An inspector button to clear the collectible menu 
+    /// that I've been using for debugging purposes
+    /// </summary>
+    [Button]
+    private void ClearData()
+    {
+        foreach (string data in collectiblesDict.Keys)
         {
-            collectableImages[i].SetActive(false);
+            if (SaveDataManager.GetCollectableFound(data))
+            {
+                SaveDataManager.SetCollectableFound(data, false);
+                ClearCollectableImage(data);
+            }
         }
     }
 
+    /// <summary>
+    /// Logs the save data for the collectible that's just been interacted with
+    /// </summary>
+    /// <param name="collected"></param>
     public void Collection(GameObject collected)
     {
-        Debug.Log("Collecting " + collected.name);
-
-        if (collectiblesDict.ContainsKey(collected))
+        if (collectiblesDict.ContainsKey(collected.name))
         {
-            Debug.Log(collected + " get!");
             SaveDataManager.SetCollectableFound(collected.name, true);
         }
-
-        //for (int i = 0; i <= collectables.Length - 1; i++)
-        //{
-        //    if (gameObject.name.Equals(collectables[i].name))
-        //    {
-        //        Debug.Log("Collectable get!");
-        //        SaveDataManager.SetCollectableFound(gameObject.name, true);
-        //    }
-        //}
     }
 
     /// <summary>
@@ -148,15 +124,11 @@ public class CollectableManager : MonoBehaviour
     /// </summary>
     private void CollectibleMenuToggle()
     {
+        collectibleMenuOn = !collectibleMenuOn;
+        _collectibleMenu.SetActive(collectibleMenuOn);
+
         if(collectibleMenuOn)
         {
-            collectibleMenuOn = false;
-            _collectibleMenu.SetActive(false);
-        }
-        else
-        {
-            collectibleMenuOn = true;
-            _collectibleMenu.SetActive(true);
             SetFoundCollectibles();
         }
     }
@@ -166,11 +138,15 @@ public class CollectableManager : MonoBehaviour
     /// </summary>
     private void SetFoundCollectibles()
     {
-        for (int i = 0; i <= collectables.Length - 1; i++)
+        foreach(string data in collectiblesDict.Keys)
         {
-            if (SaveDataManager.GetCollectableFound(collectables[i].name))
+            if(SaveDataManager.GetCollectableFound(data))
             {
-                UnlockCollectableImage(collectables[i].name);
+                UnlockCollectableImage(data);
+            }
+            else
+            {
+                ClearCollectableImage(data);
             }
         }
     }
@@ -181,12 +157,15 @@ public class CollectableManager : MonoBehaviour
     /// <param name="unlockedImage"></param>
     private void UnlockCollectableImage(string unlockedImage)
     {
-        for (int i = 0; i <= collectableImages.Length - 1; i++)
-        {
-            if (collectables[i].name == unlockedImage)
-            {
-                collectableImages[i].SetActive(true);
-            }
-        }
+        collectiblesDict[unlockedImage].SetActive(true);
+    }
+
+    /// <summary>
+    /// Makes the paramenter text in the menu for the proper collectible dissappear
+    /// </summary>
+    /// <param name="image"></param>
+    private void ClearCollectableImage(string image)
+    {
+        collectiblesDict[image].SetActive(false);
     }
 }
