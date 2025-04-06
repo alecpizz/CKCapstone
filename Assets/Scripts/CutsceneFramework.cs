@@ -106,8 +106,9 @@ public class CutsceneFramework : MonoBehaviour
         SaveDataManager.SetLevelCompleted(SceneManager.GetActiveScene().name);
         _inputActions = new DebugInputActions();
         _inputActions.UI.Enable();
-        _inputActions.UI.SkipCutscene.performed += ctx => SkipCutscene();    
+        _inputActions.UI.SkipCutscene.performed += ctx => SkipCutscene();
         //_inputActions.UI.Pause.performed += ctx => _menuManager.Pause();
+        _inputActions.UI.Pause.performed += ctx => _mChannel.setPaused(true);
         //_endChapterCutsceneVideo.loopPointReached += CheckEnd;
 
         //Registers is button is pressed
