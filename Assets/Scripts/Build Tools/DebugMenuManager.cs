@@ -122,7 +122,7 @@ public class DebugMenuManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Turns on the Debug Inputs
+    /// Turns on the Debug Inputs and input checks
     /// </summary>
     private void OnEnable()
     {
@@ -132,6 +132,8 @@ public class DebugMenuManager : MonoBehaviour
         _playerInput.Player.SceneView.performed += ToggleSceneName;
         _playerControls.Enable();
         _playerControls.InGame.Movement.performed += DetectInputType;
+        _playerControls.InGame.Toggle.performed += DetectInputType;
+        _playerControls.InGame.Interact.performed += DetectInputType;
         _defaultControls.UI.Point.performed += DetectInputType;
         _defaultControls.UI.Navigate.performed += DetectInputType;
         _playerInput.Player.ControllerDetection.performed += DetectInputType;
