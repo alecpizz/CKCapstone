@@ -134,11 +134,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
         RoundManager.Instance.AutocompleteToggled += OnAutocompleteToggledEvent;
     }
 
-    void Update()
-    {
-        Debug.Log(_playerDied);
-    }
-
     /// <summary>
     /// Registers instance to the RoundManager
     /// </summary>
