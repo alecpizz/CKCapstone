@@ -89,9 +89,9 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
     [SerializeField] private Animator _animator;
     //How many frames the game will wait before starting the movement tween
-    [SerializeField] private int walkFrameDelay = 2;
+    [SerializeField] private int _walkFrameDelay = 2;
     //How long of a delay is done between setting the wall bool true to false
-    [SerializeField] private float wallAnimationDelay = 0.01f;
+    [SerializeField] private float _wallAnimationDelay = 0.01f;
 
     [Header("Dash")]
     [SerializeField] private ParticleSystem _dashParticles;
@@ -202,7 +202,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             {
                 GridBase.Instance.UpdateEntryAtPosition(this, move);
                 _animator.SetBool(Forward, true);
-                for (i = 0; i < walkFrameDelay; i++)
+                for (i = 0; i < _walkFrameDelay; i++)
                 {
                     yield return _waitForEndOfFrame;
                 }
@@ -295,7 +295,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                         AudioManager.Instance.PlaySound(_playerCantMove);
                         RoundManager.Instance.RequestRepeatTurnStateRepeat(this);
                     }
-                }).Chain(Tween.Delay(wallAnimationDelay, () => {
+                }).Chain(Tween.Delay(_wallAnimationDelay, () => {
                     _animator.SetBool(Wall, false);
                 }));
         }
