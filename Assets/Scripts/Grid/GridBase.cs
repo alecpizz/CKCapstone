@@ -67,6 +67,26 @@ public class GridBase : MonoBehaviour
         }
 
         _grid = GetComponent<Grid>();
+        // GenerateMesh();
+        // _gridMeshHolder = transform.Find(GridMeshName).gameObject;
+        // if (_gridMeshHolder != null)
+        // {
+        //     _gridObjects.Clear();
+        //     int row = 0;
+        //     int col = 0;
+        //     for (int i = 0; i < _gridMeshHolder.transform.childCount; i++)
+        //     {
+        //         var tile = _gridMeshHolder.transform.GetChild(i);
+        //         _gridObjects.Add(new Vector3Int(row, 0, col), tile.gameObject);
+        //         Debug.Log(new Vector3Int(row, 0, col).ToString());
+        //         col++;
+        //         if (col == _gridSize)
+        //         {
+        //             row++;
+        //             col = 0;
+        //         }
+        //     }
+        // }
         GenerateMesh();
     }
 
