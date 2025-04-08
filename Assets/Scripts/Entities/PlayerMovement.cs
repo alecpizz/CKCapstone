@@ -213,7 +213,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             {
                 GridBase.Instance.UpdateEntryAtPosition(this, move);
                 _animator.SetBool(Forward, true);
-                for (i = 0; i < _walkFrameDelay; i++)
+                for (int j = 0; j < _walkFrameDelay; j++)
                 {
                     yield return _waitForEndOfFrame;
                 }

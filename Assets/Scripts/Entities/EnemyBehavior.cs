@@ -18,6 +18,8 @@ using Unity.VisualScripting;
 using FMODUnity;
 using SaintsField;
 using SaintsField.Playa;
+using UnityEngine.UI;
+using TMPro;
 
 public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     ITurnListener, IHarmonyBeamEntity
@@ -171,8 +173,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private static readonly int Frozen = Animator.StringToHash("Frozen");
     private static readonly int Turn = Animator.StringToHash("Turn");
 
-
     [SerializeField] private Animator _animator;
+
+    [SerializeField] private float _destPathVFXMatSpeed = -0.25f;
+    [SerializeField] private Material _destPathMaterial;
 
     /// <summary>
     /// Disables a PrimeTween warning.
@@ -193,6 +197,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         GridBase.Instance.AddEntry(this);
 
         PlayerMovement.Instance.BeamSwitchActivation += () => _waitOnBeam = true;
+        _destPathVFXMatSpeed = -_destPathVFXMatSpeed;
+        _destPathMaterial.SetFloat("_Speed", _destPathVFXMatSpeed);
 
         _rb = GetComponent<Rigidbody>();
         _rb.isKinematic = true;
@@ -703,6 +709,18 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         }
 
         _currentEnemyIndex = moveIndex;
+
+        if (_circularMovement)
+        {
+            return;
+        }
+
+        //If moveIndex is at the first or last position the destination path vfx will reverse
+        if (moveIndex == 0 || moveIndex == _moveDestinations.Count - 1)
+        {
+            _destPathVFXMatSpeed = -_destPathVFXMatSpeed;
+            _destPathMaterial.SetFloat("_Speed", _destPathVFXMatSpeed);
+        }
     }
 
 

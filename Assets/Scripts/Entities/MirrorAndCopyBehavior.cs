@@ -139,12 +139,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
 
         if (!EnemyFrozen)
         {
-
-            if (_animator != null)
-            {
-                _animator.SetBool(Frozen, false);
-                _animator.SetBool(Forward, true);
-            }
+            _animator.SetBool(Frozen, false);
 
             if (_mirrored)
             {
@@ -192,28 +187,25 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                             _animator.SetBool(Turn, true);
                         }
                     }
+                    _animator.SetBool(Forward, true);
                     Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
                     ease: _rotationEase);
                     if (_animator != null)
                     {
                         _animator.SetBool(Turn, false);
                     }
-                    if (_animator != null)
-                    {
-                        _animator.SetBool(Forward, false);
-                    }
 
                     if (AudioManager.Instance != null && _mirrored)
                     {
                         AudioManager.Instance.PlaySound(_walkSound);
                     }
-                    
+
                     yield return Tween.Position(transform,
                         move + CKOffsetsReference.MirrorCopyEnemyOffset(_mirrored), modifiedMovementTime, ease: _movementEase).OnUpdate<MirrorAndCopyBehavior>(target: this, (target, tween) =>
                         {
                             GridBase.Instance.UpdateEntry(this);
                         }).ToYieldInstruction();
-
+                    _animator.SetBool(Forward, false);
                     HarmonyBeam.TriggerHarmonyScan?.Invoke();
 
                     //not a fan of this but it should be more consistent than 
