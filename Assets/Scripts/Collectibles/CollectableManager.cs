@@ -15,9 +15,6 @@ public class CollectableManager : MonoBehaviour
 {
     private PlayerControls _playerControls;
 
-    [SerializeField] private GameObject _collectibleMenu;
-    [SerializeField] private bool collectibleMenuOn;
-
     private Dictionary<string, GameObject> collectiblesDict = 
         new Dictionary<string, GameObject>();
 
@@ -52,28 +49,9 @@ public class CollectableManager : MonoBehaviour
         Instance = this;
     }
 
-    /// <summary>
-    /// Initializes and turns on the controls for the player when the scene loads
-    /// </summary>
-    private void OnEnable()
-    {
-        _playerControls = new PlayerControls();
-        _playerControls.InGame.CollectibleMenu.Enable();
-    }
-
-    /// <summary>
-    /// Turns off the controls for the player when the scene is no longer active
-    /// </summary>
-    private void OnDisable()
-    {
-        _playerControls.InGame.CollectibleMenu.Disable();
-    }
-
     // Start is called before the first frame update
     private void Start()
     {
-        collectibleMenuOn = false;
-
         #region Dictionary Assignment
         collectiblesDict.Add("Cardinal Plush", cardinalPlushImage);
         collectiblesDict.Add("Aged Cardinal Plush", agedCardinalPlushImage);
@@ -86,8 +64,6 @@ public class CollectableManager : MonoBehaviour
         collectiblesDict.Add("Toy Xylophone", xylophoneImage);
         collectiblesDict.Add("Unfinished Letter", unfinishedLetterImage);
         #endregion
-
-        _playerControls.InGame.CollectibleMenu.performed += ctx => CollectibleMenuToggle();
     }
 
     /// <summary>
@@ -120,23 +96,9 @@ public class CollectableManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Handles turning on and off the collectible menu
-    /// </summary>
-    private void CollectibleMenuToggle()
-    {
-        collectibleMenuOn = !collectibleMenuOn;
-        _collectibleMenu.SetActive(collectibleMenuOn);
-
-        if(collectibleMenuOn)
-        {
-            SetFoundCollectibles();
-        }
-    }
-
-    /// <summary>
     /// Finds the right collectible to run through the UnlockCollectableImage function
     /// </summary>
-    private void SetFoundCollectibles()
+    public void SetFoundCollectibles()
     {
         foreach(string data in collectiblesDict.Keys)
         {
