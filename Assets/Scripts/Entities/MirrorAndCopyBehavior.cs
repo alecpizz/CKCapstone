@@ -228,21 +228,6 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
             _movementTiming = 1;
     }
 
-    /// <summary>
-    /// Checks to see if player dies on collision
-    /// </summary>
-    /// <param name="collision"></param>
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (!DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("Player"))
-        {
-            Time.timeScale = 0f;
-
-            PlayerMovement.Instance.OnDeath();
-            SceneController.Instance.ReloadCurrentScene();
-        }
-    }
-
     public TurnState TurnState => TurnState.Enemy;
     public TurnState SecondaryTurnState => TurnState.None;
 
