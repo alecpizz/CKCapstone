@@ -107,9 +107,8 @@ public class CutsceneFramework : MonoBehaviour
         _inputActions = new DebugInputActions();
         _inputActions.UI.Enable();
         _inputActions.UI.SkipCutscene.performed += ctx => SkipCutscene();
-        _inputActions.UI.Pause.performed += ctx => _mChannel.setPaused(_menuManager.GetOnUnpause());
+        _inputActions.UI.Pause.performed += ctx => _mChannel.setPaused(_menuManager.GetPauseInvoked());
 
-        //_menuManager.OnPause += OnPause;
         //_endChapterCutsceneVideo.loopPointReached += CheckEnd;
         //Registers is button is pressed
         _mAnyButtonPressedListener = InputSystem.onAnyButtonPress.Call(ButtonIsPressed);
@@ -154,9 +153,7 @@ public class CutsceneFramework : MonoBehaviour
     {
         _inputActions.UI.Disable();
         _inputActions.UI.SkipCutscene.performed -= ctx => SkipCutscene();
-        _inputActions.UI.Pause.performed -= ctx => _mChannel.setPaused(_menuManager.GetOnUnpause());
-
-        //_menuManager.OnPause -= OnPause;
+        _inputActions.UI.Pause.performed -= ctx => _mChannel.setPaused(_menuManager.GetPauseInvoked());
 
         if(_mAnyButtonPressedListener != null)
         {
@@ -360,11 +357,6 @@ public class CutsceneFramework : MonoBehaviour
         }
     }
 
-    public void OnPause(bool pause)
-    {
-        _mChannel.setPaused(pause);
-    }
-
     /// <summary>
     /// If there is an End Chapter Cutscene being played make sure the video is being played smoothly
     /// </summary>
@@ -384,7 +376,6 @@ public class CutsceneFramework : MonoBehaviour
             _timer = 0f;
         }
 
-        //_mChannel.setPaused(_menuManager.GetOnUnpause());
 
         if (_isEndChapterCutscene)
         {

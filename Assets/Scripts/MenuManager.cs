@@ -14,6 +14,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using static UnityEngine.Rendering.DebugUI;
 using System;
+using UnityEngine.Serialization;
 
 public class MenuManager : MonoBehaviour
 {
@@ -36,12 +37,11 @@ public class MenuManager : MonoBehaviour
 
     [SerializeField] private CursorManager _cursorManager;
 
-    [SerializeField] private GameObject _skipWhilePaused;
+    [FormerlySerializedAs("_skipWhilePaused")]
+    [SerializeField] private GameObject _skipPromptInPause;
     private bool _skipInPause;
 
-    private bool _onUnpause = true;
-
-    public Action<bool> OnPause;
+    private bool _pauseInvoked = true;
 
     /// <summary>
     /// Enables player input for opening the pause menu
@@ -72,13 +72,7 @@ public class MenuManager : MonoBehaviour
         _restartButton.SetActive(true);
         _cursorManager.OnPointerExit();
         Time.timeScale = 1f;
-        _onUnpause = false;
-        //OnPause?.Invoke(_onUnpause);
-    }
-
-    public bool GetOnUnpause()
-    {
-        return _onUnpause;
+        _pauseInvoked = false;
     }
 
     /// <summary>
@@ -140,15 +134,14 @@ public class MenuManager : MonoBehaviour
             EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
             Time.timeScale = 0f;
 
-            _onUnpause = true;
-            //OnPause?.Invoke(_onUnpause);
+            _pauseInvoked = true;
 
             //Gets the path to a scene
             string path = SceneManager.GetActiveScene().path;
 
             if (path.Contains("CS"))
             {
-                _skipWhilePaused.SetActive(true);
+                _skipPromptInPause.SetActive(true);
                 _skipInPause = true;
             }
         }
@@ -161,6 +154,15 @@ public class MenuManager : MonoBehaviour
         {
             Unpause();
         }
+    }
+
+    /// <summary>
+    /// Getter method to tell if the game is paused for FMOD audio
+    /// </summary>
+    /// <returns></returns>
+    public bool GetPauseInvoked()
+    {
+        return _pauseInvoked;
     }
 
     /// <summary>
