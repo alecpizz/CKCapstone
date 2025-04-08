@@ -537,38 +537,37 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                         }
                     });
             AudioManager.Instance.PlaySound(_enemyMove);
-            /*if (rotationDir != transform.forward && _animator != null)
+            bool turn = Vector3.Dot(rotationDir, transform.forward) > 0.9f;
+            if (!turn && _animator != null)
             {
                 _animator.SetBool(Turn, true);
-            }*/
+            }
             yield return Tween.Rotation(transform, endValue: Quaternion.LookRotation(rotationDir),
                 duration: _rotationTime,
                 ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).Chain(tween).ToYieldInstruction();
-            /*if (_animator != null)
-            {
-                _animator.SetBool(Turn, false);
-            }*/
             if (_animator != null)
             {
+                _animator.SetBool(Turn, false);
                 _animator.SetBool(Forward, false);
             }
             GridBase.Instance.UpdateEntry(this);
 
             if (_endRotate)
             {
-                /*if (_animator != null)
+                if (_animator != null)
                 {
-                    _animator.SetBool(Turn, false);
-                }*/
+                    _animator.SetBool(Turn, true);
+                }
                 yield return Tween.Rotation(transform, endValue: Quaternion.LookRotation(-rotationDir),
                 duration: _rotationTime,
                 ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).ToYieldInstruction();
+                if (_animator != null)
+                {
+                    _animator.SetBool(Turn, false);
+                }
                 _endRotate = false;
             }
-            /*if (_animator != null)
-            {
-                _animator.SetBool(Turn, false);
-            }*/
+            
         }
 
         _isMoving = false;
