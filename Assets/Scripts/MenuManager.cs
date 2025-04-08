@@ -39,7 +39,9 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject _skipWhilePaused;
     private bool _skipInPause;
 
-    public Action <bool> OnUnpause;
+    private bool _onUnpause = true;
+
+    public Action<bool> OnPause;
 
     /// <summary>
     /// Enables player input for opening the pause menu
@@ -70,7 +72,13 @@ public class MenuManager : MonoBehaviour
         _restartButton.SetActive(true);
         _cursorManager.OnPointerExit();
         Time.timeScale = 1f;
-        OnUnpause?.Invoke(false);
+        _onUnpause = false;
+        //OnPause?.Invoke(_onUnpause);
+    }
+
+    public bool GetOnUnpause()
+    {
+        return _onUnpause;
     }
 
     /// <summary>
@@ -132,7 +140,9 @@ public class MenuManager : MonoBehaviour
             EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
             Time.timeScale = 0f;
 
-            OnUnpause?.Invoke(true);
+            _onUnpause = true;
+            //OnPause?.Invoke(_onUnpause);
+
             //Gets the path to a scene
             string path = SceneManager.GetActiveScene().path;
 
