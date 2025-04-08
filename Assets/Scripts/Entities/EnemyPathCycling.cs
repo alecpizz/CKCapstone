@@ -54,6 +54,10 @@ public class EnemyPathCycling : MonoBehaviour
         _input.InGame.CycleForward.performed += PathingForward;
         _input.InGame.Toggle.performed += ToggleEnemyPaths;
         if (!_enemyToggleState) return;
+        if (_allEnemyArray.Length == 0)
+        {
+            return;
+        }
         foreach (var enemy in _allEnemyArray)
         {
             enemy.PathingToggle(IsCycling);
@@ -141,6 +145,10 @@ public class EnemyPathCycling : MonoBehaviour
     /// <param name="context">Input context</param>
     private void ToggleEnemyPaths(InputAction.CallbackContext context)
     {
+        if (_allEnemyArray.Length == 0)
+        {
+            return;
+        }
         foreach (var enemy in _allEnemyArray)
         {
             enemy.PathingToggle(IsCycling);
