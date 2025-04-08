@@ -15,22 +15,12 @@ using UnityEngine.SceneManagement;
 
 public class ControllerTextChecker : MonoBehaviour
 {
-    public static ControllerTextChecker Instance { get; private set; }
-
     private Scene currentScene;
     [SerializeField] private TextMeshProUGUI _tutorialText;
     [SerializeField] private string _keyboardText;
     [SerializeField] private string _controllerText; //Text for Xbox/Generic Controllers
     [SerializeField] private string _playstationText; //Text for PS Controllers
     [SerializeField] private string _switchText; //Text for Switch Pro Controllers
-
-    /// <summary>
-    /// sets the instance for reference
-    /// </summary>
-    private void Awake()
-    {
-        Instance = this;
-    }
 
     /// <summary>
     /// Start is called before the first frame update
@@ -49,7 +39,7 @@ public class ControllerTextChecker : MonoBehaviour
     {
         if (currentScene.name == "T_FirstDay") //Movement tutorial
         {
-            if (DebugMenuManager.Instance.KeyboardAndMouse)
+            if (ControllerGlyphManager.Instance.KeyboardAndMouse)
             {
                 _tutorialText.text = _keyboardText;
             }
@@ -60,15 +50,15 @@ public class ControllerTextChecker : MonoBehaviour
         }
         if (currentScene.name == "T_SteerClear_Sp") // Enemy path toggle tutorial
         {
-            if (DebugMenuManager.Instance.KeyboardAndMouse)
+            if (ControllerGlyphManager.Instance.KeyboardAndMouse)
             {
                 _tutorialText.text = _keyboardText;
             }
-            else if (DebugMenuManager.Instance.SwitchController)
+            else if (ControllerGlyphManager.Instance.SwitchController)
             {
                 _tutorialText.text = _switchText;
             }
-            else if (DebugMenuManager.Instance.PlayStationController)
+            else if (ControllerGlyphManager.Instance.PlayStationController)
             {
                 _tutorialText.text = _playstationText;
             }

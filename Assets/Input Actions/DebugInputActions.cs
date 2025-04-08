@@ -62,15 +62,6 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""ControllerDetection"",
-                    ""type"": ""Button"",
-                    ""id"": ""0f12d444-512d-41a7-a531-06ad056ce7fc"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -227,171 +218,6 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""SceneView"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""8b54df09-b0e5-4eb4-a425-e1c51716cce4"",
-                    ""path"": ""<Gamepad>/buttonEast"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ControllerDetection"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""3abcaf81-aa73-4aef-b130-08ccc7dfc7ef"",
-                    ""path"": ""<Gamepad>/buttonNorth"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ControllerDetection"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""5b022e71-5f4e-4fdb-a58d-0d7583cfeec5"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ControllerDetection"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""758b93b8-f327-4f40-bb21-024ea967d7f9"",
-                    ""path"": ""<Gamepad>/buttonWest"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ControllerDetection"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""12c2ab62-0cab-4f14-a309-3b356cbee011"",
-                    ""path"": ""<Gamepad>/dpad"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ControllerDetection"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""27ec28b5-111a-4a0d-9fab-d8d94a2bfe79"",
-                    ""path"": ""<Gamepad>/leftShoulder"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ControllerDetection"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""a67e3e0e-f35d-4ad3-8182-97e4ab374109"",
-                    ""path"": ""<Gamepad>/leftStick"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ControllerDetection"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""783946cb-baca-46ee-bed6-07d088653f9a"",
-                    ""path"": ""<Gamepad>/leftStickPress"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ControllerDetection"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""73478465-6121-4f70-80e7-c2503465d048"",
-                    ""path"": ""<Gamepad>/leftTrigger"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ControllerDetection"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""d4356bf0-42b5-46c4-b301-adef09855052"",
-                    ""path"": ""<Gamepad>/rightShoulder"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ControllerDetection"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""ecb3ceff-e6f9-4b07-974c-69462c21912c"",
-                    ""path"": ""<Gamepad>/rightStick"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ControllerDetection"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""bca653cf-681a-422f-85e3-3b80be347e5c"",
-                    ""path"": ""<Gamepad>/rightStickPress"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ControllerDetection"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""c2102bd9-2721-4b09-9eb1-95337f6afabb"",
-                    ""path"": ""<Gamepad>/rightTrigger"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ControllerDetection"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""d396e263-8ec8-4958-a348-12a9f86a2185"",
-                    ""path"": ""<Gamepad>/select"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ControllerDetection"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""abb68685-b4d2-46fc-b2aa-3b52101fa9f0"",
-                    ""path"": ""<Gamepad>/start"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ControllerDetection"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -474,7 +300,6 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
         m_Player_Restart = m_Player.FindAction("Restart", throwIfNotFound: true);
         m_Player_Quit = m_Player.FindAction("Quit", throwIfNotFound: true);
         m_Player_SceneView = m_Player.FindAction("SceneView", throwIfNotFound: true);
-        m_Player_ControllerDetection = m_Player.FindAction("ControllerDetection", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_SkipCutscene = m_UI.FindAction("SkipCutscene", throwIfNotFound: true);
@@ -544,7 +369,6 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Restart;
     private readonly InputAction m_Player_Quit;
     private readonly InputAction m_Player_SceneView;
-    private readonly InputAction m_Player_ControllerDetection;
     public struct PlayerActions
     {
         private @DebugInputActions m_Wrapper;
@@ -553,7 +377,6 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
         public InputAction @Restart => m_Wrapper.m_Player_Restart;
         public InputAction @Quit => m_Wrapper.m_Player_Quit;
         public InputAction @SceneView => m_Wrapper.m_Player_SceneView;
-        public InputAction @ControllerDetection => m_Wrapper.m_Player_ControllerDetection;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -575,9 +398,6 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
             @SceneView.started += instance.OnSceneView;
             @SceneView.performed += instance.OnSceneView;
             @SceneView.canceled += instance.OnSceneView;
-            @ControllerDetection.started += instance.OnControllerDetection;
-            @ControllerDetection.performed += instance.OnControllerDetection;
-            @ControllerDetection.canceled += instance.OnControllerDetection;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -594,9 +414,6 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
             @SceneView.started -= instance.OnSceneView;
             @SceneView.performed -= instance.OnSceneView;
             @SceneView.canceled -= instance.OnSceneView;
-            @ControllerDetection.started -= instance.OnControllerDetection;
-            @ControllerDetection.performed -= instance.OnControllerDetection;
-            @ControllerDetection.canceled -= instance.OnControllerDetection;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -674,7 +491,6 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
         void OnRestart(InputAction.CallbackContext context);
         void OnQuit(InputAction.CallbackContext context);
         void OnSceneView(InputAction.CallbackContext context);
-        void OnControllerDetection(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

@@ -23,8 +23,6 @@ using EventInstance = FMOD.Studio.EventInstance;
 
 public class NpcDialogueController : MonoBehaviour, IInteractable
 {
-    public static NpcDialogueController Instance { get; private set; }
-
     [SerializeField] private TMP_Text _dialogueBox;
     [SerializeField] private Image _background;
     [SerializeField] private EndLevelDoor[] _doors;
@@ -125,14 +123,6 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
     public void ResetMemory()
     {
         SaveDataManager.SetNpcProgressionCurrentScene(0);
-    }
-
-    /// <summary>
-    /// sets the current instance
-    /// </summary>
-    private void Awake()
-    {
-        Instance = this;
     }
 
     /// <summary>
@@ -451,46 +441,38 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
     /// </summary>
     public void ControllerText()
     {
-        if (DebugMenuManager.Instance.PlayStationController)
+        _tutorialHint = GetGlyph();
+    }
+
+    private string GetGlyph()
+    {
+        string buttonText;
+        string talkorInteract;
+
+        if (ControllerGlyphManager.Instance.PlayStationController)
         {
             _eKey.sprite = _playstationButtonPrompt;
-            if (gameObject.name == "TextInteractablePrefab")
-            {
-                _tutorialHint = "Press X to Talk";
-            }
-            else
-            {
-                _tutorialHint = "Press X to Interact";
-            }
+            buttonText = "X";
         }
-        else if (DebugMenuManager.Instance.SwitchController || DebugMenuManager.Instance.XboxController)
+        else if (ControllerGlyphManager.Instance.SwitchController || ControllerGlyphManager.Instance.XboxController)
         {
             _eKey.sprite = _letterButtonPrompt;
-            if (gameObject.name == "TextInteractablePrefab")
-            {
-                _tutorialHint = "Press A to Talk";
-            }
-            else
-            {
-                _tutorialHint = "Press A to Interact";
-            }
-        }
-        else if (gameObject is null)
-        {
-            return;
+            buttonText = "A";
         }
         else
         {
             _eKey.sprite = _keyboardPrompt;
-            if (gameObject.name == "TextInteractablePrefab") 
-            {
-                _tutorialHint = "Press E to Talk";
-            }
-            else
-            {
-                _tutorialHint = "Press E to Interact";
-            }
+            buttonText = "E";
         }
+        if (gameObject.name == "TextInteractablePrefab") //mother or son (they aren't properly named yet)
+        {
+            talkorInteract = "Talk";
+        }
+        else
+        {
+            talkorInteract = "Interact";
+        }
+        return "Press " + buttonText + " to " + talkorInteract;
     }
 
     /// <summary>

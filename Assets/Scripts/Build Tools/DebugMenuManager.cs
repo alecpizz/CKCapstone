@@ -29,10 +29,6 @@ public class DebugMenuManager : MonoBehaviour
 
     public bool GhostMode { get; private set; } = false;
     public bool Invincibility { get; private set; } = false;
-    public bool KeyboardAndMouse { get; private set; } = false;
-    public bool PlayStationController { get; private set; } = false;
-    public bool SwitchController { get; private set; } = false;
-    public bool XboxController { get; private set; } = false;
     public bool PauseMenu { get; set; } = false;
 
     [SerializeField] private GameObject _debugMenuFirst;
@@ -58,9 +54,6 @@ public class DebugMenuManager : MonoBehaviour
     private bool _pMenu = false;
     private bool _fpsCount = false;
     private bool _sceneNameVisible = false;
-    private bool _areInteractables = false;
-    private bool _areTextBlurbs = false;
-    private bool _areSettings = false;
 
     private const string MainMenuSceneName = "MainMenutest";
 
@@ -131,12 +124,6 @@ public class DebugMenuManager : MonoBehaviour
         _playerInput.Player.SceneView.Enable();
         _playerInput.Player.SceneView.performed += ToggleSceneName;
         _playerControls.Enable();
-        _playerControls.InGame.Movement.performed += DetectInputType;
-        _playerControls.InGame.Toggle.performed += DetectInputType;
-        _playerControls.InGame.Interact.performed += DetectInputType;
-        _defaultControls.UI.Point.performed += DetectInputType;
-        _defaultControls.UI.Navigate.performed += DetectInputType;
-        _playerInput.Player.ControllerDetection.performed += DetectInputType;
     }
 
     /// <summary>
@@ -148,10 +135,6 @@ public class DebugMenuManager : MonoBehaviour
         _restartInput.Disable();
         _playerInput.Player.SceneView.Disable();
         _playerInput.Player.SceneView.performed -= ToggleSceneName;
-        _playerControls.InGame.Movement.performed -= DetectInputType;
-        _defaultControls.UI.Point.performed -= DetectInputType;
-        _defaultControls.UI.Navigate.performed -= DetectInputType;
-        _playerInput.Player.ControllerDetection.performed -= DetectInputType;
         _playerControls.Disable();
     }
 
@@ -167,68 +150,8 @@ public class DebugMenuManager : MonoBehaviour
         Cursor.visible = true;
         //Sets an default game object for the event system to hold on to for menuing
         EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
-
-        InputSystem.onDeviceChange += ControllerDetection;
-
-        //controller check at the start of the scene
-        if (Gamepad.current is DualSenseGamepadHID || Gamepad.current is DualShock4GamepadHID)
-        {
-            PlayStationController = true;
-            SwitchController = false;
-            XboxController = false;
-            KeyboardAndMouse = false;
-        }
-        else if (Gamepad.current is SwitchProControllerHID)
-        {
-            PlayStationController = false;
-            SwitchController = true;
-            XboxController = false;
-            KeyboardAndMouse = false;
-        }
-        else if (Gamepad.current is null)
-        {
-            PlayStationController = false;
-            SwitchController = false;
-            XboxController = false;
-            KeyboardAndMouse = true;
-        }
-        else
-        {
-            PlayStationController = false;
-            SwitchController = false;
-            XboxController = true;
-            KeyboardAndMouse = false;
-        }
-
-        //changes input related text depending on current input device
-        NpcDialogueController _interactableCheck = FindAnyObjectByType<NpcDialogueController>();
-        if (_interactableCheck != null)
-        {
-            NpcDialogueController.Instance.ControllerText();
-            _areInteractables = true;
-        }
-        ControllerTextChecker _textBlurbCheck = FindAnyObjectByType<ControllerTextChecker>();
-        if (_textBlurbCheck != null)
-        {
-            ControllerTextChecker.Instance.TutorialTextChange();
-            _areTextBlurbs = true;
-        }
-        //The settings should be in about every scene but this is here just in case
-        HowToPlayControllerChecker _SettingsCheck = FindAnyObjectByType<HowToPlayControllerChecker>();
-        if (_SettingsCheck != null)
-        {
-            ControllerTextChecker.Instance.TutorialTextChange();
-            _areSettings = true;
-        }
     }
 
-    /// <summary>
-    /// If the debug manager is ever destroyed un attach controller detection
-    /// </summary>
-    private void OnDestroy()
-    {
-        InputSystem.onDeviceChange -= ControllerDetection;
-    }
 
     /// <summary>
     /// Updates the frame rate counter and makes sure debug unputs execute their code when pressed
@@ -251,116 +174,6 @@ public class DebugMenuManager : MonoBehaviour
         _frameDeltaTimeArray[_lastFrameIndex] = Time.unscaledDeltaTime;
         _lastFrameIndex = (_lastFrameIndex + 1) % _frameDeltaTimeArray.Length;
         _fpsText.text = (Mathf.RoundToInt(FpsCalculation()).ToString() + " FPS");
-    }
-
-    /// <summary>
-    /// Detects the controller automatically when plugged into a device
-    /// </summary>
-    /// <param name="device"></param>
-    /// <param name="change"></param>
-    private void ControllerDetection(InputDevice device, InputDeviceChange change)
-    {
-        switch (change)
-        {
-            case InputDeviceChange.Added:
-                if (Gamepad.current is DualSenseGamepadHID || Gamepad.current is DualShock4GamepadHID)
-                {
-                    PlayStationController = true;
-                    SwitchController = false;
-                    XboxController = false;
-                    KeyboardAndMouse = false;
-                }
-                else if (Gamepad.current is SwitchProControllerHID)
-                {
-                    PlayStationController = false;
-                    SwitchController = true;
-                    XboxController = false;
-                    KeyboardAndMouse = false;
-                }
-                else
-                {
-                    PlayStationController = false;
-                    SwitchController = false;
-                    XboxController = true;
-                    KeyboardAndMouse = false;
-                }
-                break;
-            case InputDeviceChange.Removed:
-                PlayStationController = false;
-                SwitchController = false;
-                XboxController = false;
-                KeyboardAndMouse = true;
-                break;
-            case InputDeviceChange.ConfigurationChanged:
-                Debug.Log("Device configuration changed: " + device);
-                break;
-        }
-        //changes input related text depending on current input device
-        if (_areInteractables)
-        {
-            NpcDialogueController.Instance.ControllerText();
-        }
-        if (_areTextBlurbs)
-        {
-            ControllerTextChecker.Instance.TutorialTextChange();
-        }
-        if (_areSettings)
-        {
-            ControllerTextChecker.Instance.TutorialTextChange();
-        }
-    }
-
-    /// <summary>
-    /// Handles detecting if a different input device is being used when multiple input devices
-    /// are connected to the computer
-    /// </summary>
-    /// <param name="context"></param>
-    private void DetectInputType(InputAction.CallbackContext context)
-    {     
-        string controllerName = context.control.device.displayName.ToLower();
-        if (controllerName.Contains("keyboard"))
-        {
-            PlayStationController = false;
-            SwitchController = false;
-            XboxController = false;
-            KeyboardAndMouse = true;
-        }
-        else if (controllerName.Contains("dualshock") || controllerName.Contains("dualsense") ||
-            controllerName.Contains("playstation") || controllerName.Contains("wireless controller"))
-        {
-            PlayStationController = true;
-            SwitchController = false;
-            XboxController = false;
-            KeyboardAndMouse = false;
-        }
-        else if (controllerName.Contains("pro controller") || controllerName.Contains("switch") ||
-            controllerName.Contains("nintendo"))
-        {
-            PlayStationController = false;
-            SwitchController = true;
-            XboxController = false;
-            KeyboardAndMouse = false;
-        }
-        else
-        {
-            PlayStationController = false;
-            SwitchController = false;
-            XboxController = true;
-            KeyboardAndMouse = false;
-        }
-        //changes input related text depending on current input device
-        if (_areInteractables)
-        {
-            NpcDialogueController.Instance.ControllerText();
-        }
-        if (_areTextBlurbs)
-        {
-            ControllerTextChecker.Instance.TutorialTextChange();
-        }
-        if (_areSettings)
-        {
-            ControllerTextChecker.Instance.TutorialTextChange();
-        }
     }
 
     /// <summary>
