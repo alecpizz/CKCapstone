@@ -22,7 +22,7 @@ public class EnemyPathCycling : MonoBehaviour
     private int _cycleNumber = -1;
 
     public bool IsCycling { get; private set; } = false;
-    private static bool EnemyToggleState = false;
+    private static bool _enemyToggleState = false;
     private bool _singleEnemy = false;
     private bool _singleEnemyPathOn = false;
 
@@ -53,14 +53,10 @@ public class EnemyPathCycling : MonoBehaviour
 
         _input.InGame.CycleForward.performed += PathingForward;
         _input.InGame.Toggle.performed += ToggleEnemyPaths;
-        if (EnemyToggleState)
+        if (!_enemyToggleState) return;
+        foreach (var enemy in _allEnemyArray)
         {
-            Debug.Log("prev had toggle state");
-            foreach (var enemy in _allEnemyArray)
-            {
-                //our enemy code is bad so i have to call this twice.
-                enemy.PathingToggle(IsCycling);
-            }
+            enemy.PathingToggle(IsCycling);
         }
     }
 
@@ -150,7 +146,7 @@ public class EnemyPathCycling : MonoBehaviour
             enemy.PathingToggle(IsCycling);
         }
 
-        EnemyToggleState = !EnemyToggleState;
+        _enemyToggleState = !_enemyToggleState;
 
         if (IsCycling)
         {
