@@ -73,6 +73,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
     private static readonly int Happy = Animator.StringToHash("Happy");
     private static readonly int Sad = Animator.StringToHash("Sad");
     private static readonly int Angry = Animator.StringToHash("Angry");
+    private static readonly int Scared = Animator.StringToHash("Scared");
     [SerializeField] private Animator _animator;
 
     /// <summary>
@@ -182,6 +183,9 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
                     case EmotionType.ANGRY:
                         _animator.SetTrigger(Angry);
                         break;
+                    case EmotionType.SCARED:
+                        _animator.SetTrigger(Scared);
+                        break;
                 }
             }
 
@@ -264,6 +268,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
                 _animator.ResetTrigger(Happy);
                 _animator.ResetTrigger(Sad);
                 _animator.ResetTrigger(Angry);
+                _animator.ResetTrigger(Scared);
                 switch (_dialogueEntries[_currentDialogue].emotion)
                 {
                     case EmotionType.NEUTRAL:
@@ -277,6 +282,9 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
                         break;
                     case EmotionType.ANGRY:
                         _animator.SetTrigger(Angry);
+                        break;
+                    case EmotionType.SCARED:
+                        _animator.SetTrigger(Scared);
                         break;
                 }
             }
@@ -459,5 +467,6 @@ public enum EmotionType
     NEUTRAL,
     HAPPY,
     SAD,
-    ANGRY
+    ANGRY,
+    SCARED
 }
