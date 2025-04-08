@@ -26,6 +26,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
     [SerializeField] private TMP_Text _dialogueBox;
     [SerializeField] private Image _background;
     [SerializeField] private EndLevelDoor[] _doors;
+    [SerializeField] private bool isCollectible;
     [SerializeField] public Image _eKey;
     [SerializeField] public Image _nameBox;
     [SerializeField] public TMP_Text _nameText;
@@ -240,6 +241,12 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
             {
                 _currentDialogue = 0;
                 HideDialogue();
+
+                if (isCollectible)
+                {
+                    CollectableManager.Instance.Collection(gameObject);
+                }
+
                 return;
             }
 

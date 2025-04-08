@@ -116,6 +116,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""CollectibleMenu"",
+                    ""type"": ""Button"",
+                    ""id"": ""aa2feb34-7218-4c44-b709-cb86a373210e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -668,6 +677,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""MoveLeft"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2ae5e9be-3c51-404f-9975-58c5527957d7"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CollectibleMenu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -686,6 +706,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_InGame_MoveRight = m_InGame.FindAction("MoveRight", throwIfNotFound: true);
         m_InGame_MoveDown = m_InGame.FindAction("MoveDown", throwIfNotFound: true);
         m_InGame_MoveLeft = m_InGame.FindAction("MoveLeft", throwIfNotFound: true);
+        m_InGame_CollectibleMenu = m_InGame.FindAction("CollectibleMenu", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -757,6 +778,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_InGame_MoveRight;
     private readonly InputAction m_InGame_MoveDown;
     private readonly InputAction m_InGame_MoveLeft;
+    private readonly InputAction m_InGame_CollectibleMenu;
     public struct InGameActions
     {
         private @PlayerControls m_Wrapper;
@@ -771,6 +793,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @MoveRight => m_Wrapper.m_InGame_MoveRight;
         public InputAction @MoveDown => m_Wrapper.m_InGame_MoveDown;
         public InputAction @MoveLeft => m_Wrapper.m_InGame_MoveLeft;
+        public InputAction @CollectibleMenu => m_Wrapper.m_InGame_CollectibleMenu;
         public InputActionMap Get() { return m_Wrapper.m_InGame; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -810,6 +833,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @MoveLeft.started += instance.OnMoveLeft;
             @MoveLeft.performed += instance.OnMoveLeft;
             @MoveLeft.canceled += instance.OnMoveLeft;
+            @CollectibleMenu.started += instance.OnCollectibleMenu;
+            @CollectibleMenu.performed += instance.OnCollectibleMenu;
+            @CollectibleMenu.canceled += instance.OnCollectibleMenu;
         }
 
         private void UnregisterCallbacks(IInGameActions instance)
@@ -844,6 +870,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @MoveLeft.started -= instance.OnMoveLeft;
             @MoveLeft.performed -= instance.OnMoveLeft;
             @MoveLeft.canceled -= instance.OnMoveLeft;
+            @CollectibleMenu.started -= instance.OnCollectibleMenu;
+            @CollectibleMenu.performed -= instance.OnCollectibleMenu;
+            @CollectibleMenu.canceled -= instance.OnCollectibleMenu;
         }
 
         public void RemoveCallbacks(IInGameActions instance)
@@ -873,5 +902,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnMoveRight(InputAction.CallbackContext context);
         void OnMoveDown(InputAction.CallbackContext context);
         void OnMoveLeft(InputAction.CallbackContext context);
+        void OnCollectibleMenu(InputAction.CallbackContext context);
     }
 }
