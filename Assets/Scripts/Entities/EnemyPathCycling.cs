@@ -22,6 +22,7 @@ public class EnemyPathCycling : MonoBehaviour
     private int _cycleNumber = -1;
 
     public bool IsCycling { get; private set; } = false;
+    private static bool EnemyToggleState = false;
     private bool _singleEnemy = false;
     private bool _singleEnemyPathOn = false;
 
@@ -52,6 +53,15 @@ public class EnemyPathCycling : MonoBehaviour
 
         _input.InGame.CycleForward.performed += PathingForward;
         _input.InGame.Toggle.performed += ToggleEnemyPaths;
+        if (EnemyToggleState)
+        {
+            Debug.Log("prev had toggle state");
+            foreach (var enemy in _allEnemyArray)
+            {
+                //our enemy code is bad so i have to call this twice.
+                enemy.PathingToggle(IsCycling);
+            }
+        }
     }
 
     /// <summary>
@@ -75,6 +85,7 @@ public class EnemyPathCycling : MonoBehaviour
         {
             return;
         }
+
         //Makes it so it just turns on and off the enemy path if there is a single enemy
         //since there is no need for it to get turned on multiple times
         if (_singleEnemy)
@@ -111,6 +122,7 @@ public class EnemyPathCycling : MonoBehaviour
                 {
                     _allEnemyArray[i].PathingCycle();
                 }
+
                 _cycleNumber++;
             }
             //turns off all enemy paths and starts singular enemy cycling
@@ -120,6 +132,7 @@ public class EnemyPathCycling : MonoBehaviour
                 {
                     _allEnemyArray[i].PathingCycle();
                 }
+
                 _allEnemyArray[_cycleNumber].PathingCycle();
                 _cycleNumber++;
             }
@@ -136,6 +149,8 @@ public class EnemyPathCycling : MonoBehaviour
         {
             enemy.PathingToggle(IsCycling);
         }
+
+        EnemyToggleState = !EnemyToggleState;
 
         if (IsCycling)
         {
