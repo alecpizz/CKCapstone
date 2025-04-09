@@ -39,7 +39,19 @@ public class SwitchTrigger : MonoBehaviour, IGridEntry
     {
         SnapToGridSpace();
     }
-
+    
+    /// <summary>
+    /// For when the switch desyncs and the button is still pressed inwards
+    /// </summary>
+    /// <param name="other">the should be non-existent collider</param>
+    private void OnTriggerStay(Collider other)
+    {
+        if (_animator.GetBool("Pressed") && other == null)
+        {
+            _animator.SetTrigger("Pressed");
+        }
+    }
+    
     /// <summary>
     /// Turns the switch on/off every time the Player steps on it
     /// Moves walls when switch is on and back when it's off
@@ -49,14 +61,16 @@ public class SwitchTrigger : MonoBehaviour, IGridEntry
     {
         if (other.CompareTag("Player") || other.CompareTag("SonEnemy") || other.CompareTag("Enemy"))
         {
-            //changes the walls and plays a sound
-            for (int i = 0; i < _affectedWalls.Count; i++)
+            if (!_animator.GetBool("Pressed"))
             {
-                _affectedWalls[i].SwitchActivation();
+                //changes the walls and plays a sound
+                for (int i = 0; i < _affectedWalls.Count; i++)
+                {
+                    _affectedWalls[i].SwitchActivation();
 
-                AudioManager.Instance.PlaySound(_switchSound);
+                    AudioManager.Instance.PlaySound(_switchSound);
+                }
             }
-
             //changes the reflection cubes and plays a sound
             for (int i = 0; i < _affectedReflectors.Count; i++)
             {
