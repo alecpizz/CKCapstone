@@ -75,6 +75,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [PlayaInfoBox("The floor for how fast the enemy can move.")] [SerializeField]
     private float _minMoveTime = 0.175f;
 
+    [PlayaInfoBox("Time an enemy will wait if a beam switch will be pressed" +
+        "\n Should be greater than beam rotation time.")] [SerializeField]
+    private float _waitForBeamTime = 0.2f;
+
     private bool _currentGroupToggle = true;
     private bool _currentSoloToggle = true;
 
@@ -161,6 +165,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private bool _indicatorReturningToStart = false;
     private int _currentEnemyIndex = 0;
     private Vector3 _lastPosition;
+    private bool _waitOnBeam = false;
 
     //public static PlayerMovement Instance;
     private static readonly int Forward = Animator.StringToHash("Forward");
@@ -184,6 +189,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         BuildCellList();
         GridBase.Instance.AddEntry(this);
 
+        PlayerMovement.Instance.BeamSwitchActivation += () => _waitOnBeam = true;
         _destPathVFXMatSpeed = -_destPathVFXMatSpeed;
         _destPathMaterial.SetFloat("_Speed", _destPathVFXMatSpeed);
 
@@ -277,6 +283,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// </summary>
     private void OnDisable()
     {
+        PlayerMovement.Instance.BeamSwitchActivation -= () => _waitOnBeam = true;
+
         if (RoundManager.Instance != null)
         {
             RoundManager.Instance.UnRegisterListener(this);
@@ -458,6 +466,20 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private IEnumerator MovementRoutine()
     {
         yield return new WaitForSeconds(_timeBeforeTurn);
+
+        // If the player is going to press a harmony switch, wait for the beam
+        if (_waitOnBeam)
+        {
+            yield return new WaitForSeconds(_waitForBeamTime);
+            _waitOnBeam = false;
+            HarmonyBeam.TriggerHarmonyScan?.Invoke();
+        }
+
+        if (_isFrozen)
+        {
+            RoundManager.Instance.CompleteTurn(this);
+            yield break;
+        }
         
         bool blocked = false;
         for (int i = 0; i < _enemyMovementTime; i++)
