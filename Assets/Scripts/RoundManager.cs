@@ -304,9 +304,10 @@ public sealed class RoundManager : MonoBehaviour
     /// <param name="listener">The listener to repeat a turn.</param>
     public void RequestRepeatTurnStateRepeat(ITurnListener listener)
     {
-        //Stops Held Movement
-        if (!_inputBuffered)
+        if (!_playerControls.InGame.Movement.IsPressed() && !_inputBuffered)
+        {
             _movementRegistered = false;
+        }
 
         // Returns if it's not the listener's turn
         if (listener.TurnState != _turnState &&
