@@ -185,13 +185,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     {
         PrimeTweenConfig.warnEndValueEqualsCurrent = false;
         PrimeTweenConfig.warnZeroDuration = false;
-    }
-
-    /// <summary>
-    /// Start is called before the first frame update.
-    /// </summary>
-    private void Start()
-    {
         SnapToGridSpace();
         BuildCellList();
         GridBase.Instance.AddEntry(this);
@@ -209,10 +202,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
         // Make sure enemies are always seen at the start
 
-        if (TimeSignatureManager.Instance != null)
-        {
-            TimeSignatureManager.Instance.RegisterTimeListener(this);
-        }
+       
 
         _vfxLine = _destPathVFX.GetComponent<LineRenderer>();
         _vfxLine.positionCount = 2;
@@ -229,6 +219,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// </summary>
     private void OnEnable()
     {
+        if (TimeSignatureManager.Instance != null)
+        {
+            TimeSignatureManager.Instance.RegisterTimeListener(this);
+        }
         if (RoundManager.Instance != null)
         {
             RoundManager.Instance.RegisterListener(this);
