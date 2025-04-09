@@ -189,7 +189,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         BuildCellList();
         GridBase.Instance.AddEntry(this);
 
-        PlayerMovement.Instance.BeamSwitchActivation += () => _waitOnBeam = true;
         _destPathVFXMatSpeed = -_destPathVFXMatSpeed;
         _destPathMaterial.SetFloat("_Speed", _destPathVFXMatSpeed);
 
@@ -201,23 +200,19 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _destinationMarker.transform.SetParent(null);
 
         // Make sure enemies are always seen at the start
-
-       
-
         _vfxLine = _destPathVFX.GetComponent<LineRenderer>();
         _vfxLine.positionCount = 2;
 
         _destPathVFX.SetActive(false);
         _destinationMarker.SetActive(false);
 
-        UpdateDestinationMarker();
-        DestinationPath();
+        
     }
 
     /// <summary>
     /// Registers the instance in the RoundManager.
     /// </summary>
-    private void OnEnable()
+    private void Start()
     {
         if (TimeSignatureManager.Instance != null)
         {
@@ -227,6 +222,13 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         {
             RoundManager.Instance.RegisterListener(this);
         }
+        if (PlayerMovement.Instance != null)
+        {
+            PlayerMovement.Instance.BeamSwitchActivation += () => _waitOnBeam = true;
+        }
+
+        UpdateDestinationMarker();
+        DestinationPath();
     }
 
     /// <summary>
