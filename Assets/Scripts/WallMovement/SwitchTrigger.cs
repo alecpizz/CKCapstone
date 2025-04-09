@@ -21,6 +21,8 @@ using FMOD.Studio;
 /// </summary>
 public class SwitchTrigger : MonoBehaviour, IGridEntry
 {
+    public bool HarmonyBeamsPresent => _affectedBeams.Count > 0;
+
     // for registering mechanics to a switch
     [SerializeReference] private List<MovingWall> _affectedWalls = new List<MovingWall>();
     [SerializeReference] private List<ReflectionSwitch> _affectedReflectors = new List<ReflectionSwitch>();
@@ -38,6 +40,7 @@ public class SwitchTrigger : MonoBehaviour, IGridEntry
     private void Awake()
     {
         SnapToGridSpace();
+        GridBase.Instance.AddEntry(this);
     }
 
     /// <summary>
