@@ -85,7 +85,7 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
 
     /// <summary>
     /// Original position of the wall is given
-    /// And ghost wall is put in it's initial position
+    /// And ghost wall is put in its initial position
     /// </summary>
     void Start()
     {
@@ -93,11 +93,11 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
 
         _originWall = transform.position;
         // Maintains same height to ensure consistency when swapping
-        _originWall.y = _wallGhost.transform.position.y;
+        _originWall.y = transform.position.y;
 
         _originGhost = _wallGhost.transform.position;
         // Maintains same height to ensure consistency when swapping
-        _originGhost.y = transform.position.y;
+        _originGhost.y = _wallGhost.transform.position.y;
     }
 
 

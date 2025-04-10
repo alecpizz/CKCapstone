@@ -32,24 +32,14 @@ public class SwitchTrigger : MonoBehaviour, IGridEntry
     //reference for sound of switch
     [SerializeField] private EventReference _switchSound = default;
 
-    /// <summary>
+    private bool _onTopSwitch = false;
+
+/// <summary>
     /// Positions the switch to be at a height where it doesn't clip into the ground
     /// </summary>
     private void Awake()
     {
         SnapToGridSpace();
-    }
-    
-    /// <summary>
-    /// For when the switch desyncs and the button is still pressed inwards
-    /// </summary>
-    /// <param name="other">the should be non-existent collider</param>
-    private void OnTriggerStay(Collider other)
-    {
-        if (_animator.GetBool("Pressed") && other == null)
-        {
-            _animator.SetTrigger("Pressed");
-        }
     }
     
     /// <summary>
@@ -61,8 +51,6 @@ public class SwitchTrigger : MonoBehaviour, IGridEntry
     {
         if (other.CompareTag("Player") || other.CompareTag("SonEnemy") || other.CompareTag("Enemy"))
         {
-            if (!_animator.GetBool("Pressed"))
-            {
                 //changes the walls and plays a sound
                 for (int i = 0; i < _affectedWalls.Count; i++)
                 {
@@ -70,7 +58,6 @@ public class SwitchTrigger : MonoBehaviour, IGridEntry
 
                     AudioManager.Instance.PlaySound(_switchSound);
                 }
-            }
             //changes the reflection cubes and plays a sound
             for (int i = 0; i < _affectedReflectors.Count; i++)
             {
@@ -89,7 +76,7 @@ public class SwitchTrigger : MonoBehaviour, IGridEntry
 
             if (_animator != null)
             {
-                _animator.SetTrigger("Pressed");
+                _animator.SetBool("Pressed", true);
             }
         }
     }
@@ -104,7 +91,7 @@ public class SwitchTrigger : MonoBehaviour, IGridEntry
         {
             if (_animator != null)
             {
-                _animator.SetTrigger("Pressed");
+                _animator.SetBool("Pressed", false);
             }
         }
     }
