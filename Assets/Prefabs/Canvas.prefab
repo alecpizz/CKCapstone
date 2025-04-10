@@ -890,10 +890,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2144776302792748783}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: -25, y: -187.5}
+  m_SizeDelta: {x: 150, y: 25}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &7034587572567515884
 CanvasRenderer:
@@ -3272,7 +3272,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 2.3}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 763.6, y: -687.5}
+  m_AnchoredPosition: {x: 758.8, y: -687.5}
   m_SizeDelta: {x: 408, y: 241}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4196290845523172019
@@ -3303,7 +3303,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 55ca2037677abdc48a5c3e5b6938229d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: be51d62586454da4ea003c062bd64580, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5449,7 +5449,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 2.3}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 760, y: -606.5}
+  m_AnchoredPosition: {x: 760.9, y: -606.5}
   m_SizeDelta: {x: 408, y: 241}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7451300658455294752
@@ -5480,7 +5480,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 55ca2037677abdc48a5c3e5b6938229d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3d6b066951de8bd45ab2acd92242763e, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6114,7 +6114,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &393609801819263371
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7269,16 +7269,17 @@ MonoBehaviour:
   _levelSelectButtonGameObject: {fileID: 3175680242813974834}
   _cutscenesButtonGameObject: {fileID: 3581706804791408594}
   _collectablesButtonGameObject: {fileID: 1978260789099569129}
-  _ogDisplayImage: {fileID: 21300000, guid: 38407cb9bfe8276458176142cb814ed8, type: 3}
-  _ogAudioImage: {fileID: 21300000, guid: f6a7ee8b7f99f4c43877505733d27a2c, type: 3}
-  _ogAccessibilityImage: {fileID: 21300000, guid: a9bd0391e36608d4ba9bc230a0f6e29a,
+  _ogDisplayImage: {fileID: 21300000, guid: 1b6e9fc1ea88fdd4aa5f888bc3d4fb72, type: 3}
+  _ogAudioImage: {fileID: 21300000, guid: a5b0911bedb25a1428b575461541756b, type: 3}
+  _ogAccessibilityImage: {fileID: 21300000, guid: f12f22ee628be6d4bb669410972b2256,
     type: 3}
-  _ogGameplayImage: {fileID: 21300000, guid: d56eedb0c7085ff48ab7a54b1c6d11cb, type: 3}
-  _ogHowToPlayImage: {fileID: 21300000, guid: b820160bf2f5a35429406b7fe8251b6c, type: 3}
-  _ogLevelSelectImage: {fileID: 21300000, guid: f38da148c1b10dc49906ff881c61d81e,
+  _ogGameplayImage: {fileID: 21300000, guid: 78cdb9247f02a154d91025252ed1f0f1, type: 3}
+  _ogHowToPlayImage: {fileID: 21300000, guid: b02035e6a3a28a64da267741143cdf78, type: 3}
+  _ogLevelSelectImage: {fileID: 21300000, guid: cab0407f7933d34459e0a6b864651c43,
     type: 3}
-  _ogCutscenesImage: {fileID: 0}
-  _ogCollectablesImage: {fileID: 0}
+  _ogCutscenesImage: {fileID: 21300000, guid: 7426f78d770fd144e9c97b64fa180591, type: 3}
+  _ogCollectablesImage: {fileID: 21300000, guid: 6bdbe0744bad80d438657e04b6228194,
+    type: 3}
   _altDisplayImage: {fileID: 21300000, guid: 35d45b472b3e6fe49bde828230b4d861, type: 3}
   _altAudioImage: {fileID: 21300000, guid: d1ee1f41201edd44695eef8268922cf9, type: 3}
   _altAccessibilityImage: {fileID: 21300000, guid: de1cda1a25be6ae478f5f09457cb17a2,
@@ -7287,8 +7288,9 @@ MonoBehaviour:
   _altHowToPlayImage: {fileID: 21300000, guid: 2d26d2c4f81a67549881364247d86d8b, type: 3}
   _altLevelSelectImage: {fileID: 21300000, guid: 55ca2037677abdc48a5c3e5b6938229d,
     type: 3}
-  _altCutscenesImage: {fileID: 0}
-  _altCollectablesImage: {fileID: 0}
+  _altCutscenesImage: {fileID: 21300000, guid: 3d6b066951de8bd45ab2acd92242763e, type: 3}
+  _altCollectablesImage: {fileID: 21300000, guid: be51d62586454da4ea003c062bd64580,
+    type: 3}
 --- !u!1 &4732727598548171326
 GameObject:
   m_ObjectHideFlags: 0
@@ -12976,7 +12978,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 1
+  m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &7733511358964309808
@@ -13736,10 +13738,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2144776302792748783}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: -25, y: -12.5}
+  m_SizeDelta: {x: 150, y: 25}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &4761829982066400170
 CanvasRenderer:
