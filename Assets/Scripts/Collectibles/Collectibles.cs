@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Taylor Sims
-*    Contributors: Alex Laubenstein, Alec Pizziferro
+*    Contributors: Alex Laubenstein, Alec Pizziferro, Trinity Hutson
 *    Date Created: 09-24-24
 *    Description: This script is the collection system for Notes.
 *******************************************************************/
@@ -23,6 +23,8 @@ public class Collectibles : MonoBehaviour, IGridEntry
     [SerializeField] private int _collectibleNumber;
     [SerializeField] private EventReference _sound;
     [FormerlySerializedAs("NoteGlow")] [SerializeField] private GameObject _noteGlow;
+
+    public int CollectibleNumber { get => _collectibleNumber; } 
 
     private void Start()
     {
@@ -81,6 +83,7 @@ public class Collectibles : MonoBehaviour, IGridEntry
 
     public bool IsTransparent => true;
     public bool BlocksHarmonyBeam => false;
+    public bool BlocksMovingWall => false;
     public Vector3 Position => transform.position;
     public GameObject EntryObject => gameObject;
     public void SnapToGridSpace()

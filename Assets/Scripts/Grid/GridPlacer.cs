@@ -22,6 +22,7 @@ public class GridPlacer : MonoBehaviour, IGridEntry
 {
     public bool IsTransparent { get => _isTransparent; set => _isTransparent = value; }
     public bool BlocksHarmonyBeam { get => _blocksHarmonyBeam; set => _blocksHarmonyBeam = value; }
+    public bool BlocksMovingWall => false;
     public Vector3 Position { get => transform.position; }
     public GameObject EntryObject { get => gameObject; }
 
