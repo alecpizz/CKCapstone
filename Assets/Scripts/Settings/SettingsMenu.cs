@@ -37,12 +37,12 @@ public class SettingsMenu : MonoBehaviour
         LoadSettings();
 
         // Add listeners after loading settings
+        SetupResolutionDropdown();
         _resolutionDropdown.onValueChanged.AddListener(SetResolution);
         _fullscreenToggle.onValueChanged.AddListener(SetFullscreen);
         _tooltipsToggle.onValueChanged.AddListener(SetTooltips);
         _subtitlesToggle.onValueChanged.AddListener(SetSubtitles);
 
-        SetupResolutionDropdown();
     }
 
     /// <summary>
@@ -89,8 +89,10 @@ public class SettingsMenu : MonoBehaviour
             });
         }
 
-        int currentResolutionIndex = _resolutions.IndexOf(Screen.currentResolution);
-        
+        int currentResolutionIndex = _resolutions.FindIndex(resolution => 
+            resolution.height == Screen.currentResolution.height 
+            && resolution.width == Screen.currentResolution.width);
+        Debug.Log($"NATIVE RESOLUTION IDX IS {currentResolutionIndex}");
         //goes through the list and adds the dimensions to the options list
         foreach (var resolution in _resolutions)
         {
@@ -104,6 +106,7 @@ public class SettingsMenu : MonoBehaviour
         var resolutionIdx = SaveDataManager.GetSettingInt(ScreenName, Resolution);
         if (resolutionIdx == -1)
         {
+            Debug.Log($"NO RESOLUTION SAVED, SAVING RESOLUTION AS");
             resolutionIdx = currentResolutionIndex;
             SaveDataManager.SetSettingInt(ScreenName, Resolution, resolutionIdx);
         }
