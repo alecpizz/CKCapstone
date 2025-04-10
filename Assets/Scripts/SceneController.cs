@@ -7,6 +7,8 @@
 *    Used https://www.youtube.com/watch?v=9d5Pz4SNmqo&t=300s as reference
 *    for the shader graph set-up.
 *******************************************************************/
+
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -30,6 +32,7 @@ public class SceneController : MonoBehaviour
     [SerializeField] private float _timeForScreenWipe;
     [SerializeField] private bool _shouldFadeInOnLoad;
     [SerializeField] private EventReference _endSound;
+    [SerializeField] private EventReference _deathSound;
     [SerializeField] private bool _playSoundOnSceneChange = true;
 
     private readonly int _circleSizePropId = Shader.PropertyToID("_CircleSize");
@@ -62,7 +65,6 @@ public class SceneController : MonoBehaviour
         
         Transitioning = false;
     }
-
     /// <summary>
     /// Called to reload the current scene after a fade out transition
     /// </summary>
@@ -135,10 +137,20 @@ public class SceneController : MonoBehaviour
         Transitioning = true;
         
         RepositionCircleWipe();
-        if (AudioManager.Instance != null && _playSoundOnSceneChange)
-        {
-            AudioManager.Instance.PlaySound(_endSound);
+
+        if (AudioManager.Instance != null) {
+
+            if (_playSoundOnSceneChange && PlayerMovement.Instance != null)
+            {
+                if (PlayerMovement.Instance.PlayerDied)
+                    AudioManager.Instance.PlaySound(_deathSound);
+                else
+                    AudioManager.Instance.PlaySound(_endSound);
+            }
+            else
+                AudioManager.Instance.PlaySound(_endSound);
         }
+
         yield return new WaitForEndOfFrame();
         
         
