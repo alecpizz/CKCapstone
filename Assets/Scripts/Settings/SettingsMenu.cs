@@ -92,7 +92,6 @@ public class SettingsMenu : MonoBehaviour
         int currentResolutionIndex = _resolutions.FindIndex(resolution => 
             resolution.height == Screen.currentResolution.height 
             && resolution.width == Screen.currentResolution.width);
-        Debug.Log($"NATIVE RESOLUTION IDX IS {currentResolutionIndex}");
         //goes through the list and adds the dimensions to the options list
         foreach (var resolution in _resolutions)
         {
@@ -106,7 +105,6 @@ public class SettingsMenu : MonoBehaviour
         var resolutionIdx = SaveDataManager.GetSettingInt(ScreenName, Resolution);
         if (resolutionIdx == -1)
         {
-            Debug.Log($"NO RESOLUTION SAVED, SAVING RESOLUTION AS");
             resolutionIdx = currentResolutionIndex;
             SaveDataManager.SetSettingInt(ScreenName, Resolution, resolutionIdx);
         }
