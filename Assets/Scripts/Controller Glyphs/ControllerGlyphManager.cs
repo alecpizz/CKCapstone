@@ -1,3 +1,11 @@
+/******************************************************************
+*    Author: Alex Laubenstein
+*    Contributors: Alex Laubenstein
+*    Date Created: April 7th, 2025
+*    Description: This script is what handles controller detection and
+     the variables needed to change in game text to match the input device
+     that is currently in use
+*******************************************************************/
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -25,7 +33,7 @@ public class ControllerGlyphManager : MonoBehaviour
 
     private NpcDialogueController[] _interactableArray;
     private ControllerTextChecker[] _textBlurbArray;
-    private HowToPlayControllerChecker[] _htpArray;
+    private ControllerTextChecker[] _htpArray;
 
     /// <summary>
     /// sets up variables when first possible
@@ -42,7 +50,7 @@ public class ControllerGlyphManager : MonoBehaviour
 
         _interactableArray = GameObject.FindObjectsOfType<NpcDialogueController>();
         _textBlurbArray = GameObject.FindObjectsOfType<ControllerTextChecker>();
-        _htpArray = GameObject.FindObjectsOfType<HowToPlayControllerChecker>();
+        _htpArray = GameObject.FindObjectsOfType<ControllerTextChecker>();
     }
 
     /// <summary>
@@ -165,5 +173,120 @@ public class ControllerGlyphManager : MonoBehaviour
                 htp.HowToPlayTextChange();
             }
         }
+    }
+
+    public string GetGlyph()
+    {
+        string buttonText = "";
+        string talkorInteract;
+
+        if (PlayStationController)
+        {
+            foreach (var interactable in _interactableArray)
+            
+                interactable._eKey.sprite = interactable._playstationButtonPrompt;
+                buttonText = "X";
+            
+        }
+        else if (SwitchController || XboxController)
+        {
+            foreach (var interactable in _interactableArray)
+            {
+                interactable._eKey.sprite = interactable._letterButtonPrompt;
+                buttonText = "A";
+            }
+        }
+        else
+        {
+            foreach (var interactable in _interactableArray)
+            {
+                interactable._eKey.sprite = interactable._keyboardPrompt;
+                buttonText = "E";
+            }
+        }
+        if (gameObject.name == "TextInteractablePrefab") //mother or son (they aren't properly named yet)
+        {
+            talkorInteract = "Talk";
+        }
+        else
+        {
+            talkorInteract = "Interact";
+        }
+        return "Press " + buttonText + " to " + talkorInteract;
+    }
+
+    public string TutorialText()
+    {
+        string tutorialText = "";
+        if (PlayStationController)
+        {
+            foreach (var blurb in _textBlurbArray)
+            {
+                tutorialText = blurb._playstationText;
+            }
+
+        }
+        else if (SwitchController)
+        {
+            foreach (var blurb in _textBlurbArray)
+            {
+                tutorialText = blurb._playstationText;
+            }
+        }
+        else if (XboxController)
+        {
+            foreach (var blurb in _textBlurbArray)
+            {
+                tutorialText = blurb._controllerText;
+            }
+        }
+        else
+        {
+            foreach (var blurb in _textBlurbArray)
+            {
+                tutorialText = blurb._keyboardText;
+            }
+        }
+        return tutorialText;
+    }
+
+    public string HowToPlayText()
+    {
+        string htp = "";
+        if (PlayStationController)
+        {
+            foreach (var htpText in _htpArray)
+            {
+                htp = "Collect notes in ascending order\r\nMove: Left control stick or D-pad\r\n" +
+                "Restart Level: Share\r\nPause: Options\r\nEnemy Path Toggle: Triangle\r\nIndividual Enemy Path Cycle: L1 or R1";
+            }
+            
+        }
+        else if (SwitchController)
+        {
+            foreach (var htpText in _htpArray)
+            {
+                htp = "Collect notes in ascending order\r\nMove: Left control stick or D-pad\r\n" +
+                "Restart Level: Select\r\nPause: Start\r\nEnemy Path Toggle: X\r\nIndividual Enemy Path Cycle: L or R";
+            }
+        }
+        else if  (XboxController)
+        {
+            foreach (var htpText in _htpArray)
+            {
+                htp = "Collect notes in ascending order\r\nMove: Left control stick or D-pad\r\n" +
+                "Restart Level: Select\r\nPause: Start\r\nEnemy Path Toggle: Y\r\nIndividual Enemy Path Cycle: LB or RB";
+            }
+            
+        }
+        else
+        {
+            foreach (var htpText in _htpArray)
+            {
+                htp = "Collect notes in ascending order\r\nMove: WASD or arrow keys\r\n" +
+                "Restart Level: R\r\nPause: Esc\r\nEnemy Path Toggle: Q";
+            }
+        }
+        return htp; 
     }
 }

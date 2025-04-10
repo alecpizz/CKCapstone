@@ -14,7 +14,7 @@ using UnityEngine.SceneManagement;
 
 public class HowToPlayControllerChecker : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI _tutorialText;
+    [SerializeField] private TextMeshProUGUI _howToPlayText;
 
     [SerializeField] private string _keyboardText;
     [SerializeField] private string _controllerText; //Text for Xbox/Generic Controllers
@@ -32,25 +32,6 @@ public class HowToPlayControllerChecker : MonoBehaviour
     /// </summary>
     public void HowToPlayTextChange()
     {
-        if (ControllerGlyphManager.Instance.KeyboardAndMouse)
-        {
-            _tutorialText.text = "Collect notes in ascending order\r\nMove: WASD or arrow keys\r\n" +
-                "Restart Level: R\r\nPause: Esc\r\nEnemy Path Toggle: Q";
-        }
-        else if (ControllerGlyphManager.Instance.SwitchController)
-        {
-            _tutorialText.text = "Collect notes in ascending order\r\nMove: Left control stick or D-pad\r\n" +
-                "Restart Level: Select\r\nPause: Start\r\nEnemy Path Toggle: X\r\nIndividual Enemy Path Cycle: L or R";
-        }
-        else if (ControllerGlyphManager.Instance.PlayStationController)
-        {
-            _tutorialText.text = "Collect notes in ascending order\r\nMove: Left control stick or D-pad\r\n" +
-                "Restart Level: Share\r\nPause: Options\r\nEnemy Path Toggle: Triangle\r\nIndividual Enemy Path Cycle: L1 or R1";
-        }
-        else
-        {
-            _tutorialText.text = "Collect notes in ascending order\r\nMove: Left control stick or D-pad\r\n" +
-                "Restart Level: Select\r\nPause: Start\r\nEnemy Path Toggle: Y\r\nIndividual Enemy Path Cycle: LB or RB";
-        }
+          _howToPlayText.text = ControllerGlyphManager.Instance.HowToPlayText();
     }
 }

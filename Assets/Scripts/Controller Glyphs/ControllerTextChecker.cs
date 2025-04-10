@@ -11,16 +11,19 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.XR;
 using UnityEngine.SceneManagement;
+using UnityEngine.TextCore;
 
 public class ControllerTextChecker : MonoBehaviour
 {
     private Scene currentScene;
     [SerializeField] private TextMeshProUGUI _tutorialText;
-    [SerializeField] private string _keyboardText;
-    [SerializeField] private string _controllerText; //Text for Xbox/Generic Controllers
-    [SerializeField] private string _playstationText; //Text for PS Controllers
-    [SerializeField] private string _switchText; //Text for Switch Pro Controllers
+    [SerializeField] private TextMeshProUGUI _howToPlayText;
+    [SerializeField] public string _keyboardText;
+    [SerializeField] public string _controllerText; //Text for Xbox/Generic Controllers
+    [SerializeField] public string _playstationText; //Text for PS Controllers
+    [SerializeField] public string _switchText; //Text for Switch Pro Controllers
 
     /// <summary>
     /// Start is called before the first frame update
@@ -30,6 +33,7 @@ public class ControllerTextChecker : MonoBehaviour
     {
         currentScene = SceneManager.GetActiveScene();
         TutorialTextChange();
+        HowToPlayTextChange();
     }
 
     /// <summary>
@@ -37,39 +41,10 @@ public class ControllerTextChecker : MonoBehaviour
     /// </summary>
     public void TutorialTextChange()
     {
-        if (currentScene.name == "T_FirstDay") //Movement tutorial
-        {
-            if (ControllerGlyphManager.Instance.KeyboardAndMouse)
-            {
-                _tutorialText.text = _keyboardText;
-            }
-            else
-            {
-                _tutorialText.text = _controllerText;
-            }
-        }
-        if (currentScene.name == "T_SteerClear_Sp") // Enemy path toggle tutorial
-        {
-            if (ControllerGlyphManager.Instance.KeyboardAndMouse)
-            {
-                _tutorialText.text = _keyboardText;
-            }
-            else if (ControllerGlyphManager.Instance.SwitchController)
-            {
-                _tutorialText.text = _switchText;
-            }
-            else if (ControllerGlyphManager.Instance.PlayStationController)
-            {
-                _tutorialText.text = _playstationText;
-            }
-            else
-            {
-                _tutorialText.text = _controllerText;
-            }
-        }
-        else
-        {
-            return;
-        }
+        _tutorialText.text = ControllerGlyphManager.Instance.TutorialText();
+    }
+    public void HowToPlayTextChange()
+    {
+        _howToPlayText.text = ControllerGlyphManager.Instance.HowToPlayText();
     }
 }

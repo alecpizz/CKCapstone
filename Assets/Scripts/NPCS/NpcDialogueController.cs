@@ -29,9 +29,9 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
     [SerializeField] public Image _eKey;
     [SerializeField] public Image _nameBox;
     [SerializeField] public TMP_Text _nameText;
-    [SerializeField] private Sprite _keyboardPrompt;
-    [SerializeField] private Sprite _playstationButtonPrompt;
-    [SerializeField] private Sprite _letterButtonPrompt; //Switch and Xbox sprite
+    [SerializeField] public Sprite _keyboardPrompt;
+    [SerializeField] public Sprite _playstationButtonPrompt;
+    [SerializeField] public Sprite _letterButtonPrompt; //Switch and Xbox sprite
 
     [Serializable]
     public struct DialogueEntry
@@ -441,39 +441,10 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
     /// </summary>
     public void ControllerText()
     {
-        _tutorialHint = GetGlyph();
+        _tutorialHint = ControllerGlyphManager.Instance.GetGlyph();
     }
 
-    private string GetGlyph()
-    {
-        string buttonText;
-        string talkorInteract;
-
-        if (ControllerGlyphManager.Instance.PlayStationController)
-        {
-            _eKey.sprite = _playstationButtonPrompt;
-            buttonText = "X";
-        }
-        else if (ControllerGlyphManager.Instance.SwitchController || ControllerGlyphManager.Instance.XboxController)
-        {
-            _eKey.sprite = _letterButtonPrompt;
-            buttonText = "A";
-        }
-        else
-        {
-            _eKey.sprite = _keyboardPrompt;
-            buttonText = "E";
-        }
-        if (gameObject.name == "TextInteractablePrefab") //mother or son (they aren't properly named yet)
-        {
-            talkorInteract = "Talk";
-        }
-        else
-        {
-            talkorInteract = "Interact";
-        }
-        return "Press " + buttonText + " to " + talkorInteract;
-    }
+    
 
     /// <summary>
     /// Makes sure the NPC has dialogue entries
