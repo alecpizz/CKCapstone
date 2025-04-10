@@ -31,8 +31,7 @@ public class SwitchTrigger : MonoBehaviour, IGridEntry
 
     //reference for sound of switch
     [SerializeField] private EventReference _switchSound = default;
-
-    private bool _onTopSwitch = false;
+    
 
 /// <summary>
     /// Positions the switch to be at a height where it doesn't clip into the ground
