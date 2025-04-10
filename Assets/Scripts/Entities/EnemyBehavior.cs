@@ -18,6 +18,8 @@ using Unity.VisualScripting;
 using FMODUnity;
 using SaintsField;
 using SaintsField.Playa;
+using UnityEngine.UI;
+using TMPro;
 
 public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     ITurnListener, IHarmonyBeamEntity
@@ -72,6 +74,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     [PlayaInfoBox("The floor for how fast the enemy can move.")] [SerializeField]
     private float _minMoveTime = 0.175f;
+
+    [PlayaInfoBox("Time an enemy will wait if a beam switch will be pressed" +
+        "\n Should be greater than beam rotation time.")] [SerializeField]
+    private float _waitForBeamTime = 0.2f;
 
     private bool _currentGroupToggle = true;
     private bool _currentSoloToggle = true;
@@ -159,6 +165,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private bool _indicatorReturningToStart = false;
     private int _currentEnemyIndex = 0;
     private Vector3 _lastPosition;
+    private bool _waitOnBeam = false;
 
     //public static PlayerMovement Instance;
     private static readonly int Forward = Animator.StringToHash("Forward");
@@ -166,8 +173,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private static readonly int Frozen = Animator.StringToHash("Frozen");
     private static readonly int Turn = Animator.StringToHash("Turn");
 
-
     [SerializeField] private Animator _animator;
+
+    [SerializeField] private float _destPathVFXMatSpeed = -0.25f;
+    [SerializeField] private Material _destPathMaterial;
 
     /// <summary>
     /// Disables a PrimeTween warning.
@@ -176,16 +185,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     {
         PrimeTweenConfig.warnEndValueEqualsCurrent = false;
         PrimeTweenConfig.warnZeroDuration = false;
-    }
-
-    /// <summary>
-    /// Start is called before the first frame update.
-    /// </summary>
-    private void Start()
-    {
         SnapToGridSpace();
         BuildCellList();
         GridBase.Instance.AddEntry(this);
+
+        _destPathVFXMatSpeed = -_destPathVFXMatSpeed;
+        _destPathMaterial.SetFloat("_Speed", _destPathVFXMatSpeed);
 
         _rb = GetComponent<Rigidbody>();
         _rb.isKinematic = true;
@@ -195,31 +200,35 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _destinationMarker.transform.SetParent(null);
 
         // Make sure enemies are always seen at the start
-
-        if (TimeSignatureManager.Instance != null)
-        {
-            TimeSignatureManager.Instance.RegisterTimeListener(this);
-        }
-
         _vfxLine = _destPathVFX.GetComponent<LineRenderer>();
         _vfxLine.positionCount = 2;
 
         _destPathVFX.SetActive(false);
         _destinationMarker.SetActive(false);
 
-        UpdateDestinationMarker();
-        DestinationPath();
+        
     }
 
     /// <summary>
     /// Registers the instance in the RoundManager.
     /// </summary>
-    private void OnEnable()
+    private void Start()
     {
+        if (TimeSignatureManager.Instance != null)
+        {
+            TimeSignatureManager.Instance.RegisterTimeListener(this);
+        }
         if (RoundManager.Instance != null)
         {
             RoundManager.Instance.RegisterListener(this);
         }
+        if (PlayerMovement.Instance != null)
+        {
+            PlayerMovement.Instance.BeamSwitchActivation += () => _waitOnBeam = true;
+        }
+
+        UpdateDestinationMarker();
+        DestinationPath();
     }
 
     /// <summary>
@@ -276,6 +285,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// </summary>
     private void OnDisable()
     {
+        PlayerMovement.Instance.BeamSwitchActivation -= () => _waitOnBeam = true;
+
         if (RoundManager.Instance != null)
         {
             RoundManager.Instance.UnRegisterListener(this);
@@ -457,6 +468,20 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private IEnumerator MovementRoutine()
     {
         yield return new WaitForSeconds(_timeBeforeTurn);
+
+        // If the player is going to press a harmony switch, wait for the beam
+        if (_waitOnBeam)
+        {
+            yield return new WaitForSeconds(_waitForBeamTime);
+            _waitOnBeam = false;
+            HarmonyBeam.TriggerHarmonyScan?.Invoke();
+        }
+
+        if (_isFrozen)
+        {
+            RoundManager.Instance.CompleteTurn(this);
+            yield break;
+        }
         
         bool blocked = false;
         for (int i = 0; i < _enemyMovementTime; i++)
@@ -680,6 +705,18 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         }
 
         _currentEnemyIndex = moveIndex;
+
+        if (_circularMovement)
+        {
+            return;
+        }
+
+        //If moveIndex is at the first or last position the destination path vfx will reverse
+        if (moveIndex == 0 || moveIndex == _moveDestinations.Count - 1)
+        {
+            _destPathVFXMatSpeed = -_destPathVFXMatSpeed;
+            _destPathMaterial.SetFloat("_Speed", _destPathVFXMatSpeed);
+        }
     }
 
 

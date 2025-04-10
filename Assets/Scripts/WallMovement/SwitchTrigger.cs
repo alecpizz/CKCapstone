@@ -21,6 +21,8 @@ using FMOD.Studio;
 /// </summary>
 public class SwitchTrigger : MonoBehaviour, IGridEntry
 {
+    public bool HarmonyBeamsPresent => _affectedBeams.Count > 0;
+
     // for registering mechanics to a switch
     [SerializeReference] private List<MovingWall> _affectedWalls = new List<MovingWall>();
     [SerializeReference] private List<ReflectionSwitch> _affectedReflectors = new List<ReflectionSwitch>();
@@ -31,15 +33,17 @@ public class SwitchTrigger : MonoBehaviour, IGridEntry
 
     //reference for sound of switch
     [SerializeField] private EventReference _switchSound = default;
+    
 
-    /// <summary>
+/// <summary>
     /// Positions the switch to be at a height where it doesn't clip into the ground
     /// </summary>
     private void Awake()
     {
         SnapToGridSpace();
+        GridBase.Instance.AddEntry(this);
     }
-
+    
     /// <summary>
     /// Turns the switch on/off every time the Player steps on it
     /// Moves walls when switch is on and back when it's off
@@ -49,14 +53,13 @@ public class SwitchTrigger : MonoBehaviour, IGridEntry
     {
         if (other.CompareTag("Player") || other.CompareTag("SonEnemy") || other.CompareTag("Enemy"))
         {
-            //changes the walls and plays a sound
-            for (int i = 0; i < _affectedWalls.Count; i++)
-            {
-                _affectedWalls[i].SwitchActivation();
+                //changes the walls and plays a sound
+                for (int i = 0; i < _affectedWalls.Count; i++)
+                {
+                    _affectedWalls[i].SwitchActivation();
 
-                AudioManager.Instance.PlaySound(_switchSound);
-            }
-
+                    AudioManager.Instance.PlaySound(_switchSound);
+                }
             //changes the reflection cubes and plays a sound
             for (int i = 0; i < _affectedReflectors.Count; i++)
             {
@@ -75,7 +78,7 @@ public class SwitchTrigger : MonoBehaviour, IGridEntry
 
             if (_animator != null)
             {
-                _animator.SetTrigger("Pressed");
+                _animator.SetBool("Pressed", true);
             }
         }
     }
@@ -90,7 +93,7 @@ public class SwitchTrigger : MonoBehaviour, IGridEntry
         {
             if (_animator != null)
             {
-                _animator.SetTrigger("Pressed");
+                _animator.SetBool("Pressed", false);
             }
         }
     }
