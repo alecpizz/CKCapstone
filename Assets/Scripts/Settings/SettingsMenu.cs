@@ -36,8 +36,8 @@ public class SettingsMenu : MonoBehaviour
     {
         LoadSettings();
 
-        // Add listeners after loading settings
         SetupResolutionDropdown();
+        // Add listeners after loading settings
         _resolutionDropdown.onValueChanged.AddListener(SetResolution);
         _fullscreenToggle.onValueChanged.AddListener(SetFullscreen);
         _tooltipsToggle.onValueChanged.AddListener(SetTooltips);
