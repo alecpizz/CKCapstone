@@ -42,7 +42,10 @@ public static class CKLightingEditor
         TryDestroyEnvironmentArt();
         var fxPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
             "Assets/Prefabs/VFX/Environment/EnvFX_Chapter1.prefab");
-        var fx = Object.Instantiate(fxPrefab);
+        var fx = Object.Instantiate(fxPrefab, Camera.main.transform, true);
+        var pos = fx.transform.localPosition;
+        pos.x = 0.0f;
+        fx.transform.localPosition = pos;
         var godRays = fx.transform.Find("GodRays");
         var godParticles = godRays.GetComponent<ParticleSystem>();
         AdjustGodRays(godParticles, data.GodRayAlpha);
@@ -84,7 +87,10 @@ public static class CKLightingEditor
         //create fx
         var fxPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
             "Assets/Prefabs/VFX/Environment/EnvFX_Chapter2.prefab");
-        var fx = Object.Instantiate(fxPrefab);
+        var fx = Object.Instantiate(fxPrefab, Camera.main.transform, true);
+        var pos = fx.transform.localPosition;
+        pos.x = 0.0f;
+        fx.transform.localPosition = pos;
         AdjustMotes(fx);
         var godRays = fx.transform.Find("GodRays");
         var godParticles = godRays.GetComponent<ParticleSystem>();
@@ -122,7 +128,10 @@ public static class CKLightingEditor
         //setup fx
         var fxPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
             "Assets/Prefabs/VFX/Environment/EnvFX_Chapter3.prefab");
-        var fx = Object.Instantiate(fxPrefab);
+        var fx = Object.Instantiate(fxPrefab, Camera.main.transform, true);
+        var pos = fx.transform.localPosition;
+        pos.x = 0.0f;
+        fx.transform.localPosition = pos;
         var godRays = fx.transform.Find("GodRays");
         var godParticles = godRays.GetComponent<ParticleSystem>();
         AdjustGodRays(godParticles, data.GodRayAlpha);
@@ -159,7 +168,10 @@ public static class CKLightingEditor
         //spawn in fx
         var fxPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
             "Assets/Prefabs/VFX/Environment/EnvFX_Chapter4.prefab");
-        var fx = Object.Instantiate(fxPrefab);
+        var fx = Object.Instantiate(fxPrefab, Camera.main.transform, true);
+        var pos = fx.transform.localPosition;
+        pos.x = 0.0f;
+        fx.transform.localPosition = pos;
 
         Object.DestroyImmediate(fx.transform.Find("VolumetricClouds").gameObject);
         string prefab = "Assets/Prefabs/LevelPrefabs/GridTileCH4.prefab";;
@@ -259,7 +271,10 @@ public static class CKLightingEditor
         var fxPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
             "Assets/Prefabs/VFX/Environment/EnvFX_Chapter5.prefab");
         //adjust rain start size
-        var fx = Object.Instantiate(fxPrefab);
+        var fx = Object.Instantiate(fxPrefab, Camera.main.transform, true);
+        var pos = fx.transform.localPosition;
+        pos.x = 0.0f;
+        fx.transform.localPosition = pos;
         var rainParticles = fx.transform.Find("CFXR4 Rain Falling").GetComponent<ParticleSystem>();
         var main = rainParticles.main;
         var startSize = main.startSize;
