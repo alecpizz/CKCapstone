@@ -27,9 +27,15 @@ public class ShaderController : MonoBehaviour
 
     /// <summary>
     /// Fetches all renderers on the object and instantiates the shader property IDs, if they haven't been instantiated yet.
+    /// If this is on a collectible, it will fetch its order and apply it for the shine delay.
     /// </summary>
     private void Awake()
     {
+        if(TryGetComponent(out Collectibles c))
+        {
+            _initialShineDelay = c.CollectibleNumber + 1;
+        }
+
         _renderers = GetComponentsInChildren<Renderer>();
 
         InstantiatePropertyIDs();

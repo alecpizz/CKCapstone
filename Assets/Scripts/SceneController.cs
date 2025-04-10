@@ -137,16 +137,20 @@ public class SceneController : MonoBehaviour
         Transitioning = true;
         
         RepositionCircleWipe();
-        if (AudioManager.Instance != null && _playSoundOnSceneChange && (PlayerMovement.Instance == null 
-            || !PlayerMovement.Instance.PlayerDied))
-        {
-            AudioManager.Instance.PlaySound(_endSound);
+
+        if (AudioManager.Instance != null) {
+
+            if (_playSoundOnSceneChange && PlayerMovement.Instance != null)
+            {
+                if (PlayerMovement.Instance.PlayerDied)
+                    AudioManager.Instance.PlaySound(_deathSound);
+                else
+                    AudioManager.Instance.PlaySound(_endSound);
+            }
+            else
+                AudioManager.Instance.PlaySound(_endSound);
         }
-        if (AudioManager.Instance != null && _playSoundOnSceneChange && (PlayerMovement.Instance == null 
-            || PlayerMovement.Instance.PlayerDied))
-        {
-            AudioManager.Instance.PlaySound(_deathSound);
-        }
+
         yield return new WaitForEndOfFrame();
         
         
