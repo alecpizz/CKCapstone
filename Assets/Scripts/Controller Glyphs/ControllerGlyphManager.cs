@@ -25,7 +25,6 @@ public class ControllerGlyphManager : MonoBehaviour
 
     private bool _areInteractables = false;
     private bool _areTextBlurbs = false;
-    private bool _areSettings = false;
 
     private DebugInputActions _playerInput;
     private PlayerControls _playerControls;
@@ -101,15 +100,6 @@ public class ControllerGlyphManager : MonoBehaviour
             }
             _areTextBlurbs = true;
         }
-        //The settings should be in about every scene but this is here just in case
-        if (_htpArray != null)
-        {
-            foreach (var htp in _htpArray)
-            {
-                htp.HowToPlayTextChange();
-            }
-            _areSettings = true;
-        }
     }
 
 
@@ -166,51 +156,37 @@ public class ControllerGlyphManager : MonoBehaviour
                 blurb.TutorialTextChange();
             }
         }
-        if (_areSettings)
-        {
-            foreach (var htp in _htpArray)
-            {
-                htp.HowToPlayTextChange();
-            }
-        }
     }
 
     public string GetGlyph()
     {
         string buttonText = "";
-        string talkorInteract;
-
-        if (PlayStationController)
+        string talkorInteract = "";
+        foreach (var interactable in _interactableArray)
         {
-            foreach (var interactable in _interactableArray)
-            
+            if (PlayStationController)
+            {
                 interactable._eKey.sprite = interactable._playstationButtonPrompt;
                 buttonText = "X";
-            
-        }
-        else if (SwitchController || XboxController)
-        {
-            foreach (var interactable in _interactableArray)
+            }
+            else if (SwitchController || XboxController)
             {
                 interactable._eKey.sprite = interactable._letterButtonPrompt;
                 buttonText = "A";
             }
-        }
-        else
-        {
-            foreach (var interactable in _interactableArray)
+            else
             {
                 interactable._eKey.sprite = interactable._keyboardPrompt;
                 buttonText = "E";
             }
-        }
-        if (gameObject.name == "TextInteractablePrefab") //mother or son (they aren't properly named yet)
-        {
-            talkorInteract = "Talk";
-        }
-        else
-        {
-            talkorInteract = "Interact";
+            if (interactable.isNpc) //mother or son (they aren't properly named yet)
+            {
+                talkorInteract = "Talk";
+            }
+            else
+            {
+                talkorInteract = "Interact";
+            }
         }
         return "Press " + buttonText + " to " + talkorInteract;
     }
@@ -248,45 +224,5 @@ public class ControllerGlyphManager : MonoBehaviour
             }
         }
         return tutorialText;
-    }
-
-    public string HowToPlayText()
-    {
-        string htp = "";
-        if (PlayStationController)
-        {
-            foreach (var htpText in _htpArray)
-            {
-                htp = "Collect notes in ascending order\r\nMove: Left control stick or D-pad\r\n" +
-                "Restart Level: Share\r\nPause: Options\r\nEnemy Path Toggle: Triangle\r\nIndividual Enemy Path Cycle: L1 or R1";
-            }
-            
-        }
-        else if (SwitchController)
-        {
-            foreach (var htpText in _htpArray)
-            {
-                htp = "Collect notes in ascending order\r\nMove: Left control stick or D-pad\r\n" +
-                "Restart Level: Select\r\nPause: Start\r\nEnemy Path Toggle: X\r\nIndividual Enemy Path Cycle: L or R";
-            }
-        }
-        else if  (XboxController)
-        {
-            foreach (var htpText in _htpArray)
-            {
-                htp = "Collect notes in ascending order\r\nMove: Left control stick or D-pad\r\n" +
-                "Restart Level: Select\r\nPause: Start\r\nEnemy Path Toggle: Y\r\nIndividual Enemy Path Cycle: LB or RB";
-            }
-            
-        }
-        else
-        {
-            foreach (var htpText in _htpArray)
-            {
-                htp = "Collect notes in ascending order\r\nMove: WASD or arrow keys\r\n" +
-                "Restart Level: R\r\nPause: Esc\r\nEnemy Path Toggle: Q";
-            }
-        }
-        return htp; 
     }
 }

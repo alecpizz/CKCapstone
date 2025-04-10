@@ -27,6 +27,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
     [SerializeField] private Image _background;
     [SerializeField] private EndLevelDoor[] _doors;
     [SerializeField] private bool isCollectible;
+    [SerializeField] public bool isNpc = false;
     [SerializeField] public Image _eKey;
     [SerializeField] public Image _nameBox;
     [SerializeField] public TMP_Text _nameText;

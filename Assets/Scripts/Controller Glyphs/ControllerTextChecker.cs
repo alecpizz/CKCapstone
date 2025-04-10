@@ -19,7 +19,6 @@ public class ControllerTextChecker : MonoBehaviour
 {
     private Scene currentScene;
     [SerializeField] private TextMeshProUGUI _tutorialText;
-    [SerializeField] private TextMeshProUGUI _howToPlayText;
     [SerializeField] public string _keyboardText;
     [SerializeField] public string _controllerText; //Text for Xbox/Generic Controllers
     [SerializeField] public string _playstationText; //Text for PS Controllers
@@ -33,18 +32,22 @@ public class ControllerTextChecker : MonoBehaviour
     {
         currentScene = SceneManager.GetActiveScene();
         TutorialTextChange();
-        HowToPlayTextChange();
     }
 
     /// <summary>
     /// Handles changing the tutorial text depending on if a controller is connected or not
+    /// Doesn't change the text if it does not relate to controls
     /// </summary>
     public void TutorialTextChange()
     {
-        _tutorialText.text = ControllerGlyphManager.Instance.TutorialText();
-    }
-    public void HowToPlayTextChange()
-    {
-        _howToPlayText.text = ControllerGlyphManager.Instance.HowToPlayText();
+        if (_keyboardText.Length != 0 && _controllerText.Length != 0 &&
+            _switchText.Length != 0 && _playstationText.Length != 0)
+        {
+            _tutorialText.text = ControllerGlyphManager.Instance.TutorialText();
+        }
+        else
+        {
+            return;
+        }
     }
 }
