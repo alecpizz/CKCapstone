@@ -66,7 +66,7 @@ public class CutsceneFramework : MonoBehaviour
     private DebugInputActions _inputActions;
 
     //variables referenced from FMOD documentation for help with video plpayback
-    private const int LATENCY_MS = 50; /* Some devices will require higher latency to avoid glitches */
+    private const int LATENCY_MS = 100; /* Some devices will require higher latency to avoid glitches */
     private const int DRIFT_MS = 1;
     private const float DRIFT_CORRECTION_PERCENTAGE = 0.5f;
 
@@ -164,6 +164,7 @@ public class CutsceneFramework : MonoBehaviour
 
     public void ResumePlayAudio(bool play)
     {
+        print("RESUME CALLED");
         if (play)
         {
             _endChapterCutsceneVideo.Pause();
