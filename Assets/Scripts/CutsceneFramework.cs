@@ -24,7 +24,7 @@ using UnityEngine.Video;
 using FMODUnity;
 using SaintsField;
 using System.Runtime.InteropServices;
-
+using FMOD.Studio;
 using Unity.Collections;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
@@ -97,12 +97,17 @@ public class CutsceneFramework : MonoBehaviour
 
     private float _timer = 0f;
     [SerializeField] float _skipHoldTime = 2f;
-
+    
+    //Audio settings for cutscene only editable in backend
+    [SerializeField] private float _cutsceneVolume = 0f;
+    private Bus _cutscene;
+    private const string CutsceneVolume = "Voice Clips";
     /// <summary>
     /// Determines whether to play the Challenge or End Chapter Cutscene
     /// </summary>
     private void Start()
     {
+        _cutscene.setVolume(_cutsceneVolume);
         SaveDataManager.SetLevelCompleted(SceneManager.GetActiveScene().name);
         _inputActions = new DebugInputActions();
         _inputActions.UI.Enable();
@@ -146,6 +151,11 @@ public class CutsceneFramework : MonoBehaviour
         }
     }
 
+    private void Awake()
+    {
+        _cutscene = RuntimeManager.GetBus("bus:/Voice Clips");
+    }
+    
     /// <summary>
     /// Unregister input actions
     /// </summary>
