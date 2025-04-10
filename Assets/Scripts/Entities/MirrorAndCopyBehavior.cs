@@ -42,6 +42,11 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     [PlayaInfoBox("The floor for how fast the enemy can move.")]
     [SerializeField] private float _minMoveTime = 0.175f;
 
+    [PlayaInfoBox("Time an enemy will wait if a beam switch will be pressed" +
+       "\n Should be greater than beam rotation time.")]
+    [SerializeField]
+    private float _waitForBeamTime = 0.2f;
+
     // Timing from metronome
     private int _movementTiming = 1;
     private WaitForSeconds _waitForSeconds;
@@ -66,6 +71,8 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     //
     [SerializeField] private EventReference _walkSound;
 
+    private bool _waitOnBeam = false;
+
     /// <summary>
     /// Prime tween configuration
     /// </summary>
@@ -80,6 +87,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     void Start()
     {
         GridBase.Instance.AddEntry(this);
+        PlayerMovement.Instance.BeamSwitchActivation += () => _waitOnBeam = true;
 
         _player = PlayerMovement.Instance.gameObject;
         _rb = GetComponent<Rigidbody>();
@@ -102,6 +110,8 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     /// </summary>
     private void OnDisable()
     {
+        PlayerMovement.Instance.BeamSwitchActivation -= () => _waitOnBeam = true;
+
         if (RoundManager.Instance != null)
             RoundManager.Instance.UnRegisterListener(this);
 
@@ -118,6 +128,14 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     private IEnumerator MoveEnemy(Vector3 moveDirection)
     {
         yield return new WaitForSeconds(_timeBeforeTurn);
+
+        // If the player is going to press a harmony switch, wait for the beam
+        if (_waitOnBeam && sonEnemy)
+        {
+            yield return new WaitForSeconds(_waitForBeamTime);
+            _waitOnBeam = false;
+            HarmonyBeam.TriggerHarmonyScan?.Invoke();
+        }
 
         if (!EnemyFrozen)
         {
@@ -226,21 +244,6 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
 
         if (_movementTiming <= 0)
             _movementTiming = 1;
-    }
-
-    /// <summary>
-    /// Checks to see if player dies on collision
-    /// </summary>
-    /// <param name="collision"></param>
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (!DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("Player"))
-        {
-            Time.timeScale = 0f;
-
-            PlayerMovement.Instance.OnDeath();
-            SceneController.Instance.ReloadCurrentScene();
-        }
     }
 
     public TurnState TurnState => TurnState.Enemy;

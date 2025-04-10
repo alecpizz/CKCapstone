@@ -17,6 +17,7 @@ using FMODUnity;
 using FMOD.Studio;
 using SaintsField.Playa;
 using JetBrains.Annotations;
+using Unity.VisualScripting;
 
 public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener
 {
@@ -54,6 +55,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     {
         get => _playerDied;
     }
+
+    public Action BeamSwitchActivation;
 
     [SerializeField] private PlayerInteraction _playerInteraction;
 
@@ -293,6 +296,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                     if ((GridBase.Instance.CellIsTransparent(move) || DebugMenuManager.Instance.GhostMode))
                     {
                         AudioManager.Instance.PlaySound(_playerMove);
+                        ScanForHarmonySwitches();
                         StartCoroutine(MovePlayer(direction));
                         RoundManager.Instance.CompleteTurn(this);
                     }
@@ -367,5 +371,49 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                 t.emitting = false;
         }
             
+    }
+
+    /// <summary>
+    /// Scans for switches to alert enemies to wait for the beams to rotate.
+    /// This ensures enemies don't move while being hit by a beam.
+    /// </summary>
+    private void ScanForHarmonySwitches()
+    {
+        var currTilePos = (transform.position);
+        var fwd = transform.forward;
+        bool stop = false;
+        int spacesChecked = 0;
+
+        while (!stop && spacesChecked < _playerMovementTiming)
+        {
+            spacesChecked++;
+
+            var nextCell = GridBase.Instance.GetCellPositionInDirection(currTilePos, fwd);
+            if (currTilePos == nextCell) //no where to go :(
+            {
+                stop = true;
+            }
+
+            currTilePos = nextCell;
+
+            var entries = GridBase.Instance.GetCellEntries(nextCell);
+            foreach (var gridEntry in entries) //check each cell
+            {
+                if (gridEntry == null) continue;
+                //the entry has a switch type :)
+                if (gridEntry.EntryObject.TryGetComponent(out SwitchTrigger entity))
+                {
+                    if (entity.HarmonyBeamsPresent)
+                    {
+                        BeamSwitchActivation?.Invoke();
+                    }
+                }
+                //no entry, but a cell that blocks movement. pass through.
+                else if (!gridEntry.IsTransparent)
+                {
+                    stop = true;
+                }
+            }
+        }
     }
 }
