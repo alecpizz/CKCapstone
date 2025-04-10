@@ -160,12 +160,20 @@ public class CutsceneFramework : MonoBehaviour
             _mAnyButtonPressedListener.Dispose();
             _mAnyButtonPressedListener = null;
         }
-
     }
 
     public void ResumePlayAudio(bool play)
     {
-        _mChannel.setPaused(play);
+        if (play)
+        {
+            _endChapterCutsceneVideo.Pause();
+        }
+        else
+        {
+            _endChapterCutsceneVideo.Play();
+        }
+        
+        _mChannel.setPaused(play);                                       
     }
 
     /// <summary>
@@ -380,7 +388,7 @@ public class CutsceneFramework : MonoBehaviour
         {
             _timer = 0f;
         }
-
+        
 
         if (_isEndChapterCutscene)
         {
