@@ -66,9 +66,9 @@ public class CutsceneFramework : MonoBehaviour
     private DebugInputActions _inputActions;
 
     //variables referenced from FMOD documentation for help with video plpayback
-    private const int LATENCY_MS = 100; /* Some devices will require higher latency to avoid glitches */
+    private const int LATENCY_MS = 200; /* Some devices will require higher latency to avoid glitches */
     private const int DRIFT_MS = 1;
-    private const float DRIFT_CORRECTION_PERCENTAGE = 0.5f;
+    private const float DRIFT_CORRECTION_PERCENTAGE = 0.6f;
 
     private VideoPlayer _endChapterCutsceneVideo;
     private AudioSampleProvider _mProvider;
