@@ -349,6 +349,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
             }
             //set to tutorial text and fade in over time.
             _dialogueBox.SetText(_tutorialHint);
+            _dialogueBox.alignment = TextAlignmentOptions.Center;
             _dialogueBox.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
             _background.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
             _eKey.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
@@ -398,6 +399,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
         _isTyping = true;
         _currentFullText = dialogue;
         _dialogueBox.SetText(""); // Clear the dialogue box
+        _dialogueBox.alignment = TextAlignmentOptions.Top;
 
         bool style = false;
         string currentTag = "";

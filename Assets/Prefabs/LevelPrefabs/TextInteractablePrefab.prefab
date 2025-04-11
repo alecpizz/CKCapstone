@@ -264,6 +264,7 @@ MonoBehaviour:
   _dialogueBox: {fileID: 8169798268072232255}
   _background: {fileID: 332582067746033279}
   _doors: []
+  isCollectible: 0
   _eKey: {fileID: 4230953832924867980}
   _nameBox: {fileID: 3375692077326585251}
   _nameText: {fileID: 1748783811600621539}
@@ -299,7 +300,10 @@ MonoBehaviour:
     text: Perhaps some dialogue!
     adjustTypingSpeed: 0
     emotion: 0
-  _tutorialHint: Press E to Talk
+  _tutorialHint: 'Press E to Talk
+
+
+'
   _dialogueFadeDuration: 0.25
   _animator: {fileID: 386561796337832084}
 --- !u!114 &7404047213730304982
@@ -867,7 +871,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -0.21816349, y: 0.13499498, z: -0.22070217, w: 0.06269717}
+  m_margin: {x: -0.2776494, y: 0.62710047, z: -0.28363037, w: 0.06269717}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -889,7 +893,7 @@ PrefabInstance:
     - target: {fileID: 2529853794552941058, guid: 2b3049762d0ea254cbfe179ce0df6988,
         type: 3}
       propertyPath: serializeData2.selectionData.maxConnectionDistance
-      value: 0.048002657
+      value: 0.04800263
       objectReference: {fileID: 0}
     - target: {fileID: 2529853794552941058, guid: 2b3049762d0ea254cbfe179ce0df6988,
         type: 3}
@@ -909,7 +913,7 @@ PrefabInstance:
     - target: {fileID: 2529853794552941058, guid: 2b3049762d0ea254cbfe179ce0df6988,
         type: 3}
       propertyPath: serializeData2.selectionData.positions.Array.data[1].x
-      value: -0.025501907
+      value: -0.025501847
       objectReference: {fileID: 0}
     - target: {fileID: 2529853794552941058, guid: 2b3049762d0ea254cbfe179ce0df6988,
         type: 3}
@@ -924,7 +928,7 @@ PrefabInstance:
     - target: {fileID: 2529853794552941058, guid: 2b3049762d0ea254cbfe179ce0df6988,
         type: 3}
       propertyPath: serializeData2.selectionData.positions.Array.data[2].x
-      value: -0.028348029
+      value: -0.028347969
       objectReference: {fileID: 0}
     - target: {fileID: 2529853794552941058, guid: 2b3049762d0ea254cbfe179ce0df6988,
         type: 3}
@@ -939,7 +943,7 @@ PrefabInstance:
     - target: {fileID: 2529853794552941058, guid: 2b3049762d0ea254cbfe179ce0df6988,
         type: 3}
       propertyPath: serializeData2.selectionData.positions.Array.data[3].x
-      value: 0.010501921
+      value: 0.010501981
       objectReference: {fileID: 0}
     - target: {fileID: 2529853794552941058, guid: 2b3049762d0ea254cbfe179ce0df6988,
         type: 3}
@@ -949,7 +953,7 @@ PrefabInstance:
     - target: {fileID: 2529853794552941058, guid: 2b3049762d0ea254cbfe179ce0df6988,
         type: 3}
       propertyPath: serializeData2.selectionData.positions.Array.data[3].z
-      value: -0.016412258
+      value: -0.016412199
       objectReference: {fileID: 0}
     - target: {fileID: 2529853794552941058, guid: 2b3049762d0ea254cbfe179ce0df6988,
         type: 3}
@@ -999,7 +1003,7 @@ PrefabInstance:
     - target: {fileID: 2529853794552941058, guid: 2b3049762d0ea254cbfe179ce0df6988,
         type: 3}
       propertyPath: serializeData2.selectionData.positions.Array.data[7].x
-      value: -0.0001283288
+      value: -0.0001282692
       objectReference: {fileID: 0}
     - target: {fileID: 2529853794552941058, guid: 2b3049762d0ea254cbfe179ce0df6988,
         type: 3}
@@ -1014,7 +1018,7 @@ PrefabInstance:
     - target: {fileID: 2529853794552941058, guid: 2b3049762d0ea254cbfe179ce0df6988,
         type: 3}
       propertyPath: serializeData2.selectionData.positions.Array.data[8].x
-      value: -0.0001283288
+      value: -0.0001282692
       objectReference: {fileID: 0}
     - target: {fileID: 2529853794552941058, guid: 2b3049762d0ea254cbfe179ce0df6988,
         type: 3}
@@ -1029,7 +1033,7 @@ PrefabInstance:
     - target: {fileID: 2529853794552941058, guid: 2b3049762d0ea254cbfe179ce0df6988,
         type: 3}
       propertyPath: serializeData2.selectionData.positions.Array.data[9].x
-      value: -0.00010460615
+      value: -0.00010454655
       objectReference: {fileID: 0}
     - target: {fileID: 2529853794552941058, guid: 2b3049762d0ea254cbfe179ce0df6988,
         type: 3}
@@ -1039,7 +1043,7 @@ PrefabInstance:
     - target: {fileID: 2529853794552941058, guid: 2b3049762d0ea254cbfe179ce0df6988,
         type: 3}
       propertyPath: serializeData2.selectionData.positions.Array.data[9].z
-      value: 0.0036548972
+      value: 0.0036549568
       objectReference: {fileID: 0}
     - target: {fileID: 5437145629218027556, guid: 2b3049762d0ea254cbfe179ce0df6988,
         type: 3}
