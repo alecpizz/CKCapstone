@@ -147,8 +147,8 @@ public class SettingsTabs : MonoBehaviour
             {_howToPlayButton, _ogHowToPlayImage },
             {_levelSelectButton, _ogLevelSelectImage },
             //Placeholder
-            {_cutscenesButton, _ogLevelSelectImage },
-            {_collectablesButton, _ogLevelSelectImage }
+            {_cutscenesButton, _ogCutscenesImage },
+            {_collectablesButton, _ogCollectablesImage }
 
             //For implementation
             //{_cutscenesButton, _ogCutscenesImage },
@@ -164,8 +164,8 @@ public class SettingsTabs : MonoBehaviour
             {_howToPlayButton, _altHowToPlayImage },
             {_levelSelectButton, _altLevelSelectImage },
             //Placeholder
-            {_cutscenesButton,  _altLevelSelectImage },
-            {_collectablesButton, _altLevelSelectImage }
+            {_cutscenesButton,  _altCutscenesImage },
+            {_collectablesButton, _altCollectablesImage }
 
             //For implementation
             //{_cutscenesButton, _altCutscenesImage },
