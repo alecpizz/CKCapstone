@@ -22,6 +22,11 @@ public interface IGridEntry
     bool BlocksHarmonyBeam { get; }
 
     /// <summary>
+    /// Whether or not the object stops a moving wall
+    /// </summary>
+    bool BlocksMovingWall { get; }
+
+    /// <summary>
     /// The position of the object, in world space.
     /// </summary>
     Vector3 Position { get; }

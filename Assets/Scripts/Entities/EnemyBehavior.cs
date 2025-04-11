@@ -34,6 +34,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         get => false;
     }
 
+    public bool BlocksMovingWall
+    {
+        get => true;
+    }
+
     public Vector3 Position
     {
         get => transform.position;
