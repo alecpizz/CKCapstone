@@ -268,7 +268,7 @@ MonoBehaviour:
   _eKey: {fileID: 4230953832924867980}
   _nameBox: {fileID: 3375692077326585251}
   _nameText: {fileID: 1748783811600621539}
-  _typingSpeed: 3.48
+  _typingSpeed: 6
   _dialogueEntries:
   - sound:
       Guid:
@@ -278,7 +278,6 @@ MonoBehaviour:
         Data4: 0
       Path: 
     text: Here's some text!
-    adjustTypingSpeed: -5
     emotion: 0
   - sound:
       Guid:
@@ -288,7 +287,6 @@ MonoBehaviour:
         Data4: 0
       Path: 
     text: And some more text!
-    adjustTypingSpeed: 5
     emotion: 0
   - sound:
       Guid:
@@ -298,13 +296,14 @@ MonoBehaviour:
         Data4: 0
       Path: 
     text: Perhaps some dialogue!
-    adjustTypingSpeed: 0
     emotion: 0
   _tutorialHint: 'Press E to Talk
 
 
 '
   _dialogueFadeDuration: 0.25
+  _periodTypeDelayMult: 3
+  _commaTypeDelayMult: 1.5
   _animator: {fileID: 386561796337832084}
 --- !u!114 &7404047213730304982
 MonoBehaviour:

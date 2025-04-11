@@ -38,18 +38,17 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
         public EventReference sound;
         [FormerlySerializedAs("_text")]
         [TextArea] public string text;
-        [InfoBox("This adjusts the speed of the text. " +
-            "A value of -5 slows it down while a value of 5 speeds it up", EMessageType.Info)]
-        [FormerlySerializedAs("_adjustTypingSpeed")]
-        [Range(-5f, 5f)] public float adjustTypingSpeed;
         [InfoBox("This chooses the emotion animation " +
             "There is Neutral, Happy, Sad, and Angry", EMessageType.Info)]
         public EmotionType emotion;
     }
 
     private bool _isTalking;
+    [Header("Typing Speeds")]
     [InfoBox("This adjusts the base typing speed. 2 is the slowest, 10 is the fastest", EMessageType.Info)]
     [Range(2f, 10f)][SerializeField] private float _typingSpeed = 5f;
+    [SerializeField] private float _periodTypeDelayMult = 2f;
+    [SerializeField] private float _commaTypeDelayMult = 1.33f;
     [SerializeField] private List<DialogueEntry> _dialogueEntries;
     [SerializeField] [TextArea] private string _tutorialHint = "Press E to Talk";
     [SerializeField] private float _dialogueFadeDuration = 0.25f;
@@ -150,7 +149,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
         _occupied = false;
         _isTalking = false;
         _currentTypingSpeed = Mathf.Clamp(
-            _typingSpeed - _dialogueEntries[_currentDialogue].adjustTypingSpeed, 2f, 15f) / 100f;
+            _typingSpeed, 1f, 10f) / 100f;
 
         if (SaveDataManager.GetNpcProgressionCurrentScene() >=  _totalNpcs)
         {
@@ -260,7 +259,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
             }
 
             // adjusts typing speed on a per-entry basis
-            _currentTypingSpeed = Mathf.Clamp(_typingSpeed - _dialogueEntries[_currentDialogue].adjustTypingSpeed, 2f, 15f) / 100f;
+            _currentTypingSpeed = Mathf.Clamp(_typingSpeed, 1f, 10f) / 100f;
             //adjusts emotion on a per-entry basis
             if (_animator != null)
             {
@@ -434,10 +433,10 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
                     case '?':
                     case '!':
                     case '.':
-                        yield return new WaitForSeconds(_currentTypingSpeed * 3f);
+                        yield return new WaitForSeconds(_currentTypingSpeed * _periodTypeDelayMult);
                         break;
                     case ',':
-                        yield return new WaitForSeconds(_currentTypingSpeed * 1.5f);
+                        yield return new WaitForSeconds(_currentTypingSpeed * _commaTypeDelayMult);
                         break;
                     default:
                         yield return new WaitForSeconds(_currentTypingSpeed);
