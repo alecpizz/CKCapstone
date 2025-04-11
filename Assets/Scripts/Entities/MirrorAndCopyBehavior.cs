@@ -17,8 +17,9 @@ using SaintsField;
 
 public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener, IHarmonyBeamEntity
 {
-    public bool IsTransparent { get => false; }
+    public bool IsTransparent { get => !EnemyFrozen; }
     public bool BlocksHarmonyBeam { get => false; }
+    public bool BlocksMovingWall { get => true; }
     public Vector3 Position { get => transform.position; }
     public Transform EntityTransform { get => transform; }
     public GameObject EntryObject { get => gameObject; }
@@ -153,31 +154,8 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
             {
                 // Moves if there is no objects in the next grid space
                 var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
-                var entries = GridBase.Instance.GetCellEntries(move);
-                bool canMove = true;
+                bool canMove = GridBase.Instance.CellIsTransparent(move);
 
-                //If the next cell contains an object that is not the player then the loop breaks
-                //enemy can't move into other enemies, walls, etc.
-                foreach (var entry in entries)
-                {
-                    if (entry.EntryObject.CompareTag("Wall") && entry.IsTransparent)
-                    {
-                        _rb.isKinematic = true;
-                        canMove = true;
-                        break;
-                    }
-                    if (entry.EntryObject == _player)
-                    {
-                        _rb.isKinematic = false;
-                        canMove = true;
-                        break;
-                    }
-                    else
-                    {
-                        canMove = false;
-                        break;
-                    }
-                }
                 if (canMove == true)
                 {
                     if (moveDirection != transform.forward)
