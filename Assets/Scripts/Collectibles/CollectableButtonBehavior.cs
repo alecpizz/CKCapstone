@@ -186,9 +186,8 @@ public class CollectableButtonBehavior : MonoBehaviour
     /// </summary>
     public void HideDialogue()
     {
-        Debug.Log(_dialogueFadeDuration);
-        _dialogueBox.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
-        _background.CrossFadeAlpha(0f, _dialogueFadeDuration, false);
+        _dialogueBox.CrossFadeAlpha(0f, _dialogueFadeDuration, true);
+        _background.CrossFadeAlpha(0f, _dialogueFadeDuration, true);
         _currentTypingSpeed = 0;
 
         if (_typingCoroutine != null)
