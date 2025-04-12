@@ -166,6 +166,11 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
     {
         if (!_isTalking)
         {
+            if (isCollectible)
+            {
+                CollectableManager.Instance.Collection(gameObject);
+            }
+
             if (_animator != null)
             {
                 _animator.SetBool(Talk, true);
@@ -245,12 +250,6 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
             {
                 _currentDialogue = 0;
                 HideDialogue();
-
-                if (isCollectible)
-                {
-                    CollectableManager.Instance.Collection(gameObject);
-                }
-
                 return;
             }
 
