@@ -164,12 +164,11 @@ public class CutsceneFramework : MonoBehaviour
 
     public void ResumePlayAudio(bool play)
     {
-        print("RESUME CALLED");
-        if (play)
+        if (play && _endChapterCutsceneVideo != null)
         {
             _endChapterCutsceneVideo.Pause();
         }
-        else
+        else if (_endChapterCutsceneVideo != null)
         {
             _endChapterCutsceneVideo.Play();
         }
