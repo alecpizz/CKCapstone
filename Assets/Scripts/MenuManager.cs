@@ -12,6 +12,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using static UnityEngine.Rendering.DebugUI;
+using System;
+using UnityEngine.Serialization;
 
 public class MenuManager : MonoBehaviour
 {
@@ -33,6 +36,12 @@ public class MenuManager : MonoBehaviour
     private DebugInputActions _inputActions;
 
     [SerializeField] private CursorManager _cursorManager;
+
+    [FormerlySerializedAs("_skipWhilePaused")]
+    [SerializeField] private GameObject _skipPromptInPause;
+    private bool _skipInPause;
+
+    private bool _pauseInvoked = true;
 
     /// <summary>
     /// Enables player input for opening the pause menu
@@ -63,6 +72,7 @@ public class MenuManager : MonoBehaviour
         _restartButton.SetActive(true);
         _cursorManager.OnPointerExit();
         Time.timeScale = 1f;
+        _pauseInvoked = false;
     }
 
     /// <summary>
@@ -123,6 +133,17 @@ public class MenuManager : MonoBehaviour
             _restartButton.SetActive(false);
             EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
             Time.timeScale = 0f;
+
+            _pauseInvoked = true;
+
+            //Gets the path to a scene
+            string path = SceneManager.GetActiveScene().path;
+
+            if (path.Contains("CS"))
+            {
+                _skipPromptInPause.SetActive(true);
+                _skipInPause = true;
+            }
         }
         else if (_optionsScreen != null && _optionsScreen.activeInHierarchy)
         {
@@ -133,6 +154,24 @@ public class MenuManager : MonoBehaviour
         {
             Unpause();
         }
+    }
+
+    /// <summary>
+    /// Getter method to tell if the game is paused for FMOD audio
+    /// </summary>
+    /// <returns></returns>
+    public bool GetPauseInvoked()
+    {
+        return _pauseInvoked;
+    }
+
+    /// <summary>
+    /// Getter method to tell if the button to skip a cutscene in pause menu is used.
+    /// </summary>
+    /// <returns></returns>
+    public bool GetSkipInPause()
+    {
+        return _skipInPause;
     }
 
     /// <summary>

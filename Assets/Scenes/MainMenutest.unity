@@ -3303,6 +3303,7 @@ MonoBehaviour:
       Data4: -448360349
     Path: event:/Button Press
   _cursorManager: {fileID: 0}
+  _skipWhilePaused: {fileID: 0}
 --- !u!4 &1306577879
 Transform:
   m_ObjectHideFlags: 0
@@ -3638,6 +3639,11 @@ PrefabInstance:
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 942048191624614726}
+    - target: {fileID: 4067706999586807720, guid: 6a8517eb504a3dc4f90bc546f81eaf46,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4440712569317143336, guid: 6a8517eb504a3dc4f90bc546f81eaf46,
         type: 3}
       propertyPath: m_IsActive
@@ -4054,7 +4060,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: cd84112cb38fdd24cba3460c164a57ba,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5748489710339304012, guid: cd84112cb38fdd24cba3460c164a57ba,
         type: 3}
