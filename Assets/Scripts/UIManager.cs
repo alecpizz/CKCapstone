@@ -1,6 +1,6 @@
 /******************************************************************
  *    Author: Nick Grinstead
- *    Contributors:  Rider Hagen, Alec Pizziferro, Josephine Qualls
+ *    Contributors:  Rider Hagen, Alec Pizziferro, Josephine Qualls, Trinity Hutson
  *    Date Created: 9/28/24
  *    Description: Script designed to handle all realtime
  *    UI related functionality.
@@ -15,6 +15,7 @@ using SaintsField;
 using Unity.VisualScripting;
 using UnityEngine.Serialization;
 using static UnityEngine.Rendering.DebugUI;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour, ITimeListener
 {
@@ -33,17 +34,25 @@ public class UIManager : MonoBehaviour, ITimeListener
     [SerializeField] private bool _isIntermission;
     [SerializeField] private bool _isChallenge;
 
+    [Header("Time Signature")]
     [FormerlySerializedAs("_timeSignatureUIy")] [SerializeField]
     private TextMeshProUGUI _timeSignatureUiY;
 
     [FormerlySerializedAs("_timeSignatureUIx")] [SerializeField]
     private TextMeshProUGUI _timeSignatureUiX;
 
-    [SerializeField] private TMP_Text _levelNumber;
-    private TimeSignatureManager _timeSigManager;
-
-    [FormerlySerializedAs("timeSignature")] [SerializeField]
+    [FormerlySerializedAs("timeSignature")]
+    [SerializeField]
     private bool _timeSignature;
+
+    [SerializeField] private Color _defaultHudTextColor = Color.black;
+    [SerializeField] private Color _tsHudTextColor = Color.white;
+
+    [SerializeField] private Image _timeSignatureRibbon;
+
+    [SerializeField] private TMP_Text _levelNumber;
+
+    private TimeSignatureManager _timeSigManager;
 
     private List<int> _notes;
 
@@ -84,6 +93,8 @@ public class UIManager : MonoBehaviour, ITimeListener
         if (_timeSigManager != null)
         {
             _timeSigManager.RegisterTimeListener(this);
+
+            InitializeTimeSigHud();
         }
 
         // WinChecker.CollectedNote += UpdateCollectedNotesText;
@@ -115,7 +126,6 @@ public class UIManager : MonoBehaviour, ITimeListener
             }
                 
         }*/
-        
     }
 
     public void SetLevelText(string text)
@@ -256,5 +266,18 @@ public class UIManager : MonoBehaviour, ITimeListener
         yield return new WaitForSeconds(_messageWaitTime);
 
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    /// <summary>
+    /// Updates HUD to reflect whether or not the Time Sig is in use for the level. Should be called once per level, in Start
+    /// </summary>
+    private void InitializeTimeSigHud()
+    {
+        bool isInUse = _timeSigManager.TimeSigInUse;
+        var textColor = isInUse ? _tsHudTextColor : _defaultHudTextColor;
+
+        _timeSignatureRibbon.enabled = isInUse;
+        _timeSignatureUiX.color = textColor;
+        _timeSignatureUiY.color = textColor;
     }
 }
