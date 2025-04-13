@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: David Henvick
-*    Contributors: Claire Noto, Alec Pizziferro, Mitchell Young, Jamison Parks
+*    Contributors: Claire Noto, Alec Pizziferro, Mitchell Young, Jamison Parks, Alex Laubenstein
 *    Date Created: 09/30/2024
 *    Description: this is the script that is used control an npc 
 *    and their dialogue
@@ -27,9 +27,13 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
     [SerializeField] private Image _background;
     [SerializeField] private EndLevelDoor[] _doors;
     [SerializeField] private bool isCollectible;
+    [SerializeField] public bool isNpc = false;
     [SerializeField] public Image _eKey;
     [SerializeField] public Image _nameBox;
     [SerializeField] public TMP_Text _nameText;
+    [SerializeField] public Sprite _keyboardPrompt;
+    [SerializeField] public Sprite _playstationButtonPrompt;
+    [SerializeField] public Sprite _letterButtonPrompt; //Switch and Xbox sprite
 
     [Serializable]
     public struct DialogueEntry
@@ -447,6 +451,17 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
 
         _isTyping = false;
     }
+
+    /// <summary>
+    /// Takes the reference of the current controller from the debug manager to make sure
+    /// text and input prompts lines up with your current input device
+    /// </summary>
+    public void ControllerText()
+    {
+        _tutorialHint = ControllerGlyphManager.Instance.GetGlyph();
+    }
+
+    
 
     /// <summary>
     /// Makes sure the NPC has dialogue entries
