@@ -83,6 +83,7 @@ public class Collectibles : MonoBehaviour, IGridEntry
 
     public bool IsTransparent => true;
     public bool BlocksHarmonyBeam => false;
+    public bool BlocksMovingWall => false;
     public Vector3 Position => transform.position;
     public GameObject EntryObject => gameObject;
     public void SnapToGridSpace()

@@ -28,12 +28,17 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
     public bool IsTransparent
     {
-        get => false;
+        get => true;
     }
 
     public bool BlocksHarmonyBeam
     {
         get => false;
+    }
+
+    public bool BlocksMovingWall
+    {
+        get => true;
     }
 
     public Vector3 Position
@@ -293,7 +298,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                 {
                     var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, direction);
 
-                    if ((GridBase.Instance.CellIsTransparent(move) || DebugMenuManager.Instance.GhostMode))
+                    if ((move.x != transform.position.x || move.z != transform.position.z) && 
+                    (GridBase.Instance.CellIsTransparent(move) || DebugMenuManager.Instance.GhostMode))
                     {
                         AudioManager.Instance.PlaySound(_playerMove);
                         ScanForHarmonySwitches();
