@@ -17,8 +17,9 @@ using SaintsField;
 
 public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener, IHarmonyBeamEntity
 {
-    public bool IsTransparent { get => false; }
+    public bool IsTransparent { get => !EnemyFrozen; }
     public bool BlocksHarmonyBeam { get => false; }
+    public bool BlocksMovingWall { get => true; }
     public Vector3 Position { get => transform.position; }
     public Transform EntityTransform { get => transform; }
     public GameObject EntryObject { get => gameObject; }
@@ -41,6 +42,11 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
 
     [PlayaInfoBox("The floor for how fast the enemy can move.")]
     [SerializeField] private float _minMoveTime = 0.175f;
+
+    [PlayaInfoBox("Time an enemy will wait if a beam switch will be pressed" +
+       "\n Should be greater than beam rotation time.")]
+    [SerializeField]
+    private float _waitForBeamTime = 0.2f;
 
     // Timing from metronome
     private int _movementTiming = 1;
@@ -66,6 +72,8 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     //
     [SerializeField] private EventReference _walkSound;
 
+    private bool _waitOnBeam = false;
+
     /// <summary>
     /// Prime tween configuration
     /// </summary>
@@ -80,6 +88,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     void Start()
     {
         GridBase.Instance.AddEntry(this);
+        PlayerMovement.Instance.BeamSwitchActivation += () => _waitOnBeam = true;
 
         _player = PlayerMovement.Instance.gameObject;
         _rb = GetComponent<Rigidbody>();
@@ -102,6 +111,8 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     /// </summary>
     private void OnDisable()
     {
+        PlayerMovement.Instance.BeamSwitchActivation -= () => _waitOnBeam = true;
+
         if (RoundManager.Instance != null)
             RoundManager.Instance.UnRegisterListener(this);
 
@@ -119,6 +130,14 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     {
         yield return new WaitForSeconds(_timeBeforeTurn);
 
+        // If the player is going to press a harmony switch, wait for the beam
+        if (_waitOnBeam && sonEnemy)
+        {
+            yield return new WaitForSeconds(_waitForBeamTime);
+            _waitOnBeam = false;
+            HarmonyBeam.TriggerHarmonyScan?.Invoke();
+        }
+
         if (!EnemyFrozen)
         {
             _animator.SetBool(Frozen, false);
@@ -135,31 +154,8 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
             {
                 // Moves if there is no objects in the next grid space
                 var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
-                var entries = GridBase.Instance.GetCellEntries(move);
-                bool canMove = true;
+                bool canMove = GridBase.Instance.CellIsTransparent(move);
 
-                //If the next cell contains an object that is not the player then the loop breaks
-                //enemy can't move into other enemies, walls, etc.
-                foreach (var entry in entries)
-                {
-                    if (entry.EntryObject.CompareTag("Wall") && entry.IsTransparent)
-                    {
-                        _rb.isKinematic = true;
-                        canMove = true;
-                        break;
-                    }
-                    if (entry.EntryObject == _player)
-                    {
-                        _rb.isKinematic = false;
-                        canMove = true;
-                        break;
-                    }
-                    else
-                    {
-                        canMove = false;
-                        break;
-                    }
-                }
                 if (canMove == true)
                 {
                     if (moveDirection != transform.forward)
@@ -226,21 +222,6 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
 
         if (_movementTiming <= 0)
             _movementTiming = 1;
-    }
-
-    /// <summary>
-    /// Checks to see if player dies on collision
-    /// </summary>
-    /// <param name="collision"></param>
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (!DebugMenuManager.Instance.Invincibility && collision.gameObject.CompareTag("Player"))
-        {
-            Time.timeScale = 0f;
-
-            PlayerMovement.Instance.OnDeath();
-            SceneController.Instance.ReloadCurrentScene();
-        }
     }
 
     public TurnState TurnState => TurnState.Enemy;
