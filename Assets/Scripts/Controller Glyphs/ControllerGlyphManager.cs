@@ -158,6 +158,10 @@ public class ControllerGlyphManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sets up the text for prompting an interaction
+    /// </summary>
+    /// <returns></returns>
     public string GetGlyph()
     {
         string buttonText = "";
@@ -179,7 +183,7 @@ public class ControllerGlyphManager : MonoBehaviour
                 interactable._eKey.sprite = interactable._keyboardPrompt;
                 buttonText = "E";
             }
-            if (interactable.isNpc) //mother or son (they aren't properly named yet)
+            if (interactable.isNpc) //mother or son
             {
                 talkorInteract = "Talk";
             }
@@ -191,6 +195,10 @@ public class ControllerGlyphManager : MonoBehaviour
         return "Press " + buttonText + " to " + talkorInteract;
     }
 
+    /// <summary>
+    /// Sets up controller specific text relating to the device controlling the game
+    /// </summary>
+    /// <returns></returns>
     public string TutorialText()
     {
         string tutorialText = "";
