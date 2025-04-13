@@ -76,7 +76,7 @@ public class LevelButtons : MonoBehaviour
                     targetTransform = _chapters[^1].transform;
                     levelText = level.LevelName;
                 }
-                else if (sceneName[0] == 'I')
+                else if (sceneName[0] == 'I' || sceneName[0] == 'N')
                 {
                     levelText = $"Intermission {intermissionCounter++}";
                 }
