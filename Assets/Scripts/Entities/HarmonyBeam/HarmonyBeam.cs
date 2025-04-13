@@ -101,6 +101,7 @@ public class HarmonyBeam : MonoBehaviour
 
             foreach (var particleSystem in _beamParticleSystems)
             {
+                particleSystem.Clear();
                 particleSystem.Stop();
             }
         }
