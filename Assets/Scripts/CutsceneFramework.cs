@@ -143,6 +143,13 @@ public class CutsceneFramework : MonoBehaviour
             EditorApplication.pauseStateChanged += EditorStateChange;
             #endif
         }
+
+        var cam = Camera.main;
+        if (cam != null)
+        {
+            cam.backgroundColor = Color.black;
+            cam.clearFlags = CameraClearFlags.SolidColor;
+        }
     }
     
     /// <summary>

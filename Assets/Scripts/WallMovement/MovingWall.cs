@@ -64,6 +64,7 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     public bool IsTransparent => false;
 
     public bool BlocksHarmonyBeam { get => true; }
+    public bool BlocksMovingWall { get => false; }
 
     public GameObject EntryObject => gameObject;
 
@@ -145,9 +146,22 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     /// </summary>
     private void MoveWall()
     {
+        var targetSpaceEntries = _shouldActivate ? GridBase.Instance.GetCellEntries(_originGhost) :
+            GridBase.Instance.GetCellEntries(_originWall);
+
+        bool isBlocked = false;
+
+        foreach (var cellEntry in targetSpaceEntries)
+        {
+            if (cellEntry.BlocksMovingWall)
+            {
+                isBlocked = true;
+                break;
+            }
+        }
+
         // Check for object blocking the wall's target space
-        if (_shouldActivate ? GridBase.Instance.CellIsTransparent(_originGhost) :
-            GridBase.Instance.CellIsTransparent(_originWall))
+        if (!isBlocked)
         {
             _worked = true;
 
