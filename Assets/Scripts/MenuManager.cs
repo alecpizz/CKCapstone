@@ -51,6 +51,13 @@ public class MenuManager : MonoBehaviour
         _inputActions = new DebugInputActions();
         _inputActions.Enable();
         _inputActions.Player.Quit.performed += ctx => Pause();
+
+        //Gets rid of restart button if it's a cutscene
+        string path = SceneManager.GetActiveScene().path;
+        if (path.Contains("CS"))
+        {
+            _restartButton.SetActive(false);
+        }
     }
 
     /// <summary>
