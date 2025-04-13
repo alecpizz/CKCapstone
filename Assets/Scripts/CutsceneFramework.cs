@@ -162,6 +162,10 @@ public class CutsceneFramework : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Pauses and plays the audio and video of a cutscene
+    /// </summary>
+    /// <param name="play"></param>
     public void ResumePlayAudio(bool play)
     {
         if (play && _endChapterCutsceneVideo != null)
@@ -375,6 +379,7 @@ public class CutsceneFramework : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        //Skips cutscene after 2 secs of holding Space bar
         if (_inputActions.UI.SkipCutscene.IsPressed())
         {
             _timer += Time.deltaTime;
