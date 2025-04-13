@@ -64,6 +64,8 @@ public class CollectableManager : MonoBehaviour
         collectiblesDict.Add("Toy Xylophone", xylophoneImage);
         collectiblesDict.Add("Unfinished Letter", unfinishedLetterImage);
         #endregion
+
+        SetFoundCollectibles();
     }
 
     /// <summary>
