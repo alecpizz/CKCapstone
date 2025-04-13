@@ -18,7 +18,9 @@ using System;
 public class CollectableButtonBehavior : MonoBehaviour
 {
     [SerializeField] private TMP_Text _dialogueBox;
-    [SerializeField] private Image _background;
+    [SerializeField] private GameObject _collectableImage;
+    [SerializeField] private GameObject _collectableObject;
+    [SerializeField] private GameObject _collectablePanel;
 
     [Serializable]
     public struct DialogueEntry
@@ -38,17 +40,26 @@ public class CollectableButtonBehavior : MonoBehaviour
     private bool _isTyping = false;
     private string _currentFullText;
 
+
+    /// <summary>
+    /// Sets the collectable panel to false on awake.
+    /// </summary>
+    private void Awake()
+    {
+        _collectablePanel.SetActive(false);
+    }
+
     /// <summary>
     /// Function called on button click that loads the collectable text.
     /// </summary>
     public void loadText()
     {
+        _collectablePanel.SetActive(true);
+        _collectableObject.GetComponent<Image>().sprite = _collectableImage.GetComponent<Image>().sprite;
         if (_typingCoroutine != null)
         {
             StopCoroutine(_typingCoroutine);
         }
-        _dialogueBox.CrossFadeColor(Color.white, 0f, false, true);
-        _background.CrossFadeColor(Color.black, 0f, false, true);
         AdvanceDialogue();
     }
 
@@ -56,7 +67,7 @@ public class CollectableButtonBehavior : MonoBehaviour
     /// Is used to advance the current dialogue or show the dialogue if it is not already
     /// Is called by player when the interact key is used
     /// </summary>
-    public void AdvanceDialogue()
+    private void AdvanceDialogue()
     {
         if (!_isTalking)
         {
@@ -69,9 +80,6 @@ public class CollectableButtonBehavior : MonoBehaviour
                 _currentDialogue = 0;
                 _typingCoroutine = StartCoroutine(TypeDialogue(_dialogueEntries[_currentDialogue].text));
             }
-
-            _dialogueBox.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
-            _background.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
             _isTalking = true;
         }
         else
@@ -186,15 +194,15 @@ public class CollectableButtonBehavior : MonoBehaviour
     /// </summary>
     public void HideDialogue()
     {
-        _dialogueBox.CrossFadeAlpha(0f, _dialogueFadeDuration, true);
-        _background.CrossFadeAlpha(0f, _dialogueFadeDuration, true);
         _currentTypingSpeed = 0;
 
         if (_typingCoroutine != null)
         {
             StopCoroutine(_typingCoroutine);
         }
+        _isTyping = false;
         _isTalking = false;
+        _collectablePanel.SetActive(false);
     }
 
     /// <summary>
@@ -205,9 +213,7 @@ public class CollectableButtonBehavior : MonoBehaviour
     {
         if (_dialogueEntries.Count == 0)
         {
-            UnityEngine.Debug.LogWarning("No entries in " + gameObject.name + ", please add some.");
-            _dialogueBox.SetText("No Entries in Collectable Raw.");
-            return false;
+            HideDialogue();
         }
         return true;
     }

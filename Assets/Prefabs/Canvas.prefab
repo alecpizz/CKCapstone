@@ -4749,11 +4749,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dialogueBox: {fileID: 1629816944664304781}
-  _background: {fileID: 3514585436100916040}
+  _collectableImage: {fileID: 2530867549000137691}
+  _collectableObject: {fileID: 2997354699723199108}
+  _collectablePanel: {fileID: 6204552439467970901}
   _typingSpeed: 3.48
   _dialogueEntries:
-  - text: His college acceptance letter.
-  - text: "I couldn\u2019t have known if this would be the right path for him."
+  - text: "His college acceptance letter.\n\nI couldn\u2019t have known if this would
+      be the right path for him."
   _dialogueFadeDuration: 0.25
 --- !u!1 &2547565391514753338
 GameObject:
@@ -5543,6 +5545,8 @@ GameObject:
   - component: {fileID: 6240235624701347483}
   - component: {fileID: 6086689376097454280}
   - component: {fileID: 3514585436100916040}
+  - component: {fileID: 1378146736160262391}
+  - component: {fileID: 3425916899790659390}
   m_Layer: 5
   m_Name: CollectableBackground
   m_TagString: Untagged
@@ -5558,16 +5562,16 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2828192593558528785}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 185, y: 185, z: 185}
+  m_LocalPosition: {x: 0, y: 0, z: 66.66996}
+  m_LocalScale: {x: 130, y: 130, z: 130}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 4594836121861704247}
+  m_Father: {fileID: 8726612271346493492}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -92.50012, y: -240.00003}
-  m_SizeDelta: {x: -95, y: -97}
+  m_AnchoredPosition: {x: -166.25668, y: -50.413513}
+  m_SizeDelta: {x: 5, y: 3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6086689376097454280
 CanvasRenderer:
@@ -5590,15 +5594,165 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.7764706}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 3d4124ed76a0042c799ae2b53c9d8d55, type: 3}
+  m_Type: 3
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1378146736160262391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2828192593558528785}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 3514585436100916040}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3425916899790659390}
+        m_TargetAssemblyTypeName: CollectableButtonBehavior, Assembly-CSharp
+        m_MethodName: HideDialogue
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &3425916899790659390
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2828192593558528785}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f689ef24435ad2479fa1c8bb115b16c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _dialogueBox: {fileID: 1629816944664304781}
+  _collectableImage: {fileID: 2997354699723199108}
+  _collectableObject: {fileID: 2997354699723199108}
+  _collectablePanel: {fileID: 6204552439467970901}
+  _typingSpeed: 2
+  _dialogueEntries: []
+  _dialogueFadeDuration: 0.25
+--- !u!1 &2997354699723199108
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1625719023360757639}
+  - component: {fileID: 8072195692426105536}
+  - component: {fileID: 3399432251452434570}
+  m_Layer: 5
+  m_Name: CollectableImage
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1625719023360757639
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2997354699723199108}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 66.66996}
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 8726612271346493492}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -155, y: -0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &8072195692426105536
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2997354699723199108}
+  m_CullTransparentMesh: 1
+--- !u!114 &3399432251452434570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2997354699723199108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 9d870ffd554c140408061d40f7f6370f, type: 3}
-  m_Type: 3
+  m_Sprite: {fileID: 21300000, guid: 0f9c629e928c445acad4246dce1c37b3, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -8013,12 +8167,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dialogueBox: {fileID: 1629816944664304781}
-  _background: {fileID: 3514585436100916040}
+  _collectableImage: {fileID: 4291751509489385183}
+  _collectableObject: {fileID: 2997354699723199108}
+  _collectablePanel: {fileID: 6204552439467970901}
   _typingSpeed: 3.48
   _dialogueEntries:
-  - text: A toy xylophone.
-  - text: "He would always hit the keys so hard. I\u2019m surprised he never broke
-      them off!"
+  - text: "A toy xylophone.\n\nHe would always hit the keys so hard. I\u2019m surprised
+      he never broke them off!"
   _dialogueFadeDuration: 0.25
 --- !u!1 &4345334443669409052
 GameObject:
@@ -8528,12 +8683,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dialogueBox: {fileID: 1629816944664304781}
-  _background: {fileID: 3514585436100916040}
+  _collectableImage: {fileID: 4396519614081956537}
+  _collectableObject: {fileID: 2997354699723199108}
+  _collectablePanel: {fileID: 6204552439467970901}
   _typingSpeed: 3.48
   _dialogueEntries:
-  - text: My unfinished letter.
-  - text: "There\u2019s so much I want to say to him, but it\u2019s so hard to find
-      the words\u2026"
+  - text: "My unfinished letter.\n\nThere\u2019s so much I want to say to him, but
+      it\u2019s so hard to find the words\u2026"
   _dialogueFadeDuration: 0.25
 --- !u!1 &4440712569317143336
 GameObject:
@@ -8770,11 +8926,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dialogueBox: {fileID: 1629816944664304781}
-  _background: {fileID: 3514585436100916040}
+  _collectableImage: {fileID: 4626940906998649275}
+  _collectableObject: {fileID: 2997354699723199108}
+  _collectablePanel: {fileID: 6204552439467970901}
   _typingSpeed: 3.48
   _dialogueEntries:
-  - text: My current crochet project.
-  - text: I really should finish this. I wish I had the energy.
+  - text: 'My current crochet project.
+
+
+      I really should finish this. I wish
+      I had the energy.'
   _dialogueFadeDuration: 0.25
 --- !u!1 &4684721396807847250
 GameObject:
@@ -9874,11 +10035,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dialogueBox: {fileID: 1629816944664304781}
-  _background: {fileID: 3514585436100916040}
+  _collectableImage: {fileID: 5032423509142873770}
+  _collectableObject: {fileID: 2997354699723199108}
+  _collectablePanel: {fileID: 6204552439467970901}
   _typingSpeed: 3.48
   _dialogueEntries:
-  - text: "My son\u2019s cardinal plush. \r\n"
-  - text: "He left this behind\u2026I guess he\u2019s outgrown it."
+  - text: "My son\u2019s cardinal plush. \n\nHe left this behind\u2026I guess he\u2019s
+      outgrown it.\r"
   _dialogueFadeDuration: 0.25
 --- !u!1 &5044083098386900212
 GameObject:
@@ -10026,12 +10189,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dialogueBox: {fileID: 1629816944664304781}
-  _background: {fileID: 3514585436100916040}
+  _collectableImage: {fileID: 5044083098386900212}
+  _collectableObject: {fileID: 2997354699723199108}
+  _collectablePanel: {fileID: 6204552439467970901}
   _typingSpeed: 3.48
   _dialogueEntries:
-  - text: "My son\u2019s cardinal plush. \r\n"
-  - text: "He cried anytime this wasn't near him. I wasn\u2019t sure if he\u2019d
-      like it!"
+  - text: "My son\u2019s cardinal plush. \n\nHe cried anytime this wasn't near him.
+      I wasn\u2019t sure if he\u2019d like it!\r"
   _dialogueFadeDuration: 0.25
 --- !u!1 &5065637687910545303
 GameObject:
@@ -10149,8 +10313,7 @@ RectTransform:
   m_Children:
   - {fileID: 3910515316174233222}
   - {fileID: 6358766743583939352}
-  - {fileID: 6240235624701347483}
-  - {fileID: 669249142977827038}
+  - {fileID: 8726612271346493492}
   m_Father: {fileID: 393609801819263371}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -10879,11 +11042,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dialogueBox: {fileID: 1629816944664304781}
-  _background: {fileID: 3514585436100916040}
+  _collectableImage: {fileID: 5393654556773342293}
+  _collectableObject: {fileID: 2997354699723199108}
+  _collectablePanel: {fileID: 6204552439467970901}
   _typingSpeed: 3.48
   _dialogueEntries:
-  - text: "Son\u2019s collection of music tapes."
-  - text: "I\u2019m so glad he enjoyed these, they were some of my favorites!"
+  - text: "Son\u2019s collection of music tapes.\n\nI\u2019m so glad he enjoyed these,
+      they were some of my favorites!"
   _dialogueFadeDuration: 0.25
 --- !u!1 &5402689243239929499
 GameObject:
@@ -11527,13 +11692,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dialogueBox: {fileID: 1629816944664304781}
-  _background: {fileID: 3514585436100916040}
+  _collectableImage: {fileID: 5690080608707328139}
+  _collectableObject: {fileID: 2997354699723199108}
+  _collectablePanel: {fileID: 6204552439467970901}
   _typingSpeed: 3.48
   _dialogueEntries:
-  - text: 'My collection of cassette tapes.
-
-'
-  - text: "Every moment spent with him was precious. I didn\u2019t want to miss it."
+  - text: "My collection of cassette tapes.\n\nEvery moment spent with him was precious.
+      I didn\u2019t want to miss it."
   _dialogueFadeDuration: 0.25
 --- !u!1 &5694419526277452875
 GameObject:
@@ -11756,15 +11921,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dialogueBox: {fileID: 1629816944664304781}
-  _background: {fileID: 3514585436100916040}
+  _collectableImage: {fileID: 5718980712284168542}
+  _collectableObject: {fileID: 2997354699723199108}
+  _collectablePanel: {fileID: 6204552439467970901}
   _typingSpeed: 3.48
   _dialogueEntries:
   - text: "Some medicine cabinet supplies. Here\u2019s where I keep a vial of peppermint
-      oil.\r\n"
-  - text: 'If I apply a little to my forehead with a cold towel, it helps my migraines
-      clear up.
-
-'
+      oil.\n\nIf I apply a little to my forehead with a cold towel, it helps my migraines
+      clear up.\r"
   _dialogueFadeDuration: 0.25
 --- !u!1 &5752824827041697435
 GameObject:
@@ -12591,15 +12755,15 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6160279081113554880}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 150, y: 150, z: 150}
+  m_LocalPosition: {x: 0, y: 0, z: 66.66996}
+  m_LocalScale: {x: 50, y: 50, z: 50}
   m_ConstrainProportionsScale: 1
   m_Children: []
-  m_Father: {fileID: 4594836121861704247}
+  m_Father: {fileID: 8726612271346493492}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -92.49988, y: -239.99995}
+  m_AnchoredPosition: {x: -166.25659, y: -109}
   m_SizeDelta: {x: 4, y: 3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &108541663263585518
@@ -12694,7 +12858,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -0.21816349, y: -0.22595978, z: -0.22070217, w: -0.34769142}
+  m_margin: {x: -2.0497386, y: 0.97833705, z: -2.6833074, w: -1.2317742}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -12834,6 +12998,40 @@ MonoBehaviour:
   m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &6204552439467970901
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8726612271346493492}
+  m_Layer: 0
+  m_Name: CollectableDescriptionPanel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &8726612271346493492
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6204552439467970901}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 256.83307, y: -134.07277, z: -140.08476}
+  m_LocalScale: {x: 2.1011674, y: 2.1011674, z: 2.1011674}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 6240235624701347483}
+  - {fileID: 1625719023360757639}
+  - {fileID: 669249142977827038}
+  m_Father: {fileID: 4594836121861704247}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6214078588062482554
 GameObject:
   m_ObjectHideFlags: 0
@@ -16094,12 +16292,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dialogueBox: {fileID: 1629816944664304781}
-  _background: {fileID: 3514585436100916040}
+  _collectableImage: {fileID: 7699247279439496069}
+  _collectableObject: {fileID: 2997354699723199108}
+  _collectablePanel: {fileID: 6204552439467970901}
   _typingSpeed: 3.48
   _dialogueEntries:
-  - text: Cody's electric bass.
-  - text: "He\u2019d always practice alone, but I could listen to his music from
-      across the hall. "
+  - text: "Cody's electric bass.\n\nHe\u2019d always practice alone, but I could
+      listen to his music from across the hall. "
   _dialogueFadeDuration: 0.25
 --- !u!1 &7733511358964309808
 GameObject:
