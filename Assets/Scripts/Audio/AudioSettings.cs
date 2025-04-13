@@ -16,26 +16,32 @@ public class AudioSettings : MonoBehaviour
     [SerializeField] private Slider _masterSlider;
     [SerializeField] private Slider _bgMusicSlider;
     [SerializeField] private Slider _SFXSlider;
+    [SerializeField] private float _voiceVolume;
 
     private Bus _master;
     private Bus _bgMusic;
     private Bus _SFX;
+    private Bus _voice;
     
     private const string Volume = "Volume";
     private const string MasterVolume = "Master";
     private const string MusicVolume = "Music";
     private const string SFXVolume = "SFX";
+    private const string VoiceVolume = "Voice Clips";
 
     private void Awake()
     {
         _bgMusic = RuntimeManager.GetBus("bus:/Music");
         _SFX = RuntimeManager.GetBus("bus:/SFX");
         _master = RuntimeManager.GetBus("bus:/");
+        _voice = RuntimeManager.GetBus("bus:/Voice Clips");
     }
 
     private void Start()
     {
         Load();
+        _voice.setVolume(_voiceVolume);
+        SaveDataManager.SetSettingFloat(Volume, VoiceVolume, _voiceVolume);
     }
 
     /// <summary>

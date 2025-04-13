@@ -24,7 +24,6 @@ using UnityEngine.Video;
 using FMODUnity;
 using SaintsField;
 using System.Runtime.InteropServices;
-using FMOD.Studio;
 using Unity.Collections;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
@@ -98,16 +97,11 @@ public class CutsceneFramework : MonoBehaviour
     private float _timer = 0f;
     [SerializeField] float _skipHoldTime = 2f;
     
-    //Audio settings for cutscene only editable in backend
-    [SerializeField] private float _cutsceneVolume = 0f;
-    private Bus _cutscene;
-    private const string CutsceneVolume = "Voice Clips";
     /// <summary>
     /// Determines whether to play the Challenge or End Chapter Cutscene
     /// </summary>
     private void Start()
     {
-        _cutscene.setVolume(_cutsceneVolume);
         SaveDataManager.SetLevelCompleted(SceneManager.GetActiveScene().name);
         _inputActions = new DebugInputActions();
         _inputActions.UI.Enable();
@@ -124,7 +118,7 @@ public class CutsceneFramework : MonoBehaviour
         {
             PlayChallengeCutscene();
         }
-
+        
         // Plays the End Chapter Cutscene, provided that only the corresponding boolean 
         // (_isEndChapterCutscene) is true
         if (_isEndChapterCutscene && !_isChallengeCutscene)
@@ -138,7 +132,7 @@ public class CutsceneFramework : MonoBehaviour
                     "https://docs.unity3d.com/Manual/class-VideoPlayer.html");
                 return;
             }
-
+            
             //Sets up the video to play it in the scene
             _endChapterCutsceneVideo.audioOutputMode = VideoAudioOutputMode.APIOnly;
             _endChapterCutsceneVideo.prepareCompleted += Prepared;
@@ -149,11 +143,6 @@ public class CutsceneFramework : MonoBehaviour
             EditorApplication.pauseStateChanged += EditorStateChange;
             #endif
         }
-    }
-
-    private void Awake()
-    {
-        _cutscene = RuntimeManager.GetBus("bus:/Voice Clips");
     }
     
     /// <summary>
@@ -317,13 +306,12 @@ public class CutsceneFramework : MonoBehaviour
         _mExinfo.defaultfrequency = _mSampleRate;
         _mExinfo.length = _mTargetLatencySamples * (uint)_mExinfo.numchannels * sizeof(float);
         _mExinfo.format = FMOD.SOUND_FORMAT.PCMFLOAT;
-
         FMODUnity.RuntimeManager.CoreSystem.createSound("", FMOD.MODE.LOOP_NORMAL | FMOD.MODE.OPENUSER, ref _mExinfo, out mSound);
 
         _mProvider.sampleFramesAvailable += SampleFramesAvailable;
         _mProvider.enableSampleFramesAvailableEvents = true;
         _mProvider.freeSampleFrameCountLowThreshold = _mProvider.maxSampleFrameCount - _mTargetLatencySamples;
-
+        
         vp.Play();
     }
 
