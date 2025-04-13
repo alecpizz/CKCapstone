@@ -223,7 +223,6 @@ public class SettingsTabs : MonoBehaviour
         _collectablesButton.onClick.AddListener(() => OpenTab(Tab.Collectables));
         _collectablesButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_collectablesButtonGameObject));
         _collectablesButton.onClick.AddListener(() => ChangeImage(_collectablesButton));
-        _collectablesButton.onClick.AddListener(() => CollectableManager.Instance.SetFoundCollectibles());
 
         // Open the default tab at start
         OpenTab(Tab.Display);

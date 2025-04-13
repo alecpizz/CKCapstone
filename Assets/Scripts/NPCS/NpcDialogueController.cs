@@ -169,6 +169,7 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
             if (isCollectible)
             {
                 CollectableManager.Instance.Collection(gameObject);
+                CollectableManager.Instance.SetFoundCollectibles();
             }
 
             if (_animator != null)
