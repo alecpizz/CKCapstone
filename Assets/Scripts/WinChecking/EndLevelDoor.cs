@@ -10,6 +10,7 @@ using FMODUnity;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using SaintsField;
+using System.Collections.Generic;
 
 public class EndLevelDoor : MonoBehaviour
 {
@@ -27,13 +28,18 @@ public class EndLevelDoor : MonoBehaviour
 
     [SerializeField] private EventReference _doorSound;
 
+    private List<ParticleSystem> _childVFX = new();
+
     /// <summary>
     /// Door glow is assigned a value when the function awakens
+    /// Checks for children VFX to be updated if the door closes
     /// </summary>
     private void Awake()
     {
         _doorGlow = GetComponent<DoorGlow>();
         _doorPortalVFX.SetActive(false);
+
+        _childVFX.AddRange(_doorPortalVFX.GetComponentsInChildren<ParticleSystem>());
     }
 
     /// <summary>
@@ -41,7 +47,7 @@ public class EndLevelDoor : MonoBehaviour
     /// </summary>
     private void Start()
     {
-        WinChecker.GotCorrectSequence += UnlockDoor;
+        WinChecker.GotCorrectSequence += OnLevelComplete;
 
         if (_isUnlocked)
         {
@@ -60,11 +66,11 @@ public class EndLevelDoor : MonoBehaviour
     /// </summary>
     private void OnDisable()
     {
-        WinChecker.GotCorrectSequence -= UnlockDoor;
+        WinChecker.GotCorrectSequence -= OnLevelComplete;
     }
 
     /// <summary>
-    /// Called when correct sequence is created to open door
+    /// Called to unlock the door, and play the related VFX and SFX
     /// </summary>
     public void UnlockDoor()
     {
@@ -91,6 +97,26 @@ public class EndLevelDoor : MonoBehaviour
         {
             AudioManager.Instance.PlaySound(_doorSound);
         }
+    }
+
+    /// <summary>
+    /// Called when correct sequence is created to open door
+    /// </summary>
+    private void OnLevelComplete()
+    {
+        if (_isUnlocked)
+        {
+            _isUnlocked = false;
+            _anim.Play("ANIM_DoorClose");
+            _unlockedParticles.Stop();
+
+            foreach(var child in _childVFX)
+                child.Stop();
+
+            return;
+        }
+
+        UnlockDoor();
     }
 
     // TODO: this OnTriggerEnter method can be replaced with grid data checking
