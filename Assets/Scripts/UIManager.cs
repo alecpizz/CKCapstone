@@ -39,6 +39,8 @@ public class UIManager : MonoBehaviour, ITimeListener
     [Space]
     [SerializeField] private float _timeSigAnimDuration = 1f;
 
+    private bool _timeSigAnimEnabled = false;
+
     private TimeSignatureManager _timeSigManager;
 
     private List<int> _notes;
@@ -168,8 +170,7 @@ public class UIManager : MonoBehaviour, ITimeListener
 
         bool hasOptionalUI = _notesUI.Arrow != null;
 
-        print("Play Animation? " + playAnimation);
-        if (hasOptionalUI && playAnimation)
+        if (hasOptionalUI && playAnimation && _timeSigAnimEnabled)
         {
             AnimatedTimeSigUpdate(newTimeSignature);
             return;
@@ -200,7 +201,7 @@ public class UIManager : MonoBehaviour, ITimeListener
         Vector3 arrowStartScale = _notesUI.Arrow.transform.localScale;
         Vector3 arrowStopScale = arrowStartScale * 1.3f;
 
-        float minAlpha = 0.3f;
+        float minAlpha = 0.1f;
 
         float animDuration = _timeSigAnimDuration;
         float[] animKeyFrameDurations = { 0.33f, 0.45f, 0.5f, 2f };
@@ -378,5 +379,10 @@ public class UIManager : MonoBehaviour, ITimeListener
         _notesUI = notesUI;
 
         UpdateTimingFromSignature(_timeSigManager.GetCurrentTimeSignature(), false);
+
+        Tween.Delay(_timeSigAnimDuration)
+            .OnComplete(() => {
+                _timeSigAnimEnabled = true; 
+            });
     }
 }
