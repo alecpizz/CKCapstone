@@ -16,6 +16,7 @@ using Unity.VisualScripting;
 using UnityEngine.Serialization;
 using static UnityEngine.Rendering.DebugUI;
 using UnityEngine.UI;
+using PrimeTween;
 
 public class UIManager : MonoBehaviour, ITimeListener
 {
@@ -152,9 +153,22 @@ public class UIManager : MonoBehaviour, ITimeListener
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
     {
+        UpdateTimingFromSignature(newTimeSignature, true);
+    }
+
+    private void UpdateTimingFromSignature(Vector2Int newTimeSignature, bool playAnimation)
+    {
         if (_notesUI.TimeSigX == null || _notesUI.TimeSigY == null)
         {
             Debug.LogWarning("Missing hud elements");
+            return;
+        }
+
+        bool hasOptionalUI = _notesUI.Arrow != null;
+
+        if (hasOptionalUI && playAnimation)
+        {
+            AnimatedTimeSigUpdate(newTimeSignature);
             return;
         }
 
@@ -162,12 +176,45 @@ public class UIManager : MonoBehaviour, ITimeListener
         _notesUI.TimeSigY.text = newTimeSignature.y.ToString();
 
         // Return early if no more updating is needed
-        if (_notesUI.Arrow == null)
+        if (!hasOptionalUI)
             return;
 
         Vector2Int nextSecondaryTS = TimeSignatureManager.Instance.GetNextTimeSignature();
         _notesUI.SecondaryTimeSigX.text = nextSecondaryTS.x.ToString();
         _notesUI.SecondaryTimeSigY.text = nextSecondaryTS.y.ToString();
+    }
+
+    private void AnimatedTimeSigUpdate(Vector2Int newTimeSignature)
+    {
+        if (_notesUI.Arrow == null)
+            return;
+
+        Vector2Int nextSecondaryTS = TimeSignatureManager.Instance.GetNextTimeSignature();
+        float arrowStartY = _notesUI.Arrow.transform.localPosition.y;
+        float arrowStopY = arrowStartY + 226;
+        float animDuration = 0.5f;
+        float minAlpha = 0.3f;
+
+        Tween.LocalPositionY(_notesUI.Arrow.transform, arrowStopY, animDuration, Ease.OutSine);
+        Tween.Alpha(_notesUI.Arrow, 0, animDuration)
+            .Chain(Tween.LocalPositionY(_notesUI.Arrow.transform, arrowStartY, 0f))
+            .ChainCallback(() => {
+                _notesUI.SecondaryTimeSigX.text = nextSecondaryTS.x.ToString();
+                _notesUI.SecondaryTimeSigY.text = nextSecondaryTS.y.ToString();
+            })
+            .Chain(Tween.Alpha(_notesUI.Arrow, 1, animDuration));
+
+        Tween.Alpha(_notesUI.TimeSigX, minAlpha, animDuration / 2)
+            .OnComplete(() => { 
+                _notesUI.TimeSigX.text = newTimeSignature.x.ToString(); 
+            })
+            .Chain(Tween.Alpha(_notesUI.TimeSigX, 1, animDuration / 2));
+
+        Tween.Alpha(_notesUI.TimeSigY, minAlpha, animDuration / 2)
+            .OnComplete(() => {
+                _notesUI.TimeSigY.text = newTimeSignature.y.ToString();
+            })
+            .Chain(Tween.Alpha(_notesUI.TimeSigY, 1, animDuration / 2));
     }
 
     /// <summary>
@@ -280,5 +327,7 @@ public class UIManager : MonoBehaviour, ITimeListener
         Destroy(_notesUI.gameObject);
 
         _notesUI = notesUI;
+
+        UpdateTimingFromSignature(_timeSigManager.GetCurrentTimeSignature(), false);
     }
 }
