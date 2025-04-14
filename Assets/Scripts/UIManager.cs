@@ -36,6 +36,8 @@ public class UIManager : MonoBehaviour, ITimeListener
     [Header("Time Signature")]
     [SerializeField] private NotesUI _notesUI;
     [SerializeField] private GameObject _timeSigNotesUIPrefab;
+    [Space]
+    [SerializeField] private float _timeSigAnimDuration = 1f;
 
     private TimeSignatureManager _timeSigManager;
 
@@ -166,6 +168,7 @@ public class UIManager : MonoBehaviour, ITimeListener
 
         bool hasOptionalUI = _notesUI.Arrow != null;
 
+        print("Play Animation? " + playAnimation);
         if (hasOptionalUI && playAnimation)
         {
             AnimatedTimeSigUpdate(newTimeSignature);
@@ -190,19 +193,65 @@ public class UIManager : MonoBehaviour, ITimeListener
             return;
 
         Vector2Int nextSecondaryTS = TimeSignatureManager.Instance.GetNextTimeSignature();
+
         float arrowStartY = _notesUI.Arrow.transform.localPosition.y;
-        float arrowStopY = arrowStartY + 226;
-        float animDuration = 0.5f;
+        float arrowStopY = arrowStartY + 221;
+
+        Vector3 arrowStartScale = _notesUI.Arrow.transform.localScale;
+        Vector3 arrowStopScale = arrowStartScale * 1.3f;
+
         float minAlpha = 0.3f;
 
-        Tween.LocalPositionY(_notesUI.Arrow.transform, arrowStopY, animDuration, Ease.OutSine);
-        Tween.Alpha(_notesUI.Arrow, 0, animDuration)
+        float animDuration = _timeSigAnimDuration;
+        float[] animKeyFrameDurations = { 0.33f, 0.45f, 0.5f, 2f };
+        for(int i = 0; i < animKeyFrameDurations.Length; i++)
+            animKeyFrameDurations[i] *= animDuration;
+
+        Ease commonEaseType = Ease.OutSine;
+
+        // Moves Arrow Up
+        Tween.LocalPositionY(_notesUI.Arrow.transform, arrowStopY, animKeyFrameDurations[0], commonEaseType)
+            /*.Group(Tween.Alpha(_notesUI.Arrow, minAlpha, animDuration))*/
+
+            // Reduce alpha of current time sig, updates it, then returns to alpha 1
+            .Group(Tween.Alpha(_notesUI.TimeSigX, minAlpha, animKeyFrameDurations[0], commonEaseType))
+            .Group(Tween.Alpha(_notesUI.TimeSigY, minAlpha, animKeyFrameDurations[0], commonEaseType))
+
+            // Scales up arrow (and its child text) to fit current time sig. Vanishes after matching
+            .Chain(Tween.Scale(_notesUI.Arrow.transform, arrowStopScale, animKeyFrameDurations[1], commonEaseType)
+                .Group(Tween.Alpha(_notesUI.Arrow, 0, animKeyFrameDurations[1], commonEaseType))
+                .Group(Tween.Alpha(_notesUI.TimeSigX, 1, animKeyFrameDurations[1]))
+                .Group(Tween.Alpha(_notesUI.TimeSigY, 1, animKeyFrameDurations[1]))
+                .Group(Tween.Alpha(_notesUI.SecondaryTimeSigX, 0, animKeyFrameDurations[1]))
+                .Group(Tween.Alpha(_notesUI.SecondaryTimeSigY, 0, animKeyFrameDurations[1]))
+                .InsertCallback(animKeyFrameDurations[1] / 2, () => {
+                    _notesUI.TimeSigX.text = newTimeSignature.x.ToString();
+                    _notesUI.TimeSigY.text = newTimeSignature.y.ToString();
+                }))
+
+            .OnComplete(() => {
+                _notesUI.TimeSigX.text = newTimeSignature.x.ToString();
+                _notesUI.TimeSigY.text = newTimeSignature.y.ToString();
+            })
+            .Chain(Tween.Alpha(_notesUI.TimeSigX, 1, 0)
+                .Group(Tween.Alpha(_notesUI.TimeSigY, 1, 0)))
+
+            // Resets arrow
             .Chain(Tween.LocalPositionY(_notesUI.Arrow.transform, arrowStartY, 0f))
             .ChainCallback(() => {
                 _notesUI.SecondaryTimeSigX.text = nextSecondaryTS.x.ToString();
                 _notesUI.SecondaryTimeSigY.text = nextSecondaryTS.y.ToString();
+
+                _notesUI.SecondaryTimeSigX.alpha = 0;
+                _notesUI.SecondaryTimeSigY.alpha = 0;
             })
-            .Chain(Tween.Alpha(_notesUI.Arrow, 1, animDuration));
+            .ChainDelay(animKeyFrameDurations[^2])
+
+            // Fade arrow text back in
+            .Chain(Tween.Scale(_notesUI.Arrow.transform, arrowStartScale, 0f))
+            .Chain(Tween.Alpha(_notesUI.Arrow, 1, animKeyFrameDurations[^1])
+                .Group(Tween.Alpha(_notesUI.SecondaryTimeSigX, 1, animKeyFrameDurations[^1]))
+                .Group(Tween.Alpha(_notesUI.SecondaryTimeSigY, 1, animKeyFrameDurations[^1])));
 
         Tween.Alpha(_notesUI.TimeSigX, minAlpha, animDuration / 2)
             .OnComplete(() => { 
