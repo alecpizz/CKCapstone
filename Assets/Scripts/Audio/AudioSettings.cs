@@ -35,6 +35,9 @@ public class AudioSettings : MonoBehaviour
         _SFX = RuntimeManager.GetBus("bus:/SFX");
         _master = RuntimeManager.GetBus("bus:/");
         _voice = RuntimeManager.GetBus("bus:/Voice Clips");
+        
+        _voice.setVolume(_voiceVolume);
+        SaveDataManager.SetSettingFloat(Volume, VoiceVolume, _voiceVolume);
     }
 
     private void Start()
