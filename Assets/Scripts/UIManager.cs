@@ -29,28 +29,12 @@ public class UIManager : MonoBehaviour, ITimeListener
     [FormerlySerializedAs("_sequenceUI")] [SerializeField]
     private TextMeshProUGUI _sequenceUi;
 
-    [SerializeField] private GameObject[] _noteImages;
-    [SerializeField] private GameObject[] _ghostNoteImages;
     [SerializeField] private bool _isIntermission;
     [SerializeField] private bool _isChallenge;
 
     [Header("Time Signature")]
-    [FormerlySerializedAs("_timeSignatureUIy")] [SerializeField]
-    private TextMeshProUGUI _timeSignatureUiY;
-
-    [FormerlySerializedAs("_timeSignatureUIx")] [SerializeField]
-    private TextMeshProUGUI _timeSignatureUiX;
-
-    [FormerlySerializedAs("timeSignature")]
-    [SerializeField]
-    private bool _timeSignature;
-
-    [SerializeField] private Color _defaultHudTextColor = Color.black;
-    [SerializeField] private Color _tsHudTextColor = Color.white;
-
-    [SerializeField] private Image _timeSignatureRibbon;
-
-    [SerializeField] private TMP_Text _levelNumber;
+    [SerializeField] private NotesUI _notesUI;
+    [SerializeField] private GameObject _timeSigNotesUIPrefab;
 
     private TimeSignatureManager _timeSigManager;
 
@@ -130,7 +114,7 @@ public class UIManager : MonoBehaviour, ITimeListener
 
     public void SetLevelText(string text)
     {
-        _levelNumber.text = text;
+        _notesUI.LevelNumber.text = text;
     }
 
     /// <summary>
@@ -168,14 +152,22 @@ public class UIManager : MonoBehaviour, ITimeListener
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
     {
-        if (_timeSignatureUiX == null || _timeSignatureUiY == null)
+        if (_notesUI.TimeSigX == null || _notesUI.TimeSigY == null)
         {
             Debug.LogWarning("Missing hud elements");
             return;
         }
 
-        _timeSignatureUiY.text = newTimeSignature.y.ToString();
-        _timeSignatureUiX.text = newTimeSignature.x.ToString();
+        _notesUI.TimeSigX.text = newTimeSignature.x.ToString();
+        _notesUI.TimeSigY.text = newTimeSignature.y.ToString();
+
+        // Return early if no more updating is needed
+        if (_notesUI.Arrow == null)
+            return;
+
+        Vector2Int nextSecondaryTS = TimeSignatureManager.Instance.GetNextTimeSignature();
+        _notesUI.SecondaryTimeSigX.text = nextSecondaryTS.x.ToString();
+        _notesUI.SecondaryTimeSigY.text = nextSecondaryTS.y.ToString();
     }
 
     /// <summary>
@@ -200,13 +192,13 @@ public class UIManager : MonoBehaviour, ITimeListener
     /// </summary>
     private void UpdateColectedNotesIcons(int collectedNote)
     {
-        if (collectedNote < 0 || collectedNote > _noteImages.Length - 1)
+        if (collectedNote < 0 || collectedNote > _notesUI.NoteImages.Length - 1)
         {
             return;
         }
 
-        _noteImages[collectedNote].SetActive(true);
-        _ghostNoteImages[collectedNote].SetActive(false);
+        _notesUI.NoteImages[collectedNote].enabled = true;
+        _notesUI.GhostNoteImages[collectedNote].enabled = false;
     }
 
     /// <summary>
@@ -214,9 +206,9 @@ public class UIManager : MonoBehaviour, ITimeListener
     /// </summary>
     private void UpdateGhostNotesIcons(int collectedNote)
     {
-        if (collectedNote >= 0 && collectedNote < _noteImages.Length)
+        if (collectedNote >= 0 && collectedNote < _notesUI.NoteImages.Length)
         {
-            _ghostNoteImages[collectedNote].SetActive(true);
+            _notesUI.GhostNoteImages[collectedNote].enabled = true;
         }
     }
 
@@ -273,11 +265,20 @@ public class UIManager : MonoBehaviour, ITimeListener
     /// </summary>
     private void InitializeTimeSigHud()
     {
-        bool isInUse = _timeSigManager.TimeSigInUse;
-        var textColor = isInUse ? _tsHudTextColor : _defaultHudTextColor;
+        if (_timeSigManager == null || !_timeSigManager.TimeSigInUse)
+            return;
 
-        _timeSignatureRibbon.enabled = isInUse;
-        _timeSignatureUiX.color = textColor;
-        _timeSignatureUiY.color = textColor;
+        GameObject uiObj = Instantiate(_timeSigNotesUIPrefab, transform);
+        uiObj.transform.SetAsFirstSibling();
+
+        if(!uiObj.TryGetComponent(out NotesUI notesUI))
+        {
+            Debug.LogError("TimeSigNotesUI Prefab is missing NotesUI script!");
+            return;
+        }
+
+        Destroy(_notesUI.gameObject);
+
+        _notesUI = notesUI;
     }
 }

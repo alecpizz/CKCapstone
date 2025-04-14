@@ -16,9 +16,13 @@ public class NotesUI : MonoBehaviour
     public TMP_Text LevelNumber { get { return _levelNumber; } }
     public TMP_Text TimeSigX { get { return _timeSignatureUiX; } }
     public TMP_Text TimeSigY { get { return _timeSignatureUiY; } }
-    public Image Ribbon { get { return _ribbon; } }
     public Image[] NoteImages { get { return _noteImages; } }
     public Image[] GhostNoteImages { get { return _ghostNoteImages; } }
+    public Image Ribbon { get { return _ribbon; } }
+    public Image Arrow { get { return _arrow; } }
+    public TMP_Text SecondaryTimeSigX { get { return _secondaryUiX; } }
+    public TMP_Text SecondaryTimeSigY { get { return _secondaryUiY; } }
+
 
     [Header("Required Components")]
     [SerializeField]
@@ -29,7 +33,7 @@ public class NotesUI : MonoBehaviour
     [SerializeField]
     private TMP_Text _timeSignatureUiY;
     [Space]
-    [SerializeField] 
+    [SerializeField]
     private Image[] _noteImages;
     [SerializeField] 
     private Image[] _ghostNoteImages;
