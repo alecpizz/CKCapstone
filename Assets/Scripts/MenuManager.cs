@@ -52,6 +52,13 @@ public class MenuManager : MonoBehaviour
         _inputActions = new DebugInputActions();
         _inputActions.Enable();
         _inputActions.Player.Quit.performed += ctx => Pause();
+
+        //Gets rid of restart button if it's a cutscene
+        string path = SceneManager.GetActiveScene().path;
+        if (path.Contains("CS"))
+        {
+            _restartButton.SetActive(false);
+        }
     }
 
     /// <summary>
@@ -70,7 +77,17 @@ public class MenuManager : MonoBehaviour
     {
         DebugMenuManager.Instance.PauseMenu = false;
         _pauseScreen.SetActive(false);
-        _restartButton.SetActive(true);
+
+        //gets rid of restart icon in cutscenes
+        string path = SceneManager.GetActiveScene().path;
+        if (path.Contains("CS"))
+        {
+            _restartButton.SetActive(false);
+        }
+        else
+        {
+            _restartButton.SetActive(true);
+        }
         _cursorManager.OnPointerExit();
         Time.timeScale = 1f;
         _pauseInvoked = false;
