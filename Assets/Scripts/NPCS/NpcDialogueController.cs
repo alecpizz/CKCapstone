@@ -34,6 +34,8 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
     [SerializeField] public Sprite _keyboardPrompt;
     [SerializeField] public Sprite _playstationButtonPrompt;
     [SerializeField] public Sprite _letterButtonPrompt; //Switch and Xbox sprite
+    //Sound for collecting interactable items 
+    [SerializeField] private EventReference _onCollected;
 
     [Serializable]
     public struct DialogueEntry
@@ -249,8 +251,9 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
                 _currentDialogue = 0;
                 HideDialogue();
 
-                if (isCollectible)
+                if (isCollectible && !SaveDataManager.GetCollectableFound(gameObject.name))
                 {
+                    AudioManager.Instance.PlaySound(_onCollected);
                     CollectableManager.Instance.Collection(gameObject);
                 }
 
