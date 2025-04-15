@@ -30,6 +30,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject _mainMenuSettings;
     [SerializeField] private GameObject _mainMenuQuit;
     [SerializeField] private GameObject _restartButton;
+    [SerializeField] private GameObject _tempCredits;
     
     [SerializeField] private EventReference _buttonPress;
 
@@ -264,5 +265,23 @@ public class MenuManager : MonoBehaviour
     public void Quit()
     {
         Application.Quit();
+    }
+
+    /// <summary>
+    /// Opens credits
+    /// </summary>
+    public void Credits()
+    {
+        _tempCredits.SetActive(true);
+
+        //SceneManager.LoadScene("Credits");
+    }
+
+    /// <summary>
+    /// closes credits
+    /// </summary>
+    public void CreditsClose()
+    {
+        _tempCredits.SetActive(false);
     }
 }

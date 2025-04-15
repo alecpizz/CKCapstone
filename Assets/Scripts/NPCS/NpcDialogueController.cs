@@ -353,6 +353,14 @@ public class NpcDialogueController : MonoBehaviour, IInteractable
             //set to tutorial text and fade in over time.
             _dialogueBox.SetText(_tutorialHint);
             _dialogueBox.alignment = TextAlignmentOptions.Center;
+
+            if (!isNpc)
+            {
+                Vector4 newMargins = _dialogueBox.margin;
+                newMargins.y = 0.05f;
+                _dialogueBox.margin = newMargins;
+            }
+
             _dialogueBox.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
             _background.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
             _eKey.CrossFadeAlpha(1f, _dialogueFadeDuration, false);
