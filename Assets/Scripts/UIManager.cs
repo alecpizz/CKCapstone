@@ -378,6 +378,9 @@ public class UIManager : MonoBehaviour, ITimeListener
 
         notesUI.LevelNumber.text = levelNumber;
 
+        if (_timeSigManager.MetronomeInUse)
+            notesUI.Arrow.gameObject.SetActive(false);
+
         Destroy(_notesUI.gameObject);
 
         _notesUI = notesUI;

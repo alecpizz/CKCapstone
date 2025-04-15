@@ -18,6 +18,8 @@ public class TimeSignatureManager : MonoBehaviour
 
     public bool TimeSigInUse { get; private set; } = false;
 
+    public bool MetronomeInUse { get; private set; } = false;
+
     [InfoBox("First number is player time, second is enemy time", EMessageType.Info)]
     [OnValueChanged(nameof(UpdateListeners))]
     [SerializeField] private Vector2Int _timeSignature;
@@ -69,6 +71,8 @@ public class TimeSignatureManager : MonoBehaviour
         }
 
         TimeSigInUse = _timeSignature != Vector2Int.one || _secondaryTimeSignature != Vector2Int.one;
+
+        MetronomeInUse = FindFirstObjectByType(typeof(MetronomeBehavior)) == null;
     }
 
     /// <summary>
