@@ -72,7 +72,7 @@ public class TimeSignatureManager : MonoBehaviour
 
         TimeSigInUse = _timeSignature != Vector2Int.one || _secondaryTimeSignature != Vector2Int.one;
 
-        MetronomeInUse = FindFirstObjectByType(typeof(MetronomeBehavior)) == null;
+        MetronomeInUse = FindFirstObjectByType(typeof(MetronomeBehavior)) != null;
     }
 
     /// <summary>

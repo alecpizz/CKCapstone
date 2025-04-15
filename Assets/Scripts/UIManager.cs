@@ -33,13 +33,10 @@ public class UIManager : MonoBehaviour, ITimeListener
     [SerializeField] private bool _isIntermission;
     [SerializeField] private bool _isChallenge;
 
-    [Header("Time Signature")]
+    [Space]
     [SerializeField] private NotesUI _notesUI;
     [SerializeField] private GameObject _timeSigNotesUIPrefab;
     [Space]
-    [SerializeField] private float _timeSigAnimDuration = 1f;
-
-    private bool _timeSigAnimEnabled = false;
 
     private TimeSignatureManager _timeSigManager;
 
@@ -66,13 +63,13 @@ public class UIManager : MonoBehaviour, ITimeListener
         {
             WinChecker winChecker = WinChecker.Instance;
             _notes = winChecker.TargetNoteSequence;
-            WinChecker.CollectedNote += UpdateGhostNotesIcons;
+            WinChecker.CollectedNote += UpdateGhostNotesIcon;
             foreach (int note in _notes)
             {
                 _sequenceUi.text += " " + note;
                 if (!_isIntermission)
                 {
-                    UpdateGhostNotesIcons(note);
+                    UpdateGhostNotesIcon(note);
                 }
             }
         }
@@ -119,7 +116,7 @@ public class UIManager : MonoBehaviour, ITimeListener
 
     public void SetLevelText(string text)
     {
-        _notesUI.LevelNumber.text = text;
+        _notesUI.SetLevelText(text);
     }
 
     /// <summary>
@@ -157,114 +154,7 @@ public class UIManager : MonoBehaviour, ITimeListener
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
     {
-        UpdateTimingFromSignature(newTimeSignature, true);
-    }
-
-    private void UpdateTimingFromSignature(Vector2Int newTimeSignature, bool playAnimation)
-    {
-        if (_notesUI.TimeSigX == null || _notesUI.TimeSigY == null)
-        {
-            Debug.LogWarning("Missing hud elements");
-            return;
-        }
-
-        bool hasOptionalUI = _notesUI.Arrow != null;
-
-        if (hasOptionalUI && playAnimation && _timeSigAnimEnabled)
-        {
-            AnimatedTimeSigUpdate(newTimeSignature);
-            return;
-        }
-
-        _notesUI.TimeSigX.text = newTimeSignature.x.ToString();
-        _notesUI.TimeSigY.text = newTimeSignature.y.ToString();
-
-        // Return early if no more updating is needed
-        if (!hasOptionalUI)
-            return;
-
-        Vector2Int nextSecondaryTS = TimeSignatureManager.Instance.GetNextTimeSignature();
-        _notesUI.SecondaryTimeSigX.text = nextSecondaryTS.x.ToString();
-        _notesUI.SecondaryTimeSigY.text = nextSecondaryTS.y.ToString();
-    }
-
-    private void AnimatedTimeSigUpdate(Vector2Int newTimeSignature)
-    {
-        if (_notesUI.Arrow == null)
-            return;
-
-        Vector2Int nextSecondaryTS = TimeSignatureManager.Instance.GetNextTimeSignature();
-
-        float arrowStartY = _notesUI.Arrow.transform.localPosition.y;
-        float arrowStopY = arrowStartY + 221;
-
-        Vector3 arrowStartScale = _notesUI.Arrow.transform.localScale;
-        Vector3 arrowStopScale = arrowStartScale * 1.3f;
-
-        float minAlpha = 0.1f;
-
-        float animDuration = _timeSigAnimDuration;
-        float[] animKeyFrameDurations = { 0.33f, 0.45f, 0.5f, 2f };
-        for(int i = 0; i < animKeyFrameDurations.Length; i++)
-            animKeyFrameDurations[i] *= animDuration;
-
-        Ease commonEaseType = Ease.OutSine;
-
-        // Moves Arrow Up
-        Tween.LocalPositionY(_notesUI.Arrow.transform, arrowStopY, animKeyFrameDurations[0], commonEaseType)
-            /*.Group(Tween.Alpha(_notesUI.Arrow, minAlpha, animDuration))*/
-
-            // Reduce alpha of current time sig, updates it, then returns to alpha 1
-            .Group(Tween.Alpha(_notesUI.TimeSigX, minAlpha, animKeyFrameDurations[0], commonEaseType))
-            .Group(Tween.Alpha(_notesUI.TimeSigY, minAlpha, animKeyFrameDurations[0], commonEaseType))
-
-            // Scales up arrow (and its child text) to fit current time sig. Vanishes after matching
-            .Chain(Tween.Scale(_notesUI.Arrow.transform, arrowStopScale, animKeyFrameDurations[1], commonEaseType)
-                .Group(Tween.Alpha(_notesUI.Arrow, 0, animKeyFrameDurations[1], commonEaseType))
-                .Group(Tween.Alpha(_notesUI.TimeSigX, 1, animKeyFrameDurations[1]))
-                .Group(Tween.Alpha(_notesUI.TimeSigY, 1, animKeyFrameDurations[1]))
-                .Group(Tween.Alpha(_notesUI.SecondaryTimeSigX, 0, animKeyFrameDurations[1]))
-                .Group(Tween.Alpha(_notesUI.SecondaryTimeSigY, 0, animKeyFrameDurations[1]))
-                .InsertCallback(animKeyFrameDurations[1] / 2, () => {
-                    _notesUI.TimeSigX.text = newTimeSignature.x.ToString();
-                    _notesUI.TimeSigY.text = newTimeSignature.y.ToString();
-                }))
-
-            .OnComplete(() => {
-                _notesUI.TimeSigX.text = newTimeSignature.x.ToString();
-                _notesUI.TimeSigY.text = newTimeSignature.y.ToString();
-            })
-            .Chain(Tween.Alpha(_notesUI.TimeSigX, 1, 0)
-                .Group(Tween.Alpha(_notesUI.TimeSigY, 1, 0)))
-
-            // Resets arrow
-            .Chain(Tween.LocalPositionY(_notesUI.Arrow.transform, arrowStartY, 0f))
-            .ChainCallback(() => {
-                _notesUI.SecondaryTimeSigX.text = nextSecondaryTS.x.ToString();
-                _notesUI.SecondaryTimeSigY.text = nextSecondaryTS.y.ToString();
-
-                _notesUI.SecondaryTimeSigX.alpha = 0;
-                _notesUI.SecondaryTimeSigY.alpha = 0;
-            })
-            .ChainDelay(animKeyFrameDurations[^2])
-
-            // Fade arrow text back in
-            .Chain(Tween.Scale(_notesUI.Arrow.transform, arrowStartScale, 0f))
-            .Chain(Tween.Alpha(_notesUI.Arrow, 1, animKeyFrameDurations[^1])
-                .Group(Tween.Alpha(_notesUI.SecondaryTimeSigX, 1, animKeyFrameDurations[^1]))
-                .Group(Tween.Alpha(_notesUI.SecondaryTimeSigY, 1, animKeyFrameDurations[^1])));
-
-        Tween.Alpha(_notesUI.TimeSigX, minAlpha, animDuration / 2)
-            .OnComplete(() => { 
-                _notesUI.TimeSigX.text = newTimeSignature.x.ToString(); 
-            })
-            .Chain(Tween.Alpha(_notesUI.TimeSigX, 1, animDuration / 2));
-
-        Tween.Alpha(_notesUI.TimeSigY, minAlpha, animDuration / 2)
-            .OnComplete(() => {
-                _notesUI.TimeSigY.text = newTimeSignature.y.ToString();
-            })
-            .Chain(Tween.Alpha(_notesUI.TimeSigY, 1, animDuration / 2));
+        _notesUI.UpdateTimingFromSignature(newTimeSignature, true);
     }
 
     /// <summary>
@@ -274,7 +164,7 @@ public class UIManager : MonoBehaviour, ITimeListener
     {
         // WinChecker.CollectedNote -= UpdateCollectedNotesText;
         WinChecker.CollectedNote -= UpdateColectedNotesIcons;
-        WinChecker.CollectedNote -= UpdateGhostNotesIcons;
+        WinChecker.CollectedNote -= UpdateGhostNotesIcon;
         WinChecker.GotCorrectSequence -= DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence -= DisplayIncorrectMessage;
 
@@ -289,26 +179,15 @@ public class UIManager : MonoBehaviour, ITimeListener
     /// </summary>
     private void UpdateColectedNotesIcons(int collectedNote)
     {
-        if (collectedNote < 0 || collectedNote > _notesUI.NoteImages.Length - 1)
-        {
-            return;
-        }
-
-        _notesUI.NoteImages[collectedNote].gameObject.SetActive(true);
-        _notesUI.NoteImages[collectedNote].enabled = true;
-        _notesUI.GhostNoteImages[collectedNote].enabled = false;
+        _notesUI.UpdateCollectedNoteIcon(collectedNote);
     }
 
     /// <summary>
     /// Display ghost notes that need to be collected in UI once a note is collected
     /// </summary>
-    private void UpdateGhostNotesIcons(int collectedNote)
+    private void UpdateGhostNotesIcon(int collectedNote)
     {
-        if (collectedNote >= 0 && collectedNote < _notesUI.NoteImages.Length)
-        {
-            _notesUI.GhostNoteImages[collectedNote].gameObject.SetActive(true);
-            _notesUI.GhostNoteImages[collectedNote].enabled = true;
-        }
+        _notesUI.UpdateGhostNoteIcon(collectedNote);
     }
 
     /// <summary>
@@ -380,8 +259,8 @@ public class UIManager : MonoBehaviour, ITimeListener
 
         notesUI.LevelNumber.text = levelNumber;
 
-        if (_timeSigManager.MetronomeInUse)
-            notesUI.Arrow.gameObject.SetActive(false);
+        if (!_timeSigManager.MetronomeInUse)
+            notesUI.ToggleArrow(false);
 
         Destroy(_notesUI.gameObject);
 
@@ -390,16 +269,9 @@ public class UIManager : MonoBehaviour, ITimeListener
         foreach (int note in _notes)
         {
             if (!_isIntermission)
-            {
-                UpdateGhostNotesIcons(note);
-            }
+                UpdateGhostNotesIcon(note);
         }
 
-        UpdateTimingFromSignature(_timeSigManager.GetCurrentTimeSignature(), false);
-
-        Tween.Delay(_timeSigAnimDuration)
-            .OnComplete(() => {
-                _timeSigAnimEnabled = true; 
-            });
+        _notesUI.UpdateTimingFromSignature(_timeSigManager.GetCurrentTimeSignature(), false);
     }
 }
