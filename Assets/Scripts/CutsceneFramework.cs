@@ -61,6 +61,7 @@ public class CutsceneFramework : MonoBehaviour
     [SerializeField] private float _audioVolumeOverride = 150f;
     
     [Tooltip("For endcutscene audio only")]
+    [Range(0, 10)]
     [SerializeField] private float _endCutsceneVolumeOverride = 0f;
 
     private DebugInputActions _inputActions;

@@ -16,6 +16,7 @@ public class AudioSettings : MonoBehaviour
     [SerializeField] private Slider _masterSlider;
     [SerializeField] private Slider _bgMusicSlider;
     [SerializeField] private Slider _SFXSlider;
+    [Range (0, 10)]
     [SerializeField] private float _voiceVolume;
 
     private Bus _master;
@@ -41,7 +42,6 @@ public class AudioSettings : MonoBehaviour
     {
         Load();
         _voice.setVolume(_voiceVolume);
-        SaveDataManager.SetSettingFloat(Volume, VoiceVolume, _voiceVolume);
     }
 
     /// <summary>
