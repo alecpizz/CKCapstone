@@ -76,7 +76,15 @@ public class MenuManager : MonoBehaviour
     {
         DebugMenuManager.Instance.PauseMenu = false;
         _pauseScreen.SetActive(false);
-        _restartButton.SetActive(true);
+        string path = SceneManager.GetActiveScene().path;
+        if (path.Contains("CS"))
+        {
+            _restartButton.SetActive(false);
+        }
+        else
+        {
+            _restartButton.SetActive(true);
+        }
         _cursorManager.OnPointerExit();
         Time.timeScale = 1f;
         _pauseInvoked = false;
