@@ -361,7 +361,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         {
             _currentSoloToggle = true;
 
-            ActivateDestinationMarkers(false);
+            ActivateDestinationMarkers(true);
 
             _currentGroupToggle = true;
         }
@@ -407,7 +407,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             scale *= 0.5f;
             obj.transform.localScale = scale;
 
-            obj.SetActive(false);
+            //obj.SetActive(false);
 
             _subDestPathMarkers.Add(obj);
         }
@@ -425,7 +425,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
         _destinationMarker.SetActive(active);
 
-        // fix this
         foreach (var o in _subDestPathMarkers)
         {
             o.SetActive(active);
@@ -540,7 +539,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// <summary>
     /// Updates ALL sub markers by simulating the enemy taking their turn
     /// </summary>
-    private void UpdateAllSubMarkers()
+    public void UpdateAllSubMarkers()
     {
         int tempMoveIndex = _moveIndex;
         bool tempLooping = _isReturningToStart;
