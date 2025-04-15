@@ -24,15 +24,12 @@ using UnityEngine.Video;
 using FMODUnity;
 using SaintsField;
 using System.Runtime.InteropServices;
-
+using FMOD;
 using Unity.Collections;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 using UnityEngine.InputSystem.Controls;
-
-
-
-
+using Debug = UnityEngine.Debug;
 
 
 #if UNITY_EDITOR
@@ -62,6 +59,10 @@ public class CutsceneFramework : MonoBehaviour
     [SerializeField] private int _loadingLevelIndex = 0;
 
     [SerializeField] private float _audioVolumeOverride = 150f;
+    
+    [Tooltip("For endcutscene audio only")]
+    [Range(0, 10)]
+    [SerializeField] private float _endCutsceneVolumeOverride = 5f;
 
     private DebugInputActions _inputActions;
 
@@ -97,7 +98,7 @@ public class CutsceneFramework : MonoBehaviour
 
     private float _timer = 0f;
     [SerializeField] float _skipHoldTime = 2f;
-
+    
     /// <summary>
     /// Determines whether to play the Challenge or End Chapter Cutscene
     /// </summary>
@@ -119,7 +120,7 @@ public class CutsceneFramework : MonoBehaviour
         {
             PlayChallengeCutscene();
         }
-
+        
         // Plays the End Chapter Cutscene, provided that only the corresponding boolean 
         // (_isEndChapterCutscene) is true
         if (_isEndChapterCutscene && !_isChallengeCutscene)
@@ -133,16 +134,16 @@ public class CutsceneFramework : MonoBehaviour
                     "https://docs.unity3d.com/Manual/class-VideoPlayer.html");
                 return;
             }
-
+            
             //Sets up the video to play it in the scene
             _endChapterCutsceneVideo.audioOutputMode = VideoAudioOutputMode.APIOnly;
             _endChapterCutsceneVideo.prepareCompleted += Prepared;
             _endChapterCutsceneVideo.loopPointReached += VideoEnded;
             _endChapterCutsceneVideo.Prepare();
-
+            
             #if UNITY_EDITOR
             EditorApplication.pauseStateChanged += EditorStateChange;
-            #endif
+#endif
         }
 
         var cam = Camera.main;
@@ -152,7 +153,7 @@ public class CutsceneFramework : MonoBehaviour
             cam.clearFlags = CameraClearFlags.SolidColor;
         }
     }
-
+    
     /// <summary>
     /// Unregister input actions
     /// </summary>
@@ -168,7 +169,7 @@ public class CutsceneFramework : MonoBehaviour
             _mAnyButtonPressedListener = null;
         }
     }
-
+    
     /// <summary>
     /// Pauses and plays the audio and video of a cutscene
     /// </summary>
@@ -206,7 +207,7 @@ public class CutsceneFramework : MonoBehaviour
             SceneController.Instance.LoadNewScene(_loadingLevelIndex);
         }              
     }
-    
+
     /// <summary>
     /// Plays the Challenge Cutscene
     /// </summary>
@@ -332,13 +333,12 @@ public class CutsceneFramework : MonoBehaviour
         _mExinfo.defaultfrequency = _mSampleRate;
         _mExinfo.length = _mTargetLatencySamples * (uint)_mExinfo.numchannels * sizeof(float);
         _mExinfo.format = FMOD.SOUND_FORMAT.PCMFLOAT;
-
+        
         FMODUnity.RuntimeManager.CoreSystem.createSound("", FMOD.MODE.LOOP_NORMAL | FMOD.MODE.OPENUSER, ref _mExinfo, out mSound);
-
         _mProvider.sampleFramesAvailable += SampleFramesAvailable;
         _mProvider.enableSampleFramesAvailableEvents = true;
         _mProvider.freeSampleFrameCountLowThreshold = _mProvider.maxSampleFrameCount - _mTargetLatencySamples;
-
+        
         vp.Play();
     }
 
@@ -378,6 +378,7 @@ public class CutsceneFramework : MonoBehaviour
                 playbackRate = _mSampleRate + (int)(_mSampleRate * (DRIFT_CORRECTION_PERCENTAGE / 100.0f));
             }
             _mChannel.setFrequency(playbackRate);
+            _mChannel.setVolume(_endCutsceneVolumeOverride);
         }
     }
 
