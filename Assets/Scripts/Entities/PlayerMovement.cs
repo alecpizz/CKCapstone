@@ -93,6 +93,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     // Event references for the player movement sounds
     [SerializeField] private EventReference _playerMove = default;
     [SerializeField] private EventReference _playerCantMove = default;
+    [SerializeField] private EventReference _playerDash = default;
 
     public static PlayerMovement Instance;
     private static readonly int Forward = Animator.StringToHash("Forward");
@@ -368,6 +369,9 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             _dashParticles.Play();
             foreach (TrailRenderer t in _dashTrails)
                 t.emitting = true;
+            
+            if(_dashParticles.isPlaying)
+            AudioManager.Instance.PlaySound(_playerDash);
         }
             
         else
@@ -375,6 +379,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             _dashParticles.Stop();
             foreach (TrailRenderer t in _dashTrails)
                 t.emitting = false;
+            EventInstance dashInstance  = AudioManager.Instance.PlaySound(_playerDash);
+            AudioManager.Instance.StopSound(dashInstance);
         }
             
     }
