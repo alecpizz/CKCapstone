@@ -56,6 +56,10 @@ public class NotesUI : MonoBehaviour
     private float[] animKeyFrameDurations = { 0.33f, 0.45f, 0.5f, 2f };
 
     private bool _timeSigAnimEnabled = false;
+    
+    private float _arrowStartY;
+    private Vector3 _arrowStartScale;
+    private List<Sequence> _activeTweens = new();
 
     /// <summary>
     /// Prevent animation from playing on level start / restart
@@ -66,6 +70,9 @@ public class NotesUI : MonoBehaviour
             .OnComplete(() => {
                 _timeSigAnimEnabled = true;
             });
+
+        _arrowStartY = _arrow.transform.localPosition.y;
+        _arrowStartScale = _arrow.transform.localScale;
     }
 
     /// <summary>
@@ -155,19 +162,18 @@ public class NotesUI : MonoBehaviour
         if (_arrow == null)
             return;
 
+        ResetAnimation();
+
         Vector2Int nextSecondaryTS = TimeSignatureManager.Instance.GetNextTimeSignature();
 
-        float _arrowStartY = _arrow.transform.localPosition.y;
         float _arrowStopY = _arrowStartY + _animArrowHeight;
-
-        Vector3 _arrowStartScale = _arrow.transform.localScale;
         Vector3 _arrowStopScale = _arrowStartScale * _animArrowScale;
 
         for (int i = 0; i < animKeyFrameDurations.Length; i++)
             animKeyFrameDurations[i] *= _animDuration;
 
         // Moves _arrow Up
-        Tween.LocalPositionY(_arrow.transform, _arrowStopY, animKeyFrameDurations[0], _animEaseType)
+        Sequence temp = Tween.LocalPositionY(_arrow.transform, _arrowStopY, animKeyFrameDurations[0], _animEaseType)
 
             // Reduce alpha of current time sig, updates it, then returns to alpha 1
             .Group(Tween.Alpha(_timeSignatureUiX, _animMinAlpha, animKeyFrameDurations[0], _animEaseType))
@@ -209,16 +215,44 @@ public class NotesUI : MonoBehaviour
                 .Group(Tween.Alpha(_secondaryUiX, 1, animKeyFrameDurations[^1]))
                 .Group(Tween.Alpha(_secondaryUiY, 1, animKeyFrameDurations[^1])));
 
-        Tween.Alpha(_timeSignatureUiX, _animMinAlpha, _animDuration / 2)
+        _activeTweens.Add(temp);
+
+        temp = Tween.Alpha(_timeSignatureUiX, _animMinAlpha, _animDuration / 2)
             .OnComplete(() => {
                 _timeSignatureUiX.text = newTimeSignature.x.ToString();
             })
             .Chain(Tween.Alpha(_timeSignatureUiX, 1, _animDuration / 2));
 
-        Tween.Alpha(_timeSignatureUiY, _animMinAlpha, _animDuration / 2)
+        _activeTweens.Add(temp);
+
+        temp = Tween.Alpha(_timeSignatureUiY, _animMinAlpha, _animDuration / 2)
             .OnComplete(() => {
                 _timeSignatureUiY.text = newTimeSignature.y.ToString();
             })
             .Chain(Tween.Alpha(_timeSignatureUiY, 1, _animDuration / 2));
+
+        _activeTweens.Add(temp);
+    }
+
+    /// <summary>
+    /// Resets arrow's position and scale, and prevents it from being manipulated in unintended ways. Stops all active tweens.
+    /// </summary>
+    private void ResetAnimation()
+    {
+        foreach(Sequence t in _activeTweens)
+        {
+            if (t.isAlive)
+                t.Stop();
+        }
+
+        _activeTweens.Clear();
+
+        _arrow.transform.localPosition = new Vector3(_arrow.transform.localPosition.x, _arrowStartY, _arrow.transform.localPosition.z);
+
+        _arrow.transform.localScale = _arrowStartScale;
+
+        _secondaryUiX.alpha = 1;
+        _secondaryUiY.alpha = 1;
+        _arrow.color = new Color(_arrow.color.r, _arrow.color.g, _arrow.color.b, 1f);
     }
 }
