@@ -76,6 +76,8 @@ public class MenuManager : MonoBehaviour
     {
         DebugMenuManager.Instance.PauseMenu = false;
         _pauseScreen.SetActive(false);
+
+        //gets rid of restart icon in cutscenes
         string path = SceneManager.GetActiveScene().path;
         if (path.Contains("CS"))
         {
