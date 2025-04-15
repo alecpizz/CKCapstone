@@ -294,6 +294,7 @@ public class UIManager : MonoBehaviour, ITimeListener
             return;
         }
 
+        _notesUI.NoteImages[collectedNote].gameObject.SetActive(true);
         _notesUI.NoteImages[collectedNote].enabled = true;
         _notesUI.GhostNoteImages[collectedNote].enabled = false;
     }
@@ -305,6 +306,7 @@ public class UIManager : MonoBehaviour, ITimeListener
     {
         if (collectedNote >= 0 && collectedNote < _notesUI.NoteImages.Length)
         {
+            _notesUI.GhostNoteImages[collectedNote].gameObject.SetActive(true);
             _notesUI.GhostNoteImages[collectedNote].enabled = true;
         }
     }
@@ -384,6 +386,14 @@ public class UIManager : MonoBehaviour, ITimeListener
         Destroy(_notesUI.gameObject);
 
         _notesUI = notesUI;
+
+        foreach (int note in _notes)
+        {
+            if (!_isIntermission)
+            {
+                UpdateGhostNotesIcons(note);
+            }
+        }
 
         UpdateTimingFromSignature(_timeSigManager.GetCurrentTimeSignature(), false);
 
