@@ -56,6 +56,7 @@ public class CollectableButtonBehavior : MonoBehaviour
     private void OnEnable()
     {
         _playerControls.Enable();
+        _playerControls.InGame.CloseCollectableWindow.performed += RegisterCloseInput;
     }
 
     /// <summary>
@@ -63,18 +64,17 @@ public class CollectableButtonBehavior : MonoBehaviour
     /// </summary>
     private void OnDisable()
     {
+        _playerControls.InGame.CloseCollectableWindow.performed -= RegisterCloseInput;
         _playerControls.Disable();
     }
 
     /// <summary>
-    /// Checks for controller input for closing the collectable window every frame.
+    /// Closes the collectable pop up.
     /// </summary>
-    private void Update()
+    /// <param name="obj"></param>
+    private void RegisterCloseInput(InputAction.CallbackContext obj)
     {
-        if (_playerControls.InGame.CloseCollectableWindow.IsPressed())
-        {
-            HideDialogue();
-        }
+        HideDialogue();
     }
 
     /// <summary>
@@ -238,6 +238,7 @@ public class CollectableButtonBehavior : MonoBehaviour
         if (_dialogueEntries.Count == 0)
         {
             HideDialogue();
+            return false;
         }
         return true;
     }
