@@ -15,8 +15,13 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Users;
 using TMPro;
 using UnityEngine.Rendering.UI;
+using UnityEngine.InputSystem.DualShock;
+using UnityEngine.InputSystem.Layouts;
+using UnityEngine.InputSystem.Switch;
+using UnityEngine.InputSystem.UI;
 
 public class DebugMenuManager : MonoBehaviour
 {
@@ -50,14 +55,17 @@ public class DebugMenuManager : MonoBehaviour
     private bool _fpsCount = false;
     private bool _sceneNameVisible = false;
 
-    private const string MainMenuSceneName = "MainMenu2";
+    private const string MainMenuSceneName = "MainMenutest";
 
     private int _lastFrameIndex;
     private float[] _frameDeltaTimeArray;
 
     private DebugInputActions _playerInput;
+    private PlayerControls _playerControls;
+    private DefaultInputActions _defaultControls;
     private InputAction _debugInput;
     private InputAction _restartInput;
+
 
     /// <summary>
     /// Does the calculation for determining the game's frame rate.
@@ -73,6 +81,9 @@ public class DebugMenuManager : MonoBehaviour
         return _frameDeltaTimeArray.Length / total;
     }
 
+    /// <summary>
+    /// sets up variables when first possible
+    /// </summary>
     private void Awake()
     {
         //sets the current instance
@@ -80,6 +91,8 @@ public class DebugMenuManager : MonoBehaviour
 
         //enables player input
         _playerInput = new DebugInputActions();
+        _playerControls = new PlayerControls();
+        _defaultControls = new DefaultInputActions();
         _debugInput = _playerInput.Player.Debug;
         _restartInput = _playerInput.Player.Restart;
 
@@ -102,7 +115,7 @@ public class DebugMenuManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Turns on the Debug Inputs
+    /// Turns on the Debug Inputs and input checks
     /// </summary>
     private void OnEnable()
     {
@@ -110,6 +123,7 @@ public class DebugMenuManager : MonoBehaviour
         _restartInput.Enable();
         _playerInput.Player.SceneView.Enable();
         _playerInput.Player.SceneView.performed += ToggleSceneName;
+        _playerControls.Enable();
     }
 
     /// <summary>
@@ -121,10 +135,12 @@ public class DebugMenuManager : MonoBehaviour
         _restartInput.Disable();
         _playerInput.Player.SceneView.Disable();
         _playerInput.Player.SceneView.performed -= ToggleSceneName;
+        _playerControls.Disable();
     }
 
     /// <summary>
-    /// Sets up pointers for code functionality and makes sure the cursor is unlocked if it is ever hidden
+    /// Sets up pointers for code functionality and makes sure the cursor is unlocked if it is ever hidden.
+    /// Also does the intial controller check for a level
     /// </summary>
     private void Start()
     {
@@ -133,9 +149,10 @@ public class DebugMenuManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         //Sets an default game object for the event system to hold on to for menuing
-        EventSystem.current.SetSelectedGameObject(_mainMenuFirst);   
+        EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
     }
- 
+
+
     /// <summary>
     /// Updates the frame rate counter and makes sure debug unputs execute their code when pressed
     /// </summary>
@@ -154,9 +171,9 @@ public class DebugMenuManager : MonoBehaviour
         }
 
         //updates the FPS Counter
-        _frameDeltaTimeArray[_lastFrameIndex] = Time.unscaledDeltaTime;
-        _lastFrameIndex = (_lastFrameIndex + 1) % _frameDeltaTimeArray.Length;
-        _fpsText.text = (Mathf.RoundToInt(FpsCalculation()).ToString() + " FPS");
+        // _frameDeltaTimeArray[_lastFrameIndex] = Time.unscaledDeltaTime;
+        // _lastFrameIndex = (_lastFrameIndex + 1) % _frameDeltaTimeArray.Length;
+        // _fpsText.text = (Mathf.RoundToInt(FpsCalculation()).ToString() + " FPS");
     }
 
     /// <summary>

@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: David Galmines
-*    Contributors: ...
+*    Contributors: Rider Hagen
 *    Date Created: 11/17/24
 *    Description: This makes splash text pop up to indicate a 
 *    challenge level
@@ -41,6 +41,9 @@ public class BonusChallengeDisplay : MonoBehaviour
     //are we ready to delete this object?
     private bool _readyToDestroy;
 
+    //the particles for the background of the challenge level poppup
+    [SerializeField] private ParticleSystem _challengeSplash;
+
     /// <summary>
     /// Assigns the color value based on the text UI, and makes it 
     /// transparent.
@@ -76,6 +79,11 @@ public class BonusChallengeDisplay : MonoBehaviour
     /// <returns></returns>
     private IEnumerator FadingOut()
     {
+        if (_challengeSplash != null)
+        {
+            _challengeSplash.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        }
+
         yield return new WaitForSeconds(2);
         _readyToDestroy = true;
 
