@@ -24,6 +24,8 @@ public class TimeSignatureManager : MonoBehaviour
     private Vector2Int _startingTimeSignature;
     private bool _isToggled = false;
 
+    [SerializeField] private EventReference _timeSigToggleSFX = default;
+
     [SerializeField] private TMP_Text _metronomePredictor;
 
     private List<ITimeListener> _timeListeners = new List<ITimeListener>();
@@ -74,6 +76,8 @@ public class TimeSignatureManager : MonoBehaviour
         _isToggled = !_isToggled;
 
         _timeSignature = _isToggled ? _secondaryTimeSignature : _startingTimeSignature;
+
+        AudioManager.Instance.PlaySound(_timeSigToggleSFX);
 
         UpdateListeners();
     }
