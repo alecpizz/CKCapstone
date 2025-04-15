@@ -100,6 +100,7 @@ public class MenuManager : MonoBehaviour
     {
         _optionsScreen.SetActive(true);
         _mainMenu.SetActive(false);
+        CollectableManager.Instance.SetFoundCollectibles();
         EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
     }
 
@@ -122,6 +123,7 @@ public class MenuManager : MonoBehaviour
         _mainMenuStart.SetActive(false);
         _mainMenuSettings.SetActive(false);
         _mainMenuQuit.SetActive(false);
+        CollectableManager.Instance.SetFoundCollectibles();
         EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
     }
 
