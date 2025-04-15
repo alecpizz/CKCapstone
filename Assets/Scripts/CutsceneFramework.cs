@@ -24,15 +24,12 @@ using UnityEngine.Video;
 using FMODUnity;
 using SaintsField;
 using System.Runtime.InteropServices;
-
+using FMOD;
 using Unity.Collections;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 using UnityEngine.InputSystem.Controls;
-
-
-
-
+using Debug = UnityEngine.Debug;
 
 
 #if UNITY_EDITOR
@@ -62,13 +59,17 @@ public class CutsceneFramework : MonoBehaviour
     [SerializeField] private int _loadingLevelIndex = 0;
 
     [SerializeField] private float _audioVolumeOverride = 150f;
+    
+    [Tooltip("For endcutscene audio only")]
+    [Range(0, 10)]
+    [SerializeField] private float _endCutsceneVolumeOverride = 5f;
 
     private DebugInputActions _inputActions;
 
     //variables referenced from FMOD documentation for help with video plpayback
-    private const int LATENCY_MS = 50; /* Some devices will require higher latency to avoid glitches */
+    private const int LATENCY_MS = 200; /* Some devices will require higher latency to avoid glitches */
     private const int DRIFT_MS = 1;
-    private const float DRIFT_CORRECTION_PERCENTAGE = 0.5f;
+    private const float DRIFT_CORRECTION_PERCENTAGE = 0.6f;
 
     private VideoPlayer _endChapterCutsceneVideo;
     private AudioSampleProvider _mProvider;
@@ -93,11 +94,11 @@ public class CutsceneFramework : MonoBehaviour
 
     private IDisposable _mAnyButtonPressedListener;
 
-    private MenuManager _menuManager = new MenuManager();
+    [SerializeField] private MenuManager _menuManager;
 
     private float _timer = 0f;
     [SerializeField] float _skipHoldTime = 2f;
-
+    
     /// <summary>
     /// Determines whether to play the Challenge or End Chapter Cutscene
     /// </summary>
@@ -106,10 +107,10 @@ public class CutsceneFramework : MonoBehaviour
         SaveDataManager.SetLevelCompleted(SceneManager.GetActiveScene().name);
         _inputActions = new DebugInputActions();
         _inputActions.UI.Enable();
-        _inputActions.UI.SkipCutscene.performed += ctx => SkipCutscene();    
-        _inputActions.UI.Pause.performed += ctx => _menuManager.Pause();
-        //_endChapterCutsceneVideo.loopPointReached += CheckEnd;
+        _inputActions.UI.SkipCutscene.performed += ctx => SkipCutscene();
+        _inputActions.UI.Pause.performed += ctx => ResumePlayAudio(_menuManager.GetPauseInvoked());
 
+        //_endChapterCutsceneVideo.loopPointReached += CheckEnd;
         //Registers is button is pressed
         _mAnyButtonPressedListener = InputSystem.onAnyButtonPress.Call(ButtonIsPressed);
 
@@ -119,7 +120,7 @@ public class CutsceneFramework : MonoBehaviour
         {
             PlayChallengeCutscene();
         }
-
+        
         // Plays the End Chapter Cutscene, provided that only the corresponding boolean 
         // (_isEndChapterCutscene) is true
         if (_isEndChapterCutscene && !_isChallengeCutscene)
@@ -133,19 +134,26 @@ public class CutsceneFramework : MonoBehaviour
                     "https://docs.unity3d.com/Manual/class-VideoPlayer.html");
                 return;
             }
-
+            
             //Sets up the video to play it in the scene
             _endChapterCutsceneVideo.audioOutputMode = VideoAudioOutputMode.APIOnly;
             _endChapterCutsceneVideo.prepareCompleted += Prepared;
             _endChapterCutsceneVideo.loopPointReached += VideoEnded;
             _endChapterCutsceneVideo.Prepare();
-
+            
             #if UNITY_EDITOR
             EditorApplication.pauseStateChanged += EditorStateChange;
-            #endif
+#endif
+        }
+
+        var cam = Camera.main;
+        if (cam != null)
+        {
+            cam.backgroundColor = Color.black;
+            cam.clearFlags = CameraClearFlags.SolidColor;
         }
     }
-
+    
     /// <summary>
     /// Unregister input actions
     /// </summary>
@@ -153,7 +161,7 @@ public class CutsceneFramework : MonoBehaviour
     {
         _inputActions.UI.Disable();
         _inputActions.UI.SkipCutscene.performed -= ctx => SkipCutscene();
-        _inputActions.UI.Pause.performed -= ctx => _menuManager.Pause();
+        _inputActions.UI.Pause.performed -= ctx => ResumePlayAudio(_menuManager.GetPauseInvoked());
 
         if(_mAnyButtonPressedListener != null)
         {
@@ -161,13 +169,31 @@ public class CutsceneFramework : MonoBehaviour
             _mAnyButtonPressedListener = null;
         }
     }
+    
+    /// <summary>
+    /// Pauses and plays the audio and video of a cutscene
+    /// </summary>
+    /// <param name="play"></param>
+    public void ResumePlayAudio(bool play)
+    {
+        if (play && _endChapterCutsceneVideo != null)
+        {
+            _endChapterCutsceneVideo.Pause();
+        }
+        else if (_endChapterCutsceneVideo != null)
+        {
+            _endChapterCutsceneVideo.Play();
+        }
+        
+        _mChannel.setPaused(play);                                       
+    }
 
     /// <summary>
     /// Used to skip the cutscene when an input is given
     /// </summary>
     public void SkipCutscene()
     {
-        if(_timer > _skipHoldTime)
+        if(_timer > _skipHoldTime || _menuManager.GetSkipInPause())
         {
             StopAllCoroutines();
             string scenePath = SceneUtility.GetScenePathByBuildIndex(_loadingLevelIndex);
@@ -179,9 +205,9 @@ public class CutsceneFramework : MonoBehaviour
                 return;
             }
             SceneController.Instance.LoadNewScene(_loadingLevelIndex);
-        }                
+        }              
     }
-    
+
     /// <summary>
     /// Plays the Challenge Cutscene
     /// </summary>
@@ -307,13 +333,12 @@ public class CutsceneFramework : MonoBehaviour
         _mExinfo.defaultfrequency = _mSampleRate;
         _mExinfo.length = _mTargetLatencySamples * (uint)_mExinfo.numchannels * sizeof(float);
         _mExinfo.format = FMOD.SOUND_FORMAT.PCMFLOAT;
-
+        
         FMODUnity.RuntimeManager.CoreSystem.createSound("", FMOD.MODE.LOOP_NORMAL | FMOD.MODE.OPENUSER, ref _mExinfo, out mSound);
-
         _mProvider.sampleFramesAvailable += SampleFramesAvailable;
         _mProvider.enableSampleFramesAvailableEvents = true;
         _mProvider.freeSampleFrameCountLowThreshold = _mProvider.maxSampleFrameCount - _mTargetLatencySamples;
-
+        
         vp.Play();
     }
 
@@ -353,6 +378,7 @@ public class CutsceneFramework : MonoBehaviour
                 playbackRate = _mSampleRate + (int)(_mSampleRate * (DRIFT_CORRECTION_PERCENTAGE / 100.0f));
             }
             _mChannel.setFrequency(playbackRate);
+            _mChannel.setVolume(_endCutsceneVolumeOverride);
         }
     }
 
@@ -361,6 +387,7 @@ public class CutsceneFramework : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        //Skips cutscene after 2 secs of holding Space bar
         if (_inputActions.UI.SkipCutscene.IsPressed())
         {
             _timer += Time.deltaTime;
@@ -374,6 +401,7 @@ public class CutsceneFramework : MonoBehaviour
         {
             _timer = 0f;
         }
+        
 
         if (_isEndChapterCutscene)
         {

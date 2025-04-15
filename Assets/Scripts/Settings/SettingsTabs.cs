@@ -147,8 +147,8 @@ public class SettingsTabs : MonoBehaviour
             {_howToPlayButton, _ogHowToPlayImage },
             {_levelSelectButton, _ogLevelSelectImage },
             //Placeholder
-            {_cutscenesButton, _ogLevelSelectImage },
-            {_collectablesButton, _ogLevelSelectImage }
+            {_cutscenesButton, _ogCutscenesImage },
+            {_collectablesButton, _ogCollectablesImage }
 
             //For implementation
             //{_cutscenesButton, _ogCutscenesImage },
@@ -164,8 +164,8 @@ public class SettingsTabs : MonoBehaviour
             {_howToPlayButton, _altHowToPlayImage },
             {_levelSelectButton, _altLevelSelectImage },
             //Placeholder
-            {_cutscenesButton,  _altLevelSelectImage },
-            {_collectablesButton, _altLevelSelectImage }
+            {_cutscenesButton,  _altCutscenesImage },
+            {_collectablesButton, _altCollectablesImage }
 
             //For implementation
             //{_cutscenesButton, _altCutscenesImage },
@@ -223,6 +223,7 @@ public class SettingsTabs : MonoBehaviour
         _collectablesButton.onClick.AddListener(() => OpenTab(Tab.Collectables));
         _collectablesButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_collectablesButtonGameObject));
         _collectablesButton.onClick.AddListener(() => ChangeImage(_collectablesButton));
+        _collectablesButton.onClick.AddListener(() => CollectableManager.Instance.SetFoundCollectibles());
 
         // Open the default tab at start
         OpenTab(Tab.Display);

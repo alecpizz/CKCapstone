@@ -12,6 +12,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using static UnityEngine.Rendering.DebugUI;
+using System;
+using UnityEngine.Serialization;
 
 public class MenuManager : MonoBehaviour
 {
@@ -27,12 +30,19 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject _mainMenuSettings;
     [SerializeField] private GameObject _mainMenuQuit;
     [SerializeField] private GameObject _restartButton;
+    [SerializeField] private GameObject _tempCredits;
     
     [SerializeField] private EventReference _buttonPress;
 
     private DebugInputActions _inputActions;
 
     [SerializeField] private CursorManager _cursorManager;
+
+    [FormerlySerializedAs("_skipWhilePaused")]
+    [SerializeField] private GameObject _skipPromptInPause;
+    private bool _skipInPause;
+
+    private bool _pauseInvoked = true;
 
     /// <summary>
     /// Enables player input for opening the pause menu
@@ -42,6 +52,13 @@ public class MenuManager : MonoBehaviour
         _inputActions = new DebugInputActions();
         _inputActions.Enable();
         _inputActions.Player.Quit.performed += ctx => Pause();
+
+        //Gets rid of restart button if it's a cutscene
+        string path = SceneManager.GetActiveScene().path;
+        if (path.Contains("CS"))
+        {
+            _restartButton.SetActive(false);
+        }
     }
 
     /// <summary>
@@ -60,9 +77,20 @@ public class MenuManager : MonoBehaviour
     {
         DebugMenuManager.Instance.PauseMenu = false;
         _pauseScreen.SetActive(false);
-        _restartButton.SetActive(true);
+
+        //gets rid of restart icon in cutscenes
+        string path = SceneManager.GetActiveScene().path;
+        if (path.Contains("CS"))
+        {
+            _restartButton.SetActive(false);
+        }
+        else
+        {
+            _restartButton.SetActive(true);
+        }
         _cursorManager.OnPointerExit();
         Time.timeScale = 1f;
+        _pauseInvoked = false;
     }
 
     /// <summary>
@@ -72,6 +100,7 @@ public class MenuManager : MonoBehaviour
     {
         _optionsScreen.SetActive(true);
         _mainMenu.SetActive(false);
+        CollectableManager.Instance.SetFoundCollectibles();
         EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
     }
 
@@ -94,6 +123,7 @@ public class MenuManager : MonoBehaviour
         _mainMenuStart.SetActive(false);
         _mainMenuSettings.SetActive(false);
         _mainMenuQuit.SetActive(false);
+        CollectableManager.Instance.SetFoundCollectibles();
         EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
     }
 
@@ -123,6 +153,17 @@ public class MenuManager : MonoBehaviour
             _restartButton.SetActive(false);
             EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
             Time.timeScale = 0f;
+
+            _pauseInvoked = true;
+
+            //Gets the path to a scene
+            string path = SceneManager.GetActiveScene().path;
+
+            if (path.Contains("CS"))
+            {
+                _skipPromptInPause.SetActive(true);
+                _skipInPause = true;
+            }
         }
         else if (_optionsScreen != null && _optionsScreen.activeInHierarchy)
         {
@@ -133,6 +174,24 @@ public class MenuManager : MonoBehaviour
         {
             Unpause();
         }
+    }
+
+    /// <summary>
+    /// Getter method to tell if the game is paused for FMOD audio
+    /// </summary>
+    /// <returns></returns>
+    public bool GetPauseInvoked()
+    {
+        return _pauseInvoked;
+    }
+
+    /// <summary>
+    /// Getter method to tell if the button to skip a cutscene in pause menu is used.
+    /// </summary>
+    /// <returns></returns>
+    public bool GetSkipInPause()
+    {
+        return _skipInPause;
     }
 
     /// <summary>
@@ -208,5 +267,23 @@ public class MenuManager : MonoBehaviour
     public void Quit()
     {
         Application.Quit();
+    }
+
+    /// <summary>
+    /// Opens credits
+    /// </summary>
+    public void Credits()
+    {
+        _tempCredits.SetActive(true);
+
+        //SceneManager.LoadScene("Credits");
+    }
+
+    /// <summary>
+    /// closes credits
+    /// </summary>
+    public void CreditsClose()
+    {
+        _tempCredits.SetActive(false);
     }
 }

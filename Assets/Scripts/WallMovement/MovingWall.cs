@@ -64,6 +64,7 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     public bool IsTransparent => false;
 
     public bool BlocksHarmonyBeam { get => true; }
+    public bool BlocksMovingWall { get => false; }
 
     public GameObject EntryObject => gameObject;
 
@@ -85,7 +86,7 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
 
     /// <summary>
     /// Original position of the wall is given
-    /// And ghost wall is put in it's initial position
+    /// And ghost wall is put in its initial position
     /// </summary>
     void Start()
     {
@@ -93,11 +94,11 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
 
         _originWall = transform.position;
         // Maintains same height to ensure consistency when swapping
-        _originWall.y = _wallGhost.transform.position.y;
+        _originWall.y = transform.position.y;
 
         _originGhost = _wallGhost.transform.position;
         // Maintains same height to ensure consistency when swapping
-        _originGhost.y = transform.position.y;
+        _originGhost.y = _wallGhost.transform.position.y;
     }
 
 
@@ -145,9 +146,22 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     /// </summary>
     private void MoveWall()
     {
+        var targetSpaceEntries = _shouldActivate ? GridBase.Instance.GetCellEntries(_originGhost) :
+            GridBase.Instance.GetCellEntries(_originWall);
+
+        bool isBlocked = false;
+
+        foreach (var cellEntry in targetSpaceEntries)
+        {
+            if (cellEntry.BlocksMovingWall)
+            {
+                isBlocked = true;
+                break;
+            }
+        }
+
         // Check for object blocking the wall's target space
-        if (_shouldActivate ? GridBase.Instance.CellIsTransparent(_originGhost) :
-            GridBase.Instance.CellIsTransparent(_originWall))
+        if (!isBlocked)
         {
             _worked = true;
 
