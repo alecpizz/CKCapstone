@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4532018780647744608}
   - component: {fileID: 1238397645620571336}
   - component: {fileID: 2406617457571976407}
-  - component: {fileID: 1960267330481669514}
   m_Layer: 2
   m_Name: Switch
   m_TagString: Untagged
@@ -72,35 +71,20 @@ MonoBehaviour:
   - {fileID: 0}
   _affectedReflectors: []
   _affectedBeams: []
-  _animator: {fileID: 1960267330481669514}
+  _switchMovingObject: {fileID: 6158840736833350542}
+  _switchDepth: 0.2
+  _switchPressTime: 0.1
+  _switchDePressTime: 0.1
+  _switchPressEase: 1
+  _switchDePressEase: 1
   _switchSound:
     Guid:
-      Data1: 207925213
-      Data2: 1125044607
-      Data3: -890037886
-      Data4: -448360349
-    Path: event:/Button Press
---- !u!95 &1960267330481669514
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 73749311997623971}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: bbc04c4070ba895409a3d23dcae3c835, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
+      Data1: -1707290922
+      Data2: 1250861949
+      Data3: 2142963355
+      Data4: -53796704
+    Path: event:/Main Menu Clicks
+  _switchParam: MainMenu
 --- !u!1 &2011586552418028058
 GameObject:
   m_ObjectHideFlags: 0
@@ -771,8 +755,8 @@ Transform:
   m_GameObject: {fileID: 8958203319199760428}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.022991428, y: 0.072, z: 0.012014007}
-  m_LocalScale: {x: 5.569068, y: 9.081238, z: 5.5291457}
+  m_LocalPosition: {x: 0.00013588993, y: -0.0059019225, z: 0.000071009876}
+  m_LocalScale: {x: 0.032916777, y: 0.3357857, z: 0.032680813}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7503712106234863246}
@@ -780,7 +764,7 @@ Transform:
   - {fileID: 5838927220481203205}
   - {fileID: 1773025578021704106}
   - {fileID: 4619208287190821057}
-  m_Father: {fileID: 8841727764687974285}
+  m_Father: {fileID: 6158840736833350542}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9116803892868063623
 GameObject:
@@ -966,12 +950,18 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: e259f04d12ff80543855712231514776,
+    - targetCorrespondingSourceObject: {fileID: 2902008074560218088, guid: e259f04d12ff80543855712231514776,
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 6171958032712500742}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e259f04d12ff80543855712231514776, type: 3}
+--- !u!4 &6158840736833350542 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2902008074560218088, guid: e259f04d12ff80543855712231514776,
+    type: 3}
+  m_PrefabInstance: {fileID: 9024819972392749158}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8841727764687974285 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e259f04d12ff80543855712231514776,
