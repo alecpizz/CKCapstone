@@ -14,6 +14,7 @@ using TMPro;
 using SaintsField;
 using UnityEngine.Serialization;
 using System;
+using UnityEngine.InputSystem;
 
 public class CollectableButtonBehavior : MonoBehaviour
 {
@@ -21,6 +22,7 @@ public class CollectableButtonBehavior : MonoBehaviour
     [SerializeField] private GameObject _collectableImage;
     [SerializeField] private GameObject _collectableObject;
     [SerializeField] private GameObject _collectablePanel;
+    private PlayerControls _playerControls;
 
     [Serializable]
     public struct DialogueEntry
@@ -39,6 +41,41 @@ public class CollectableButtonBehavior : MonoBehaviour
     private Coroutine _typingCoroutine;
     private bool _isTyping = false;
     private string _currentFullText;
+
+    /// <summary>
+    /// Sets _playerControls to PlayerControls on awake
+    /// </summary>
+    private void Awake()
+    {
+        _playerControls = new PlayerControls();
+    }
+
+    /// <summary>
+    /// Enables player controls to detect when the select button is pressed to close the collectable menu.
+    /// </summary>
+    private void OnEnable()
+    {
+        _playerControls.Enable();
+    }
+
+    /// <summary>
+    /// Disables player controls when the script is no longer being used.
+    /// </summary>
+    private void OnDisable()
+    {
+        _playerControls.Disable();
+    }
+
+    /// <summary>
+    /// Checks for controller input for closing the collectable window every frame.
+    /// </summary>
+    private void Update()
+    {
+        if (_playerControls.InGame.CloseCollectableWindow.IsPressed())
+        {
+            HideDialogue();
+        }
+    }
 
     /// <summary>
     /// Function called on button click that loads the collectable text.
