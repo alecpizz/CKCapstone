@@ -67,9 +67,9 @@ public class CutsceneFramework : MonoBehaviour
     private DebugInputActions _inputActions;
 
     //variables referenced from FMOD documentation for help with video plpayback
-    private const int LATENCY_MS = 50; /* Some devices will require higher latency to avoid glitches */
+    private const int LATENCY_MS = 200; /* Some devices will require higher latency to avoid glitches */
     private const int DRIFT_MS = 1;
-    private const float DRIFT_CORRECTION_PERCENTAGE = 0.5f;
+    private const float DRIFT_CORRECTION_PERCENTAGE = 0.6f;
 
     private VideoPlayer _endChapterCutsceneVideo;
     private AudioSampleProvider _mProvider;
@@ -94,7 +94,7 @@ public class CutsceneFramework : MonoBehaviour
 
     private IDisposable _mAnyButtonPressedListener;
 
-    private MenuManager _menuManager = new MenuManager();
+    [SerializeField] private MenuManager _menuManager;
 
     private float _timer = 0f;
     [SerializeField] float _skipHoldTime = 2f;
@@ -107,10 +107,10 @@ public class CutsceneFramework : MonoBehaviour
         SaveDataManager.SetLevelCompleted(SceneManager.GetActiveScene().name);
         _inputActions = new DebugInputActions();
         _inputActions.UI.Enable();
-        _inputActions.UI.SkipCutscene.performed += ctx => SkipCutscene();    
-        _inputActions.UI.Pause.performed += ctx => _menuManager.Pause();
-        //_endChapterCutsceneVideo.loopPointReached += CheckEnd;
+        _inputActions.UI.SkipCutscene.performed += ctx => SkipCutscene();
+        _inputActions.UI.Pause.performed += ctx => ResumePlayAudio(_menuManager.GetPauseInvoked());
 
+        //_endChapterCutsceneVideo.loopPointReached += CheckEnd;
         //Registers is button is pressed
         _mAnyButtonPressedListener = InputSystem.onAnyButtonPress.Call(ButtonIsPressed);
 
@@ -161,7 +161,7 @@ public class CutsceneFramework : MonoBehaviour
     {
         _inputActions.UI.Disable();
         _inputActions.UI.SkipCutscene.performed -= ctx => SkipCutscene();
-        _inputActions.UI.Pause.performed -= ctx => _menuManager.Pause();
+        _inputActions.UI.Pause.performed -= ctx => ResumePlayAudio(_menuManager.GetPauseInvoked());
 
         if(_mAnyButtonPressedListener != null)
         {
@@ -171,11 +171,29 @@ public class CutsceneFramework : MonoBehaviour
     }
     
     /// <summary>
+    /// Pauses and plays the audio and video of a cutscene
+    /// </summary>
+    /// <param name="play"></param>
+    public void ResumePlayAudio(bool play)
+    {
+        if (play && _endChapterCutsceneVideo != null)
+        {
+            _endChapterCutsceneVideo.Pause();
+        }
+        else if (_endChapterCutsceneVideo != null)
+        {
+            _endChapterCutsceneVideo.Play();
+        }
+        
+        _mChannel.setPaused(play);                                       
+    }
+
+    /// <summary>
     /// Used to skip the cutscene when an input is given
     /// </summary>
     public void SkipCutscene()
     {
-        if(_timer > _skipHoldTime)
+        if(_timer > _skipHoldTime || _menuManager.GetSkipInPause())
         {
             StopAllCoroutines();
             string scenePath = SceneUtility.GetScenePathByBuildIndex(_loadingLevelIndex);
@@ -187,7 +205,7 @@ public class CutsceneFramework : MonoBehaviour
                 return;
             }
             SceneController.Instance.LoadNewScene(_loadingLevelIndex);
-        }                
+        }              
     }
 
     /// <summary>
@@ -369,6 +387,7 @@ public class CutsceneFramework : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        //Skips cutscene after 2 secs of holding Space bar
         if (_inputActions.UI.SkipCutscene.IsPressed())
         {
             _timer += Time.deltaTime;
@@ -382,6 +401,7 @@ public class CutsceneFramework : MonoBehaviour
         {
             _timer = 0f;
         }
+        
 
         if (_isEndChapterCutscene)
         {
