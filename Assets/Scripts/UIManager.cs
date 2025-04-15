@@ -374,6 +374,10 @@ public class UIManager : MonoBehaviour, ITimeListener
             return;
         }
 
+        string levelNumber = _notesUI.LevelNumber.text;
+
+        notesUI.LevelNumber.text = levelNumber;
+
         Destroy(_notesUI.gameObject);
 
         _notesUI = notesUI;
