@@ -40,20 +40,15 @@ public class CollectableButtonBehavior : MonoBehaviour
     private bool _isTyping = false;
     private string _currentFullText;
 
-
-    /// <summary>
-    /// Sets the collectable panel to false on awake.
-    /// </summary>
-    private void Awake()
-    {
-        _collectablePanel.SetActive(false);
-    }
-
     /// <summary>
     /// Function called on button click that loads the collectable text.
     /// </summary>
     public void loadText()
     {
+        if (_collectablePanel == null || _collectableObject == null || _collectableImage == null)
+        {
+            return;
+        }
         _collectablePanel.SetActive(true);
         _collectableObject.GetComponent<Image>().sprite = _collectableImage.GetComponent<Image>().sprite;
         if (_typingCoroutine != null)
@@ -93,18 +88,6 @@ public class CollectableButtonBehavior : MonoBehaviour
             if (_isTyping)
             {
                 FinishTyping();
-                return;
-            }
-
-            if (_currentDialogue < _dialogueEntries.Count - 1)
-            {
-                _currentDialogue++;
-            }
-            else
-            {
-                _currentDialogue = 0;
-                HideDialogue();
-
                 return;
             }
 
@@ -202,6 +185,10 @@ public class CollectableButtonBehavior : MonoBehaviour
         }
         _isTyping = false;
         _isTalking = false;
+        if (_collectablePanel == null)
+        {
+            return;
+        }
         _collectablePanel.SetActive(false);
     }
 

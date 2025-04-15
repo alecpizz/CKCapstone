@@ -103,6 +103,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "CloseCollectableWindow",
+                    "type": "Button",
+                    "id": "0ec47673-fa89-444d-8001-6a0abb433fd2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -664,6 +673,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "CollectibleMenu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2ab3b8e4-bc9c-4c7f-a012-6a823a0195f9",
+                    "path": "<Gamepad>/select",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CloseCollectableWindow",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

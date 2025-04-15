@@ -125,6 +125,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""CloseCollectableWindow"",
+                    ""type"": ""Button"",
+                    ""id"": ""0ec47673-fa89-444d-8001-6a0abb433fd2"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -688,6 +697,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""CollectibleMenu"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2ab3b8e4-bc9c-4c7f-a012-6a823a0195f9"",
+                    ""path"": ""<Gamepad>/select"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CloseCollectableWindow"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -707,6 +727,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_InGame_MoveDown = m_InGame.FindAction("MoveDown", throwIfNotFound: true);
         m_InGame_MoveLeft = m_InGame.FindAction("MoveLeft", throwIfNotFound: true);
         m_InGame_CollectibleMenu = m_InGame.FindAction("CollectibleMenu", throwIfNotFound: true);
+        m_InGame_CloseCollectableWindow = m_InGame.FindAction("CloseCollectableWindow", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -779,6 +800,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_InGame_MoveDown;
     private readonly InputAction m_InGame_MoveLeft;
     private readonly InputAction m_InGame_CollectibleMenu;
+    private readonly InputAction m_InGame_CloseCollectableWindow;
     public struct InGameActions
     {
         private @PlayerControls m_Wrapper;
@@ -794,6 +816,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @MoveDown => m_Wrapper.m_InGame_MoveDown;
         public InputAction @MoveLeft => m_Wrapper.m_InGame_MoveLeft;
         public InputAction @CollectibleMenu => m_Wrapper.m_InGame_CollectibleMenu;
+        public InputAction @CloseCollectableWindow => m_Wrapper.m_InGame_CloseCollectableWindow;
         public InputActionMap Get() { return m_Wrapper.m_InGame; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -836,6 +859,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @CollectibleMenu.started += instance.OnCollectibleMenu;
             @CollectibleMenu.performed += instance.OnCollectibleMenu;
             @CollectibleMenu.canceled += instance.OnCollectibleMenu;
+            @CloseCollectableWindow.started += instance.OnCloseCollectableWindow;
+            @CloseCollectableWindow.performed += instance.OnCloseCollectableWindow;
+            @CloseCollectableWindow.canceled += instance.OnCloseCollectableWindow;
         }
 
         private void UnregisterCallbacks(IInGameActions instance)
@@ -873,6 +899,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @CollectibleMenu.started -= instance.OnCollectibleMenu;
             @CollectibleMenu.performed -= instance.OnCollectibleMenu;
             @CollectibleMenu.canceled -= instance.OnCollectibleMenu;
+            @CloseCollectableWindow.started -= instance.OnCloseCollectableWindow;
+            @CloseCollectableWindow.performed -= instance.OnCloseCollectableWindow;
+            @CloseCollectableWindow.canceled -= instance.OnCloseCollectableWindow;
         }
 
         public void RemoveCallbacks(IInGameActions instance)
@@ -903,5 +932,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnMoveDown(InputAction.CallbackContext context);
         void OnMoveLeft(InputAction.CallbackContext context);
         void OnCollectibleMenu(InputAction.CallbackContext context);
+        void OnCloseCollectableWindow(InputAction.CallbackContext context);
     }
 }
