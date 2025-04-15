@@ -1,6 +1,6 @@
 /******************************************************************
  *    Author: Nick Grinstead
- *    Contributors:  Rider Hagen, Alec Pizziferro, Josephine Qualls
+ *    Contributors:  Rider Hagen, Alec Pizziferro, Josephine Qualls, Trinity Hutson
  *    Date Created: 9/28/24
  *    Description: Script designed to handle all realtime
  *    UI related functionality.
@@ -15,6 +15,8 @@ using SaintsField;
 using Unity.VisualScripting;
 using UnityEngine.Serialization;
 using static UnityEngine.Rendering.DebugUI;
+using UnityEngine.UI;
+using PrimeTween;
 
 public class UIManager : MonoBehaviour, ITimeListener
 {
@@ -28,22 +30,18 @@ public class UIManager : MonoBehaviour, ITimeListener
     [FormerlySerializedAs("_sequenceUI")] [SerializeField]
     private TextMeshProUGUI _sequenceUi;
 
-    [SerializeField] private GameObject[] _noteImages;
-    [SerializeField] private GameObject[] _ghostNoteImages;
     [SerializeField] private bool _isIntermission;
     [SerializeField] private bool _isChallenge;
 
-    [FormerlySerializedAs("_timeSignatureUIy")] [SerializeField]
-    private TextMeshProUGUI _timeSignatureUiY;
+    [Header("Time Signature")]
+    [SerializeField] private NotesUI _notesUI;
+    [SerializeField] private GameObject _timeSigNotesUIPrefab;
+    [Space]
+    [SerializeField] private float _timeSigAnimDuration = 1f;
 
-    [FormerlySerializedAs("_timeSignatureUIx")] [SerializeField]
-    private TextMeshProUGUI _timeSignatureUiX;
+    private bool _timeSigAnimEnabled = false;
 
-    [SerializeField] private TMP_Text _levelNumber;
     private TimeSignatureManager _timeSigManager;
-
-    [FormerlySerializedAs("timeSignature")] [SerializeField]
-    private bool _timeSignature;
 
     private List<int> _notes;
 
@@ -84,6 +82,8 @@ public class UIManager : MonoBehaviour, ITimeListener
         if (_timeSigManager != null)
         {
             _timeSigManager.RegisterTimeListener(this);
+
+            InitializeTimeSigHud();
         }
 
         // WinChecker.CollectedNote += UpdateCollectedNotesText;
@@ -115,12 +115,11 @@ public class UIManager : MonoBehaviour, ITimeListener
             }
                 
         }*/
-        
     }
 
     public void SetLevelText(string text)
     {
-        _levelNumber.text = text;
+        _notesUI.LevelNumber.text = text;
     }
 
     /// <summary>
@@ -158,14 +157,114 @@ public class UIManager : MonoBehaviour, ITimeListener
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
     {
-        if (_timeSignatureUiX == null || _timeSignatureUiY == null)
+        UpdateTimingFromSignature(newTimeSignature, true);
+    }
+
+    private void UpdateTimingFromSignature(Vector2Int newTimeSignature, bool playAnimation)
+    {
+        if (_notesUI.TimeSigX == null || _notesUI.TimeSigY == null)
         {
             Debug.LogWarning("Missing hud elements");
             return;
         }
 
-        _timeSignatureUiY.text = newTimeSignature.y.ToString();
-        _timeSignatureUiX.text = newTimeSignature.x.ToString();
+        bool hasOptionalUI = _notesUI.Arrow != null;
+
+        if (hasOptionalUI && playAnimation && _timeSigAnimEnabled)
+        {
+            AnimatedTimeSigUpdate(newTimeSignature);
+            return;
+        }
+
+        _notesUI.TimeSigX.text = newTimeSignature.x.ToString();
+        _notesUI.TimeSigY.text = newTimeSignature.y.ToString();
+
+        // Return early if no more updating is needed
+        if (!hasOptionalUI)
+            return;
+
+        Vector2Int nextSecondaryTS = TimeSignatureManager.Instance.GetNextTimeSignature();
+        _notesUI.SecondaryTimeSigX.text = nextSecondaryTS.x.ToString();
+        _notesUI.SecondaryTimeSigY.text = nextSecondaryTS.y.ToString();
+    }
+
+    private void AnimatedTimeSigUpdate(Vector2Int newTimeSignature)
+    {
+        if (_notesUI.Arrow == null)
+            return;
+
+        Vector2Int nextSecondaryTS = TimeSignatureManager.Instance.GetNextTimeSignature();
+
+        float arrowStartY = _notesUI.Arrow.transform.localPosition.y;
+        float arrowStopY = arrowStartY + 221;
+
+        Vector3 arrowStartScale = _notesUI.Arrow.transform.localScale;
+        Vector3 arrowStopScale = arrowStartScale * 1.3f;
+
+        float minAlpha = 0.1f;
+
+        float animDuration = _timeSigAnimDuration;
+        float[] animKeyFrameDurations = { 0.33f, 0.45f, 0.5f, 2f };
+        for(int i = 0; i < animKeyFrameDurations.Length; i++)
+            animKeyFrameDurations[i] *= animDuration;
+
+        Ease commonEaseType = Ease.OutSine;
+
+        // Moves Arrow Up
+        Tween.LocalPositionY(_notesUI.Arrow.transform, arrowStopY, animKeyFrameDurations[0], commonEaseType)
+            /*.Group(Tween.Alpha(_notesUI.Arrow, minAlpha, animDuration))*/
+
+            // Reduce alpha of current time sig, updates it, then returns to alpha 1
+            .Group(Tween.Alpha(_notesUI.TimeSigX, minAlpha, animKeyFrameDurations[0], commonEaseType))
+            .Group(Tween.Alpha(_notesUI.TimeSigY, minAlpha, animKeyFrameDurations[0], commonEaseType))
+
+            // Scales up arrow (and its child text) to fit current time sig. Vanishes after matching
+            .Chain(Tween.Scale(_notesUI.Arrow.transform, arrowStopScale, animKeyFrameDurations[1], commonEaseType)
+                .Group(Tween.Alpha(_notesUI.Arrow, 0, animKeyFrameDurations[1], commonEaseType))
+                .Group(Tween.Alpha(_notesUI.TimeSigX, 1, animKeyFrameDurations[1]))
+                .Group(Tween.Alpha(_notesUI.TimeSigY, 1, animKeyFrameDurations[1]))
+                .Group(Tween.Alpha(_notesUI.SecondaryTimeSigX, 0, animKeyFrameDurations[1]))
+                .Group(Tween.Alpha(_notesUI.SecondaryTimeSigY, 0, animKeyFrameDurations[1]))
+                .InsertCallback(animKeyFrameDurations[1] / 2, () => {
+                    _notesUI.TimeSigX.text = newTimeSignature.x.ToString();
+                    _notesUI.TimeSigY.text = newTimeSignature.y.ToString();
+                }))
+
+            .OnComplete(() => {
+                _notesUI.TimeSigX.text = newTimeSignature.x.ToString();
+                _notesUI.TimeSigY.text = newTimeSignature.y.ToString();
+            })
+            .Chain(Tween.Alpha(_notesUI.TimeSigX, 1, 0)
+                .Group(Tween.Alpha(_notesUI.TimeSigY, 1, 0)))
+
+            // Resets arrow
+            .Chain(Tween.LocalPositionY(_notesUI.Arrow.transform, arrowStartY, 0f))
+            .ChainCallback(() => {
+                _notesUI.SecondaryTimeSigX.text = nextSecondaryTS.x.ToString();
+                _notesUI.SecondaryTimeSigY.text = nextSecondaryTS.y.ToString();
+
+                _notesUI.SecondaryTimeSigX.alpha = 0;
+                _notesUI.SecondaryTimeSigY.alpha = 0;
+            })
+            .ChainDelay(animKeyFrameDurations[^2])
+
+            // Fade arrow text back in
+            .Chain(Tween.Scale(_notesUI.Arrow.transform, arrowStartScale, 0f))
+            .Chain(Tween.Alpha(_notesUI.Arrow, 1, animKeyFrameDurations[^1])
+                .Group(Tween.Alpha(_notesUI.SecondaryTimeSigX, 1, animKeyFrameDurations[^1]))
+                .Group(Tween.Alpha(_notesUI.SecondaryTimeSigY, 1, animKeyFrameDurations[^1])));
+
+        Tween.Alpha(_notesUI.TimeSigX, minAlpha, animDuration / 2)
+            .OnComplete(() => { 
+                _notesUI.TimeSigX.text = newTimeSignature.x.ToString(); 
+            })
+            .Chain(Tween.Alpha(_notesUI.TimeSigX, 1, animDuration / 2));
+
+        Tween.Alpha(_notesUI.TimeSigY, minAlpha, animDuration / 2)
+            .OnComplete(() => {
+                _notesUI.TimeSigY.text = newTimeSignature.y.ToString();
+            })
+            .Chain(Tween.Alpha(_notesUI.TimeSigY, 1, animDuration / 2));
     }
 
     /// <summary>
@@ -190,13 +289,13 @@ public class UIManager : MonoBehaviour, ITimeListener
     /// </summary>
     private void UpdateColectedNotesIcons(int collectedNote)
     {
-        if (collectedNote < 0 || collectedNote > _noteImages.Length - 1)
+        if (collectedNote < 0 || collectedNote > _notesUI.NoteImages.Length - 1)
         {
             return;
         }
 
-        _noteImages[collectedNote].SetActive(true);
-        _ghostNoteImages[collectedNote].SetActive(false);
+        _notesUI.NoteImages[collectedNote].enabled = true;
+        _notesUI.GhostNoteImages[collectedNote].enabled = false;
     }
 
     /// <summary>
@@ -204,9 +303,9 @@ public class UIManager : MonoBehaviour, ITimeListener
     /// </summary>
     private void UpdateGhostNotesIcons(int collectedNote)
     {
-        if (collectedNote >= 0 && collectedNote < _noteImages.Length)
+        if (collectedNote >= 0 && collectedNote < _notesUI.NoteImages.Length)
         {
-            _ghostNoteImages[collectedNote].SetActive(true);
+            _notesUI.GhostNoteImages[collectedNote].enabled = true;
         }
     }
 
@@ -256,5 +355,34 @@ public class UIManager : MonoBehaviour, ITimeListener
         yield return new WaitForSeconds(_messageWaitTime);
 
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    /// <summary>
+    /// Updates HUD to reflect whether or not the Time Sig is in use for the level. Should be called once per level, in Start
+    /// </summary>
+    private void InitializeTimeSigHud()
+    {
+        if (_timeSigManager == null || !_timeSigManager.TimeSigInUse)
+            return;
+
+        GameObject uiObj = Instantiate(_timeSigNotesUIPrefab, transform);
+        uiObj.transform.SetAsFirstSibling();
+
+        if(!uiObj.TryGetComponent(out NotesUI notesUI))
+        {
+            Debug.LogError("TimeSigNotesUI Prefab is missing NotesUI script!");
+            return;
+        }
+
+        Destroy(_notesUI.gameObject);
+
+        _notesUI = notesUI;
+
+        UpdateTimingFromSignature(_timeSigManager.GetCurrentTimeSignature(), false);
+
+        Tween.Delay(_timeSigAnimDuration)
+            .OnComplete(() => {
+                _timeSigAnimEnabled = true; 
+            });
     }
 }

@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Nick Grinstead
-*    Contributors: Rider Hagen
+*    Contributors: Rider Hagen, Trinity Hutson
 *    Date Created: 10/20/24
 *    Description: Script for tracking the current time signature.
 *    Has methods for updating to a new time signature and pushs updates
@@ -10,10 +10,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using SaintsField;
 using TMPro;
+using UnityEngine.UI;
 
 public class TimeSignatureManager : MonoBehaviour
 {
     public static TimeSignatureManager Instance;
+
+    public bool TimeSigInUse { get; private set; } = false;
 
     [InfoBox("First number is player time, second is enemy time", EMessageType.Info)]
     [OnValueChanged(nameof(UpdateListeners))]
@@ -64,6 +67,8 @@ public class TimeSignatureManager : MonoBehaviour
         {
             _metronomePredictor.text = _secondaryTimeSignature.x + "/" + _secondaryTimeSignature.y;
         }
+
+        TimeSigInUse = _timeSignature != Vector2Int.one || _secondaryTimeSignature != Vector2Int.one;
     }
 
     /// <summary>
