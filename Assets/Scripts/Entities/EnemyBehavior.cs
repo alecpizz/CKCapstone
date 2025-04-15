@@ -1,6 +1,6 @@
 /******************************************************************
  *    Author: Cole Stranczek
- *    Contributors: Cole Stranczek, Mitchell Young, Nick Grinstead, Alec Pizziferro, Alex Laubenstein
+ *    Contributors: Cole Stranczek, Mitchell Young, Nick Grinstead, Alec Pizziferro, Alex Laubenstein, Trinity Hutson
  *    Jamison Parks
  *    Date Created: 10/3/24
  *    Description: Script that handles the behavior of the enemy,
@@ -57,6 +57,13 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     [SerializeField] private GameObject _destinationMarker;
     [SerializeField] private GameObject _destPathVFX;
+    [Space]
+    [SerializeField] private GameObject _destPathMarkerPrefab;
+    [Space]
+
+    private List<GameObject> _subDestPathMarkers = new();
+
+    private int _subMarkerIdx = 0;
 
     //Destination object values
 
@@ -207,11 +214,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         // Make sure enemies are always seen at the start
         _vfxLine = _destPathVFX.GetComponent<LineRenderer>();
         _vfxLine.positionCount = 2;
-
-        _destPathVFX.SetActive(false);
-        _destinationMarker.SetActive(false);
-
         
+        ActivateDestinationMarkers(false);
     }
 
     /// <summary>
@@ -231,6 +235,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         {
             PlayerMovement.Instance.BeamSwitchActivation += () => _waitOnBeam = true;
         }
+
+        InitializeDestinationMarkers();
+
+        SimulateTurn();
 
         UpdateDestinationMarker();
         DestinationPath();
@@ -336,8 +344,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             return;
         }
 
-        _destPathVFX.SetActive(CollidingWithRay);
-        _destinationMarker.SetActive(CollidingWithRay);
+        ActivateDestinationMarkers(CollidingWithRay);
+        
     }
 
     /// <summary>
@@ -351,15 +359,13 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         {
             _currentSoloToggle = true;
 
-            _destPathVFX.SetActive(false);
-            _destinationMarker.SetActive(false);
+            ActivateDestinationMarkers(false);
 
             _currentGroupToggle = true;
         }
         else
         {
-            _destPathVFX.SetActive(_currentGroupToggle);
-            _destinationMarker.SetActive(_currentGroupToggle);
+            ActivateDestinationMarkers(_currentGroupToggle);
 
             _currentGroupToggle = !_currentGroupToggle;
         }
@@ -379,6 +385,108 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     }
 
     /// <summary>
+    /// Instantiates sub markers
+    /// </summary>
+    private void InitializeDestinationMarkers()
+    {
+        if (TimeSignatureManager.Instance == null)
+            return;
+
+        int timeSig1 = TimeSignatureManager.Instance.GetCurrentTimeSignature().y;
+        int timeSig2 = TimeSignatureManager.Instance.GetNextTimeSignature().y;
+
+        int maxTimeSig = Mathf.Max(timeSig1, timeSig2);
+
+        for(int i = 0; i < maxTimeSig - 1; i++)
+        {
+            GameObject obj = Instantiate(_destPathMarkerPrefab);
+
+            Vector3 scale = obj.transform.localScale;
+            scale *= 0.5f;
+            obj.transform.localScale = scale;
+
+            obj.SetActive(false);
+
+            _subDestPathMarkers.Add(obj);
+        }
+
+        print($"sub path size: {_subDestPathMarkers.Count}");
+    }
+
+    private void ActivateDestinationMarkers(bool active, bool ignorePathLine = false)
+    {
+        if(!ignorePathLine)
+            _destPathVFX.SetActive(active);
+
+        _destinationMarker.SetActive(active);
+
+        // fix this
+        foreach (var o in _subDestPathMarkers)
+        {
+            o.SetActive(active);
+        }
+    }
+
+    /// <summary>
+    /// Updates sub markers
+    /// </summary>
+    /// <param name="prevIndex"></param>
+    /// <param name="currentIndex"></param>
+    private void UpdateSubMarkers(int prevIndex)
+    {
+        if (_subDestPathMarkers.Count == 0)
+            return;
+
+        int diff = _indicatorIndex - prevIndex;
+        int increment = diff < 0 ? -1 : 1;
+
+        diff = Mathf.Abs(diff);
+
+        bool looped = _indicatorReturningToStart;
+
+        if (looped && _circularMovement)
+        {
+            if(!_circularMovement)
+                increment = -1;
+            else
+            {
+                diff = (_movePoints.Count - prevIndex - 1) + _indicatorIndex;
+                increment = 1;
+            }
+        }
+
+        int currentIdx = prevIndex;
+        print($"prev: {prevIndex} | indicator: {_indicatorIndex}");
+        for (int i = 0; i < diff - 1; i++)
+        {
+            currentIdx += increment;
+            if (currentIdx < 0)
+                currentIdx = _moveDestinations.Count - 1;
+            else if (currentIdx > _moveDestinations.Count)
+                currentIdx = 0;
+
+            var gridPoint = _moveDestinations[currentIdx];
+            var worldPoint = GridBase.Instance.CellToWorld(gridPoint);
+         
+            worldPoint.y += _destYPos;
+            _subDestPathMarkers[i].transform.position = worldPoint;
+        }
+        // work around to avoid having to disable
+        for (int i = diff - 1; i < _subDestPathMarkers.Count; i++)
+            _subDestPathMarkers[i].transform.position = Vector3.one * 1000;
+    }
+
+    private void UpdateSubMarker(int moveIdx)
+    {
+        var gridPoint = _moveDestinations[moveIdx];
+        var worldPoint = GridBase.Instance.CellToWorld(gridPoint);
+        worldPoint.y += _destYPos;
+        _subDestPathMarkers[_subMarkerIdx].transform.position = worldPoint;
+
+        _subMarkerIdx++;
+    }
+
+    /// <summary>
     /// This function updates the position of the _destinationMarker object using the
     /// _movePoints list.
     /// </summary>
@@ -389,8 +497,10 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         Vector3 linePos = _lastPosition;
         linePos.y = _lineYPosOffset;
         //Looks at the time signature for the enemy so it can place multiple moves in advance
-
         NextMarkerDestination(ref _indicatorIndex, ref _indicatorReturningToStart);
+
+        //UpdateSubMarkers(prevIndex);
+
         _vfxLine.positionCount = _moveDestinations.Count;
 
         //Finds the direction and tiles to move based on its own current point index value
@@ -409,6 +519,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
         destPointWorld.y += _destYPos;
         _destinationMarker.transform.position = destPointWorld;
+
+        SimulateTurn();
     }
 
     /// <summary>
@@ -465,6 +577,53 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         StartCoroutine(MovementRoutine());
     }
 
+    private void SimulateTurn()
+    {
+        int tempMoveIndex = _moveIndex;
+        bool tempLooping = _isReturningToStart;
+
+        bool blocked = false;
+
+        _subMarkerIdx = 0;
+
+        for (int i = 0; i < _enemyMovementTime; i++)
+        {
+            int prevMove = tempMoveIndex;
+            bool prevReturn = tempLooping;
+            EvaluateNextMove(ref tempMoveIndex, ref tempLooping);
+
+            if(i < _enemyMovementTime - 1)
+                UpdateSubMarker(tempMoveIndex);
+            
+            var movePt = _moveDestinations[tempMoveIndex];
+            var currCell = GridBase.Instance.WorldToCell(transform.position);
+            var goalCell = GetLongestPath(GridBase.Instance.CellToWorld(movePt));
+
+            //we were blocked by something, adjust memory
+            if (goalCell != movePt)
+            {
+                blocked = true;
+                //we can still make the move in the future, we just need to try again because we were blocked.
+                tempMoveIndex = prevMove;
+                tempLooping = prevReturn;
+            }
+            //already at this spot, next turn.
+            if (goalCell == currCell && !blocked)
+            {
+                continue;
+            }
+
+            if (_isFrozen)
+            {
+                blocked = true;
+                continue;
+            }
+        }
+
+        for (int i = _subMarkerIdx; i < _subDestPathMarkers.Count; i++)
+            _subDestPathMarkers[i].transform.position = Vector3.one * 1000;
+    }
+
     /// <summary>
     /// Coroutine for handling enemy movement. Handles determining pathing,
     /// Tween movement, and updating the indicator.
@@ -489,11 +648,18 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         }
         
         bool blocked = false;
+
+        _subMarkerIdx = 0;
+
         for (int i = 0; i < _enemyMovementTime; i++)
         {
             int prevMove = _moveIndex;
             bool prevReturn = _isReturningToStart;
             EvaluateNextMove(ref _moveIndex, ref _isReturningToStart);
+
+            if (i < _enemyMovementTime - 1)
+                UpdateSubMarker(_moveIndex);
+
             var movePt = _moveDestinations[_moveIndex];
             var currCell = GridBase.Instance.WorldToCell(transform.position);
             var goalCell = GetLongestPath(GridBase.Instance.CellToWorld(movePt));
@@ -593,6 +759,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 _animator.SetBool(Turn, false);
             }*/
         }
+
+        for(int i = _subMarkerIdx; i < _subDestPathMarkers.Count; i++)
+            _subDestPathMarkers[i].transform.position = Vector3.one * 1000;
 
         _isMoving = false;
 
@@ -737,6 +906,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             _enemyMovementTime;
 
         _metronomeTriggered = false;
+
+        //_subMarkerIdx = 0;
 
         if (_circularMovement)
         {
