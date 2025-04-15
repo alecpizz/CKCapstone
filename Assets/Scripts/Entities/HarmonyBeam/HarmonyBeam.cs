@@ -88,21 +88,22 @@ public class HarmonyBeam : MonoBehaviour
 
         if (toggle)
         {
+            ScanForObjects();
+
             foreach (var particleSystem in _beamParticleSystems)
             {
                 particleSystem.Play();
             }
-
-            ScanForObjects();
         }
         else
         {
+            ScanForObjects();
+
             foreach (var particleSystem in _beamParticleSystems)
             {
+                particleSystem.Clear();
                 particleSystem.Stop();
             }
-
-            ScanForObjects();
         }
 
         AudioManager.Instance.PauseSound(_beamInstance, _beamActive);
