@@ -69,7 +69,7 @@ public class LevelButtons : MonoBehaviour
             foreach (var level in levelDataChapter.Puzzles)
             {
                 var targetTransform = chapter.transform;
-                string levelText = $"Level {counter}";
+                string levelText = $"{_levelPrefix} {counter}";
                 var sceneName = Path.GetFileNameWithoutExtension(level.ScenePath);
                 if (sceneName.Contains("CS"))
                 {
@@ -82,7 +82,7 @@ public class LevelButtons : MonoBehaviour
                 }
                 else if (sceneName[0] == 'C')
                 {
-                    levelText = $"Challenge {challengeCounter++}";
+                    levelText = $"{_challengeText} {challengeCounter++}";
                 }
                 else
                 {
