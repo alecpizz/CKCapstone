@@ -103,6 +103,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "CloseCollectableWindow",
+                    "type": "Button",
+                    "id": "0ec47673-fa89-444d-8001-6a0abb433fd2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -252,7 +261,7 @@
                 {
                     "name": "Left Control Stick",
                     "id": "06b0959e-8795-46b2-9093-9d817ceaa8f3",
-                    "path": "2DVector",
+                    "path": "2DVector(mode=2)",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -307,7 +316,7 @@
                 {
                     "name": "D-Pad",
                     "id": "415c3ae1-17ed-4fcd-b095-611dff744fa1",
-                    "path": "2DVector",
+                    "path": "2DVector(mode=2)",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -664,6 +673,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "CollectibleMenu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2ab3b8e4-bc9c-4c7f-a012-6a823a0195f9",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "CloseCollectableWindow",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

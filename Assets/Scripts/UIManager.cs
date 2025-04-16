@@ -1,6 +1,6 @@
 /******************************************************************
  *    Author: Nick Grinstead
- *    Contributors:  Rider Hagen, Alec Pizziferro, Josephine Qualls
+ *    Contributors:  Rider Hagen, Alec Pizziferro, Josephine Qualls, Trinity Hutson
  *    Date Created: 9/28/24
  *    Description: Script designed to handle all realtime
  *    UI related functionality.
@@ -15,6 +15,8 @@ using SaintsField;
 using Unity.VisualScripting;
 using UnityEngine.Serialization;
 using static UnityEngine.Rendering.DebugUI;
+using UnityEngine.UI;
+using PrimeTween;
 
 public class UIManager : MonoBehaviour, ITimeListener
 {
@@ -28,22 +30,15 @@ public class UIManager : MonoBehaviour, ITimeListener
     [FormerlySerializedAs("_sequenceUI")] [SerializeField]
     private TextMeshProUGUI _sequenceUi;
 
-    [SerializeField] private GameObject[] _noteImages;
-    [SerializeField] private GameObject[] _ghostNoteImages;
     [SerializeField] private bool _isIntermission;
     [SerializeField] private bool _isChallenge;
 
-    [FormerlySerializedAs("_timeSignatureUIy")] [SerializeField]
-    private TextMeshProUGUI _timeSignatureUiY;
+    [Space]
+    [SerializeField] private NotesUI _notesUI;
+    [SerializeField] private GameObject _timeSigNotesUIPrefab;
+    [Space]
 
-    [FormerlySerializedAs("_timeSignatureUIx")] [SerializeField]
-    private TextMeshProUGUI _timeSignatureUiX;
-
-    [SerializeField] private TMP_Text _levelNumber;
     private TimeSignatureManager _timeSigManager;
-
-    [FormerlySerializedAs("timeSignature")] [SerializeField]
-    private bool _timeSignature;
 
     private List<int> _notes;
 
@@ -68,13 +63,13 @@ public class UIManager : MonoBehaviour, ITimeListener
         {
             WinChecker winChecker = WinChecker.Instance;
             _notes = winChecker.TargetNoteSequence;
-            WinChecker.CollectedNote += UpdateGhostNotesIcons;
+            WinChecker.CollectedNote += UpdateGhostNotesIcon;
             foreach (int note in _notes)
             {
                 _sequenceUi.text += " " + note;
                 if (!_isIntermission)
                 {
-                    UpdateGhostNotesIcons(note);
+                    UpdateGhostNotesIcon(note);
                 }
             }
         }
@@ -84,6 +79,8 @@ public class UIManager : MonoBehaviour, ITimeListener
         if (_timeSigManager != null)
         {
             _timeSigManager.RegisterTimeListener(this);
+
+            InitializeTimeSigHud();
         }
 
         // WinChecker.CollectedNote += UpdateCollectedNotesText;
@@ -115,12 +112,11 @@ public class UIManager : MonoBehaviour, ITimeListener
             }
                 
         }*/
-        
     }
 
     public void SetLevelText(string text)
     {
-        _levelNumber.text = text;
+        _notesUI.SetLevelText(text);
     }
 
     /// <summary>
@@ -158,14 +154,7 @@ public class UIManager : MonoBehaviour, ITimeListener
 
     public void UpdateTimingFromSignature(Vector2Int newTimeSignature)
     {
-        if (_timeSignatureUiX == null || _timeSignatureUiY == null)
-        {
-            Debug.LogWarning("Missing hud elements");
-            return;
-        }
-
-        _timeSignatureUiY.text = newTimeSignature.y.ToString();
-        _timeSignatureUiX.text = newTimeSignature.x.ToString();
+        _notesUI.UpdateTimingFromSignature(newTimeSignature, true);
     }
 
     /// <summary>
@@ -175,7 +164,7 @@ public class UIManager : MonoBehaviour, ITimeListener
     {
         // WinChecker.CollectedNote -= UpdateCollectedNotesText;
         WinChecker.CollectedNote -= UpdateColectedNotesIcons;
-        WinChecker.CollectedNote -= UpdateGhostNotesIcons;
+        WinChecker.CollectedNote -= UpdateGhostNotesIcon;
         WinChecker.GotCorrectSequence -= DisplayDoorUnlockMessage;
         WinChecker.GotWrongSequence -= DisplayIncorrectMessage;
 
@@ -190,24 +179,15 @@ public class UIManager : MonoBehaviour, ITimeListener
     /// </summary>
     private void UpdateColectedNotesIcons(int collectedNote)
     {
-        if (collectedNote < 0 || collectedNote > _noteImages.Length - 1)
-        {
-            return;
-        }
-
-        _noteImages[collectedNote].SetActive(true);
-        _ghostNoteImages[collectedNote].SetActive(false);
+        _notesUI.UpdateCollectedNoteIcon(collectedNote);
     }
 
     /// <summary>
     /// Display ghost notes that need to be collected in UI once a note is collected
     /// </summary>
-    private void UpdateGhostNotesIcons(int collectedNote)
+    private void UpdateGhostNotesIcon(int collectedNote)
     {
-        if (collectedNote >= 0 && collectedNote < _noteImages.Length)
-        {
-            _ghostNoteImages[collectedNote].SetActive(true);
-        }
+        _notesUI.UpdateGhostNoteIcon(collectedNote);
     }
 
     /// <summary>
@@ -256,5 +236,42 @@ public class UIManager : MonoBehaviour, ITimeListener
         yield return new WaitForSeconds(_messageWaitTime);
 
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    /// <summary>
+    /// Updates HUD to reflect whether or not the Time Sig is in use for the level. Should be called once per level, in Start
+    /// </summary>
+    private void InitializeTimeSigHud()
+    {
+        if (_timeSigManager == null || !_timeSigManager.TimeSigInUse)
+            return;
+
+        GameObject uiObj = Instantiate(_timeSigNotesUIPrefab, transform);
+        uiObj.transform.SetAsFirstSibling();
+
+        if(!uiObj.TryGetComponent(out NotesUI notesUI))
+        {
+            Debug.LogError("TimeSigNotesUI Prefab is missing NotesUI script!");
+            return;
+        }
+
+        string levelNumber = _notesUI.LevelNumber.text;
+
+        notesUI.LevelNumber.text = levelNumber;
+
+        if (!_timeSigManager.MetronomeInUse)
+            notesUI.ToggleArrow(false);
+
+        Destroy(_notesUI.gameObject);
+
+        _notesUI = notesUI;
+
+        foreach (int note in _notes)
+        {
+            if (!_isIntermission)
+                UpdateGhostNotesIcon(note);
+        }
+
+        _notesUI.UpdateTimingFromSignature(_timeSigManager.GetCurrentTimeSignature(), false);
     }
 }
