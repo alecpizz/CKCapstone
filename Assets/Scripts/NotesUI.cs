@@ -71,8 +71,11 @@ public class NotesUI : MonoBehaviour
                 _timeSigAnimEnabled = true;
             });
 
-        _arrowStartY = _arrow.transform.localPosition.y;
-        _arrowStartScale = _arrow.transform.localScale;
+        if(_arrow != null)
+        {
+            _arrowStartY = _arrow.transform.localPosition.y;
+            _arrowStartScale = _arrow.transform.localScale;
+        }
     }
 
     /// <summary>
