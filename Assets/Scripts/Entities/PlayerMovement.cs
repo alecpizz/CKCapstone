@@ -379,8 +379,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             _dashParticles.Stop();
             foreach (TrailRenderer t in _dashTrails)
                 t.emitting = false;
-            EventInstance dashInstance  = AudioManager.Instance.PlaySound(_playerDash);
-            AudioManager.Instance.StopSound(dashInstance);
         }
             
     }
