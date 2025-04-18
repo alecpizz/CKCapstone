@@ -10,6 +10,8 @@ using UnityEngine;
 using FMOD.Studio;
 using FMODUnity;
 using UnityEngine.UI;
+using Unity.VisualScripting;
+using UnityEngine.EventSystems;
 
 public class AudioSettings : MonoBehaviour
 {
@@ -52,7 +54,6 @@ public class AudioSettings : MonoBehaviour
     {
         _master.setVolume(_masterSlider.value);
         SaveDataManager.SetSettingFloat(Volume, MasterVolume, _masterSlider.value);
-        Debug.Log("Change master");
         AudioManager.Instance.PlaySound(_menuClicks);
     }
 
@@ -63,7 +64,6 @@ public class AudioSettings : MonoBehaviour
     {
         _bgMusic.setVolume(_bgMusicSlider.value);
         SaveDataManager.SetSettingFloat(Volume, MusicVolume, _bgMusicSlider.value);
-        Debug.Log("Change music");
         AudioManager.Instance.PlaySound(_menuClicks);
     }
 
@@ -74,7 +74,6 @@ public class AudioSettings : MonoBehaviour
     {
         _SFX.setVolume(_SFXSlider.value);
         SaveDataManager.SetSettingFloat(Volume, SFXVolume, _SFXSlider.value);
-        Debug.Log("Change SFX");
         AudioManager.Instance.PlaySound(_menuClicks);
     }
 
