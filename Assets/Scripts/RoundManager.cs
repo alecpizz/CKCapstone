@@ -318,6 +318,8 @@ public sealed class RoundManager : MonoBehaviour
             return;
         }
 
+        DisableAutocomplete();
+
         TurnState listenerTurnState = listener.TurnState == _turnState ?
             listener.TurnState : listener.SecondaryTurnState;
 
