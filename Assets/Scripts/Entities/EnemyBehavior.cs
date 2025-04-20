@@ -551,7 +551,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         {
             int prevMove = tempMoveIndex;
             bool prevReturn = tempLooping;
-            EvaluateNextMove(ref tempMoveIndex, ref tempLooping);
+            bool isVFX = true;
+            EvaluateNextMove(ref tempMoveIndex, ref tempLooping, ref isVFX);
 
             if (i < _enemyMovementTime - 1)
             {
@@ -617,7 +618,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         {
             int prevMove = _moveIndex;
             bool prevReturn = _isReturningToStart;
-            EvaluateNextMove(ref _moveIndex, ref _isReturningToStart);
+            bool isVFX = false;
+            EvaluateNextMove(ref _moveIndex, ref _isReturningToStart, ref isVFX);
 
             var movePt = _moveDestinations[_moveIndex];
             var currCell = GridBase.Instance.WorldToCell(transform.position);
@@ -793,7 +795,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// </summary>
     /// <param name="moveIndex">Reference to the evaluated move index.</param>
     /// <param name="looped">Reference to the evaluated loop state.</param>
-    private void EvaluateNextMove(ref int moveIndex, ref bool looped)
+    /// /// <param name="looped">Reference to the evaluated call location.</param>
+    private void EvaluateNextMove(ref int moveIndex, ref bool looped, ref bool isVFX)
     {
         //not at the end of our list of moves.
         if (moveIndex < _moveDestinations.Count - 1)
@@ -836,16 +839,19 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
         _currentEnemyIndex = moveIndex;
 
-        if (_circularMovement)
-        {
-            return;
-        }
-
         //If moveIndex is at the first or last position the destination path vfx will reverse
-        if (moveIndex == 0 || moveIndex == _moveDestinations.Count - 1)
+        if (!isVFX)
         {
-            _destPathVFXMatSpeed = -_destPathVFXMatSpeed;
-            _destPathMaterial.SetFloat("_Speed", _destPathVFXMatSpeed);
+            if (_circularMovement)
+            {
+                return;
+            }
+
+            if (moveIndex == 0 || moveIndex == _moveDestinations.Count - 1)
+            {
+                _destPathVFXMatSpeed = -_destPathVFXMatSpeed;
+                _destPathMaterial.SetFloat("_Speed", _destPathVFXMatSpeed);
+            }
         }
     }
 
