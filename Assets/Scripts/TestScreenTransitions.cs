@@ -37,5 +37,19 @@ public class TestScreenTransitions : MonoBehaviour
         }
 
         _circleWipeImage.materialForRendering.SetFloat(_rise, 1f);
+
+        yield return new WaitForSeconds(.3f);
+
+        time = 0f;
+
+        while (time < _timeForScreenWipe)
+        {
+            _circleWipeImage.materialForRendering.SetFloat(_rise, Mathf.Lerp(1f, 0f, time / _timeForScreenWipe));
+
+            time += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        _circleWipeImage.materialForRendering.SetFloat(_rise, 0f);
     }
 }
