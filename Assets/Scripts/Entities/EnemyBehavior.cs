@@ -240,8 +240,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
         InitializeDestinationMarkers();
 
-        UpdateAllSubMarkers();
-
         UpdateDestinationMarker();
         DestinationPath();
     }
@@ -543,6 +541,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     {
         int tempMoveIndex = _moveIndex;
         bool tempLooping = _isReturningToStart;
+        Vector3 lastSubPosition = transform.position;
 
         bool blocked = false;
 
@@ -552,14 +551,18 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         {
             int prevMove = tempMoveIndex;
             bool prevReturn = tempLooping;
-            EvaluateNextMove(ref tempMoveIndex, ref tempLooping);
+            bool isVFX = true;
+            EvaluateNextMove(ref tempMoveIndex, ref tempLooping, ref isVFX);
 
             if (i < _enemyMovementTime - 1)
+            {
                 UpdateSubMarker(tempMoveIndex);
+                lastSubPosition = _subDestPathMarkers[_subMarkerIdx - 1].transform.position;
+            }
 
             var movePt = _moveDestinations[tempMoveIndex];
             var currCell = GridBase.Instance.WorldToCell(transform.position);
-            var goalCell = GetLongestPath(GridBase.Instance.CellToWorld(movePt));
+            var goalCell = GetLongestPath(GridBase.Instance.CellToWorld(movePt), lastSubPosition);
 
             //we were blocked by something, adjust memory
             if (goalCell != movePt)
@@ -615,11 +618,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         {
             int prevMove = _moveIndex;
             bool prevReturn = _isReturningToStart;
-            EvaluateNextMove(ref _moveIndex, ref _isReturningToStart);
+            bool isVFX = false;
+            EvaluateNextMove(ref _moveIndex, ref _isReturningToStart, ref isVFX);
 
             var movePt = _moveDestinations[_moveIndex];
             var currCell = GridBase.Instance.WorldToCell(transform.position);
-            var goalCell = GetLongestPath(GridBase.Instance.CellToWorld(movePt));
+            var goalCell = GetLongestPath(GridBase.Instance.CellToWorld(movePt), transform.position);
 
             if (_moveIndex == _moveDestinations.Count - 1 && !_circularMovement)
             {
@@ -733,12 +737,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// </summary>
     /// <param name="goal">The goal position, in world space to get to.</param>
     /// <returns>The updated goal cell.</returns>
-    private Vector3Int GetLongestPath(Vector3 goal)
+    private Vector3Int GetLongestPath(Vector3 goal, Vector3 origin)
     {
-        var direction = (goal - transform.position);
+        var direction = (goal - origin);
         direction.Normalize();
         bool stop = false;
-        var originTilePos = GridBase.Instance.WorldToCell(transform.position);
+        var originTilePos = GridBase.Instance.WorldToCell(origin);
         var currTilePos = GridBase.Instance.CellToWorld(originTilePos);
         //loop thru all tiles in the direction of the goal, stopping if blocked or if we're at the goal.
         do
@@ -791,7 +795,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// </summary>
     /// <param name="moveIndex">Reference to the evaluated move index.</param>
     /// <param name="looped">Reference to the evaluated loop state.</param>
-    private void EvaluateNextMove(ref int moveIndex, ref bool looped)
+    /// /// <param name="looped">Reference to the evaluated call location.</param>
+    private void EvaluateNextMove(ref int moveIndex, ref bool looped, ref bool isVFX)
     {
         //not at the end of our list of moves.
         if (moveIndex < _moveDestinations.Count - 1)
@@ -834,16 +839,19 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
         _currentEnemyIndex = moveIndex;
 
-        if (_circularMovement)
-        {
-            return;
-        }
-
         //If moveIndex is at the first or last position the destination path vfx will reverse
-        if (moveIndex == 0 || moveIndex == _moveDestinations.Count - 1)
+        if (!isVFX)
         {
-            _destPathVFXMatSpeed = -_destPathVFXMatSpeed;
-            _destPathMaterial.SetFloat("_Speed", _destPathVFXMatSpeed);
+            if (_circularMovement)
+            {
+                return;
+            }
+
+            if (moveIndex == 0 || moveIndex == _moveDestinations.Count - 1)
+            {
+                _destPathVFXMatSpeed = -_destPathVFXMatSpeed;
+                _destPathMaterial.SetFloat("_Speed", _destPathVFXMatSpeed);
+            }
         }
     }
 
