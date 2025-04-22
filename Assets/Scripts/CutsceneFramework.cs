@@ -105,6 +105,7 @@ public class CutsceneFramework : MonoBehaviour
     private void Start()
     {
         SaveDataManager.SetLevelCompleted(SceneManager.GetActiveScene().name);
+        SaveDataManager.SetLastFinishedLevel(SceneManager.GetActiveScene().name);
         _inputActions = new DebugInputActions();
         _inputActions.UI.Enable();
         _inputActions.UI.SkipCutscene.performed += ctx => SkipCutscene();
