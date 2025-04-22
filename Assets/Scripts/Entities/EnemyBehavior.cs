@@ -800,7 +800,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     {
         //not at the end of our list of moves.
         if (moveIndex < _moveDestinations.Count - 1)
-        {
+        { 
             if (!looped)
             {
                 //move forward as normal
@@ -813,6 +813,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 if (moveIndex <= 0)
                 {
                     moveIndex = 0;
+                    //checks if there is only one move in the list and will add a movement if so
+                    //to prevent skipping a turn
+                    if (_moveDestinations.Count - 1 == 1)
+                    {
+                        moveIndex++;
+                    }
                     looped = false;
                     _endRotate = true;
                 }
