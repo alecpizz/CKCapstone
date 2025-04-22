@@ -14,6 +14,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using static UnityEngine.Rendering.DebugUI;
 using System;
+using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 using System.Drawing.Printing;
 using UnityEngine.InputSystem.DualShock;
@@ -34,6 +35,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject _mainMenuSettings;
     [SerializeField] private GameObject _mainMenuQuit;
     [SerializeField] private GameObject _restartButton;
+    [SerializeField] private GameObject _tempCredits;
     
     [SerializeField] private EventReference _buttonPress;
 
@@ -46,6 +48,7 @@ public class MenuManager : MonoBehaviour
     private bool _skipInPause;
 
     private bool _pauseInvoked = true;
+    private bool _isMainMenu;    
     private bool _optionsOpen = false;
 
     /// <summary>
@@ -57,6 +60,18 @@ public class MenuManager : MonoBehaviour
         _inputActions.Enable();
         _inputActions.Player.Quit.performed += ctx => Pause();
         InputSystem.onDeviceChange += ControllerDetection;
+        _inputActions.UI.Back.performed += BackPerformed;
+
+        //Gets rid of restart button if it's a cutscene
+        string path = SceneManager.GetActiveScene().path;
+        if (path.Contains("CS"))
+        {
+            _restartButton.SetActive(false);
+        }
+
+        //TODO: adjust this whenever we fix duplicate main menu in settings..
+        _isMainMenu = SceneManager.GetActiveScene().buildIndex == 0 
+                      || SceneManager.GetActiveScene().buildIndex == SceneManager.sceneCountInBuildSettings - 1;
     }
 
     /// <summary>
@@ -66,6 +81,7 @@ public class MenuManager : MonoBehaviour
     {
         _inputActions.Disable();
         _inputActions.Player.Quit.performed -= ctx => Pause();
+        _inputActions.UI.Back.performed -= BackPerformed;
         InputSystem.onDeviceChange -= ControllerDetection;
     }
 
@@ -76,7 +92,17 @@ public class MenuManager : MonoBehaviour
     {
         DebugMenuManager.Instance.PauseMenu = false;
         _pauseScreen.SetActive(false);
-        _restartButton.SetActive(true);
+
+        //gets rid of restart icon in cutscenes
+        string path = SceneManager.GetActiveScene().path;
+        if (path.Contains("CS"))
+        {
+            _restartButton.SetActive(false);
+        }
+        else
+        {
+            _restartButton.SetActive(true);
+        }
         _cursorManager.OnPointerExit();
         Time.timeScale = 1f;
         _pauseInvoked = false;
@@ -90,6 +116,7 @@ public class MenuManager : MonoBehaviour
         _optionsOpen = true;
         _optionsScreen.SetActive(true);
         _mainMenu.SetActive(false);
+        CollectableManager.Instance.SetFoundCollectibles();
         if (ControllerGlyphManager.Instance.controllerInUse)
         {
             EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
@@ -128,6 +155,7 @@ public class MenuManager : MonoBehaviour
         _mainMenuStart.SetActive(false);
         _mainMenuSettings.SetActive(false);
         _mainMenuQuit.SetActive(false);
+        CollectableManager.Instance.SetFoundCollectibles();
         if (ControllerGlyphManager.Instance.controllerInUse)
         {
             EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
@@ -197,6 +225,32 @@ public class MenuManager : MonoBehaviour
             OptionsClose();
             _mainMenu.SetActive(true);
         }
+        else if (_pauseScreen != null && _pauseScreen.activeInHierarchy)
+        {
+            Unpause();
+        }
+    }
+
+    /// <summary>
+    /// Back button based exiting pause menu.
+    /// </summary>
+    /// <param name="ctx">Callback ctx. Unused.</param>
+    private void BackPerformed(InputAction.CallbackContext ctx)
+    {
+        //options menu is open, let's go back to the pause screen rather than the game for clarity
+        if (_optionsScreen != null && _optionsScreen.activeSelf)
+        {
+            //Kinda dumb that we have two methods for this...
+            if (_isMainMenu)
+            {
+                OptionsMainMenuClose();
+            }
+            else
+            {
+                OptionsClose();
+            }
+        }
+        //pause menu is open, go back to the game.
         else if (_pauseScreen != null && _pauseScreen.activeInHierarchy)
         {
             Unpause();
@@ -326,5 +380,23 @@ public class MenuManager : MonoBehaviour
     public void Quit()
     {
         Application.Quit();
+    }
+
+    /// <summary>
+    /// Opens credits
+    /// </summary>
+    public void Credits()
+    {
+        _tempCredits.SetActive(true);
+
+        //SceneManager.LoadScene("Credits");
+    }
+
+    /// <summary>
+    /// closes credits
+    /// </summary>
+    public void CreditsClose()
+    {
+        _tempCredits.SetActive(false);
     }
 }

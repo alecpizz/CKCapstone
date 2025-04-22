@@ -38,6 +38,7 @@ public sealed class RoundManager : MonoBehaviour
     private PlayerControls _playerControls;
     private Vector3 _lastMovementInput;
     private bool _movementRegistered = false;
+    private Vector2 _lastRegistered = Vector2.zero;
     private bool _inputBuffered = false;
     private bool _autocompleteActive = false;
     private float _movementRegisteredTime = -1;
@@ -106,13 +107,13 @@ public sealed class RoundManager : MonoBehaviour
     private void OnEnable()
     {
         _playerControls.Enable();
-        _playerControls.InGame.MoveUp.performed += ctx => _registeredInput = new Vector2(0, 1);
+        _playerControls.InGame.MoveUp.performed += ctx => _lastRegistered = new Vector2(0, 1);
         _playerControls.InGame.MoveUp.performed += RegisterMovementInput;
-        _playerControls.InGame.MoveDown.performed += ctx => _registeredInput = new Vector2(0, -1);
+        _playerControls.InGame.MoveDown.performed += ctx => _lastRegistered = new Vector2(0, -1);
         _playerControls.InGame.MoveDown.performed += RegisterMovementInput;
-        _playerControls.InGame.MoveRight.performed += ctx => _registeredInput = new Vector2(1, 0);
+        _playerControls.InGame.MoveRight.performed += ctx => _lastRegistered = new Vector2(1, 0);
         _playerControls.InGame.MoveRight.performed += RegisterMovementInput;
-        _playerControls.InGame.MoveLeft.performed += ctx => _registeredInput = new Vector2(-1, 0);
+        _playerControls.InGame.MoveLeft.performed += ctx => _lastRegistered = new Vector2(-1, 0);
         _playerControls.InGame.MoveLeft.performed += RegisterMovementInput;
     }
 
@@ -317,6 +318,8 @@ public sealed class RoundManager : MonoBehaviour
             return;
         }
 
+        DisableAutocomplete();
+
         TurnState listenerTurnState = listener.TurnState == _turnState ?
             listener.TurnState : listener.SecondaryTurnState;
 
@@ -418,15 +421,23 @@ public sealed class RoundManager : MonoBehaviour
     /// <returns>Normalized input vector</returns>
     private Vector3 GetNormalizedInput()
     {
-        Vector2 input = _registeredInput;
+        Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>().normalized;
         if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
         {
             input.y = 0;
+            input.x = input.x < 0 ? -1 : 1;
         }
         else
         {
             input.x = 0;
+            input.y = input.y < 0 ? -1 : 1;
         }
+
+        if (input != _lastRegistered)
+        {
+            input = _lastRegistered;
+        }
+
         return new Vector3(input.x, 0f, input.y);
     }
 
