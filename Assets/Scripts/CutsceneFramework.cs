@@ -420,12 +420,12 @@ public class CutsceneFramework : MonoBehaviour
                 Debug.Log("run");
                 SkipCutscene();
             }
-            _skipCompletingIcon.fillAmount = Mathf.Clamp01(_skipCompletingIcon.fillAmount + fillSpeed * Time.deltaTime);
+            _skipCompletingIcon.fillAmount = fillSpeed;
         }
         else if(_timer != 0) //so timer doesn't become negative
         {
             _timer -= Time.deltaTime;
-            _skipCompletingIcon.fillAmount = Mathf.Clamp01(_skipCompletingIcon.fillAmount - fillSpeed * Time.deltaTime);
+            _skipCompletingIcon.fillAmount = fillSpeed;
         }
 
         //turns off the icon after some time
