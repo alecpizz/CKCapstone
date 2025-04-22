@@ -258,6 +258,7 @@ public class MenuManager : MonoBehaviour
     public void StartGame()
     {
         SceneManager.LoadScene(_firstLevelIndex);
+        SaveDataManager.SetLastFinishedLevel(SceneUtility.GetScenePathByBuildIndex(_firstLevelIndex));
     }
 
     /// <summary>
