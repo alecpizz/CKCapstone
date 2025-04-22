@@ -207,8 +207,8 @@ public sealed class RoundManager : MonoBehaviour
 
         bool doubleTap = _lastMovementInput == dir &&
                          Time.unscaledTime - _movementRegisteredTime
-                         <= _autocompleteWindow && _turnState != TurnState.None;
-        if (EnemiesPresent && !_autocompleteActive &&
+                         <= _autocompleteWindow && _turnState != TurnState.None && !_autocompleteActive;
+        if (EnemiesPresent  &&
             (doubleTap || _sprintHeld))
         {
             EnableAutocomplete();
@@ -288,7 +288,7 @@ public sealed class RoundManager : MonoBehaviour
         if (_turnState == TurnState.Player)
         {
             _inputBuffered = false;
-            DisableAutocomplete();
+            // DisableAutocomplete();
         }
 
         //find out who's turn is next, if it's nobody's, stop.
