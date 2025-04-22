@@ -186,14 +186,6 @@ public class DebugMenuManager : MonoBehaviour
             _debugMenu.SetActive(true);
             _dMenu = true;
             //Sets the default option for keyboard and controller navigation
-            if (ControllerGlyphManager.Instance.controllerInUse)
-            {
-                EventSystem.current.SetSelectedGameObject(_debugMenuFirst);
-            }
-            else
-            {
-                EventSystem.current.SetSelectedGameObject(null);
-            }
         }
         else if ( _dMenu == true)
         {
@@ -218,15 +210,6 @@ public class DebugMenuManager : MonoBehaviour
         {
             _quitMenu.SetActive(true);
             _qMenu = true;
-            //Sets the default option for keyboard and controller navigation
-            if (ControllerGlyphManager.Instance.controllerInUse)
-            {
-                EventSystem.current.SetSelectedGameObject(_quitMenuFirst);
-            }
-            else
-            {
-                EventSystem.current.SetSelectedGameObject(null);
-            }
         }
         else if ( _qMenu == true)
         {
@@ -246,15 +229,6 @@ public class DebugMenuManager : MonoBehaviour
             _puzzleSelectMenu.SetActive(true);
             _debugMenu.SetActive(false);
             _pMenu = true;
-            //Sets the default option for keyboard and controller navigation
-            if (ControllerGlyphManager.Instance.controllerInUse)
-            {
-                EventSystem.current.SetSelectedGameObject(_puzzleSelectFirst);
-            }
-            else
-            {
-                EventSystem.current.SetSelectedGameObject(null);
-            }
         }
         else if (_pMenu == true)
         {
@@ -263,27 +237,11 @@ public class DebugMenuManager : MonoBehaviour
             {
                 //doesn't go back to the dubug menu
                 _pMenu = false;
-                if (ControllerGlyphManager.Instance.controllerInUse)
-                {
-                    EventSystem.current.SetSelectedGameObject(_settingsFirst);
-                }
-                else
-                {
-                    EventSystem.current.SetSelectedGameObject(null);
-                }
             }
             else
             {
                 _debugMenu.SetActive(true);
                 _pMenu = false;
-                if (ControllerGlyphManager.Instance.controllerInUse)
-                {
-                    EventSystem.current.SetSelectedGameObject(_debugMenuFirst);
-                }
-                else
-                {
-                    EventSystem.current.SetSelectedGameObject(null);
-                }
             }            
         }
     }

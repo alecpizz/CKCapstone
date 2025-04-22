@@ -19,7 +19,6 @@ using UnityEngine.Serialization;
 using System.Drawing.Printing;
 using UnityEngine.InputSystem.DualShock;
 using UnityEngine.InputSystem.Switch;
-using UnityEngine.InputSystem;
 
 public class MenuManager : MonoBehaviour
 {
@@ -50,6 +49,7 @@ public class MenuManager : MonoBehaviour
     private bool _pauseInvoked = true;
     private bool _isMainMenu;    
     private bool _optionsOpen = false;
+    private bool _controllerMenuing = false;
 
     /// <summary>
     /// Enables player input for opening the pause menu
@@ -59,6 +59,8 @@ public class MenuManager : MonoBehaviour
         _inputActions = new DebugInputActions();
         _inputActions.Enable();
         _inputActions.Player.Quit.performed += ctx => Pause();
+        _inputActions.Player.ControlDetection.performed += ctx => MenuDetection();
+        _inputActions.Player.MouseDetection.performed += ctx => MouseDetection();
         InputSystem.onDeviceChange += ControllerDetection;
         _inputActions.UI.Back.performed += BackPerformed;
 
@@ -80,6 +82,8 @@ public class MenuManager : MonoBehaviour
     private void OnDisable()
     {
         _inputActions.Disable();
+        _inputActions.Player.ControlDetection.performed -= ctx => MenuDetection();
+        _inputActions.Player.MouseDetection.performed -= ctx => MouseDetection();
         _inputActions.Player.Quit.performed -= ctx => Pause();
         _inputActions.UI.Back.performed -= BackPerformed;
         InputSystem.onDeviceChange -= ControllerDetection;
@@ -92,6 +96,7 @@ public class MenuManager : MonoBehaviour
     {
         DebugMenuManager.Instance.PauseMenu = false;
         _pauseScreen.SetActive(false);
+        _controllerMenuing = false;
 
         //gets rid of restart icon in cutscenes
         string path = SceneManager.GetActiveScene().path;
@@ -117,7 +122,7 @@ public class MenuManager : MonoBehaviour
         _optionsScreen.SetActive(true);
         _mainMenu.SetActive(false);
         CollectableManager.Instance.SetFoundCollectibles();
-        if (ControllerGlyphManager.Instance.controllerInUse)
+        if (_controllerMenuing)
         {
             EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
         }
@@ -135,7 +140,7 @@ public class MenuManager : MonoBehaviour
         _optionsOpen = false;
         _optionsScreen.SetActive(false);
         _mainMenu.SetActive(true);
-        if (ControllerGlyphManager.Instance.controllerInUse)
+        if (_controllerMenuing)
         {
             EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
         }
@@ -156,9 +161,10 @@ public class MenuManager : MonoBehaviour
         _mainMenuSettings.SetActive(false);
         _mainMenuQuit.SetActive(false);
         CollectableManager.Instance.SetFoundCollectibles();
-        if (ControllerGlyphManager.Instance.controllerInUse)
+        if (_controllerMenuing)
         {
             EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
+            _controllerMenuing = true;
         }
         else
         {
@@ -177,9 +183,10 @@ public class MenuManager : MonoBehaviour
         _mainMenuStart.SetActive(true);
         _mainMenuSettings.SetActive(true);
         _mainMenuQuit.SetActive(true);
-        if (ControllerGlyphManager.Instance.controllerInUse)
+        if (_controllerMenuing)
         {
             EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+            _controllerMenuing = true;
         }
         else
         {
@@ -198,9 +205,10 @@ public class MenuManager : MonoBehaviour
             DebugMenuManager.Instance.PauseMenu = true;
             _pauseScreen.SetActive(true);
             _restartButton.SetActive(false);
-            if (ControllerGlyphManager.Instance.controllerInUse)
+            if (_controllerMenuing)
             {
                 EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+                _controllerMenuing = true;
             }
             else
             {
@@ -327,7 +335,9 @@ public class MenuManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Detects the controller automatically when plugged into a device
+    /// Detects the controller automatically when plugged into a device and automatically
+    /// assigns the menu to hover a button to begin menu navigation with a controller
+    /// depending on what menu is currently open
     /// </summary>
     /// <param name="device"></param>
     /// <param name="change"></param>
@@ -339,23 +349,54 @@ public class MenuManager : MonoBehaviour
                 if (_optionsOpen)
                 {
                     EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
-                }
-                else if (_pauseInvoked)
-                {
-                    EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+                    _controllerMenuing = true;
                 }
                 else
                 {
                     EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+                    _controllerMenuing = true;
                 }
                 break;
             case InputDeviceChange.Removed:
                 EventSystem.current.SetSelectedGameObject(null);
+                _controllerMenuing = false;
                 break;
             case InputDeviceChange.ConfigurationChanged:
                 Debug.Log("Device configuration changed: " + device);
                 break;
         }
+    }
+
+    /// <summary>
+    /// Detects the controller inputs to start menuing with a controller instead of a mouse
+    /// also automatically hovers the first menu option depending on the menu
+    /// </summary>
+    private void MenuDetection()
+    {
+        if (_optionsOpen && !_controllerMenuing)
+        {
+            EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
+            _controllerMenuing = true;
+        }
+        else if (!_controllerMenuing)
+        {
+            EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+            _controllerMenuing = true;
+        }
+        else
+        {
+            return;
+        }
+    }
+
+    /// <summary>
+    /// If the mouse is used while a controller is being used the event system will 
+    /// unfocus the current button to allow the mouse to be primarily used instead
+    /// </summary>
+    private void MouseDetection()
+    {
+        EventSystem.current.SetSelectedGameObject(null);
+        _controllerMenuing = false;
     }
 
     /// <summary>

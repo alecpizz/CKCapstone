@@ -23,7 +23,6 @@ public class ControllerGlyphManager : MonoBehaviour
     public bool PlayStationController { get; private set; } = false;
     public bool SwitchController { get; private set; } = false;
     public bool XboxController { get; private set; } = false;
-    public bool controllerInUse { get; private set; } = false;
 
     private bool _areInteractables = false;
     private bool _areTextBlurbs = false;
@@ -59,8 +58,9 @@ public class ControllerGlyphManager : MonoBehaviour
     /// </summary>
     private void OnEnable()
     {
+        _playerInput.Enable();
         _playerControls.Enable();
-        //_defaultControls.Enable();
+        //defaultControls.Enable();
         _playerControls.InGame.Movement.performed += DetectInputType;
         _playerControls.InGame.Toggle.performed += DetectInputType;
         _playerControls.InGame.Interact.performed += DetectInputType;
@@ -79,6 +79,7 @@ public class ControllerGlyphManager : MonoBehaviour
         _defaultControls.UI.Point.performed -= DetectInputType;
         _defaultControls.UI.Navigate.performed -= DetectInputType;
         _playerControls.Disable();
+        _playerInput.Disable();
         //_defaultControls.Disable();
     }
 
@@ -119,7 +120,6 @@ public class ControllerGlyphManager : MonoBehaviour
             SwitchController = false;
             XboxController = false;
             KeyboardAndMouse = true;
-            controllerInUse = false;
         }
         else if (controllerName.Contains("dualshock") || controllerName.Contains("dualsense") ||
             controllerName.Contains("playstation") || controllerName.Contains("wireless controller"))
@@ -128,7 +128,6 @@ public class ControllerGlyphManager : MonoBehaviour
             SwitchController = false;
             XboxController = false;
             KeyboardAndMouse = false;
-            controllerInUse = true;
         }
         else if (controllerName.Contains("pro controller") || controllerName.Contains("switch") ||
             controllerName.Contains("nintendo"))
@@ -137,7 +136,6 @@ public class ControllerGlyphManager : MonoBehaviour
             SwitchController = true;
             XboxController = false;
             KeyboardAndMouse = false;
-            controllerInUse = true;
         }
         else
         {
@@ -145,7 +143,6 @@ public class ControllerGlyphManager : MonoBehaviour
             SwitchController = false;
             XboxController = true;
             KeyboardAndMouse = false;
-            controllerInUse = true;
         }
         //changes input related text depending on current input device
         if (_areInteractables)
