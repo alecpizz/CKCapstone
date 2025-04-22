@@ -178,6 +178,10 @@ public sealed class RoundManager : MonoBehaviour
     /// <param name="obj"></param>
     private void RegisterMovementInput(InputAction.CallbackContext obj)
     {
+        if (SceneController.Instance.Transitioning)
+        {
+            return;
+        }
         if (Time.timeScale > 1)
             return;
 
