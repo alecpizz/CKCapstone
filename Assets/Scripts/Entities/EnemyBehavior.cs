@@ -118,6 +118,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         Right
     }
 
+    [SerializeField] private int _startingPositionCount;
+    private float _initialY = 0;
+
     /// <summary>
     /// Struct to hold an enemy's move. Contains a direction and magnitude.
     /// </summary>
@@ -239,6 +242,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         }
 
         InitializeDestinationMarkers();
+
+        _initialY = transform.position.y;
+        StartPositionOffset();
 
         UpdateDestinationMarker();
         DestinationPath();
@@ -587,6 +593,35 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
         for (int i = _subMarkerIdx; i < _subDestPathMarkers.Count; i++)
             _subDestPathMarkers[i].transform.position = Vector3.one * 1000;
+    }
+
+    /// <summary>
+    /// Function that changes an enemy's starting position within their move
+    /// points list for the first turn.
+    /// </summary>
+    private void StartPositionOffset()
+    {
+        if (_startingPositionCount >= _moveDestinations.Count - 1 || _startingPositionCount <= 0)
+        {
+            return;
+        }
+
+        for (int i = 0; i < _startingPositionCount; i++)
+        {
+            bool isVFX = true;
+            EvaluateNextMove(ref _moveIndex, ref _isReturningToStart, ref isVFX);
+
+            var movePt = _moveDestinations[_moveIndex];
+            var goalCell = GetLongestPath(GridBase.Instance.CellToWorld(movePt), transform.position);
+            var moveWorld = GridBase.Instance.CellToWorld(goalCell);
+
+            Vector3 changeTransform = moveWorld;
+            changeTransform.y = _initialY;
+            transform.position = changeTransform;
+        }
+
+        _moveIndex = _startingPositionCount;
+        _indicatorIndex = _startingPositionCount;
     }
 
     /// <summary>
