@@ -31,6 +31,10 @@ using UnityEngine.InputSystem.Utilities;
 using UnityEngine.InputSystem.Controls;
 using Debug = UnityEngine.Debug;
 using Unity.VisualScripting;
+using UnityEngine.UI;
+using UnityEngine.Serialization;
+
+
 
 
 
@@ -98,11 +102,15 @@ public class CutsceneFramework : MonoBehaviour
 
     [SerializeField] private MenuManager _menuManager;
 
-    private float _timer = 0f;
-    [SerializeField] float _skipHoldTime = 2f;
+    [FormerlySerializedAs("_skipHoldTime")]
+    [SerializeField] float _skipIconDuration = 2f;
 
     private float _skipIconTimer = 0f;
     [SerializeField] private GameObject _holdToSkipIcon;
+
+    private float _fillSpeed = 0.5f;
+    private float _resetSpeed = 1f;
+    [SerializeField] private Image _skipCompletingIcon;
     
     /// <summary>
     /// Determines whether to play the Challenge or End Chapter Cutscene
@@ -157,6 +165,10 @@ public class CutsceneFramework : MonoBehaviour
             cam.backgroundColor = Color.black;
             cam.clearFlags = CameraClearFlags.SolidColor;
         }
+
+        //initial state of circle skip indicator
+        _skipCompletingIcon.enabled = true;
+        _skipCompletingIcon.fillAmount = 0;
     }
     
     /// <summary>
@@ -198,7 +210,7 @@ public class CutsceneFramework : MonoBehaviour
     /// </summary>
     public void SkipCutscene()
     {
-        if(_timer > _skipHoldTime || _menuManager.GetSkipInPause())
+        if(_skipCompletingIcon.fillAmount == 1 || _menuManager.GetPauseInvoked())
         {
             StopAllCoroutines();
             string scenePath = SceneUtility.GetScenePathByBuildIndex(_loadingLevelIndex);
@@ -209,8 +221,9 @@ public class CutsceneFramework : MonoBehaviour
                 SceneManager.LoadScene(SaveDataManager.GetSceneLoadedFrom());
                 return;
             }
+            _skipCompletingIcon.enabled = false;
             SceneController.Instance.LoadNewScene(_loadingLevelIndex);
-        }              
+        }
     }
 
     /// <summary>
@@ -393,26 +406,26 @@ public class CutsceneFramework : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        //Skips cutscene after 2 secs of holding Space bar
+        //Skips cutscene after holding Space bar until icon is complete
         if (_inputActions.UI.SkipCutscene.IsPressed())
-        {
-            _timer += Time.deltaTime;
-            
-            if(_timer > _skipHoldTime)
+        {            
+            if(_skipCompletingIcon.fillAmount == 1)
             {
+                Debug.Log("run");
                 SkipCutscene();
             }
+            _skipCompletingIcon.fillAmount = Mathf.Clamp01(_skipCompletingIcon.fillAmount + _fillSpeed * Time.deltaTime);
         }
         else
         {
-            _timer = 0f;
+            _skipCompletingIcon.fillAmount = Mathf.Clamp01(_skipCompletingIcon.fillAmount - _resetSpeed * Time.deltaTime);
         }
 
         //turns off the icon after some time
         if (_holdToSkipIcon.activeInHierarchy)
         {
             _skipIconTimer += Time.deltaTime;
-            if (_skipIconTimer > 2f || _menuManager.GetPauseInvoked()) //do you want this time to be serialized?
+            if (_skipIconTimer > _skipIconDuration || _menuManager.GetPauseInvoked())
             {
                 _holdToSkipIcon.SetActive(false);
                 _skipIconTimer = 0f;
