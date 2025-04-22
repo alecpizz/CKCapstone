@@ -147,8 +147,7 @@ public class DebugMenuManager : MonoBehaviour
         Scene currentScene = SceneManager.GetActiveScene();
         //unlocks the cursor if locked
         Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-        //Sets an default game object for the event system to hold on to for menuing     
+        Cursor.visible = true;  
     }
 
 

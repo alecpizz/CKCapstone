@@ -60,7 +60,7 @@ public class ControllerGlyphManager : MonoBehaviour
     {
         _playerInput.Enable();
         _playerControls.Enable();
-        //defaultControls.Enable();
+        //_defaultControls.Enable();
         _playerControls.InGame.Movement.performed += DetectInputType;
         _playerControls.InGame.Toggle.performed += DetectInputType;
         _playerControls.InGame.Interact.performed += DetectInputType;
