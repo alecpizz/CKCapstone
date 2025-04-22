@@ -208,8 +208,7 @@ public sealed class RoundManager : MonoBehaviour
         bool doubleTap = _lastMovementInput == dir &&
                          Time.unscaledTime - _movementRegisteredTime
                          <= _autocompleteWindow && _turnState != TurnState.None && !_autocompleteActive;
-        if (EnemiesPresent  &&
-            (doubleTap || _sprintHeld))
+        if (EnemiesPresent && doubleTap)
         {
             EnableAutocomplete();
         }
@@ -224,10 +223,7 @@ public sealed class RoundManager : MonoBehaviour
 
         _movementRegistered = true;
         _movementRegisteredTime = Time.unscaledTime;
-
-        if (_turnState != TurnState.None)
-            return;
-
+        
         PerformMovement();
     }
 
@@ -252,7 +248,11 @@ public sealed class RoundManager : MonoBehaviour
         }
 
         _turnState = TurnState.Player;
-
+        
+        if (EnemiesPresent && _sprintHeld)
+        {
+            EnableAutocomplete();
+        }
         //perform the turn now so that it's frame perfect.
         foreach (var turnListener in _turnListeners[TurnState.Player])
         {
@@ -288,7 +288,7 @@ public sealed class RoundManager : MonoBehaviour
         if (_turnState == TurnState.Player)
         {
             _inputBuffered = false;
-            // DisableAutocomplete();
+           // DisableAutocomplete();
         }
 
         //find out who's turn is next, if it's nobody's, stop.
@@ -296,9 +296,8 @@ public sealed class RoundManager : MonoBehaviour
         if (next is null or TurnState.None)
         {
             _turnState = TurnState.None;
-            CheckForBufferedInput();
-
             DisableAutocomplete();
+            CheckForBufferedInput();
             return;
         }
 
@@ -348,6 +347,7 @@ public sealed class RoundManager : MonoBehaviour
 
         DisableAutocomplete();
 
+       
         TurnState listenerTurnState =
             listener.TurnState == _turnState ? listener.TurnState : listener.SecondaryTurnState;
 
@@ -366,6 +366,7 @@ public sealed class RoundManager : MonoBehaviour
         }
 
         _turnState = prev.Value;
+     
         foreach (var turnListener in _turnListeners[_turnState])
         {
             turnListener.BeginTurn(_lastMovementInput);
