@@ -20,6 +20,7 @@ using SaintsField;
 using SaintsField.Playa;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Analytics;
 
 public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     ITurnListener, IHarmonyBeamEntity
@@ -54,6 +55,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     {
         get => gameObject;
     }
+
+    public static Action EnemyBeamSwitchActivation;
 
     [SerializeField] private GameObject _destinationMarker;
     [SerializeField] private GameObject _destPathVFX;
@@ -238,6 +241,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             PlayerMovement.Instance.BeamSwitchActivation += () => _waitOnBeam = true;
         }
 
+        EnemyBeamSwitchActivation += () => _waitOnBeam = true;
+
         InitializeDestinationMarkers();
 
         UpdateDestinationMarker();
@@ -299,6 +304,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private void OnDisable()
     {
         PlayerMovement.Instance.BeamSwitchActivation -= () => _waitOnBeam = true;
+        EnemyBeamSwitchActivation -= () => _waitOnBeam = true;
 
         if (RoundManager.Instance != null)
         {
@@ -308,6 +314,52 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         if (TimeSignatureManager.Instance != null)
         {
             TimeSignatureManager.Instance.UnregisterTimeListener(this);
+        }
+    }
+
+    /// <summary>
+    /// Scans for switches to alert enemies to wait for the beams to rotate.
+    /// This ensures enemies don't move while being hit by a beam.
+    /// </summary>
+    private void ScanForHarmonySwitches()
+    {
+        var currTilePos = (transform.position);
+        var fwd = transform.forward;
+        bool stop = false;
+        int spacesChecked = 0;
+
+        while (!stop && spacesChecked < _enemyMovementTime)
+        {
+            spacesChecked++;
+
+            var nextCell = GridBase.Instance.GetCellPositionInDirection(currTilePos, fwd);
+            if (currTilePos == nextCell) //no where to go :(
+            {
+                stop = true;
+            }
+
+            currTilePos = nextCell;
+
+            var entries = GridBase.Instance.GetCellEntries(nextCell);
+            foreach (var gridEntry in entries) //check each cell
+            {
+                if (gridEntry == null) continue;
+                //the entry has a switch type :)
+                if (gridEntry.EntryObject.TryGetComponent(out SwitchTrigger entity))
+                {
+                    if (entity.HarmonyBeamsPresent)
+                    {
+                        EnemyBeamSwitchActivation?.Invoke();
+                        // Reset this enemy's boolean so it can step on the switch
+                        _waitOnBeam = false;
+                    }
+                }
+                //no entry, but a cell that blocks movement. pass through.
+                else if (!gridEntry.IsTransparent)
+                {
+                    stop = true;
+                }
+            }
         }
     }
 
@@ -528,6 +580,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             return;
         }
 
+        ScanForHarmonySwitches();
+
         _isMoving = true;
         _lastPosition = transform.position;
         StartCoroutine(MovementRoutine());
@@ -726,6 +780,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         {
             UpdateDestinationMarker();
         }
+
+        if (_waitOnBeam)
+            _waitOnBeam = false;
 
         RoundManager.Instance.CompleteTurn(this);
     }
