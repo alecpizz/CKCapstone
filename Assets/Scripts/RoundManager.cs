@@ -178,10 +178,14 @@ public sealed class RoundManager : MonoBehaviour
     /// <param name="obj"></param>
     private void RegisterMovementInput(InputAction.CallbackContext obj)
     {
+        
+        
         if (Time.timeScale > 1)
             return;
 
         var dir = GetNormalizedInput();
+        if (dir == Vector3.zero)
+           return;
 
         if (EnemiesPresent && !_autocompleteActive && _turnState != TurnState.None && 
             _lastMovementInput == dir && 
@@ -189,7 +193,7 @@ public sealed class RoundManager : MonoBehaviour
         {
             EnableAutocomplete();
         }
-
+        
         _lastMovementInput = dir;
 
         // If a movement is already registered, then flag as buffered
@@ -215,7 +219,8 @@ public sealed class RoundManager : MonoBehaviour
         // Return if no movement is registered or if the game is paused
         if (_turnState != TurnState.None ||
             (!_movementRegistered && !_inputBuffered) ||
-            DebugMenuManager.Instance.PauseMenu) { return; }
+            DebugMenuManager.Instance.PauseMenu) 
+        {return; }
 
         // Stop moving if no movement input was pressed
         if (!_playerControls.InGame.Movement.IsPressed() && !_inputBuffered)
@@ -422,6 +427,8 @@ public sealed class RoundManager : MonoBehaviour
     private Vector3 GetNormalizedInput()
     {
         Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>().normalized;
+        if (_playerControls.InGame.Movement.ReadValue<Vector2>().x != 0 &&
+            _playerControls.InGame.Movement.ReadValue<Vector2>().y != 0){return new Vector3(0f, 0f, 0f);}
         if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
         {
             input.y = 0;
@@ -437,7 +444,6 @@ public sealed class RoundManager : MonoBehaviour
         {
             input = _lastRegistered;
         }
-
         return new Vector3(input.x, 0f, input.y);
     }
 
