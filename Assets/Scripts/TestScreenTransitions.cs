@@ -9,6 +9,7 @@ public class TestScreenTransitions : MonoBehaviour
 {
     [SerializeField] private Image _circleWipeImage;
     [SerializeField] private float _timeForScreenWipe = 1f;
+    [SerializeField] private float _riseTo = 1f;
 
     private readonly int _rise = Shader.PropertyToID("_Rise");
 
@@ -30,13 +31,13 @@ public class TestScreenTransitions : MonoBehaviour
 
         while (time < _timeForScreenWipe)
         {
-            _circleWipeImage.materialForRendering.SetFloat(_rise, Mathf.Lerp(0f, 1f, time / _timeForScreenWipe));
+            _circleWipeImage.materialForRendering.SetFloat(_rise, Mathf.Lerp(0f, _riseTo, time / _timeForScreenWipe));
 
             time += Time.unscaledDeltaTime;
             yield return null;
         }
 
-        _circleWipeImage.materialForRendering.SetFloat(_rise, 1f);
+        _circleWipeImage.materialForRendering.SetFloat(_rise, _riseTo);
 
         yield return new WaitForSeconds(.3f);
 
@@ -44,7 +45,7 @@ public class TestScreenTransitions : MonoBehaviour
 
         while (time < _timeForScreenWipe)
         {
-            _circleWipeImage.materialForRendering.SetFloat(_rise, Mathf.Lerp(1f, 0f, time / _timeForScreenWipe));
+            _circleWipeImage.materialForRendering.SetFloat(_rise, Mathf.Lerp(_riseTo, 0f, time / _timeForScreenWipe));
 
             time += Time.unscaledDeltaTime;
             yield return null;
