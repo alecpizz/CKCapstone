@@ -102,14 +102,15 @@ public class CutsceneFramework : MonoBehaviour
 
     [SerializeField] private MenuManager _menuManager;
 
+    private float _timer = 0f;
+    [SerializeField] private float _timeTillSkip = 2f;
+
     [FormerlySerializedAs("_skipHoldTime")]
-    [SerializeField] float _skipIconDuration = 2f;
+    [SerializeField] private float _skipIconDuration = 2f;
 
     private float _skipIconTimer = 0f;
     [SerializeField] private GameObject _holdToSkipIcon;
 
-    private float _fillSpeed = 0.5f;
-    private float _resetSpeed = 1f;
     [SerializeField] private Image _skipCompletingIcon;
     
     /// <summary>
@@ -210,7 +211,7 @@ public class CutsceneFramework : MonoBehaviour
     /// </summary>
     public void SkipCutscene()
     {
-        if(_skipCompletingIcon.fillAmount == 1 || _menuManager.GetPauseInvoked())
+        if(_timer > _timeTillSkip || _menuManager.GetPauseInvoked())
         {
             StopAllCoroutines();
             string scenePath = SceneUtility.GetScenePathByBuildIndex(_loadingLevelIndex);
@@ -222,6 +223,7 @@ public class CutsceneFramework : MonoBehaviour
                 return;
             }
             _skipCompletingIcon.enabled = false;
+            _holdToSkipIcon.SetActive(false);
             SceneController.Instance.LoadNewScene(_loadingLevelIndex);
         }
     }
@@ -406,19 +408,24 @@ public class CutsceneFramework : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        float fillSpeed = _timer / _timeTillSkip;
+
         //Skips cutscene after holding Space bar until icon is complete
         if (_inputActions.UI.SkipCutscene.IsPressed())
-        {            
-            if(_skipCompletingIcon.fillAmount == 1)
+        {
+            _timer += Time.deltaTime;
+
+            if (_timer > _timeTillSkip)
             {
                 Debug.Log("run");
                 SkipCutscene();
             }
-            _skipCompletingIcon.fillAmount = Mathf.Clamp01(_skipCompletingIcon.fillAmount + _fillSpeed * Time.deltaTime);
+            _skipCompletingIcon.fillAmount = Mathf.Clamp01(_skipCompletingIcon.fillAmount + fillSpeed * Time.deltaTime);
         }
-        else
+        else if(_timer != 0) //so timer doesn't become negative
         {
-            _skipCompletingIcon.fillAmount = Mathf.Clamp01(_skipCompletingIcon.fillAmount - _resetSpeed * Time.deltaTime);
+            _timer -= Time.deltaTime;
+            _skipCompletingIcon.fillAmount = Mathf.Clamp01(_skipCompletingIcon.fillAmount - fillSpeed * Time.deltaTime);
         }
 
         //turns off the icon after some time
