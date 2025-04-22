@@ -121,7 +121,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         Right
     }
 
-    [SerializeField] private int _startingPositionCount;
+    [SerializeField] private int _startPosOffset;
     private float _initialY = 0;
 
     /// <summary>
@@ -654,12 +654,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// </summary>
     private void StartPositionOffset()
     {
-        if (_startingPositionCount >= _moveDestinations.Count - 1 || _startingPositionCount <= 0)
+        if (_startPosOffset >= _moveDestinations.Count - 1 || _startPosOffset <= 0)
         {
             return;
         }
 
-        for (int i = 0; i < _startingPositionCount; i++)
+        for (int i = 0; i < _startPosOffset; i++)
         {
             bool isVFX = true;
             EvaluateNextMove(ref _moveIndex, ref _isReturningToStart, ref isVFX);
@@ -673,8 +673,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             transform.position = changeTransform;
         }
 
-        _moveIndex = _startingPositionCount;
-        _indicatorIndex = _startingPositionCount;
+        _moveIndex = _startPosOffset;
+        _indicatorIndex = _startPosOffset;
     }
 
     /// <summary>
