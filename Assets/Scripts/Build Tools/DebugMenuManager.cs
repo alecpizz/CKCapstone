@@ -148,8 +148,7 @@ public class DebugMenuManager : MonoBehaviour
         //unlocks the cursor if locked
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        //Sets an default game object for the event system to hold on to for menuing
-        //EventSystem.current.SetSelectedGameObject(_mainMenuFirst);        
+        //Sets an default game object for the event system to hold on to for menuing     
     }
 
 
