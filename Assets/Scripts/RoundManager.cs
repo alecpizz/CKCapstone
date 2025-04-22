@@ -208,6 +208,7 @@ public sealed class RoundManager : MonoBehaviour
             return;
 
         var dir = GetNormalizedInput();
+        //Don't use direction if zero
         if (dir == Vector3.zero)
            return;
 
@@ -463,6 +464,7 @@ public sealed class RoundManager : MonoBehaviour
     private Vector3 GetNormalizedInput()
     {
         Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>().normalized;
+        //disable input if diagonal
         if (_playerControls.InGame.Movement.ReadValue<Vector2>().x != 0 &&
             _playerControls.InGame.Movement.ReadValue<Vector2>().y != 0){return new Vector3(0f, 0f, 0f);}
         if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
