@@ -277,7 +277,6 @@ public class MenuManager : MonoBehaviour
 
         int idx = SceneUtility.GetBuildIndexByScenePath(level);
         SceneManager.LoadScene(idx);
-        Debug.Log(idx);
     }
 
     /// <summary>
