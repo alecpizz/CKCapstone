@@ -194,7 +194,7 @@ public class CutsceneFramework : MonoBehaviour
     /// </summary>
     public void SkipCutscene()
     {
-        if(_timer > _skipHoldTime || _menuManager.GetSkipInPause())
+        if (_timer > _skipHoldTime || _menuManager.GetSkipInPause())
         {
             StopAllCoroutines();
             string scenePath = SceneUtility.GetScenePathByBuildIndex(_loadingLevelIndex);
@@ -206,6 +206,11 @@ public class CutsceneFramework : MonoBehaviour
                 return;
             }
             SceneController.Instance.LoadNewScene(_loadingLevelIndex);
+
+            if(SceneManager.GetActiveScene().name.Equals("CSCN_Act5_End"))
+            {
+                SaveDataManager.SetLastFinishedLevel(SceneManager.GetActiveScene().name);
+            }
         }              
     }
 
