@@ -251,6 +251,15 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Back"",
+                    ""type"": ""Button"",
+                    ""id"": ""51719d5f-e61b-408e-9fd2-134692769369"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -396,6 +405,17 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Scroll"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cd9d9606-f6b8-43b5-94c3-76f28ee2e5f3"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Back"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -413,6 +433,7 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
         m_UI_SkipCutscene = m_UI.FindAction("SkipCutscene", throwIfNotFound: true);
         m_UI_Pause = m_UI.FindAction("Pause", throwIfNotFound: true);
         m_UI_Scroll = m_UI.FindAction("Scroll", throwIfNotFound: true);
+        m_UI_Back = m_UI.FindAction("Back", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -547,6 +568,7 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_SkipCutscene;
     private readonly InputAction m_UI_Pause;
     private readonly InputAction m_UI_Scroll;
+    private readonly InputAction m_UI_Back;
     public struct UIActions
     {
         private @DebugInputActions m_Wrapper;
@@ -554,6 +576,7 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
         public InputAction @SkipCutscene => m_Wrapper.m_UI_SkipCutscene;
         public InputAction @Pause => m_Wrapper.m_UI_Pause;
         public InputAction @Scroll => m_Wrapper.m_UI_Scroll;
+        public InputAction @Back => m_Wrapper.m_UI_Back;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -572,6 +595,9 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
             @Scroll.started += instance.OnScroll;
             @Scroll.performed += instance.OnScroll;
             @Scroll.canceled += instance.OnScroll;
+            @Back.started += instance.OnBack;
+            @Back.performed += instance.OnBack;
+            @Back.canceled += instance.OnBack;
         }
 
         private void UnregisterCallbacks(IUIActions instance)
@@ -585,6 +611,9 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
             @Scroll.started -= instance.OnScroll;
             @Scroll.performed -= instance.OnScroll;
             @Scroll.canceled -= instance.OnScroll;
+            @Back.started -= instance.OnBack;
+            @Back.performed -= instance.OnBack;
+            @Back.canceled -= instance.OnBack;
         }
 
         public void RemoveCallbacks(IUIActions instance)
@@ -614,5 +643,6 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
         void OnSkipCutscene(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
         void OnScroll(InputAction.CallbackContext context);
+        void OnBack(InputAction.CallbackContext context);
     }
 }
