@@ -387,6 +387,7 @@ MonoBehaviour:
   _endCutsceneVolumeOverride: 5
   _menuManager: {fileID: 2108491762}
   _skipHoldTime: 2
+  _holdToSkipIcon: {fileID: 2108491764}
 --- !u!4 &2000108363
 Transform:
   m_ObjectHideFlags: 0
@@ -511,6 +512,16 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: SkipCutscene
       objectReference: {fileID: 0}
+    - target: {fileID: 7315412022279455653, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2000108362}
+    - target: {fileID: 7315412022279455653, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SkipCutscene
+      objectReference: {fileID: 0}
     - target: {fileID: 7663816770030828482, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: m_ClearFlags
@@ -591,6 +602,11 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9017290271949941636, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -621,6 +637,12 @@ MonoBehaviour:
 --- !u!20 &2108491763 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 7663816770030828482, guid: dbb0dd27c6fab3344aab4441094b0849,
+    type: 3}
+  m_PrefabInstance: {fileID: 2108491760}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2108491764 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1979347854173412038, guid: dbb0dd27c6fab3344aab4441094b0849,
     type: 3}
   m_PrefabInstance: {fileID: 2108491760}
   m_PrefabAsset: {fileID: 0}

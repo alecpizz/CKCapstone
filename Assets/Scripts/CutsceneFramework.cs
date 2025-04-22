@@ -30,6 +30,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 using UnityEngine.InputSystem.Controls;
 using Debug = UnityEngine.Debug;
+using Unity.VisualScripting;
+
 
 
 #if UNITY_EDITOR
@@ -98,6 +100,9 @@ public class CutsceneFramework : MonoBehaviour
 
     private float _timer = 0f;
     [SerializeField] float _skipHoldTime = 2f;
+
+    private float _skipIconTimer = 0f;
+    [SerializeField] private GameObject _holdToSkipIcon;
     
     /// <summary>
     /// Determines whether to play the Challenge or End Chapter Cutscene
@@ -111,7 +116,7 @@ public class CutsceneFramework : MonoBehaviour
         _inputActions.UI.Pause.performed += ctx => ResumePlayAudio(_menuManager.GetPauseInvoked());
 
         //_endChapterCutsceneVideo.loopPointReached += CheckEnd;
-        //Registers is button is pressed
+        //Registers if button is pressed
         _mAnyButtonPressedListener = InputSystem.onAnyButtonPress.Call(ButtonIsPressed);
 
         // Plays the Challenge Cutscene, provided that only the corresponding boolean
@@ -239,6 +244,7 @@ public class CutsceneFramework : MonoBehaviour
 
         if (scene.Substring(0, 2).Equals("CS"))
         {
+            _holdToSkipIcon.SetActive(true);
             Debug.Log("Hold the Space bar to skip!");
         }
     }
@@ -401,7 +407,17 @@ public class CutsceneFramework : MonoBehaviour
         {
             _timer = 0f;
         }
-        
+
+        //turns off the icon after some time
+        if (_holdToSkipIcon.activeInHierarchy)
+        {
+            _skipIconTimer += Time.deltaTime;
+            if (_skipIconTimer > 2f || _menuManager.GetPauseInvoked()) //do you want this time to be serialized?
+            {
+                _holdToSkipIcon.SetActive(false);
+                _skipIconTimer = 0f;
+            }
+        }
 
         if (_isEndChapterCutscene)
         {

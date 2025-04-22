@@ -43,7 +43,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject _skipPromptInPause;
     private bool _skipInPause;
 
-    private bool _pauseInvoked = true;
+    private bool _pauseInvoked = false;
     private bool _isMainMenu;
     /// <summary>
     /// Enables player input for opening the pause menu
