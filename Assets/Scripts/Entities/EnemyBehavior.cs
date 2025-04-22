@@ -402,7 +402,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             GameObject obj = Instantiate(_destPathMarkerPrefab);
 
             Vector3 scale = obj.transform.localScale;
-            scale *= 0.5f;
             obj.transform.localScale = scale;
 
             //obj.SetActive(false);
