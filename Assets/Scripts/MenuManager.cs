@@ -15,6 +15,10 @@ using UnityEngine.SceneManagement;
 using static UnityEngine.Rendering.DebugUI;
 using System;
 using UnityEngine.Serialization;
+using System.Drawing.Printing;
+using UnityEngine.InputSystem.DualShock;
+using UnityEngine.InputSystem.Switch;
+using UnityEngine.InputSystem;
 
 public class MenuManager : MonoBehaviour
 {
@@ -42,6 +46,7 @@ public class MenuManager : MonoBehaviour
     private bool _skipInPause;
 
     private bool _pauseInvoked = true;
+    private bool _optionsOpen = false;
 
     /// <summary>
     /// Enables player input for opening the pause menu
@@ -51,6 +56,7 @@ public class MenuManager : MonoBehaviour
         _inputActions = new DebugInputActions();
         _inputActions.Enable();
         _inputActions.Player.Quit.performed += ctx => Pause();
+        InputSystem.onDeviceChange += ControllerDetection;
     }
 
     /// <summary>
@@ -60,6 +66,7 @@ public class MenuManager : MonoBehaviour
     {
         _inputActions.Disable();
         _inputActions.Player.Quit.performed -= ctx => Pause();
+        InputSystem.onDeviceChange -= ControllerDetection;
     }
 
     /// <summary>
@@ -80,9 +87,17 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void OptionsMainMenu()
     {
+        _optionsOpen = true;
         _optionsScreen.SetActive(true);
         _mainMenu.SetActive(false);
-        EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
+        if (ControllerGlyphManager.Instance.controllerInUse)
+        {
+            EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
+        }
+        else
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
     /// <summary>
@@ -90,9 +105,17 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void OptionsMainMenuClose()
     {
+        _optionsOpen = false;
         _optionsScreen.SetActive(false);
         _mainMenu.SetActive(true);
-        EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+        if (ControllerGlyphManager.Instance.controllerInUse)
+        {
+            EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+        }
+        else
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
     /// <summary>
@@ -100,11 +123,19 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void Options()
     {
+        _optionsOpen = true;
         _optionsScreen.SetActive(true);
         _mainMenuStart.SetActive(false);
         _mainMenuSettings.SetActive(false);
         _mainMenuQuit.SetActive(false);
-        EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
+        if (ControllerGlyphManager.Instance.controllerInUse)
+        {
+            EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
+        }
+        else
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
 
@@ -113,11 +144,19 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void OptionsClose()
     {
+        _optionsOpen = false;
         _optionsScreen.SetActive(false);
         _mainMenuStart.SetActive(true);
         _mainMenuSettings.SetActive(true);
         _mainMenuQuit.SetActive(true);
-        EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+        if (ControllerGlyphManager.Instance.controllerInUse)
+        {
+            EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+        }
+        else
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
     /// <summary>
@@ -131,7 +170,15 @@ public class MenuManager : MonoBehaviour
             DebugMenuManager.Instance.PauseMenu = true;
             _pauseScreen.SetActive(true);
             _restartButton.SetActive(false);
-            EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+            if (ControllerGlyphManager.Instance.controllerInUse)
+            {
+                EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+            }
+            else
+            {
+                EventSystem.current.SetSelectedGameObject(null);
+            }
+
             Time.timeScale = 0f;
 
             _pauseInvoked = true;
@@ -223,6 +270,38 @@ public class MenuManager : MonoBehaviour
 
         int idx = SceneUtility.GetBuildIndexByScenePath(level);
         SceneManager.LoadScene(idx);
+    }
+
+    /// <summary>
+    /// Detects the controller automatically when plugged into a device
+    /// </summary>
+    /// <param name="device"></param>
+    /// <param name="change"></param>
+    private void ControllerDetection(InputDevice device, InputDeviceChange change)
+    {
+        switch (change)
+        {
+            case InputDeviceChange.Added:
+                if (_optionsOpen)
+                {
+                    EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
+                }
+                else if (_pauseInvoked)
+                {
+                    EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+                }
+                else
+                {
+                    EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+                }
+                break;
+            case InputDeviceChange.Removed:
+                EventSystem.current.SetSelectedGameObject(null);
+                break;
+            case InputDeviceChange.ConfigurationChanged:
+                Debug.Log("Device configuration changed: " + device);
+                break;
+        }
     }
 
     /// <summary>

@@ -17,11 +17,13 @@ using UnityEngine.UI;
 
 public class ControllerGlyphManager : MonoBehaviour
 {
+    //sets up variables to be used in the script
     public static ControllerGlyphManager Instance { get; private set; }
     public bool KeyboardAndMouse { get; private set; } = false;
     public bool PlayStationController { get; private set; } = false;
     public bool SwitchController { get; private set; } = false;
     public bool XboxController { get; private set; } = false;
+    public bool controllerInUse { get; private set; } = false;
 
     private bool _areInteractables = false;
     private bool _areTextBlurbs = false;
@@ -117,6 +119,7 @@ public class ControllerGlyphManager : MonoBehaviour
             SwitchController = false;
             XboxController = false;
             KeyboardAndMouse = true;
+            controllerInUse = false;
         }
         else if (controllerName.Contains("dualshock") || controllerName.Contains("dualsense") ||
             controllerName.Contains("playstation") || controllerName.Contains("wireless controller"))
@@ -125,6 +128,7 @@ public class ControllerGlyphManager : MonoBehaviour
             SwitchController = false;
             XboxController = false;
             KeyboardAndMouse = false;
+            controllerInUse = true;
         }
         else if (controllerName.Contains("pro controller") || controllerName.Contains("switch") ||
             controllerName.Contains("nintendo"))
@@ -133,6 +137,7 @@ public class ControllerGlyphManager : MonoBehaviour
             SwitchController = true;
             XboxController = false;
             KeyboardAndMouse = false;
+            controllerInUse = true;
         }
         else
         {
@@ -140,6 +145,7 @@ public class ControllerGlyphManager : MonoBehaviour
             SwitchController = false;
             XboxController = true;
             KeyboardAndMouse = false;
+            controllerInUse = true;
         }
         //changes input related text depending on current input device
         if (_areInteractables)
