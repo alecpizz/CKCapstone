@@ -559,27 +559,27 @@ PrefabInstance:
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Path
-      value: event:/Chapter 3 Music Controller
+      value: event:/Chapter 1 Music Controller
       objectReference: {fileID: 0}
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Guid.Data1
-      value: -1579106428
+      value: -696882822
       objectReference: {fileID: 0}
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Guid.Data2
-      value: 1336796883
+      value: 1104010296
       objectReference: {fileID: 0}
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Guid.Data3
-      value: 474597256
+      value: 1958491800
       objectReference: {fileID: 0}
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Guid.Data4
-      value: 1114371168
+      value: -1193433071
       objectReference: {fileID: 0}
     - target: {fileID: 2298426373216158578, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
@@ -684,6 +684,80 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e56c7dc95d6d4c4484630d90410c89b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1001 &410165078
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1066533064}
+    m_Modifications:
+    - target: {fileID: 1066457527364679113, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: m_Name
+      value: Disable Tile Wall (52)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 9.11
+      objectReference: {fileID: 0}
+    - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.67
+      objectReference: {fileID: 0}
+    - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 6.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 481ef263620677f4da33125bd7de384d, type: 3}
+--- !u!4 &410165079 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
+    type: 3}
+  m_PrefabInstance: {fileID: 410165078}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &415092564
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2726,6 +2800,7 @@ Transform:
   - {fileID: 1636366581}
   - {fileID: 986190503}
   - {fileID: 630472927}
+  - {fileID: 410165079}
   - {fileID: 806838131}
   - {fileID: 468192882}
   - {fileID: 1957526996}
@@ -10456,6 +10531,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Electric Bass
+      objectReference: {fileID: 0}
+    - target: {fileID: 6743034246124607987, guid: 529a4f4f7375eb3419c509c0f0d43214,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8918476211529489084, guid: 529a4f4f7375eb3419c509c0f0d43214,
         type: 3}
