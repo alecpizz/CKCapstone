@@ -6,6 +6,7 @@
  *******************************************************************/
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using FMODUnity;
 using PrimeTween;
@@ -48,7 +49,9 @@ public sealed class RoundManager : MonoBehaviour
     [SerializeField] private float _noEnemiesBufferWindow = 0.25f;
 
     private bool _isListeningForMoveEnd = false;
-
+    //For input detected when moving to help the mirror enemies keep up
+    private bool _isDelaying = false;
+    
     [Header("Autocomplete Mechanic")]
     [SerializeField, Tooltip("Timescale during autocomplete dash")] private float _autocompleteSpeed = 3;
     [SerializeField] private float _autocompleteWindow = 0.2f;
@@ -93,7 +96,8 @@ public sealed class RoundManager : MonoBehaviour
         }
 
         _playerControls = new PlayerControls();
-
+        _isDelaying = false;
+        
         for (int i = 0; i <= (int)TurnState.None; i++)
         {
             _turnListeners.Add((TurnState)i, new List<ITurnListener>());
@@ -182,12 +186,10 @@ public sealed class RoundManager : MonoBehaviour
         
         if (Time.timeScale > 1)
             return;
-
+        
         var dir = GetNormalizedInput();
-        //Don't use direction if zero
-        if (dir == Vector3.zero)
-           return;
-
+        
+        
         if (EnemiesPresent && !_autocompleteActive && _turnState != TurnState.None && 
             _lastMovementInput == dir && 
             Time.unscaledTime - _movementRegisteredTime <= _autocompleteWindow)
@@ -427,28 +429,59 @@ public sealed class RoundManager : MonoBehaviour
     /// <returns>Normalized input vector</returns>
     private Vector3 GetNormalizedInput()
     {
-        Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>().normalized;
-        //disable input if diagonal
-        if (_playerControls.InGame.Movement.ReadValue<Vector2>().x != 0 &&
-            _playerControls.InGame.Movement.ReadValue<Vector2>().y != 0){return new Vector3(0f, 0f, 0f);}
-        if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
+        if (!_isDelaying)
         {
-            input.y = 0;
-            input.x = input.x < 0 ? -1 : 1;
-        }
-        else
-        {
-            input.x = 0;
-            input.y = input.y < 0 ? -1 : 1;
-        }
+            Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>().normalized;
+            //new filter for inputs
+            if ((input.x) != 0 && (input.y) != 0)
+            {
+                Vector2 unnormalized = _playerControls.InGame.Movement.ReadValue<Vector2>();
+                if (MathF.Abs(input.x) - MathF.Abs(unnormalized.x) < MathF.Abs(input.y) - MathF.Abs(unnormalized.y))
+                {
+                    input.y = 0;
+                    input.x = input.x;
+                }
 
-        if (input != _lastRegistered)
-        {
-            input = _lastRegistered;
+                if (MathF.Abs(input.y) - MathF.Abs(unnormalized.y) < MathF.Abs(input.x) - MathF.Abs(unnormalized.x))
+                {
+                    input.x = 0;
+                    input.y = input.y;
+                }
+            }
+
+            if (input != _lastRegistered)
+            {
+                input = _lastRegistered;
+            }
+
+            _isDelaying = true;
+            StartCoroutine(ShortDelay());
+            
+            return new Vector3(input.x, 0f, input.y);
         }
-        return new Vector3(input.x, 0f, input.y);
+        //does last input so that it links up with the mirror enemy
+        return new Vector3(_lastMovementInput.x, _lastMovementInput.y, _lastMovementInput.z);
     }
 
+    /// <summary>
+    /// Delay for inputs so everything has time to process
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator ShortDelay()
+    {
+        if (_isDelaying)
+        {
+            yield return new WaitForSeconds(0.3f);
+            _isDelaying = false;
+        }
+
+        if (!_isDelaying)
+        {
+            StopCoroutine("ShortDelay");
+        }
+    }
+    
+    
     /// <summary>
     /// Helper method to get the next turn state.
     /// </summary>
