@@ -121,6 +121,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         Right
     }
 
+    [SerializeField] private int _startPosOffset;
+    private float _initialY = 0;
+
     /// <summary>
     /// Struct to hold an enemy's move. Contains a direction and magnitude.
     /// </summary>
@@ -244,6 +247,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         EnemyBeamSwitchActivation += () => _waitOnBeam = true;
 
         InitializeDestinationMarkers();
+
+        _initialY = transform.position.y;
+        StartPositionOffset();
 
         UpdateDestinationMarker();
         DestinationPath();
@@ -643,6 +649,35 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     }
 
     /// <summary>
+    /// Function that changes an enemy's starting position within their move
+    /// points list for the first turn.
+    /// </summary>
+    private void StartPositionOffset()
+    {
+        if (_startPosOffset >= _moveDestinations.Count - 1 || _startPosOffset <= 0)
+        {
+            return;
+        }
+
+        for (int i = 0; i < _startPosOffset; i++)
+        {
+            bool isVFX = true;
+            EvaluateNextMove(ref _moveIndex, ref _isReturningToStart, ref isVFX);
+
+            var movePt = _moveDestinations[_moveIndex];
+            var goalCell = GetLongestPath(GridBase.Instance.CellToWorld(movePt), transform.position);
+            var moveWorld = GridBase.Instance.CellToWorld(goalCell);
+
+            Vector3 changeTransform = moveWorld;
+            changeTransform.y = _initialY;
+            transform.position = changeTransform;
+        }
+
+        _moveIndex = _startPosOffset;
+        _indicatorIndex = _startPosOffset;
+    }
+
+    /// <summary>
     /// Coroutine for handling enemy movement. Handles determining pathing,
     /// Tween movement, and updating the indicator.
     /// </summary>
@@ -856,7 +891,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     {
         //not at the end of our list of moves.
         if (moveIndex < _moveDestinations.Count - 1)
-        {
+        { 
             if (!looped)
             {
                 //move forward as normal
@@ -869,6 +904,12 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 if (moveIndex <= 0)
                 {
                     moveIndex = 0;
+                    //checks if there is only one move in the list and will add a movement if so
+                    //to prevent skipping a turn
+                    if (_moveDestinations.Count - 1 == 1)
+                    {
+                        moveIndex++;
+                    }
                     looped = false;
                     _endRotate = true;
                 }
