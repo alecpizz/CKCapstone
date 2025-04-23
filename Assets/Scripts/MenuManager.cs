@@ -14,6 +14,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using static UnityEngine.Rendering.DebugUI;
 using System;
+using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 
 public class MenuManager : MonoBehaviour
@@ -43,7 +44,7 @@ public class MenuManager : MonoBehaviour
     private bool _skipInPause;
 
     private bool _pauseInvoked = true;
-
+    private bool _isMainMenu;
     /// <summary>
     /// Enables player input for opening the pause menu
     /// </summary>
@@ -52,6 +53,7 @@ public class MenuManager : MonoBehaviour
         _inputActions = new DebugInputActions();
         _inputActions.Enable();
         _inputActions.Player.Quit.performed += ctx => Pause();
+        _inputActions.UI.Back.performed += BackPerformed;
 
         //Gets rid of restart button if it's a cutscene
         string path = SceneManager.GetActiveScene().path;
@@ -59,6 +61,10 @@ public class MenuManager : MonoBehaviour
         {
             _restartButton.SetActive(false);
         }
+
+        //TODO: adjust this whenever we fix duplicate main menu in settings..
+        _isMainMenu = SceneManager.GetActiveScene().buildIndex == 0 
+                      || SceneManager.GetActiveScene().buildIndex == SceneManager.sceneCountInBuildSettings - 1;
     }
 
     /// <summary>
@@ -68,6 +74,7 @@ public class MenuManager : MonoBehaviour
     {
         _inputActions.Disable();
         _inputActions.Player.Quit.performed -= ctx => Pause();
+        _inputActions.UI.Back.performed -= BackPerformed;
     }
 
     /// <summary>
@@ -177,6 +184,32 @@ public class MenuManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Back button based exiting pause menu.
+    /// </summary>
+    /// <param name="ctx">Callback ctx. Unused.</param>
+    private void BackPerformed(InputAction.CallbackContext ctx)
+    {
+        //options menu is open, let's go back to the pause screen rather than the game for clarity
+        if (_optionsScreen != null && _optionsScreen.activeSelf)
+        {
+            //Kinda dumb that we have two methods for this...
+            if (_isMainMenu)
+            {
+                OptionsMainMenuClose();
+            }
+            else
+            {
+                OptionsClose();
+            }
+        }
+        //pause menu is open, go back to the game.
+        else if (_pauseScreen != null && _pauseScreen.activeInHierarchy)
+        {
+            Unpause();
+        }
+    }
+
+    /// <summary>
     /// Getter method to tell if the game is paused for FMOD audio
     /// </summary>
     /// <returns></returns>
@@ -225,6 +258,7 @@ public class MenuManager : MonoBehaviour
     public void StartGame()
     {
         SceneManager.LoadScene(_firstLevelIndex);
+        SaveDataManager.SetLastFinishedLevel(SceneUtility.GetScenePathByBuildIndex(_firstLevelIndex));
     }
 
     /// <summary>

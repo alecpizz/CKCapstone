@@ -8,6 +8,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
+using FMOD.Studio;
+using FMODUnity;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -49,6 +51,9 @@ public class MetronomeBehavior : MonoBehaviour, ITimeListener
     private bool _isSlow = true;
     private static readonly int GoFaster = Animator.StringToHash("GoFaster");
 
+    [SerializeField] private EventReference _slowMetronome;
+    [SerializeField] private EventReference _fastMetronome;
+    
 
     [SerializeField]
     private TMP_Text _metronomePredictor;
@@ -101,6 +106,15 @@ public class MetronomeBehavior : MonoBehaviour, ITimeListener
     public void SetAnimSpeed()
     {
         _isSlow = !_isSlow;
+        
+        if (_isSlow)
+        {
+            AudioManager.Instance.PlaySound(_fastMetronome);
+        }
+        if (!_isSlow)
+        {
+            AudioManager.Instance.PlaySound(_slowMetronome);
+        }
         
         _anim.speed = _isSlow ? _slowSpeed : _fastSpeed;
     }
