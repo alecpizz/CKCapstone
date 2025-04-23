@@ -15,17 +15,16 @@ using UnityEngine.UI;
 public class IllnessTransition : MonoBehaviour
 {
     [Header("Test Controls")]
-    [Tooltip("Test fading in from nothing to Stage 1 (less intense) from editor")]
     [SerializeField] private bool _testFadeIn = false;
+    [SerializeField] private bool _testFadeOut = false;
 
-    [Header("Intensity Values - Stage 1 (Lower Intensity)")]
-    [Tooltip("How transparent the aura effect should be at Stage 2")]
+    [Header("Intensity Values")]
     [SerializeField] private float _auraAlpha = .98f;
-    [Tooltip("How intense the chromatic aberration effect should be at Stage 2")]
     [SerializeField] private float _chromaticAberration = .23f;
+    [SerializeField] private float _auraAlpha2 = .5f;
+    [SerializeField] private float _chromaticAberration2 = .15f;
     //[Tooltip("How bright the post exposure effect should be at Stage 2")]
     //[SerializeField] private float _stage2Exposure = .7f;
-    [Tooltip("How long Stage 2 should take to fade (both in and out)")]
     [SerializeField] private float _auraFadeInDuration = .4f;
     [SerializeField] private float _auraFadeOutDuration = .4f;
     [SerializeField] private float _whiteFadeDuration = .4f;
@@ -36,7 +35,7 @@ public class IllnessTransition : MonoBehaviour
     [SerializeField] private GameObject _auraObj;
     [Tooltip("The illness post processing volume")]
     [SerializeField] private GameObject _postProcessObj;
-    [Tooltip("The illness post processing volume")]
+
     [SerializeField] private GameObject _whiteObj;
 
     private Volume _postProcess;
@@ -71,6 +70,11 @@ public class IllnessTransition : MonoBehaviour
             _testFadeIn = false;
         }
 
+        if (_testFadeOut)
+        {
+            FadeOut();
+            _testFadeOut = false;
+        }
     }
 
     /// <summary>
@@ -80,6 +84,11 @@ public class IllnessTransition : MonoBehaviour
     {
         // Start the LerpEffect coroutine with the relevant values
         StartCoroutine(LerpEffects());
+    }
+
+    public void FadeOut()
+    {
+        StartCoroutine(FadeFromWhite());
     }
 
     /// <summary>
@@ -133,9 +142,44 @@ public class IllnessTransition : MonoBehaviour
 
         yield return new WaitForSeconds(_pauseDuration);
 
+        // FADE OUT //
+
+        time = 0f;
+
+        while (time < _auraFadeOutDuration)
+        {
+
+            // Set the aura intensity over time
+            auraA.a = Mathf.Lerp(_auraAlpha, _auraAlpha2, time / _auraFadeOutDuration);
+            _aura.color = auraA;
+
+            // Set the chromatic aberration over time
+            if (_postProcess.profile.TryGet<ChromaticAberration>(out chroma))
+            {
+                chroma.intensity.value = Mathf.Lerp(_chromaticAberration, _chromaticAberration2, time / _auraFadeOutDuration);
+            }
+
+            // Add the seconds passed to time
+            time += Time.deltaTime;
+
+            // Return a null value
+            yield return null;
+        }
+
+        // Just in case, set all the effects to their end values at the end
+
+        // Vignette alpha
+        // Aura alpha
+        _aura.color = new Color(_aura.color.r, _aura.color.b, _aura.color.b, _auraAlpha2);
+        // Chromatic aberration
+        if (_postProcess.profile.TryGet<ChromaticAberration>(out chroma))
+        {
+            chroma.intensity.value = _chromaticAberration2;
+        }
+
         // FADE TO WHITE //
 
-        time = 0;
+        time = 0f;
 
         // Fade over time
         while (time < _whiteFadeDuration)
@@ -152,5 +196,35 @@ public class IllnessTransition : MonoBehaviour
         }
 
         _white.color = new Color(_white.color.r, _white.color.b, _white.color.b, 1f);
+    }
+
+    private IEnumerator FadeFromWhite()
+    {
+        _white.color = new Color(_white.color.r, _white.color.b, _white.color.b, 0f);
+        _aura.color = new Color(_aura.color.r, _aura.color.b, _aura.color.b, 0f);
+        if (_postProcess.profile.TryGet<ChromaticAberration>(out ChromaticAberration chroma))
+        {
+            chroma.intensity.value = 0f;
+        }
+
+        float time = 0;
+
+        Color whiteA = _white.color;
+
+        while (time < _whiteFadeDuration)
+        {
+
+            // Set the aura intensity over time
+            whiteA.a = Mathf.Lerp(1f, 0f, time / _whiteFadeDuration);
+            _white.color = whiteA;
+
+            // Add the seconds passed to time
+            time += Time.deltaTime;
+
+            // Return a null value
+            yield return null;
+        }
+
+        _white.color = new Color(_white.color.r, _white.color.b, _white.color.b, 0f);
     }
 }
