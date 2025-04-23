@@ -168,6 +168,7 @@ public class CutsceneFramework : MonoBehaviour
         }
 
         //initial state of circle skip indicator
+        if (!_skipCompletingIcon) return;
         _skipCompletingIcon.enabled = true;
         _skipCompletingIcon.fillAmount = 0;
     }
@@ -222,8 +223,12 @@ public class CutsceneFramework : MonoBehaviour
                 SceneManager.LoadScene(SaveDataManager.GetSceneLoadedFrom());
                 return;
             }
-            _skipCompletingIcon.enabled = false;
-            _holdToSkipIcon.SetActive(false);
+
+            if (_skipCompletingIcon && _holdToSkipIcon)
+            {
+                _skipCompletingIcon.enabled = false;
+                _holdToSkipIcon.SetActive(false);
+            }
             SceneController.Instance.LoadNewScene(_loadingLevelIndex);
         }
     }
@@ -259,7 +264,10 @@ public class CutsceneFramework : MonoBehaviour
 
         if (scene.Substring(0, 2).Equals("CS"))
         {
-            _holdToSkipIcon.SetActive(true);
+            if (_holdToSkipIcon)
+            {
+                _holdToSkipIcon.SetActive(true);
+            }
             Debug.Log("Hold the Space bar to skip!");
         }
     }
@@ -420,16 +428,23 @@ public class CutsceneFramework : MonoBehaviour
                 Debug.Log("run");
                 SkipCutscene();
             }
-            _skipCompletingIcon.fillAmount = fillSpeed;
+
+            if (_skipCompletingIcon)
+            {
+                _skipCompletingIcon.fillAmount = fillSpeed;
+            }
         }
         else if(_timer != 0) //so timer doesn't become negative
         {
             _timer -= Time.deltaTime;
-            _skipCompletingIcon.fillAmount = fillSpeed;
+            if (_skipCompletingIcon)
+            {
+                _skipCompletingIcon.fillAmount = fillSpeed;
+            }
         }
 
         //turns off the icon after some time
-        if (_holdToSkipIcon.activeInHierarchy)
+        if (_holdToSkipIcon && _holdToSkipIcon.activeInHierarchy)
         {
             _skipIconTimer += Time.deltaTime;
             if (_skipIconTimer > _skipIconDuration || _menuManager.GetPauseInvoked())
