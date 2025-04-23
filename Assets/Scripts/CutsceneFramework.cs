@@ -237,7 +237,7 @@ public class CutsceneFramework : MonoBehaviour
                 SaveDataManager.SetLastFinishedLevel(SceneManager.GetActiveScene().name);
             }
         }              
-        }
+        
     }
 
     /// <summary>
