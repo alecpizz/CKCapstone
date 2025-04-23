@@ -164,7 +164,6 @@ public class MenuManager : MonoBehaviour
         if (_controllerMenuing)
         {
             EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
-            _controllerMenuing = true;
         }
         else
         {
