@@ -111,8 +111,16 @@ public class CutsceneFramework : MonoBehaviour
     private float _skipIconTimer = 0f;
     [SerializeField] private GameObject _holdToSkipIcon;
 
-    [SerializeField] private Image _skipCompletingIcon;
-    
+    [SerializeField] public Image SkipIcon;
+    [SerializeField] public Image SkipCompletingIcon;
+
+    [SerializeField] public Sprite KeyboardSkipButton;
+    [SerializeField] public Sprite PlaystationSkipButton;
+    [SerializeField] public Sprite SwitchSkipButton;
+    [SerializeField] public Sprite XboxSkipButton;
+    [SerializeField] public Sprite CompletionCircle;
+    [SerializeField] public Sprite CompletionSquare;
+
     /// <summary>
     /// Determines whether to play the Challenge or End Chapter Cutscene
     /// </summary>
@@ -168,8 +176,8 @@ public class CutsceneFramework : MonoBehaviour
         }
 
         //initial state of circle skip indicator
-        _skipCompletingIcon.enabled = true;
-        _skipCompletingIcon.fillAmount = 0;
+        SkipCompletingIcon.enabled = true;
+        SkipCompletingIcon.fillAmount = 0;
     }
     
     /// <summary>
@@ -222,10 +230,19 @@ public class CutsceneFramework : MonoBehaviour
                 SceneManager.LoadScene(SaveDataManager.GetSceneLoadedFrom());
                 return;
             }
-            _skipCompletingIcon.enabled = false;
+            SkipCompletingIcon.enabled = false;
             _holdToSkipIcon.SetActive(false);
             SceneController.Instance.LoadNewScene(_loadingLevelIndex);
         }
+    }
+
+    /// <summary>
+    /// Takes the reference of the current controller from the debug manager to make sure
+    /// input prompt for skipping the cutscene lines up with your current input device
+    /// </summary>
+    public void ControllerIconChange()
+    {
+        ControllerGlyphManager.Instance.GetIcon();
     }
 
     /// <summary>
@@ -420,12 +437,12 @@ public class CutsceneFramework : MonoBehaviour
                 Debug.Log("run");
                 SkipCutscene();
             }
-            _skipCompletingIcon.fillAmount = fillSpeed;
+            SkipCompletingIcon.fillAmount = fillSpeed;
         }
         else if(_timer != 0) //so timer doesn't become negative
         {
             _timer -= Time.deltaTime;
-            _skipCompletingIcon.fillAmount = fillSpeed;
+            SkipCompletingIcon.fillAmount = fillSpeed;
         }
 
         //turns off the icon after some time

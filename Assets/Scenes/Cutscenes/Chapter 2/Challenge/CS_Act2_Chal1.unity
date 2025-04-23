@@ -384,9 +384,18 @@ MonoBehaviour:
   _audioVolumeOverride: 0
   _endCutsceneVolumeOverride: 5
   _menuManager: {fileID: 296463433}
+  _timeTillSkip: 2
   _skipIconDuration: 2
   _holdToSkipIcon: {fileID: 296463434}
-  _skipCompletingIcon: {fileID: 296463435}
+  SkipIcon: {fileID: 2024149335}
+  SkipCompletingIcon: {fileID: 296463435}
+  KeyboardSkipButton: {fileID: 21300000, guid: d156689db7ba8d34a91ce47982ad19c2, type: 3}
+  PlaystationSkipButton: {fileID: -375959303, guid: d25c3175f993ca443b7392e16da76eaf,
+    type: 3}
+  SwitchSkipButton: {fileID: 1410447040, guid: d25c3175f993ca443b7392e16da76eaf, type: 3}
+  XboxSkipButton: {fileID: 15496422, guid: d25c3175f993ca443b7392e16da76eaf, type: 3}
+  CompletionCircle: {fileID: 21300000, guid: e1b98eccdf343714cb7f2710ccd94023, type: 3}
+  CompletionSquare: {fileID: 21300000, guid: 8fe49c9b811c3fb4ba2a614c49c409b0, type: 3}
 --- !u!4 &857533594
 Transform:
   m_ObjectHideFlags: 0
@@ -585,6 +594,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1805176606}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2024149335 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 325715214546594739, guid: dbb0dd27c6fab3344aab4441094b0849,
+    type: 3}
+  m_PrefabInstance: {fileID: 296463431}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
