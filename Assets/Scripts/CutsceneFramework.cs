@@ -112,6 +112,7 @@ public class CutsceneFramework : MonoBehaviour
     [SerializeField] private GameObject _holdToSkipIcon;
 
     [SerializeField] private Image _skipCompletingIcon;
+    private bool _skipHeld = false;
     
     /// <summary>
     /// Determines whether to play the Challenge or End Chapter Cutscene
@@ -236,7 +237,7 @@ public class CutsceneFramework : MonoBehaviour
             {
                 SaveDataManager.SetLastFinishedLevel(SceneManager.GetActiveScene().name);
             }
-        }              
+        }
         
     }
 
@@ -429,6 +430,8 @@ public class CutsceneFramework : MonoBehaviour
         if (_inputActions.UI.SkipCutscene.IsPressed())
         {
             _timer += Time.deltaTime;
+            _skipHeld = true;
+            _skipCompletingIcon.enabled = true;
 
             if (_timer > _timeTillSkip)
             {
@@ -444,6 +447,8 @@ public class CutsceneFramework : MonoBehaviour
         else if(_timer != 0) //so timer doesn't become negative
         {
             _timer -= Time.deltaTime;
+            _skipHeld = false;
+
             if (_skipCompletingIcon)
             {
                 _skipCompletingIcon.fillAmount = fillSpeed;
@@ -454,9 +459,16 @@ public class CutsceneFramework : MonoBehaviour
         if (_holdToSkipIcon && _holdToSkipIcon.activeInHierarchy)
         {
             _skipIconTimer += Time.deltaTime;
+
+            if (_skipHeld)
+            {
+                _skipIconTimer = 0;
+            }
+
             if (_skipIconTimer > _skipIconDuration || _menuManager.GetPauseInvoked())
             {
                 _holdToSkipIcon.SetActive(false);
+                _skipCompletingIcon.enabled = false;
                 _skipIconTimer = 0f;
             }
         }
