@@ -276,7 +276,6 @@ public class CutsceneFramework : MonoBehaviour
             {
                 _holdToSkipIcon.SetActive(true);
             }
-            Debug.Log("Hold the Space bar to skip!");
         }
     }
 
@@ -444,7 +443,7 @@ public class CutsceneFramework : MonoBehaviour
                 _skipCompletingIcon.fillAmount = fillSpeed;
             }
         }
-        else if(_timer != 0) //so timer doesn't become negative
+        else if(_timer > 0) 
         {
             _timer -= Time.deltaTime;
             _skipHeld = false;
@@ -454,12 +453,17 @@ public class CutsceneFramework : MonoBehaviour
                 _skipCompletingIcon.fillAmount = fillSpeed;
             }
         }
+        else //so timer doesn't become negative
+        {
+            _timer = 0;
+        }
 
         //turns off the icon after some time
         if (_holdToSkipIcon && _holdToSkipIcon.activeInHierarchy)
         {
             _skipIconTimer += Time.deltaTime;
 
+            //So the icon doesn't disappear while Space bar is held
             if (_skipHeld)
             {
                 _skipIconTimer = 0;
