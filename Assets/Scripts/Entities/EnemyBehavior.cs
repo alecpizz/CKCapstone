@@ -68,6 +68,14 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
     private int _subMarkerIdx = 0;
 
+    private ParticleSystem.MainModule _particleMainModule;
+    private Renderer _destMarkerRenderer;
+    private Renderer _pathVfxRenderer;
+    private List<Renderer> _subMarkerRenderers = new();
+    private Color _defaultMarkerColor;
+
+    [SerializeField] private Color _frozenMarkerColor;
+
     public bool CollidingWithRay { get; set; } = false;
 
     [SerializeField] private float _destYPos = 1f;
@@ -213,6 +221,16 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
         _rb = GetComponent<Rigidbody>();
         _rb.isKinematic = true;
+
+        ParticleSystem markerParticleSystem = _destinationMarker.GetComponentInChildren<ParticleSystem>();
+        _particleMainModule = markerParticleSystem.main;
+        _destMarkerRenderer = _destinationMarker.GetComponentInChildren<Renderer>();
+        _pathVfxRenderer = _destPathVFX.GetComponent<Renderer>();
+        foreach (var subMarker in _subDestPathMarkers)
+        {
+            _subMarkerRenderers.Add(subMarker.GetComponentInChildren<Renderer>());
+        }
+        _defaultMarkerColor = _destMarkerRenderer.material.color;
 
         _lastPosition = transform.position;
 
@@ -1069,6 +1087,14 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 _animator.SetBool(Frozen, true);
             }
             _isFrozen = true;
+
+            _particleMainModule.startColor = _frozenMarkerColor;
+            _destMarkerRenderer.material.color = _frozenMarkerColor;
+            _pathVfxRenderer.material.color = _frozenMarkerColor;
+            foreach (var subMarker in _subMarkerRenderers)
+            {
+                subMarker.material.color = _frozenMarkerColor;
+            }
         }
     }
 
@@ -1082,6 +1108,14 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             _animator.SetBool(Frozen, false);
         }
         _isFrozen = false;
+
+        _particleMainModule.startColor = _defaultMarkerColor;
+        _destMarkerRenderer.material.color = _defaultMarkerColor;
+        _pathVfxRenderer.material.color = _defaultMarkerColor;
+        foreach (var subMarker in _subMarkerRenderers)
+        {
+            subMarker.material.color = _defaultMarkerColor;
+        }
     }
 
     public bool HitWrapAround
