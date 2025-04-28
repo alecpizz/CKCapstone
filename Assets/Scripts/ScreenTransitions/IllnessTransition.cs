@@ -15,19 +15,29 @@ using UnityEngine.UI;
 public class IllnessTransition : MonoBehaviour
 {
     [Header("Test Controls")]
+    [Tooltip("Use this to test fading the screen in")]
     [SerializeField] private bool _testFadeIn = false;
+    [Tooltip("Use this to test fading the screen out")]
     [SerializeField] private bool _testFadeOut = false;
 
     [Header("Intensity Values")]
+    [Tooltip("How opaque the aura effect should initially become")]
     [SerializeField] private float _auraAlpha = .98f;
+    [Tooltip("How apparent the chromatic aberration effect should initially become")]
     [SerializeField] private float _chromaticAberration = .23f;
+    [Tooltip("How opaque the aura effect should fade to second")]
     [SerializeField] private float _auraAlpha2 = .5f;
+    [Tooltip("How apparent the chromatic aberration effect should fade to second")]
     [SerializeField] private float _chromaticAberration2 = .15f;
-    //[Tooltip("How bright the post exposure effect should be at Stage 2")]
-    //[SerializeField] private float _stage2Exposure = .7f;
+
+    [Header("Duration Values")]
+    [Tooltip("How long the aura and related effects should take to fade in")]
     [SerializeField] private float _auraFadeInDuration = .4f;
+    [Tooltip("How long the aura and related effects should take to fade out")]
     [SerializeField] private float _auraFadeOutDuration = .4f;
+    [Tooltip("How long the white screen should take to fade in and out")]
     [SerializeField] private float _whiteFadeDuration = .4f;
+    [Tooltip("How long the effects should pause at their climax before fading out")]
     [SerializeField] private float _pauseDuration = .2f;
 
     [Header("Object References")]
@@ -35,7 +45,7 @@ public class IllnessTransition : MonoBehaviour
     [SerializeField] private GameObject _auraObj;
     [Tooltip("The illness post processing volume")]
     [SerializeField] private GameObject _postProcessObj;
-
+    [Tooltip("The white screen UI image")]
     [SerializeField] private GameObject _whiteObj;
 
     private Volume _postProcess;
@@ -57,19 +67,14 @@ public class IllnessTransition : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        // Test fading in to Stage 1 (less intense)
+        // Test fading in
         if (_testFadeIn)
         {
-            _white.color = new Color(_white.color.r, _white.color.b, _white.color.b, 0f);
-            _aura.color = new Color(_aura.color.r, _aura.color.b, _aura.color.b, 0f);
-            if (_postProcess.profile.TryGet<ChromaticAberration>(out ChromaticAberration chroma))
-            {
-                chroma.intensity.value = 0f;
-            }
             ScreenFade();
             _testFadeIn = false;
         }
 
+        // Test fading out
         if (_testFadeOut)
         {
             FadeOut();
@@ -78,21 +83,41 @@ public class IllnessTransition : MonoBehaviour
     }
 
     /// <summary>
-    /// Fade in from nothing
+    /// Fade in from nothing.  Call this when the screen should fade in.
     /// </summary>
     public void ScreenFade()
     {
+        // Reset all values
+        _white.color = new Color(_white.color.r, _white.color.b, _white.color.b, 0f);
+        _aura.color = new Color(_aura.color.r, _aura.color.b, _aura.color.b, 0f);
+        if (_postProcess.profile.TryGet<ChromaticAberration>(out ChromaticAberration chroma))
+        {
+            chroma.intensity.value = 0f;
+        }
+
         // Start the LerpEffect coroutine with the relevant values
         StartCoroutine(LerpEffects());
     }
 
+    /// <summary>
+    /// Fades out from white.  Call this when the screen should fade out.
+    /// </summary>
     public void FadeOut()
     {
-        StartCoroutine(FadeFromWhite());
+        // Reset all values
+        _white.color = new Color(_white.color.r, _white.color.b, _white.color.b, 1f);
+        _aura.color = new Color(_aura.color.r, _aura.color.b, _aura.color.b, 0f);
+        if (_postProcess.profile.TryGet<ChromaticAberration>(out ChromaticAberration chroma))
+        {
+            chroma.intensity.value = 0f;
+        }
+
+        // Start the fade out
+        StartCoroutine(FadeWhite(1f, 0f));
     }
 
     /// <summary>
-    /// Lerps all of the screen effects based on the given parameters.
+    /// Lerps the aura and related effects between their various stages.
     /// </summary>
     /// <returns> null </returns>
     private IEnumerator LerpEffects()
@@ -103,10 +128,9 @@ public class IllnessTransition : MonoBehaviour
         // according the the specified lerp duration
         float time = 0;
 
-        // Create vars to hold the post processing components
+        // Get the specific components that need adjusting for easier reference
         ChromaticAberration chroma;
         Color auraA = _aura.color;
-        Color whiteA = _white.color;
 
         // Fade all the screen effects over time
         while (time < _auraFadeInDuration)
@@ -131,7 +155,6 @@ public class IllnessTransition : MonoBehaviour
 
         // Just in case, set all the effects to their end values at the end
 
-        // Vignette alpha
         // Aura alpha
         _aura.color = new Color(_aura.color.r, _aura.color.b, _aura.color.b, _auraAlpha);
         // Chromatic aberration
@@ -140,12 +163,15 @@ public class IllnessTransition : MonoBehaviour
             chroma.intensity.value = _chromaticAberration;
         }
 
+        // Pause for an amount of time
         yield return new WaitForSeconds(_pauseDuration);
 
-        // FADE OUT //
+        // FADE OUT TO NEXT VALUES //
 
+        // Reset time
         time = 0f;
 
+        // Fade out over a specified duration of time
         while (time < _auraFadeOutDuration)
         {
 
@@ -168,7 +194,6 @@ public class IllnessTransition : MonoBehaviour
 
         // Just in case, set all the effects to their end values at the end
 
-        // Vignette alpha
         // Aura alpha
         _aura.color = new Color(_aura.color.r, _aura.color.b, _aura.color.b, _auraAlpha2);
         // Chromatic aberration
@@ -177,15 +202,66 @@ public class IllnessTransition : MonoBehaviour
             chroma.intensity.value = _chromaticAberration2;
         }
 
-        // FADE TO WHITE //
+        // Start fading the white screen in
+        StartCoroutine(FadeWhite(0f, 1f));
 
+        // FADE OUT TO ZERO //
+
+        // Reset time
         time = 0f;
+
+        // Fade out effects completely as the white fades in
+        while (time < _whiteFadeDuration)
+        {
+
+            // Set the aura intensity over time
+            auraA.a = Mathf.Lerp(_auraAlpha2, 0f, time / _whiteFadeDuration);
+            _aura.color = auraA;
+
+            // Set the chromatic aberration over time
+            if (_postProcess.profile.TryGet<ChromaticAberration>(out chroma))
+            {
+                chroma.intensity.value = Mathf.Lerp(_chromaticAberration2, 0f, time / _whiteFadeDuration);
+            }
+
+            // Add the seconds passed to time
+            time += Time.deltaTime;
+
+            // Return a null value
+            yield return null;
+        }
+
+        // Just in case, set all the effects to their end values at the end
+
+        // Aura alpha
+        _aura.color = new Color(_aura.color.r, _aura.color.b, _aura.color.b, 0f);
+        // Chromatic aberration
+        if (_postProcess.profile.TryGet<ChromaticAberration>(out chroma))
+        {
+            chroma.intensity.value = 0f;
+        }
+    }
+
+    /// <summary>
+    /// Fades the white screen from a set start to a set end value
+    /// </summary>
+    /// <param name="start"> How opaque the screen should be to begin with </param>
+    /// <param name="end"> How opaque the screen should become </param>
+    /// <returns> null </returns>
+    private IEnumerator FadeWhite(float start, float end)
+    {
+        // This float will be updated over time to set the interpolation percentage
+        // according the the specified lerp duration
+        float time = 0f;
+
+        // Get the color property of the white screen
+        Color whiteA = _white.color;
 
         // Fade over time
         while (time < _whiteFadeDuration)
         {
             // Set the vignette intensity over time
-            whiteA.a = Mathf.Lerp(0f, 1f, time / _whiteFadeDuration);
+            whiteA.a = Mathf.Lerp(start, end, time / _whiteFadeDuration);
             _white.color = whiteA;
 
             // Add the seconds passed to time
@@ -195,36 +271,7 @@ public class IllnessTransition : MonoBehaviour
             yield return null;
         }
 
-        _white.color = new Color(_white.color.r, _white.color.b, _white.color.b, 1f);
-    }
-
-    private IEnumerator FadeFromWhite()
-    {
-        _white.color = new Color(_white.color.r, _white.color.b, _white.color.b, 0f);
-        _aura.color = new Color(_aura.color.r, _aura.color.b, _aura.color.b, 0f);
-        if (_postProcess.profile.TryGet<ChromaticAberration>(out ChromaticAberration chroma))
-        {
-            chroma.intensity.value = 0f;
-        }
-
-        float time = 0;
-
-        Color whiteA = _white.color;
-
-        while (time < _whiteFadeDuration)
-        {
-
-            // Set the aura intensity over time
-            whiteA.a = Mathf.Lerp(1f, 0f, time / _whiteFadeDuration);
-            _white.color = whiteA;
-
-            // Add the seconds passed to time
-            time += Time.deltaTime;
-
-            // Return a null value
-            yield return null;
-        }
-
-        _white.color = new Color(_white.color.r, _white.color.b, _white.color.b, 0f);
+        // Set the screen to full opacity at the end
+        _white.color = new Color(_white.color.r, _white.color.b, _white.color.b, end);
     }
 }

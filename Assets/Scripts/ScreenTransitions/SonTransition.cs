@@ -2,7 +2,7 @@
 *    Author: Zayden Joyner
 *    Contributors: 
 *    Date Created: 4/23/25
-*    Description: Fades the son screen in, then fades to white.
+*    Description: Fades in and out a screen effect when the player is hugged by the son.
 *******************************************************************/
 using System.Collections;
 using System.Collections.Generic;
@@ -15,34 +15,32 @@ using UnityEngine.UI;
 public class SonTransition : MonoBehaviour
 {
     [Header("Test Controls")]
+    [Tooltip("Use this to test fading the screen in")]
     [SerializeField] private bool _testFadeIn = false;
+    [Tooltip("Use this to test fading the screen out")]
     [SerializeField] private bool _testFadeOut = false;
 
-    [SerializeField] private float _notesFade1 = .2f;
-    [SerializeField] private float _notesFade2 = .2f;
-    [SerializeField] private float _notesFade3 = .2f;
+    [Header("Adjustable Values")]
+    [Tooltip("How long the white screen should take to fade in and out")]
     [SerializeField] private float _whiteFade = 1.5f;
 
     [Header("Object References")]
-    [SerializeField] private GameObject _noteImg1;
-    [SerializeField] private GameObject _noteImg2;
-    [SerializeField] private GameObject _noteImg3;
+    [Tooltip("The white screen UI image")]
     [SerializeField] private GameObject _whiteObj;
+    [Tooltip("The music note particles")]
+    [SerializeField] private GameObject _noteParticles;
 
-    private Image _notes1;
-    private Image _notes2;
-    private Image _notes3;
+    // Internal references
     private Image _white;
+    private ParticleSystem _notes;
 
     /// <summary>
     /// Assign references
     /// </summary>
     private void Start()
     {
-        _notes1 = _noteImg1.GetComponent<Image>();
-        _notes2 = _noteImg2.GetComponent<Image>();
-        _notes3 = _noteImg3.GetComponent<Image>();
         _white = _whiteObj.GetComponent<Image>();
+        _notes = _noteParticles.GetComponent<ParticleSystem>();
     }
 
     /// <summary>
@@ -50,19 +48,14 @@ public class SonTransition : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        // Test fading in to Stage 1 (less intense)
+        // Test fading in the effects
         if (_testFadeIn)
         {
-            _notes1.color = new Color(_notes1.color.r, _notes1.color.b, _notes1.color.b, 0f);
-            _notes2.color = new Color(_notes2.color.r, _notes2.color.b, _notes2.color.b, 0f);
-            _notes3.color = new Color(_notes3.color.r, _notes3.color.b, _notes3.color.b, 0f);
-            _white.color = new Color(_white.color.r, _white.color.b, _white.color.b, 0f);
-
             ScreenFade();
-
             _testFadeIn = false;
         }
 
+        // Test fading out the effects
         if (_testFadeOut)
         {
             FadeOut();
@@ -72,26 +65,35 @@ public class SonTransition : MonoBehaviour
     }
 
     /// <summary>
-    /// Fade in from nothing
+    /// Fade in from nothing. Call this when the screen should fade in.
     /// </summary>
     public void ScreenFade()
     {
-        // Start the LerpEffect coroutine with the relevant values
+        // Reset the screen color
+        _white.color = new Color(_white.color.r, _white.color.b, _white.color.b, 0f);
+
+        // Play the note particles
+        _noteParticles.SetActive(true);
+        _notes.Play();
+
+        // Start fading in the white screen
         StartCoroutine(LerpEffects(_white, _whiteFade));
-        StartCoroutine(LerpEffects(_notes1, _notesFade1));
-        StartCoroutine(LerpEffects(_notes2, _notesFade2));
-        StartCoroutine(LerpEffects(_notes3, _notesFade3));
     }
 
+    /// <summary>
+    /// Fade out from white.  Call this when the screen should fade out.
+    /// </summary>
     public void FadeOut()
     {
         StartCoroutine(FadeFromWhite());
     }
 
-    /// <summary>
-    /// Lerps all of the screen effects based on the given parameters.
-    /// </summary>
-    /// <returns> null </returns>
+/// <summary>
+/// Fades any effects (white screen) in from zero opacity
+/// </summary>
+/// <param name="img"> The screen overlay image to fade </param>
+/// <param name="duration"> How long the fade should take </param>
+/// <returns> null </returns>
     private IEnumerator LerpEffects(Image img, float duration)
     {
 
@@ -99,13 +101,14 @@ public class SonTransition : MonoBehaviour
         // according the the specified lerp duration
         float time = 0;
 
+        // Get the color property of the image
         Color colA = img.color;
 
-        // Fade all the screen effects over time
+        // Fade any screen effects over time
         while (time < duration)
         {
 
-            // Set the aura intensity over time
+            // Set the image color over time
             colA.a = Mathf.Lerp(0f, 1f, time / duration);
             img.color = colA;
 
@@ -116,24 +119,31 @@ public class SonTransition : MonoBehaviour
             yield return null;
         }
 
-        // Just in case, set all the effects to their end values at the end
+        // Just in case, set any effects to their end values at the end
         img.color = new Color(img.color.r, img.color.b, img.color.b, 1f);
+
+        // Turn off net particles
+        _noteParticles.SetActive(false);
     }
 
+    /// <summary>
+    /// Fades the screen out from white to nothing
+    /// </summary>
+    /// <returns> null </returns>
     private IEnumerator FadeFromWhite()
     {
-        _notes1.color = new Color(_notes1.color.r, _notes1.color.b, _notes1.color.b, 0f);
-        _notes2.color = new Color(_notes2.color.r, _notes2.color.b, _notes2.color.b, 0f);
-        _notes3.color = new Color(_notes3.color.r, _notes3.color.b, _notes3.color.b, 0f);
-
+        // This float will be updated over time to set the interpolation percentage
+        // according the the specified lerp duration
         float time = 0;
 
+        // Get the color property of the image
         Color whiteA = _white.color;
 
+        // Fade the white screen out over time
         while (time < _whiteFade)
         {
 
-            // Set the aura intensity over time
+            // Set the image color over time
             whiteA.a = Mathf.Lerp(1f, 0f, time / _whiteFade);
             _white.color = whiteA;
 
@@ -144,6 +154,7 @@ public class SonTransition : MonoBehaviour
             yield return null;
         }
 
+        // Just in case, set the white screen to zero
         _white.color = new Color(_white.color.r, _white.color.b, _white.color.b, 0f);
     }
 }
