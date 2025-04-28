@@ -123,7 +123,6 @@ public class CutsceneFramework : MonoBehaviour
         SaveDataManager.SetLastFinishedLevel(SceneManager.GetActiveScene().name);
         _inputActions = new DebugInputActions();
         _inputActions.UI.Enable();
-        _inputActions.UI.SkipCutscene.performed += ctx => SkipCutscene();
         _inputActions.UI.Pause.performed += ctx => ResumePlayAudio(_menuManager.GetPauseInvoked());
 
         //_endChapterCutsceneVideo.loopPointReached += CheckEnd;
@@ -181,7 +180,6 @@ public class CutsceneFramework : MonoBehaviour
     private void OnDisable()
     {
         _inputActions.UI.Disable();
-        _inputActions.UI.SkipCutscene.performed -= ctx => SkipCutscene();
         _inputActions.UI.Pause.performed -= ctx => ResumePlayAudio(_menuManager.GetPauseInvoked());
 
         if(_mAnyButtonPressedListener != null)
