@@ -72,6 +72,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private Renderer _destMarkerRenderer;
     private Renderer _pathVfxRenderer;
     private List<Renderer> _subMarkerRenderers = new();
+    private List<ParticleSystem.MainModule> _subDestMainModules = new();
     private Color _defaultMarkerColor;
 
     [SerializeField] private Color _frozenMarkerColor;
@@ -226,10 +227,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _particleMainModule = markerParticleSystem.main;
         _destMarkerRenderer = _destinationMarker.GetComponentInChildren<Renderer>();
         _pathVfxRenderer = _destPathVFX.GetComponent<Renderer>();
-        foreach (var subMarker in _subDestPathMarkers)
-        {
-            _subMarkerRenderers.Add(subMarker.GetComponentInChildren<Renderer>());
-        }
+        
         _defaultMarkerColor = _destMarkerRenderer.material.color;
 
         _lastPosition = transform.position;
@@ -483,6 +481,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             //obj.SetActive(false);
 
             _subDestPathMarkers.Add(obj);
+            _subMarkerRenderers.Add(obj.GetComponentInChildren<Renderer>());
+            ParticleSystem subDestParticles = obj.GetComponentInChildren<ParticleSystem>();
+            _subDestMainModules.Add(subDestParticles.main);
         }
     }
 
@@ -1095,6 +1096,13 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             {
                 subMarker.material.color = _frozenMarkerColor;
             }
+
+            ParticleSystem.MainModule temp;
+            for (int i = 0; i < _subDestMainModules.Count; ++i)
+            {
+                temp = _subDestMainModules[i];
+                temp.startColor = _frozenMarkerColor;
+            }
         }
     }
 
@@ -1115,6 +1123,13 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         foreach (var subMarker in _subMarkerRenderers)
         {
             subMarker.material.color = _defaultMarkerColor;
+        }
+
+        ParticleSystem.MainModule temp;
+        for (int i = 0; i < _subDestMainModules.Count; ++i)
+        {
+            temp = _subDestMainModules[i];
+            temp.startColor = _defaultMarkerColor;
         }
     }
 
