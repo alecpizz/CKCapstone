@@ -111,18 +111,25 @@ public class CutsceneFramework : MonoBehaviour
     private float _skipIconTimer = 0f;
     [SerializeField] private GameObject _holdToSkipIcon;
 
-    [SerializeField] private Image _skipCompletingIcon;
-    private bool _skipHeld = false;
-    
+    [SerializeField] public Image SkipIcon;
+    [SerializeField] public Image SkipCompletingIcon;
+
+    [SerializeField] public Sprite KeyboardSkipButton;
+    [SerializeField] public Sprite PlaystationSkipButton;
+    [SerializeField] public Sprite SwitchSkipButton;
+    [SerializeField] public Sprite XboxSkipButton;
+    [SerializeField] public Sprite CompletionCircle;
+    [SerializeField] public Sprite CompletionSquare;
+
     /// <summary>
     /// Determines whether to play the Challenge or End Chapter Cutscene
     /// </summary>
     private void Start()
     {
         SaveDataManager.SetLevelCompleted(SceneManager.GetActiveScene().name);
-        SaveDataManager.SetLastFinishedLevel(SceneManager.GetActiveScene().name);
         _inputActions = new DebugInputActions();
         _inputActions.UI.Enable();
+        _inputActions.UI.SkipCutscene.performed += ctx => SkipCutscene();
         _inputActions.UI.Pause.performed += ctx => ResumePlayAudio(_menuManager.GetPauseInvoked());
 
         //_endChapterCutsceneVideo.loopPointReached += CheckEnd;
@@ -169,9 +176,8 @@ public class CutsceneFramework : MonoBehaviour
         }
 
         //initial state of circle skip indicator
-        if (!_skipCompletingIcon) return;
-        _skipCompletingIcon.enabled = true;
-        _skipCompletingIcon.fillAmount = 0;
+        SkipCompletingIcon.enabled = true;
+        SkipCompletingIcon.fillAmount = 0;
     }
     
     /// <summary>
@@ -180,6 +186,7 @@ public class CutsceneFramework : MonoBehaviour
     private void OnDisable()
     {
         _inputActions.UI.Disable();
+        _inputActions.UI.SkipCutscene.performed -= ctx => SkipCutscene();
         _inputActions.UI.Pause.performed -= ctx => ResumePlayAudio(_menuManager.GetPauseInvoked());
 
         if(_mAnyButtonPressedListener != null)
@@ -223,20 +230,19 @@ public class CutsceneFramework : MonoBehaviour
                 SceneManager.LoadScene(SaveDataManager.GetSceneLoadedFrom());
                 return;
             }
-
-            if (_skipCompletingIcon && _holdToSkipIcon)
-            {
-                _skipCompletingIcon.enabled = false;
-                _holdToSkipIcon.SetActive(false);
-            }
+            SkipCompletingIcon.enabled = false;
+            _holdToSkipIcon.SetActive(false);
             SceneController.Instance.LoadNewScene(_loadingLevelIndex);
-
-            if(SceneManager.GetActiveScene().name.Equals("CSCN_Act5_End"))
-            {
-                SaveDataManager.SetLastFinishedLevel(SceneManager.GetActiveScene().name);
-            }
         }
-        
+    }
+
+    /// <summary>
+    /// Takes the reference of the current controller from the debug manager to make sure
+    /// input prompt for skipping the cutscene lines up with your current input device
+    /// </summary>
+    public void ControllerIconChange()
+    {
+        ControllerGlyphManager.Instance.GetIcon();
     }
 
     /// <summary>
@@ -270,10 +276,8 @@ public class CutsceneFramework : MonoBehaviour
 
         if (scene.Substring(0, 2).Equals("CS"))
         {
-            if (_holdToSkipIcon)
-            {
-                _holdToSkipIcon.SetActive(true);
-            }
+            _holdToSkipIcon.SetActive(true);
+            Debug.Log("Hold the Space bar to skip!");
         }
     }
 
@@ -427,50 +431,27 @@ public class CutsceneFramework : MonoBehaviour
         if (_inputActions.UI.SkipCutscene.IsPressed())
         {
             _timer += Time.deltaTime;
-            _skipHeld = true;
-            _skipCompletingIcon.enabled = true;
 
             if (_timer > _timeTillSkip)
             {
                 Debug.Log("run");
                 SkipCutscene();
             }
-
-            if (_skipCompletingIcon)
-            {
-                _skipCompletingIcon.fillAmount = fillSpeed;
-            }
+            SkipCompletingIcon.fillAmount = fillSpeed;
         }
-        else if(_timer > 0) 
+        else if(_timer != 0) //so timer doesn't become negative
         {
             _timer -= Time.deltaTime;
-            _skipHeld = false;
-
-            if (_skipCompletingIcon)
-            {
-                _skipCompletingIcon.fillAmount = fillSpeed;
-            }
-        }
-        else //so timer doesn't become negative
-        {
-            _timer = 0;
+            SkipCompletingIcon.fillAmount = fillSpeed;
         }
 
         //turns off the icon after some time
-        if (_holdToSkipIcon && _holdToSkipIcon.activeInHierarchy)
+        if (_holdToSkipIcon.activeInHierarchy)
         {
             _skipIconTimer += Time.deltaTime;
-
-            //So the icon doesn't disappear while Space bar is held
-            if (_skipHeld)
-            {
-                _skipIconTimer = 0;
-            }
-
             if (_skipIconTimer > _skipIconDuration || _menuManager.GetPauseInvoked())
             {
                 _holdToSkipIcon.SetActive(false);
-                _skipCompletingIcon.enabled = false;
                 _skipIconTimer = 0f;
             }
         }

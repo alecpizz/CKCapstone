@@ -20,7 +20,6 @@ using SaintsField;
 using SaintsField.Playa;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.Analytics;
 
 public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     ITurnListener, IHarmonyBeamEntity
@@ -55,8 +54,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     {
         get => gameObject;
     }
-
-    public static Action EnemyBeamSwitchActivation;
 
     [SerializeField] private GameObject _destinationMarker;
     [SerializeField] private GameObject _destPathVFX;
@@ -120,9 +117,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         Left,
         Right
     }
-
-    [SerializeField] private int _startPosOffset;
-    private float _initialY = 0;
 
     /// <summary>
     /// Struct to hold an enemy's move. Contains a direction and magnitude.
@@ -244,12 +238,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             PlayerMovement.Instance.BeamSwitchActivation += () => _waitOnBeam = true;
         }
 
-        EnemyBeamSwitchActivation += () => _waitOnBeam = true;
-
         InitializeDestinationMarkers();
-
-        _initialY = transform.position.y;
-        StartPositionOffset();
 
         UpdateDestinationMarker();
         DestinationPath();
@@ -310,7 +299,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private void OnDisable()
     {
         PlayerMovement.Instance.BeamSwitchActivation -= () => _waitOnBeam = true;
-        EnemyBeamSwitchActivation -= () => _waitOnBeam = true;
 
         if (RoundManager.Instance != null)
         {
@@ -320,52 +308,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         if (TimeSignatureManager.Instance != null)
         {
             TimeSignatureManager.Instance.UnregisterTimeListener(this);
-        }
-    }
-
-    /// <summary>
-    /// Scans for switches to alert enemies to wait for the beams to rotate.
-    /// This ensures enemies don't move while being hit by a beam.
-    /// </summary>
-    private void ScanForHarmonySwitches()
-    {
-        var currTilePos = (transform.position);
-        var fwd = transform.forward;
-        bool stop = false;
-        int spacesChecked = 0;
-
-        while (!stop && spacesChecked < _enemyMovementTime)
-        {
-            spacesChecked++;
-
-            var nextCell = GridBase.Instance.GetCellPositionInDirection(currTilePos, fwd);
-            if (currTilePos == nextCell) //no where to go :(
-            {
-                stop = true;
-            }
-
-            currTilePos = nextCell;
-
-            var entries = GridBase.Instance.GetCellEntries(nextCell);
-            foreach (var gridEntry in entries) //check each cell
-            {
-                if (gridEntry == null) continue;
-                //the entry has a switch type :)
-                if (gridEntry.EntryObject.TryGetComponent(out SwitchTrigger entity))
-                {
-                    if (entity.HarmonyBeamsPresent)
-                    {
-                        EnemyBeamSwitchActivation?.Invoke();
-                        // Reset this enemy's boolean so it can step on the switch
-                        _waitOnBeam = false;
-                    }
-                }
-                //no entry, but a cell that blocks movement. pass through.
-                else if (!gridEntry.IsTransparent)
-                {
-                    stop = true;
-                }
-            }
         }
     }
 
@@ -586,8 +528,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             return;
         }
 
-        ScanForHarmonySwitches();
-
         _isMoving = true;
         _lastPosition = transform.position;
         StartCoroutine(MovementRoutine());
@@ -646,35 +586,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
         for (int i = _subMarkerIdx; i < _subDestPathMarkers.Count; i++)
             _subDestPathMarkers[i].transform.position = Vector3.one * 1000;
-    }
-
-    /// <summary>
-    /// Function that changes an enemy's starting position within their move
-    /// points list for the first turn.
-    /// </summary>
-    private void StartPositionOffset()
-    {
-        if (_startPosOffset >= _moveDestinations.Count - 1 || _startPosOffset <= 0)
-        {
-            return;
-        }
-
-        for (int i = 0; i < _startPosOffset; i++)
-        {
-            bool isVFX = true;
-            EvaluateNextMove(ref _moveIndex, ref _isReturningToStart, ref isVFX);
-
-            var movePt = _moveDestinations[_moveIndex];
-            var goalCell = GetLongestPath(GridBase.Instance.CellToWorld(movePt), transform.position);
-            var moveWorld = GridBase.Instance.CellToWorld(goalCell);
-
-            Vector3 changeTransform = moveWorld;
-            changeTransform.y = _initialY;
-            transform.position = changeTransform;
-        }
-
-        _moveIndex = _startPosOffset;
-        _indicatorIndex = _startPosOffset;
     }
 
     /// <summary>
@@ -816,9 +727,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             UpdateDestinationMarker();
         }
 
-        if (_waitOnBeam)
-            _waitOnBeam = false;
-
         RoundManager.Instance.CompleteTurn(this);
     }
 
@@ -891,7 +799,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     {
         //not at the end of our list of moves.
         if (moveIndex < _moveDestinations.Count - 1)
-        { 
+        {
             if (!looped)
             {
                 //move forward as normal
@@ -904,12 +812,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 if (moveIndex <= 0)
                 {
                     moveIndex = 0;
-                    //checks if there is only one move in the list and will add a movement if so
-                    //to prevent skipping a turn
-                    if (_moveDestinations.Count - 1 == 1)
-                    {
-                        moveIndex++;
-                    }
                     looped = false;
                     _endRotate = true;
                 }
