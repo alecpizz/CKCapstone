@@ -12,14 +12,8 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
-public class PortalTransition : MonoBehaviour
+public class PortalTransition : ScreenTransitionBase
 {
-    [Header("Test Controls")]
-    [Tooltip("Use this to test fading the screen in")]
-    [SerializeField] private bool _testFadeIn = false;
-    [Tooltip("Use this to test fading the screen out")]
-    [SerializeField] private bool _testFadeOut = false;
-
     [Header("Adjustable Values")]
     [Tooltip("How long the white screen should take to fade in")]
     [SerializeField] private float _whiteFadeIn = 1.5f;
@@ -56,28 +50,9 @@ public class PortalTransition : MonoBehaviour
     }
 
     /// <summary>
-    /// Allows the user to test all fade transitions in editor
-    /// </summary>
-    private void Update()
-    {
-        // Test fading in
-        if (_testFadeIn)
-        {
-            ScreenFade();
-            _testFadeIn = false;
-        }
-        // Test fading out
-        if (_testFadeOut)
-        {
-            FadeOut();
-            _testFadeOut = false;
-        }
-    }
-
-    /// <summary>
     /// Fade in screen effeects from nothing.  Call this when the screen should fade in.
     /// </summary>
-    public void ScreenFade()
+    public override void FadeIn()
     {
         // Reset all color properties
         _white.color = new Color(_white.color.r, _white.color.b, _white.color.b, 0f);
@@ -96,7 +71,7 @@ public class PortalTransition : MonoBehaviour
     /// <summary>
     /// Fade out screen effects.  Call this when the screen should fade out.
     /// </summary>
-    public void FadeOut()
+    public override void FadeOut()
     {
         _glow.color = new Color(_glow.color.r, _glow.color.b, _glow.color.b, 0f);
         _glowObj.SetActive(false);

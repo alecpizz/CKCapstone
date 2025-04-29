@@ -12,14 +12,8 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
-public class IllnessTransition : MonoBehaviour
+public class IllnessTransition : ScreenTransitionBase
 {
-    [Header("Test Controls")]
-    [Tooltip("Use this to test fading the screen in")]
-    [SerializeField] private bool _testFadeIn = false;
-    [Tooltip("Use this to test fading the screen out")]
-    [SerializeField] private bool _testFadeOut = false;
-
     [Header("Intensity Values")]
     [Tooltip("How opaque the aura effect should initially become")]
     [SerializeField] private float _auraAlpha = .98f;
@@ -63,31 +57,12 @@ public class IllnessTransition : MonoBehaviour
         _aura = _auraObj.GetComponent<Image>();
         _white = _whiteObj.GetComponent<Image>();
     }
-
-    /// <summary>
-    /// Allows the user to test all fade transitions in editor
-    /// </summary>
-    private void Update()
-    {
-        // Test fading in
-        if (_testFadeIn)
-        {
-            ScreenFade();
-            _testFadeIn = false;
-        }
-
-        // Test fading out
-        if (_testFadeOut)
-        {
-            FadeOut();
-            _testFadeOut = false;
-        }
-    }
+    
 
     /// <summary>
     /// Fade in from nothing.  Call this when the screen should fade in.
     /// </summary>
-    public void ScreenFade()
+    public override void FadeIn()
     {
         // Reset all values
         _white.color = new Color(_white.color.r, _white.color.b, _white.color.b, 0f);
@@ -104,7 +79,7 @@ public class IllnessTransition : MonoBehaviour
     /// <summary>
     /// Fades out from white.  Call this when the screen should fade out.
     /// </summary>
-    public void FadeOut()
+    public override void FadeOut()
     {
         // Reset all values
         _white.color = new Color(_white.color.r, _white.color.b, _white.color.b, 1f);

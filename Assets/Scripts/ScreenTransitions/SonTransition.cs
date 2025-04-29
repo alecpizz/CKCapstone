@@ -12,14 +12,8 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
-public class SonTransition : MonoBehaviour
+public class SonTransition : ScreenTransitionBase
 {
-    [Header("Test Controls")]
-    [Tooltip("Use this to test fading the screen in")]
-    [SerializeField] private bool _testFadeIn = false;
-    [Tooltip("Use this to test fading the screen out")]
-    [SerializeField] private bool _testFadeOut = false;
-
     [Header("Adjustable Values")]
     [Tooltip("How long the white screen should take to fade in")]
     [SerializeField] private float _whiteFadeIn = 1.5f;
@@ -46,30 +40,9 @@ public class SonTransition : MonoBehaviour
     }
 
     /// <summary>
-    /// Allows the user to test all fade transitions in editor
-    /// </summary>
-    private void Update()
-    {
-        // Test fading in the effects
-        if (_testFadeIn)
-        {
-            ScreenFade();
-            _testFadeIn = false;
-        }
-
-        // Test fading out the effects
-        if (_testFadeOut)
-        {
-            FadeOut();
-            _testFadeOut = false;
-        }
-
-    }
-
-    /// <summary>
     /// Fade in from nothing. Call this when the screen should fade in.
     /// </summary>
-    public void ScreenFade()
+    public override void FadeIn()
     {
         // Reset the screen color
         _white.color = new Color(_white.color.r, _white.color.b, _white.color.b, 0f);
@@ -85,7 +58,7 @@ public class SonTransition : MonoBehaviour
     /// <summary>
     /// Fade out from white.  Call this when the screen should fade out.
     /// </summary>
-    public void FadeOut()
+    public override void FadeOut()
     {
         StartCoroutine(FadeFromWhite());
     }

@@ -12,14 +12,8 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
-public class FadeToBlack : MonoBehaviour
+public class FadeToBlack : ScreenTransitionBase
 {
-    [Header("Test Controls")]
-    [Tooltip("Use this to test fading the screen in")]
-    [SerializeField] private bool _testFadeIn = false;
-    [Tooltip("Use this to test fading the screen out")]
-    [SerializeField] private bool _testFadeOut = false;
-
     [Header("Adjustable Values")]
     [Tooltip("How long the screen should take to fade in")]
     [SerializeField] private float _fadeIn = 1.5f;
@@ -42,28 +36,9 @@ public class FadeToBlack : MonoBehaviour
     }
 
     /// <summary>
-    /// Allows the user to test all fade transitions in editor
-    /// </summary>
-    private void Update()
-    {
-        // Test fading in
-        if (_testFadeIn)
-        {
-            ScreenFade();
-            _testFadeIn = false;
-        }
-        // Test fading out
-        if (_testFadeOut)
-        {
-            FadeOut();
-            _testFadeOut = false;
-        }
-    }
-
-    /// <summary>
     /// Fade in screen effeects from nothing.  Call this when the screen should fade in.
     /// </summary>
-    public void ScreenFade()
+    public override void FadeIn()
     {
         // Reset all color properties
         _blackScreen.color = new Color(_blackScreen.color.r, _blackScreen.color.b, _blackScreen.color.b, 0f);
@@ -75,7 +50,7 @@ public class FadeToBlack : MonoBehaviour
     /// <summary>
     /// Fade out screen effects.  Call this when the screen should fade out.
     /// </summary>
-    public void FadeOut()
+    public override void FadeOut()
     {
         StartCoroutine(LerpEffects(_blackScreen, _fadeOut, 1, 0));
     }
