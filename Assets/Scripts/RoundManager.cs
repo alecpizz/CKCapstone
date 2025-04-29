@@ -488,18 +488,13 @@ public sealed class RoundManager : MonoBehaviour
                 }
             }
 
-            if (input != _lastRegistered)
-            {
-                input = _lastRegistered;
-            }
-
             _isDelaying = true;
             StartCoroutine(ShortDelay());
             
             return new Vector3(input.x, 0f, input.y);
         }
         //does last input so that it links up with the mirror enemy
-        return new Vector3(_lastMovementInput.x, _lastMovementInput.y, _lastMovementInput.z);
+        return _lastMovementInput;
     }
 
     /// <summary>
@@ -510,13 +505,13 @@ public sealed class RoundManager : MonoBehaviour
     {
         if (_isDelaying)
         {
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(0.01f);
             _isDelaying = false;
         }
 
         if (!_isDelaying)
         {
-            StopCoroutine("ShortDelay");
+            StopCoroutine(nameof(ShortDelay));
         }
     }
     
