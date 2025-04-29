@@ -1,3 +1,10 @@
+/******************************************************************
+*    Author: Alec Pizziferro
+*    Contributors: Zayden Joyner.
+*    Date Created: 4/29/25
+*    Description: Base class for screen transitions.
+ *   Provides a base method for fading in/out.
+*******************************************************************/
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
