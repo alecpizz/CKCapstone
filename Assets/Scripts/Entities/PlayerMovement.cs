@@ -141,8 +141,6 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
         _movementTime = RoundManager.Instance.EnemiesPresent ? 
             _withEnemiesMovementTime : _noEnemiesMovementTime;
-
-        RoundManager.Instance.AutocompleteToggled += OnAutocompleteToggledEvent;
     }
 
     /// <summary>
