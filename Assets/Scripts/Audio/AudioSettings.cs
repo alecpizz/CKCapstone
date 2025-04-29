@@ -10,6 +10,8 @@ using UnityEngine;
 using FMOD.Studio;
 using FMODUnity;
 using UnityEngine.UI;
+using Unity.VisualScripting;
+using UnityEngine.EventSystems;
 
 public class AudioSettings : MonoBehaviour
 {
@@ -18,11 +20,12 @@ public class AudioSettings : MonoBehaviour
     [SerializeField] private Slider _SFXSlider;
     [Range (0, 10)]
     [SerializeField] private float _voiceVolume;
+    [SerializeField] private EventReference _menuClicks;
 
     private Bus _master;
     private Bus _bgMusic;
     private Bus _SFX;
-    private Bus _voice;
+    private Bus _voice; 
     
     private const string Volume = "Volume";
     private const string MasterVolume = "Master";
@@ -51,6 +54,7 @@ public class AudioSettings : MonoBehaviour
     {
         _master.setVolume(_masterSlider.value);
         SaveDataManager.SetSettingFloat(Volume, MasterVolume, _masterSlider.value);
+        AudioManager.Instance.PlaySound(_menuClicks);
     }
 
     /// <summary>
@@ -60,6 +64,7 @@ public class AudioSettings : MonoBehaviour
     {
         _bgMusic.setVolume(_bgMusicSlider.value);
         SaveDataManager.SetSettingFloat(Volume, MusicVolume, _bgMusicSlider.value);
+        AudioManager.Instance.PlaySound(_menuClicks);
     }
 
     /// <summary>
@@ -69,6 +74,7 @@ public class AudioSettings : MonoBehaviour
     {
         _SFX.setVolume(_SFXSlider.value);
         SaveDataManager.SetSettingFloat(Volume, SFXVolume, _SFXSlider.value);
+        AudioManager.Instance.PlaySound(_menuClicks);
     }
 
     /// <summary>
