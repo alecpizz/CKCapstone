@@ -185,7 +185,6 @@ public class MenuManager : MonoBehaviour
         if (_controllerMenuing)
         {
             EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
-            _controllerMenuing = true;
         }
         else
         {
@@ -207,7 +206,6 @@ public class MenuManager : MonoBehaviour
             if (_controllerMenuing)
             {
                 EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
-                _controllerMenuing = true;
             }
             else
             {
@@ -366,17 +364,16 @@ public class MenuManager : MonoBehaviour
         if (_optionsOpen && !_controllerMenuing)
         {
             EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
-            _controllerMenuing = true;
         }
         else if (!_controllerMenuing)
         {
             EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
-            _controllerMenuing = true;
         }
         else
         {
             return;
         }
+        _controllerMenuing = true;
     }
 
     /// <summary>
