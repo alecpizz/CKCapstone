@@ -505,7 +505,7 @@ public sealed class RoundManager : MonoBehaviour
     {
         if (_isDelaying)
         {
-            yield return new WaitForSeconds(0.01f);
+            yield return new WaitForSeconds(0.05f);
             _isDelaying = false;
         }
 
