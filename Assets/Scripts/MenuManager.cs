@@ -46,8 +46,8 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject _skipPromptInPause;
     private bool _skipInPause;
 
-    private bool _pauseInvoked = true;
-    private bool _isMainMenu;    
+    private bool _pauseInvoked = false;
+    private bool _isMainMenu;   
     private bool _optionsOpen = false;
     private bool _controllerMenuing = false;
 
@@ -224,7 +224,6 @@ public class MenuManager : MonoBehaviour
             if (path.Contains("CS"))
             {
                 _skipPromptInPause.SetActive(true);
-                _skipInPause = true;
             }
         }
         else if (_optionsScreen != null && _optionsScreen.activeInHierarchy)
@@ -274,15 +273,6 @@ public class MenuManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Getter method to tell if the button to skip a cutscene in pause menu is used.
-    /// </summary>
-    /// <returns></returns>
-    public bool GetSkipInPause()
-    {
-        return _skipInPause;
-    }
-
-    /// <summary>
     /// Invoked for pause menu to return to the base main menu scene
     /// </summary>
     public void BackToMainMenu()
@@ -313,6 +303,7 @@ public class MenuManager : MonoBehaviour
     public void StartGame()
     {
         SceneManager.LoadScene(_firstLevelIndex);
+        SaveDataManager.SetLastFinishedLevel(SceneUtility.GetScenePathByBuildIndex(_firstLevelIndex));
     }
 
     /// <summary>
