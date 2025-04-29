@@ -21,8 +21,10 @@ public class SonTransition : MonoBehaviour
     [SerializeField] private bool _testFadeOut = false;
 
     [Header("Adjustable Values")]
-    [Tooltip("How long the white screen should take to fade in and out")]
-    [SerializeField] private float _whiteFade = 1.5f;
+    [Tooltip("How long the white screen should take to fade in")]
+    [SerializeField] private float _whiteFadeIn = 1.5f;
+    [Tooltip("How long the white screen should take to fade out")]
+    [SerializeField] private float _whiteFadeOut = 1.5f;
 
     [Header("Object References")]
     [Tooltip("The white screen UI image")]
@@ -77,7 +79,7 @@ public class SonTransition : MonoBehaviour
         _notes.Play();
 
         // Start fading in the white screen
-        StartCoroutine(LerpEffects(_white, _whiteFade));
+        StartCoroutine(LerpEffects(_white, _whiteFadeIn));
     }
 
     /// <summary>
@@ -140,11 +142,11 @@ public class SonTransition : MonoBehaviour
         Color whiteA = _white.color;
 
         // Fade the white screen out over time
-        while (time < _whiteFade)
+        while (time < _whiteFadeOut)
         {
 
             // Set the image color over time
-            whiteA.a = Mathf.Lerp(1f, 0f, time / _whiteFade);
+            whiteA.a = Mathf.Lerp(1f, 0f, time / _whiteFadeOut);
             _white.color = whiteA;
 
             // Add the seconds passed to time

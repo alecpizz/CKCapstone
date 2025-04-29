@@ -21,8 +21,10 @@ public class PortalTransition : MonoBehaviour
     [SerializeField] private bool _testFadeOut = false;
 
     [Header("Adjustable Values")]
-    [Tooltip("How long the white screen should take to fade in or out")]
-    [SerializeField] private float _whiteFade = 1.5f;
+    [Tooltip("How long the white screen should take to fade in")]
+    [SerializeField] private float _whiteFadeIn = 1.5f;
+    [Tooltip("How long the white screen should take to fade out")]
+    [SerializeField] private float _whiteFadeOut = 1.5f;
     [Tooltip("How long the central yellow glow image should take to fade in")]
     [SerializeField] private float _glowFade = 1.5f;
     [Tooltip("How long the sparkles in the corners of the screen should take to fade in")]
@@ -86,7 +88,7 @@ public class PortalTransition : MonoBehaviour
         _glowObj.SetActive(true);
 
         // Fade each effect in over different durations of time
-        StartCoroutine(LerpEffects(_white, _whiteFade, 0, 1));
+        StartCoroutine(LerpEffects(_white, _whiteFadeIn, 0, 1));
         StartCoroutine(LerpEffects(_glow, _glowFade, 0, 1));
         StartCoroutine(LerpEffects(_sparkles, _sparklesFadeIn, 0, 1));
     }
@@ -98,7 +100,7 @@ public class PortalTransition : MonoBehaviour
     {
         _glow.color = new Color(_glow.color.r, _glow.color.b, _glow.color.b, 0f);
         _glowObj.SetActive(false);
-        StartCoroutine(LerpEffects(_white, _whiteFade, 1, 0));
+        StartCoroutine(LerpEffects(_white, _whiteFadeOut, 1, 0));
         StartCoroutine(LerpEffects(_sparkles, _sparklesFadeOut, 1, 0));
     }
 
