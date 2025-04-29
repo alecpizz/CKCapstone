@@ -21,9 +21,9 @@ public class FadeToBlack : MonoBehaviour
     [SerializeField] private bool _testFadeOut = false;
 
     [Header("Adjustable Values")]
-    [Tooltip("How long the white screen should take to fade in")]
+    [Tooltip("How long the screen should take to fade in")]
     [SerializeField] private float _fadeIn = 1.5f;
-    [Tooltip("How long the white screen should take to fade out")]
+    [Tooltip("How long the screen should take to fade out")]
     [SerializeField] private float _fadeOut = 1.5f;
 
     [Header("Object References")]
