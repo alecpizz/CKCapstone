@@ -30,6 +30,12 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 using UnityEngine.InputSystem.Controls;
 using Debug = UnityEngine.Debug;
+using Unity.VisualScripting;
+using UnityEngine.UI;
+using UnityEngine.Serialization;
+
+
+
 
 
 #if UNITY_EDITOR
@@ -97,7 +103,16 @@ public class CutsceneFramework : MonoBehaviour
     [SerializeField] private MenuManager _menuManager;
 
     private float _timer = 0f;
-    [SerializeField] float _skipHoldTime = 2f;
+    [SerializeField] private float _timeTillSkip = 2f;
+
+    [FormerlySerializedAs("_skipHoldTime")]
+    [SerializeField] private float _skipIconDuration = 2f;
+
+    private float _skipIconTimer = 0f;
+    [SerializeField] private GameObject _holdToSkipIcon;
+
+    [SerializeField] private Image _skipCompletingIcon;
+    private bool _skipHeld = false;
     
     /// <summary>
     /// Determines whether to play the Challenge or End Chapter Cutscene
@@ -108,11 +123,10 @@ public class CutsceneFramework : MonoBehaviour
         SaveDataManager.SetLastFinishedLevel(SceneManager.GetActiveScene().name);
         _inputActions = new DebugInputActions();
         _inputActions.UI.Enable();
-        _inputActions.UI.SkipCutscene.performed += ctx => SkipCutscene();
         _inputActions.UI.Pause.performed += ctx => ResumePlayAudio(_menuManager.GetPauseInvoked());
 
         //_endChapterCutsceneVideo.loopPointReached += CheckEnd;
-        //Registers is button is pressed
+        //Registers if button is pressed
         _mAnyButtonPressedListener = InputSystem.onAnyButtonPress.Call(ButtonIsPressed);
 
         // Plays the Challenge Cutscene, provided that only the corresponding boolean
@@ -153,6 +167,11 @@ public class CutsceneFramework : MonoBehaviour
             cam.backgroundColor = Color.black;
             cam.clearFlags = CameraClearFlags.SolidColor;
         }
+
+        //initial state of circle skip indicator
+        if (!_skipCompletingIcon) return;
+        _skipCompletingIcon.enabled = true;
+        _skipCompletingIcon.fillAmount = 0;
     }
     
     /// <summary>
@@ -161,7 +180,6 @@ public class CutsceneFramework : MonoBehaviour
     private void OnDisable()
     {
         _inputActions.UI.Disable();
-        _inputActions.UI.SkipCutscene.performed -= ctx => SkipCutscene();
         _inputActions.UI.Pause.performed -= ctx => ResumePlayAudio(_menuManager.GetPauseInvoked());
 
         if(_mAnyButtonPressedListener != null)
@@ -194,7 +212,7 @@ public class CutsceneFramework : MonoBehaviour
     /// </summary>
     public void SkipCutscene()
     {
-        if (_timer > _skipHoldTime || _menuManager.GetSkipInPause())
+        if(_timer > _timeTillSkip || _menuManager.GetPauseInvoked())
         {
             StopAllCoroutines();
             string scenePath = SceneUtility.GetScenePathByBuildIndex(_loadingLevelIndex);
@@ -205,13 +223,20 @@ public class CutsceneFramework : MonoBehaviour
                 SceneManager.LoadScene(SaveDataManager.GetSceneLoadedFrom());
                 return;
             }
+
+            if (_skipCompletingIcon && _holdToSkipIcon)
+            {
+                _skipCompletingIcon.enabled = false;
+                _holdToSkipIcon.SetActive(false);
+            }
             SceneController.Instance.LoadNewScene(_loadingLevelIndex);
 
             if(SceneManager.GetActiveScene().name.Equals("CSCN_Act5_End"))
             {
                 SaveDataManager.SetLastFinishedLevel(SceneManager.GetActiveScene().name);
             }
-        }              
+        }
+        
     }
 
     /// <summary>
@@ -245,7 +270,10 @@ public class CutsceneFramework : MonoBehaviour
 
         if (scene.Substring(0, 2).Equals("CS"))
         {
-            Debug.Log("Hold the Space bar to skip!");
+            if (_holdToSkipIcon)
+            {
+                _holdToSkipIcon.SetActive(true);
+            }
         }
     }
 
@@ -393,21 +421,59 @@ public class CutsceneFramework : MonoBehaviour
     /// </summary>
     private void Update()
     {
-        //Skips cutscene after 2 secs of holding Space bar
+        float fillSpeed = _timer / _timeTillSkip;
+
+        //Skips cutscene after holding Space bar until icon is complete
         if (_inputActions.UI.SkipCutscene.IsPressed())
         {
             _timer += Time.deltaTime;
-            
-            if(_timer > _skipHoldTime)
+            _skipHeld = true;
+            _skipCompletingIcon.enabled = true;
+
+            if (_timer > _timeTillSkip)
             {
+                Debug.Log("run");
                 SkipCutscene();
             }
+
+            if (_skipCompletingIcon)
+            {
+                _skipCompletingIcon.fillAmount = fillSpeed;
+            }
         }
-        else
+        else if(_timer > 0) 
         {
-            _timer = 0f;
+            _timer -= Time.deltaTime;
+            _skipHeld = false;
+
+            if (_skipCompletingIcon)
+            {
+                _skipCompletingIcon.fillAmount = fillSpeed;
+            }
         }
-        
+        else //so timer doesn't become negative
+        {
+            _timer = 0;
+        }
+
+        //turns off the icon after some time
+        if (_holdToSkipIcon && _holdToSkipIcon.activeInHierarchy)
+        {
+            _skipIconTimer += Time.deltaTime;
+
+            //So the icon doesn't disappear while Space bar is held
+            if (_skipHeld)
+            {
+                _skipIconTimer = 0;
+            }
+
+            if (_skipIconTimer > _skipIconDuration || _menuManager.GetPauseInvoked())
+            {
+                _holdToSkipIcon.SetActive(false);
+                _skipCompletingIcon.enabled = false;
+                _skipIconTimer = 0f;
+            }
+        }
 
         if (_isEndChapterCutscene)
         {
