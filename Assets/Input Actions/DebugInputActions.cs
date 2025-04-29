@@ -287,6 +287,17 @@ public partial class @DebugInputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""7891143d-f244-4e3a-ab76-06dc6b33c668"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SkipCutscene"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""4e36a0df-8f6a-4c85-9788-1adda01599bf"",
                     ""path"": ""<Keyboard>/escape"",
                     ""interactions"": """",
