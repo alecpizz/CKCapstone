@@ -188,6 +188,8 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
 
             _wallCollider.enabled = !_shouldActivate;
             _ghostCollider.enabled = _shouldActivate;
+
+            TriggerHarmonyScan();
         }
         else
         {

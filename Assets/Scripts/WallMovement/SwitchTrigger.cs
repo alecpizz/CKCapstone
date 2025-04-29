@@ -23,7 +23,7 @@ using SaintsField;
 /// </summary>
 public class SwitchTrigger : MonoBehaviour, IGridEntry
 {
-    public bool HarmonyBeamsPresent => _affectedBeams.Count > 0;
+    public bool HarmonyBeamsPresent => _affectedBeams.Count > 0 || _affectedReflectors.Count > 0;
 
     // for registering mechanics to a switch
     [SerializeReference] private List<MovingWall> _affectedWalls = new List<MovingWall>();
