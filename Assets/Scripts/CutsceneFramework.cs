@@ -65,7 +65,7 @@ public class CutsceneFramework : MonoBehaviour
     [SerializeField] private int _loadingLevelIndex = 0;
 
     [SerializeField] private float _audioVolumeOverride = 150f;
-    
+
     [Tooltip("For endcutscene audio only")]
     [Range(0, 10)]
     [SerializeField] private float _endCutsceneVolumeOverride = 5f;
@@ -110,9 +110,9 @@ public class CutsceneFramework : MonoBehaviour
 
     private float _skipIconTimer = 0f;
     [SerializeField] private GameObject _holdToSkipIcon;
-
     [SerializeField] public Image SkipIcon;
     [SerializeField] public Image SkipCompletingIcon;
+    [SerializeField] private Image _skipCompletingIcon;
 
     [SerializeField] public Sprite KeyboardSkipButton;
     [SerializeField] public Sprite PlaystationSkipButton;
@@ -120,6 +120,8 @@ public class CutsceneFramework : MonoBehaviour
     [SerializeField] public Sprite XboxSkipButton;
     [SerializeField] public Sprite CompletionCircle;
     [SerializeField] public Sprite CompletionSquare;
+    
+    private bool _skipHeld = false;
 
     /// <summary>
     /// Determines whether to play the Challenge or End Chapter Cutscene
@@ -127,9 +129,9 @@ public class CutsceneFramework : MonoBehaviour
     private void Start()
     {
         SaveDataManager.SetLevelCompleted(SceneManager.GetActiveScene().name);
+        SaveDataManager.SetLastFinishedLevel(SceneManager.GetActiveScene().name);
         _inputActions = new DebugInputActions();
         _inputActions.UI.Enable();
-        _inputActions.UI.SkipCutscene.performed += ctx => SkipCutscene();
         _inputActions.UI.Pause.performed += ctx => ResumePlayAudio(_menuManager.GetPauseInvoked());
 
         //_endChapterCutsceneVideo.loopPointReached += CheckEnd;
@@ -142,7 +144,7 @@ public class CutsceneFramework : MonoBehaviour
         {
             PlayChallengeCutscene();
         }
-        
+
         // Plays the End Chapter Cutscene, provided that only the corresponding boolean 
         // (_isEndChapterCutscene) is true
         if (_isEndChapterCutscene && !_isChallengeCutscene)
@@ -156,14 +158,14 @@ public class CutsceneFramework : MonoBehaviour
                     "https://docs.unity3d.com/Manual/class-VideoPlayer.html");
                 return;
             }
-            
+
             //Sets up the video to play it in the scene
             _endChapterCutsceneVideo.audioOutputMode = VideoAudioOutputMode.APIOnly;
             _endChapterCutsceneVideo.prepareCompleted += Prepared;
             _endChapterCutsceneVideo.loopPointReached += VideoEnded;
             _endChapterCutsceneVideo.Prepare();
-            
-            #if UNITY_EDITOR
+
+#if UNITY_EDITOR
             EditorApplication.pauseStateChanged += EditorStateChange;
 #endif
         }
@@ -176,26 +178,26 @@ public class CutsceneFramework : MonoBehaviour
         }
 
         //initial state of circle skip indicator
-        SkipCompletingIcon.enabled = true;
-        SkipCompletingIcon.fillAmount = 0;
+        if (!_skipCompletingIcon) return;
+        _skipCompletingIcon.enabled = true;
+        _skipCompletingIcon.fillAmount = 0;
     }
-    
+
     /// <summary>
     /// Unregister input actions
     /// </summary>
     private void OnDisable()
     {
         _inputActions.UI.Disable();
-        _inputActions.UI.SkipCutscene.performed -= ctx => SkipCutscene();
         _inputActions.UI.Pause.performed -= ctx => ResumePlayAudio(_menuManager.GetPauseInvoked());
 
-        if(_mAnyButtonPressedListener != null)
+        if (_mAnyButtonPressedListener != null)
         {
             _mAnyButtonPressedListener.Dispose();
             _mAnyButtonPressedListener = null;
         }
     }
-    
+
     /// <summary>
     /// Pauses and plays the audio and video of a cutscene
     /// </summary>
@@ -210,8 +212,8 @@ public class CutsceneFramework : MonoBehaviour
         {
             _endChapterCutsceneVideo.Play();
         }
-        
-        _mChannel.setPaused(play);                                       
+
+        _mChannel.setPaused(play);
     }
 
     /// <summary>
@@ -219,7 +221,7 @@ public class CutsceneFramework : MonoBehaviour
     /// </summary>
     public void SkipCutscene()
     {
-        if(_timer > _timeTillSkip || _menuManager.GetPauseInvoked())
+        if (_timer > _timeTillSkip || _menuManager.GetPauseInvoked())
         {
             StopAllCoroutines();
             string scenePath = SceneUtility.GetScenePathByBuildIndex(_loadingLevelIndex);
@@ -230,10 +232,20 @@ public class CutsceneFramework : MonoBehaviour
                 SceneManager.LoadScene(SaveDataManager.GetSceneLoadedFrom());
                 return;
             }
-            SkipCompletingIcon.enabled = false;
-            _holdToSkipIcon.SetActive(false);
+
+            if (_skipCompletingIcon && _holdToSkipIcon)
+            {
+                _skipCompletingIcon.enabled = false;
+                _holdToSkipIcon.SetActive(false);
+            }
             SceneController.Instance.LoadNewScene(_loadingLevelIndex);
+
+            if (SceneManager.GetActiveScene().name.Equals("CSCN_Act5_End"))
+            {
+                SaveDataManager.SetLastFinishedLevel(SceneManager.GetActiveScene().name);
+            }
         }
+
     }
 
     /// <summary>
@@ -276,8 +288,10 @@ public class CutsceneFramework : MonoBehaviour
 
         if (scene.Substring(0, 2).Equals("CS"))
         {
-            _holdToSkipIcon.SetActive(true);
-            Debug.Log("Hold the Space bar to skip!");
+            if (_holdToSkipIcon)
+            {
+                _holdToSkipIcon.SetActive(true);
+            }
         }
     }
 
@@ -317,7 +331,7 @@ public class CutsceneFramework : MonoBehaviour
             _mChannel.setPaused(state == PauseState.Paused);
         }
     }
-    #endif
+#endif
 
     /// <summary>
     /// If the video player is destroyed stop trying to play the video
@@ -327,9 +341,9 @@ public class CutsceneFramework : MonoBehaviour
         _mChannel.stop();
         mSound.release();
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         EditorApplication.pauseStateChanged -= EditorStateChange;
-        #endif
+#endif
     }
 
     /// <summary>
@@ -371,12 +385,12 @@ public class CutsceneFramework : MonoBehaviour
         _mExinfo.defaultfrequency = _mSampleRate;
         _mExinfo.length = _mTargetLatencySamples * (uint)_mExinfo.numchannels * sizeof(float);
         _mExinfo.format = FMOD.SOUND_FORMAT.PCMFLOAT;
-        
+
         FMODUnity.RuntimeManager.CoreSystem.createSound("", FMOD.MODE.LOOP_NORMAL | FMOD.MODE.OPENUSER, ref _mExinfo, out mSound);
         _mProvider.sampleFramesAvailable += SampleFramesAvailable;
         _mProvider.enableSampleFramesAvailableEvents = true;
         _mProvider.freeSampleFrameCountLowThreshold = _mProvider.maxSampleFrameCount - _mTargetLatencySamples;
-        
+
         vp.Play();
     }
 
@@ -391,7 +405,7 @@ public class CutsceneFramework : MonoBehaviour
         {
             uint samplesWritten = provider.ConsumeSampleFrames(buffer);
             _mBuffer.AddRange(buffer);
-            
+
             // Drift compensation
             // If we are behind our latency target, play a little faster
             // If we are ahead of our latency target, play a little slower            
@@ -431,27 +445,50 @@ public class CutsceneFramework : MonoBehaviour
         if (_inputActions.UI.SkipCutscene.IsPressed())
         {
             _timer += Time.deltaTime;
+            _skipHeld = true;
+            _skipCompletingIcon.enabled = true;
 
             if (_timer > _timeTillSkip)
             {
                 Debug.Log("run");
                 SkipCutscene();
             }
-            SkipCompletingIcon.fillAmount = fillSpeed;
+
+            if (_skipCompletingIcon)
+            {
+                _skipCompletingIcon.fillAmount = fillSpeed;
+            }
         }
-        else if(_timer != 0) //so timer doesn't become negative
+        else if (_timer > 0)
         {
             _timer -= Time.deltaTime;
-            SkipCompletingIcon.fillAmount = fillSpeed;
+            _skipHeld = false;
+
+            if (_skipCompletingIcon)
+            {
+                _skipCompletingIcon.fillAmount = fillSpeed;
+            }
+        }
+        else //so timer doesn't become negative
+        {
+            _timer = 0;
         }
 
         //turns off the icon after some time
-        if (_holdToSkipIcon.activeInHierarchy)
+        if (_holdToSkipIcon && _holdToSkipIcon.activeInHierarchy)
         {
             _skipIconTimer += Time.deltaTime;
+
+            //So the icon doesn't disappear while Space bar is held
+            if (_skipHeld)
+            {
+                _skipIconTimer = 0;
+            }
+
             if (_skipIconTimer > _skipIconDuration || _menuManager.GetPauseInvoked())
             {
                 _holdToSkipIcon.SetActive(false);
+                _skipCompletingIcon.enabled = false;
                 _skipIconTimer = 0f;
             }
         }
