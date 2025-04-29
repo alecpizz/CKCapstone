@@ -129,7 +129,14 @@ public class MovingWall : MonoBehaviour, IParentSwitch, IGridEntry
     {
         Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
         Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos) + CKOffsetsReference.MovingWallOffset;
+        worldPos.y = _activatedHeight;
         transform.position = worldPos;
+        
+        
+        cellPos = GridBase.Instance.WorldToCell(_wallGhost.transform.position);
+        worldPos = GridBase.Instance.CellToWorld(cellPos) + CKOffsetsReference.MovingWallOffset;
+        worldPos.y = _groundHeight;
+        _wallGhost.transform.position = worldPos;
     }
 
     /// <summary>
