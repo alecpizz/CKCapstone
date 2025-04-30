@@ -801,7 +801,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                                 direction.y = 0;
                                 Vector3 endPos = transform.position + (direction.normalized * _attackLungeDistance);
                                 Tween.Position(transform, endValue: endPos, _enemyMovementTime * (1 - progress));
-                                _endRotate = false;
                             }
                             if (_animator != null)
                             {
