@@ -851,9 +851,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             {
                 _animator.SetBool(Turn, false);
             }*/
-            yield return Tween.Rotation(transform, endValue: Quaternion.LookRotation(-_rotationDir),
-            duration: _rotationTime,
-            ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).ToYieldInstruction();
+            if(!_didHitPlayer)
+                yield return Tween.Rotation(transform, endValue: Quaternion.LookRotation(-_rotationDir),
+                    duration: _rotationTime,
+                    ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).ToYieldInstruction();
+
         }
 
         RoundManager.Instance.CompleteTurn(this);
