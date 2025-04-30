@@ -59,6 +59,11 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     // Bool checked if this enemy is a Son Enemy
     [SerializeField] private bool sonEnemy;
 
+    [Space]
+    [Tooltip("Distance from which the enemy will stop when walking into the player.")]
+    [Range(0.01f, 2f)]
+    [SerializeField] private float _attackLungeDistance;
+
     private Rigidbody _rb;
  
     //public static PlayerMovement Instance;
@@ -178,8 +183,6 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                         }
                     }
                     _animator.SetBool(Forward, true);
-                    Tween rotateTween = Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
-                    ease: _rotationEase);
                     if (_animator != null)
                     {
                         _animator.SetBool(Turn, false);
@@ -190,40 +193,45 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                         AudioManager.Instance.PlaySound(_walkSound);
                     }
 
-                    _moveSequence = rotateTween.Chain(Tween.Position(transform,
-                        move + CKOffsetsReference.MirrorCopyEnemyOffset(_mirrored), modifiedMovementTime, ease: _movementEase).OnUpdate<MirrorAndCopyBehavior>(target: this, (target, tween) =>
+                    _moveSequence = Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
+                    ease: _rotationEase).Chain(Tween.Position(transform,
+                        move + CKOffsetsReference.MirrorCopyEnemyOffset(_mirrored), modifiedMovementTime, ease: _movementEase)
+                        .OnUpdate(target: this, (target, tween) =>
                         {
                             GridBase.Instance.UpdateEntry(this);
-                        }).OnUpdate(
-                    target: this,
-                    (_, _) =>
-                    {
-                        //not a fan of this but it should be more consistent than 
-                        //using collisions
-                        //also just math comparisons, no memory accessing outside of Position.
-                        if (GridBase.Instance.WorldToCell(PlayerMovement.Instance.Position) ==
-                            GridBase.Instance.WorldToCell(transform.position) &&
-                            !DebugMenuManager.Instance.Invincibility)
-                        {
-                            //hit a player!
-                            _didHitPlayer = true;
-                            PlayerMovement.Instance.OnDeath();
-                            if (_moveSequence.isAlive)
+                            //not a fan of this but it should be more consistent than 
+                            //using collisions
+                            //also just math comparisons, no memory accessing outside of Position.
+                            if (GridBase.Instance.WorldToCell(PlayerMovement.Instance.Position) ==
+                                GridBase.Instance.WorldToCell(transform.position) &&
+                                !DebugMenuManager.Instance.Invincibility)
                             {
-                                float progress = _moveSequence.progress;
-                                _moveSequence.Stop();
-                                Vector3 endPos = PlayerMovement.Instance.Position;
-                                endPos.y = transform.position.y;
-                                Tween.Position(transform, endValue: endPos, _movementTime * (1 - progress));
+                                //hit a player!
+                                _didHitPlayer = true;
+                                PlayerMovement.Instance.OnDeath();
+                                // When walking into a player, stops the enemy at a reasonable distance
+                                // for the enemy's attack animation to play without clipping
+                                if (_moveSequence.isAlive)
+                                {
+                                    float progress = _moveSequence.progress;
+                                    _moveSequence.Stop();
+                                   
+                                    Vector3 direction = PlayerMovement.Instance.Position - transform.position;
+                                    direction.y = 0;
+                                    Vector3 endPos = transform.position + (direction.normalized * _attackLungeDistance);
+                                    Tween.Position(transform, endValue: endPos, _movementTime * (1 - progress))
+                                    // Bandaid fix due to the mirror enemy moving after it reaches its destination from an external source
+                                    // This prevents the enemy from moving until the sccene is reloaded
+                                        .Chain(Tween.Position(transform, endPos, 2));
+                                    
+                                }
+                                if (_animator != null)
+                                {
+                                    _animator.SetBool(Attack, true);
+                                }
+                                SceneController.Instance.ReloadCurrentScene();
                             }
-                            if (_animator != null)
-                            {
-                                _animator.SetBool(Attack, true);
-                            }
-                            SceneController.Instance.ReloadCurrentScene();
-                        }
-
-                    }));
+                        }));
 
                     yield return _moveSequence.ToYieldInstruction();
                     _animator.SetBool(Forward, false);
@@ -323,6 +331,9 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     /// <param name="target"></param>
     public void AttackTarget(Transform target)
     {
+        if (_didHitPlayer)
+            return;
+
         var rotationDir = (target.position - transform.position).normalized;
         rotationDir.y = 0f;
         Tween.Rotation(transform, endValue: Quaternion.LookRotation(rotationDir),

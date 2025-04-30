@@ -173,6 +173,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [SerializeField]
     private bool _isSonEnemy;
 
+    [Space]
+    [Tooltip("Distance from which the enemy will stop when walking into the player.")]
+    [Range(0.01f, 2f)]
+    [SerializeField] private float _attackLungeDistance;
+
     private readonly List<Vector3Int> _moveDestinations = new();
 
     // Timing from metronome
@@ -775,12 +780,15 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                             //hit a player!
                             _didHitPlayer = true;
                             PlayerMovement.Instance.OnDeath();
+                            // When walking into a player, stops the enemy at a reasonable distance
+                            // for the enemy's attack animation to play without clipping
                             if (_moveSequence.isAlive)
                             {
                                 float progress = _moveSequence.progress;
                                 _moveSequence.Stop();
-                                Vector3 endPos = PlayerMovement.Instance.Position;
-                                endPos.y = transform.position.y;
+                                Vector3 direction = PlayerMovement.Instance.Position - transform.position;
+                                direction.y = 0;
+                                Vector3 endPos = transform.position + (direction.normalized * _attackLungeDistance);
                                 Tween.Position(transform, endValue: endPos, _enemyMovementTime * (1 - progress));
                                 _endRotate = false;
                             }
@@ -1125,6 +1133,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// <param name="target"></param>
     public void AttackTarget(Transform target)
     {
+        if (_didHitPlayer)
+            return;
+
         var rotationDir = (target.position - transform.position).normalized;
         rotationDir.y = 0f;
         Tween.Rotation(transform, endValue: Quaternion.LookRotation(rotationDir),

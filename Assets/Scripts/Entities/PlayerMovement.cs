@@ -109,7 +109,10 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     //How long of a delay is done between setting the wall bool true to false
     [SerializeField] private float _wallAnimationDelay = 0.01f;
 
-    [SerializeField] private float _hugDistance = 2f;
+    [Space]
+    [Tooltip("Distance from which the player will stop when walking into an enemy.")]
+    [Range(0.01f, 2f)]
+    [SerializeField] private float _attackLungeDistance = 2f;
 
     [Header("Dash")]
     [SerializeField] private ParticleSystem _dashParticles;
@@ -264,11 +267,13 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
             {
                 IEnemy enemy = gridEntry as IEnemy;
                 enemy.AttackTarget(transform);
+                // When walking into an enemy, stops the player at a reasonable distance
+                // for the enemy's attack animation to play without clipping
                 if (_moveTween.isAlive)
                 {
                     float progress = _moveTween.progress;
                     _moveTween.Stop();
-                    Vector3 endPos = transform.position + (FacingDirection * _hugDistance);
+                    Vector3 endPos = transform.position + (FacingDirection * _attackLungeDistance);
                     Tween.Position(transform, endValue: endPos, _movementTime * (1 - progress));
                 }
                 OnDeath();
