@@ -23,7 +23,7 @@ using TMPro;
 using UnityEngine.Analytics;
 
 public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
-    ITurnListener, IHarmonyBeamEntity
+    ITurnListener, IHarmonyBeamEntity, IEnemy
 {
     public bool IsTransparent
     {
@@ -110,6 +110,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private bool _isMoving = false;
     private bool _isCircling = false;
 
+    private Tween _moveTween;
+    private PrimeTween.Sequence _moveSequence;
+
     /// <summary>
     /// Helper enum for enemy directions.
     /// </summary>
@@ -185,6 +188,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private int _currentEnemyIndex = 0;
     private Vector3 _lastPosition;
     private bool _waitOnBeam = false;
+    private bool _didHitPlayer = false;
 
     //public static PlayerMovement Instance;
     private static readonly int Forward = Animator.StringToHash("Forward");
@@ -694,7 +698,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             HarmonyBeam.TriggerHarmonyScan?.Invoke();
         }
 
-        if (_isFrozen)
+        if (_isFrozen || _didHitPlayer)
         {
             RoundManager.Instance.CompleteTurn(this);
             yield break;
@@ -704,6 +708,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
         for (int i = 0; i < _enemyMovementTime; i++)
         {
+            if (_didHitPlayer)
+                continue;
+
             int prevMove = _moveIndex;
             bool prevReturn = _isReturningToStart;
             bool isVFX = false;
@@ -750,7 +757,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             dist = Mathf.Max(dist, 1f);
             float movementTime = Mathf.Clamp((_waitTime / _enemyMovementTime) * dist,
                 _minMoveTime, float.MaxValue);
-            var tween = Tween
+            _moveTween = Tween
                 .Position(transform, endValue: moveWorld + CKOffsetsReference.EnemyOffset(_isSonEnemy),
                     duration: movementTime, _movementEase).OnUpdate(
                     target: this,
@@ -766,7 +773,17 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                             !DebugMenuManager.Instance.Invincibility)
                         {
                             //hit a player!
+                            _didHitPlayer = true;
                             PlayerMovement.Instance.OnDeath();
+                            if (_moveSequence.isAlive)
+                            {
+                                float progress = _moveSequence.progress;
+                                _moveSequence.Stop();
+                                Vector3 endPos = PlayerMovement.Instance.Position;
+                                endPos.y = transform.position.y;
+                                Tween.Position(transform, endValue: endPos, _enemyMovementTime * (1 - progress));
+                                _endRotate = false;
+                            }
                             if (_animator != null)
                             {
                                 _animator.SetBool(Attack, true);
@@ -775,13 +792,15 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                         }
                     });
             AudioManager.Instance.PlaySound(_enemyMove);
+
             /*if (rotationDir != transform.forward && _animator != null)
             {
                 _animator.SetBool(Turn, true);
             }*/
-            yield return Tween.Rotation(transform, endValue: Quaternion.LookRotation(rotationDir),
+            _moveSequence = Tween.Rotation(transform, endValue: Quaternion.LookRotation(rotationDir),
                 duration: _rotationTime,
-                ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).Chain(tween).ToYieldInstruction();
+                ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).Chain(_moveTween);
+            yield return _moveSequence.ToYieldInstruction();
             /*if (_animator != null)
             {
                 _animator.SetBool(Turn, false);
@@ -1097,5 +1116,24 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
         Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos);
         transform.position = worldPos + CKOffsetsReference.EnemyOffset(_isSonEnemy);
+    }
+
+    /// <summary>
+    /// Implementation of IEnemy
+    /// Rotates to face its target and then does its attack animation
+    /// </summary>
+    /// <param name="target"></param>
+    public void AttackTarget(Transform target)
+    {
+        var rotationDir = (target.position - transform.position).normalized;
+        rotationDir.y = 0f;
+        Tween.Rotation(transform, endValue: Quaternion.LookRotation(rotationDir),
+                duration: _rotationTime,
+                ease: _rotationEase);
+
+        if (_animator != null)
+            _animator.SetBool(Attack, true);
+
+        _didHitPlayer = true;
     }
 }

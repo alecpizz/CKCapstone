@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Mitchell Young
-*    Contributors: Mitchell Young, Nick Grinstead, Jamison Parks, Alec Pizziferro
+*    Contributors: Mitchell Young, Nick Grinstead, Jamison Parks, Alec Pizziferro, Trinity Hutson
 *    Date Created: 10/27/24
 *    Description: Script that handles the behavior of the mirror and
 *    copy enemy that mirrors or copies player movement.
@@ -15,7 +15,7 @@ using UnityEngine.EventSystems;
 using SaintsField.Playa;
 using SaintsField;
 
-public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener, IHarmonyBeamEntity
+public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener, IHarmonyBeamEntity, IEnemy
 {
     public bool IsTransparent { get => !EnemyFrozen; }
     public bool BlocksHarmonyBeam { get => false; }
@@ -73,6 +73,9 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     [SerializeField] private EventReference _walkSound;
 
     private bool _waitOnBeam = false;
+    private bool _didHitPlayer = false;
+
+    private Sequence _moveSequence;
 
     /// <summary>
     /// Prime tween configuration
@@ -138,6 +141,12 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
             HarmonyBeam.TriggerHarmonyScan?.Invoke();
         }
 
+        if (_didHitPlayer)
+        {
+            RoundManager.Instance.CompleteTurn(this);
+            yield break;
+        }
+
         if (!EnemyFrozen)
         {
             _animator.SetBool(Frozen, false);
@@ -152,8 +161,11 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
 
             for (int i = 0; i < _movementTiming; ++i)
             {
-                // Moves if there is no objects in the next grid space
-                var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
+                if (_didHitPlayer)
+                    continue;
+
+                    // Moves if there is no objects in the next grid space
+                    var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
                 bool canMove = GridBase.Instance.CellIsTransparent(move);
 
                 if (canMove == true)
@@ -166,7 +178,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                         }
                     }
                     _animator.SetBool(Forward, true);
-                    Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
+                    Tween rotateTween = Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
                     ease: _rotationEase);
                     if (_animator != null)
                     {
@@ -178,29 +190,45 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                         AudioManager.Instance.PlaySound(_walkSound);
                     }
 
-                    yield return Tween.Position(transform,
+                    _moveSequence = rotateTween.Chain(Tween.Position(transform,
                         move + CKOffsetsReference.MirrorCopyEnemyOffset(_mirrored), modifiedMovementTime, ease: _movementEase).OnUpdate<MirrorAndCopyBehavior>(target: this, (target, tween) =>
                         {
                             GridBase.Instance.UpdateEntry(this);
-                        }).ToYieldInstruction();
+                        }).OnUpdate(
+                    target: this,
+                    (_, _) =>
+                    {
+                        //not a fan of this but it should be more consistent than 
+                        //using collisions
+                        //also just math comparisons, no memory accessing outside of Position.
+                        if (GridBase.Instance.WorldToCell(PlayerMovement.Instance.Position) ==
+                            GridBase.Instance.WorldToCell(transform.position) &&
+                            !DebugMenuManager.Instance.Invincibility)
+                        {
+                            //hit a player!
+                            _didHitPlayer = true;
+                            PlayerMovement.Instance.OnDeath();
+                            if (_moveSequence.isAlive)
+                            {
+                                float progress = _moveSequence.progress;
+                                _moveSequence.Stop();
+                                Vector3 endPos = PlayerMovement.Instance.Position;
+                                endPos.y = transform.position.y;
+                                Tween.Position(transform, endValue: endPos, _movementTime * (1 - progress));
+                            }
+                            if (_animator != null)
+                            {
+                                _animator.SetBool(Attack, true);
+                            }
+                            SceneController.Instance.ReloadCurrentScene();
+                        }
+
+                    }));
+
+                    yield return _moveSequence.ToYieldInstruction();
                     _animator.SetBool(Forward, false);
                     HarmonyBeam.TriggerHarmonyScan?.Invoke();
 
-                    //not a fan of this but it should be more consistent than 
-                    //using collisions
-                    //also just math comparisons, no memory accessing outside of Position.
-                    if (GridBase.Instance.WorldToCell(PlayerMovement.Instance.Position) ==
-                        GridBase.Instance.WorldToCell(transform.position) &&
-                        !DebugMenuManager.Instance.Invincibility)
-                    {
-                        //hit a player!
-                        PlayerMovement.Instance.OnDeath();
-                        if (_animator != null)
-                        {
-                            _animator.SetBool(Attack, true);
-                        }
-                        SceneController.Instance.ReloadCurrentScene();
-                    }
                 }
                 else
                 {
@@ -286,5 +314,24 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
         Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
         Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos) + CKOffsetsReference.MirrorCopyEnemyOffset(_mirrored);
         transform.position = worldPos;
+    }
+
+    /// <summary>
+    /// Implementation of IEnemy
+    /// Rotates to face its target and then does its attack animation
+    /// </summary>
+    /// <param name="target"></param>
+    public void AttackTarget(Transform target)
+    {
+        var rotationDir = (target.position - transform.position).normalized;
+        rotationDir.y = 0f;
+        Tween.Rotation(transform, endValue: Quaternion.LookRotation(rotationDir),
+                duration: _rotationTime,
+                ease: _rotationEase);
+
+        if (_animator != null)
+            _animator.SetBool(Attack, true);
+
+        _didHitPlayer = true;
     }
 }
