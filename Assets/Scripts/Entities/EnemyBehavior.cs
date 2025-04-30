@@ -56,6 +56,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         get => gameObject;
     }
 
+    public bool IsSon
+    {
+        get => _isSonEnemy;
+    }
+
     public static Action EnemyBeamSwitchActivation;
 
     [SerializeField] private GameObject _destinationMarker;

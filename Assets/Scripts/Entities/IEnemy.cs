@@ -9,6 +9,8 @@ using UnityEngine;
 
 public interface IEnemy
 {
+    public bool IsSon { get; }
+
     public void AttackTarget(Transform target);
 
     

@@ -23,6 +23,8 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     public Vector3 Position { get => transform.position; }
     public Transform EntityTransform { get => transform; }
     public GameObject EntryObject { get => gameObject; }
+    public bool IsSon { get => sonEnemy; }
+
 
     public bool EnemyFrozen { get; private set; } = false;
     

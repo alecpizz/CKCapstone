@@ -113,6 +113,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     [Tooltip("Distance from which the player will stop when walking into an enemy.")]
     [Range(0.01f, 2f)]
     [SerializeField] private float _attackLungeDistance = 2f;
+    [Range(0.01f, 2f)]
+    [SerializeField] private float _hugLungeDistance = 2f;
 
     [Header("Dash")]
     [SerializeField] private ParticleSystem _dashParticles;
@@ -272,8 +274,9 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                 if (_moveTween.isAlive)
                 {
                     float progress = _moveTween.progress;
+                    float distance = enemy.IsSon ? _hugLungeDistance : _attackLungeDistance;
                     _moveTween.Stop();
-                    Vector3 endPos = transform.position + (FacingDirection * _attackLungeDistance);
+                    Vector3 endPos = transform.position + (FacingDirection * distance);
                     Tween.Position(transform, endValue: endPos, _movementTime * (1 - progress));
                 }
                 OnDeath();
