@@ -488,6 +488,10 @@ public sealed class RoundManager : MonoBehaviour
                 }
             }
 
+            if (input != _lastRegistered)
+            {
+                input = _lastRegistered;
+            }
             _isDelaying = true;
             StartCoroutine(ShortDelay());
             
@@ -505,7 +509,7 @@ public sealed class RoundManager : MonoBehaviour
     {
         if (_isDelaying)
         {
-            yield return new WaitForSeconds(0.05f);
+            yield return new WaitForSeconds(0.1f);
             _isDelaying = false;
         }
 
