@@ -366,12 +366,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 //the entry has a switch type :)
                 if (gridEntry.EntryObject.TryGetComponent(out SwitchTrigger entity))
                 {
-                    if (entity.HarmonyBeamsPresent)
-                    {
-                        EnemyBeamSwitchActivation?.Invoke();
-                        // Reset this enemy's boolean so it can step on the switch
-                        _waitOnBeam = false;
-                    }
+                    EnemyBeamSwitchActivation?.Invoke();
+                    // Reset this enemy's boolean so it can step on the switch
+                    _waitOnBeam = false;
                 }
                 //no entry, but a cell that blocks movement. pass through.
                 else if (!gridEntry.IsTransparent)
