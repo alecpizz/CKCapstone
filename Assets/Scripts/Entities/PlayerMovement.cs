@@ -109,9 +109,18 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     //How long of a delay is done between setting the wall bool true to false
     [SerializeField] private float _wallAnimationDelay = 0.01f;
 
+    [Space]
+    [Tooltip("Distance from which the player will stop when walking into an enemy.")]
+    [Range(0.01f, 2f)]
+    [SerializeField] private float _attackLungeDistance = 2f;
+    [Range(0.01f, 2f)]
+    [SerializeField] private float _hugLungeDistance = 2f;
+
     [Header("Dash")]
     [SerializeField] private ParticleSystem _dashParticles;
     [SerializeField] private TrailRenderer[] _dashTrails;
+
+    private Tween _moveTween;
 
     /// <summary>
     /// Sets instance upon awake.
@@ -204,6 +213,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
 
         for (int i = 0; i < _playerMovementTiming; i++)
         {
+            if (_playerDied)
+                yield break;
             // Move if there is no wall below the player or if ghost mode is enabled
             var move = GridBase.Instance.GetCellPositionInDirection
                 (gameObject.transform.position, moveDirection);
@@ -221,12 +232,16 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                 {
                     yield return _waitForEndOfFrame;
                 }
-                yield return Tween.Position(transform,
-                    move + CKOffsetsReference.MotherOffset, duration: modifiedMovementTime, 
-                    _movementEase).OnUpdate(target: this, (_, _) =>
-                    {
-                        CheckForEnemyCollision(move);
-                    }).ToYieldInstruction();
+
+                _moveTween = Tween.Position(transform,
+                    move + CKOffsetsReference.MotherOffset, duration: modifiedMovementTime,
+                    _movementEase);
+                _moveTween.OnUpdate(target: this, (_, _) =>
+                {
+                    CheckForEnemyCollision(move);
+                });
+
+                yield return _moveTween.ToYieldInstruction();
                 _animator.SetBool(Forward, false);
             }
 
@@ -244,18 +259,33 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
     /// Allows the player to check if they hit an enemy while moving
     /// </summary>
     /// <param name="move">Where the player is moving to</param>
-    private void CheckForEnemyCollision(Vector3 move)
+    private bool CheckForEnemyCollision(Vector3 move)
     {
         var gridEntries = GridBase.Instance.GetCellEntries(move);
 
         foreach (var gridEntry in gridEntries)
         {
-            if (gridEntry as EnemyBehavior || gridEntry as MirrorAndCopyBehavior)
+            if (gridEntry is IEnemy)
             {
+                IEnemy enemy = gridEntry as IEnemy;
+                enemy.AttackTarget(transform);
+                // When walking into an enemy, stops the player at a reasonable distance
+                // for the enemy's attack animation to play without clipping
+                if (_moveTween.isAlive)
+                {
+                    float progress = _moveTween.progress;
+                    float distance = enemy.IsSon ? _hugLungeDistance : _attackLungeDistance;
+                    _moveTween.Stop();
+                    Vector3 endPos = transform.position + (FacingDirection * distance);
+                    Tween.Position(transform, endValue: endPos, _movementTime * (1 - progress));
+                }
                 OnDeath();
                 SceneController.Instance.ReloadCurrentScene();
+                return true;
             }
         }
+
+        return false;
     }
 
     /// <summary>
