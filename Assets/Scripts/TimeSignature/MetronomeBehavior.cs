@@ -23,7 +23,6 @@ public class MetronomeBehavior : MonoBehaviour, ITimeListener
     private const string _WEIGHT_ANIM_UP = "Armature|WeightSlide_Up";
     private const string _WEIGHT_ANIM_DOWN = "Armature|WeightSlide_Down";
 
-
     //the ripple effect when touching the metronome
     [SerializeField] private ParticleSystem _contactIndicator;
     //the ripple effect on HUD when touching the metronome
@@ -55,6 +54,7 @@ public class MetronomeBehavior : MonoBehaviour, ITimeListener
 
     [SerializeField] private EventReference _slowMetronome;
     [SerializeField] private EventReference _fastMetronome;
+    [SerializeField] private EventReference _metronomeChange;
     
 
     [SerializeField]
@@ -73,6 +73,9 @@ public class MetronomeBehavior : MonoBehaviour, ITimeListener
         _metronomePredictor.rectTransform.Rotate(Vector3.right * 90);
 
         _isSlow = _initiallySlow;
+
+        AudioManager.Instance.PlaySound(_metronomeChange);
+        
     }
 
     /// <summary>
