@@ -411,10 +411,7 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                 //the entry has a switch type :)
                 if (gridEntry.EntryObject.TryGetComponent(out SwitchTrigger entity))
                 {
-                    if (entity.HarmonyBeamsPresent)
-                    {
-                        BeamSwitchActivation?.Invoke();
-                    }
+                    BeamSwitchActivation?.Invoke();
                 }
                 //no entry, but a cell that blocks movement. pass through.
                 else if (!gridEntry.IsTransparent)
