@@ -25,8 +25,6 @@ public class MetronomeBehavior : MonoBehaviour, ITimeListener
 
     //the ripple effect when touching the metronome
     [SerializeField] private ParticleSystem _contactIndicator;
-    //the ripple effect on HUD when touching the metronome
-    [SerializeField] private ParticleSystem _hudIndicator;
     //the circle that flashes around the HUD time signature
     [SerializeField] private GameObject _HUDEffect;
     //is this the tutorial tmetronome puzzle?
@@ -87,11 +85,6 @@ public class MetronomeBehavior : MonoBehaviour, ITimeListener
 
         Vector2Int nextTimeSig = TimeSignatureManager.Instance.GetNextTimeSignature();
         _metronomePredictor.text = nextTimeSig.x + "/" + nextTimeSig.y;
-
-        if (_hudIndicator == null)
-        {
-            _hudIndicator = GameObject.Find("TimeSigParticles").transform.GetChild(1).gameObject.GetComponent<ParticleSystem>();
-        }
     }
 
     /// <summary>
@@ -180,7 +173,10 @@ public class MetronomeBehavior : MonoBehaviour, ITimeListener
         }
 
         _contactIndicator.Play();
-        _hudIndicator.Play();
+
+        if(TimeSignatureManager.Instance != null)
+            TimeSignatureManager.Instance.PlayJuice(playSFX: false);
+
         if (_HUDEffect != null)
         _HUDEffect.SetActive(false);
 
