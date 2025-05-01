@@ -7067,6 +7067,12 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!198 &580469534 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 7584167016803537953, guid: 0b0371260ff9da546bbcc326a18590ff,
+    type: 3}
+  m_PrefabInstance: {fileID: 1295888112}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &585538820
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8247,6 +8253,12 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4140118600393809808, guid: 481ef263620677f4da33125bd7de384d,
     type: 3}
   m_PrefabInstance: {fileID: 1087326365}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &1130893561 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 8418692816172332539, guid: 2f5b26343a140d047864548534642419,
+    type: 3}
+  m_PrefabInstance: {fileID: 1727130348}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1162665777
 PrefabInstance:
@@ -10818,6 +10830,21 @@ PrefabInstance:
       propertyPath: _HUDEffect
       value: 
       objectReference: {fileID: 1184237180}
+    - target: {fileID: 7582661336523163796, guid: 2f5b26343a140d047864548534642419,
+        type: 3}
+      propertyPath: _hudIndicator
+      value: 
+      objectReference: {fileID: 580469534}
+    - target: {fileID: 7582661336523163796, guid: 2f5b26343a140d047864548534642419,
+        type: 3}
+      propertyPath: _contactIndicator
+      value: 
+      objectReference: {fileID: 1130893561}
+    - target: {fileID: 7582661336523163796, guid: 2f5b26343a140d047864548534642419,
+        type: 3}
+      propertyPath: MetronomeTriggered.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1644702353362542500, guid: 2f5b26343a140d047864548534642419, type: 3}
     m_RemovedGameObjects: []

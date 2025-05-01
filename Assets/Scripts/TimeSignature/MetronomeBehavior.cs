@@ -26,6 +26,8 @@ public class MetronomeBehavior : MonoBehaviour, ITimeListener
 
     //the ripple effect when touching the metronome
     [SerializeField] private ParticleSystem _contactIndicator;
+    //the ripple effect on HUD when touching the metronome
+    [SerializeField] private ParticleSystem _hudIndicator;
     //the circle that flashes around the HUD time signature
     [SerializeField] private GameObject _HUDEffect;
     //is this the tutorial tmetronome puzzle?
@@ -173,7 +175,8 @@ public class MetronomeBehavior : MonoBehaviour, ITimeListener
         }
 
         _contactIndicator.Play();
-        if(_HUDEffect != null)
+        _hudIndicator.Play();
+        if (_HUDEffect != null)
         _HUDEffect.SetActive(false);
 
        /* PlayerMovement playerMovement;
