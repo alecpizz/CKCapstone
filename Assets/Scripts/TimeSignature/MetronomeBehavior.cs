@@ -54,7 +54,6 @@ public class MetronomeBehavior : MonoBehaviour, ITimeListener
 
     [SerializeField] private EventReference _slowMetronome;
     [SerializeField] private EventReference _fastMetronome;
-    [SerializeField] private EventReference _metronomeChange;
     
 
     [SerializeField]
@@ -73,8 +72,6 @@ public class MetronomeBehavior : MonoBehaviour, ITimeListener
         _metronomePredictor.rectTransform.Rotate(Vector3.right * 90);
 
         _isSlow = _initiallySlow;
-
-        AudioManager.Instance.PlaySound(_metronomeChange);
         
     }
 
