@@ -72,6 +72,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private List<GameObject> _subDestPathMarkers = new();
 
     private int _subMarkerIdx = 0;
+    private int _changeInIndex = 0;
 
     private ParticleSystem.MainModule _particleMainModule;
     private Renderer _destMarkerRenderer;
@@ -562,6 +563,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _destinationMarker.transform.position = destPointWorld;
 
         UpdateAllSubMarkers();
+
+        _metronomeTriggered = false;
     }
 
     /// <summary>
@@ -625,6 +628,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// </summary>
     public void UpdateAllSubMarkers()
     {
+        _changeInIndex = _metronomeTriggered ? _enemyMovementTime - _prevMovementTime :
+            _enemyMovementTime;
+
         int tempMoveIndex = _moveIndex;
         bool tempLooping = _isReturningToStart;
         Vector3 lastSubPosition = _lastPosition;
@@ -633,7 +639,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
         _subMarkerIdx = 0;
 
-        for (int i = 0; i < _enemyMovementTime; i++)
+        for (int i = 0; i < _changeInIndex; i++)
         {
             int prevMove = tempMoveIndex;
             bool prevReturn = tempLooping;
@@ -1001,50 +1007,19 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// <param name="looped">Reference to the evaluated loop state.</param>
     private void NextMarkerDestination(ref int moveIndex, ref bool looped)
     {
-        int changeInIndex = _metronomeTriggered ? _enemyMovementTime - _prevMovementTime :
+        _changeInIndex = _metronomeTriggered ? _enemyMovementTime - _prevMovementTime :
             _enemyMovementTime;
+        
+        int prevMove = _moveIndex;
+        bool prevReturn = _isReturningToStart;
+        bool isVFX = false;
 
-        _metronomeTriggered = false;
-
-        if (_circularMovement)
+        for (int i = 0; i < _changeInIndex; i++)
         {
-            moveIndex += changeInIndex;
-
-            if (moveIndex < 0)
-            {
-                moveIndex = _moveDestinations.Count - -moveIndex;
-            }
-
-            if (moveIndex > _moveDestinations.Count - 1)
-            {
-                moveIndex %= _moveDestinations.Count - 1;
-                _isCircling = true;
-            }
-
-            if (moveIndex < _currentEnemyIndex && _isMoving && !_isCircling)
-            {
-                moveIndex = _currentEnemyIndex;
-            }
-            else if (moveIndex < _currentEnemyIndex && !_isCircling)
-            {
-                moveIndex = _currentEnemyIndex + changeInIndex;
-                moveIndex %= _moveDestinations.Count - 1;
-                _isCircling = true;
-            }
+            EvaluateNextMove(ref prevMove, ref prevReturn, ref isVFX);
         }
-        else
-        {
-            int prevMove = _moveIndex;
-            bool prevReturn = _isReturningToStart;
-            bool isVFX = false;
 
-            for (int i = 0; i < changeInIndex; i++)
-            {
-                EvaluateNextMove(ref prevMove, ref prevReturn, ref isVFX);
-            }
-
-            moveIndex = prevMove;
-        }
+        moveIndex = prevMove;
     }
 
     /// <summary>
