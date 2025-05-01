@@ -853,7 +853,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         if (_waitOnBeam)
             _waitOnBeam = false;
 
-        if (_moveIndex == 0 || _moveIndex == _moveDestinations.Count - 1)
+        if (_moveIndex == 0 && !_circularMovement || _moveIndex == _moveDestinations.Count - 1 && !_circularMovement)
         {
             /*if (_animator != null)
             {
