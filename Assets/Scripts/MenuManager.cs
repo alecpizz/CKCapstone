@@ -16,6 +16,9 @@ using static UnityEngine.Rendering.DebugUI;
 using System;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
+using System.Drawing.Printing;
+using UnityEngine.InputSystem.DualShock;
+using UnityEngine.InputSystem.Switch;
 
 public class MenuManager : MonoBehaviour
 {
@@ -43,8 +46,11 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject _skipPromptInPause;
     private bool _skipInPause;
 
-    private bool _pauseInvoked = true;
-    private bool _isMainMenu;
+    private bool _pauseInvoked = false;
+    private bool _isMainMenu;   
+    private bool _optionsOpen = false;
+    private bool _controllerMenuing = false;
+
     /// <summary>
     /// Enables player input for opening the pause menu
     /// </summary>
@@ -53,6 +59,9 @@ public class MenuManager : MonoBehaviour
         _inputActions = new DebugInputActions();
         _inputActions.Enable();
         _inputActions.Player.Quit.performed += ctx => Pause();
+        _inputActions.Player.ControlDetection.performed += ctx => MenuDetection();
+        _inputActions.Player.MouseDetection.performed += ctx => MouseDetection();
+        InputSystem.onDeviceChange += ControllerDetection;
         _inputActions.UI.Back.performed += BackPerformed;
 
         //Gets rid of restart button if it's a cutscene
@@ -73,8 +82,11 @@ public class MenuManager : MonoBehaviour
     private void OnDisable()
     {
         _inputActions.Disable();
+        _inputActions.Player.ControlDetection.performed -= ctx => MenuDetection();
+        _inputActions.Player.MouseDetection.performed -= ctx => MouseDetection();
         _inputActions.Player.Quit.performed -= ctx => Pause();
         _inputActions.UI.Back.performed -= BackPerformed;
+        InputSystem.onDeviceChange -= ControllerDetection;
     }
 
     /// <summary>
@@ -84,6 +96,7 @@ public class MenuManager : MonoBehaviour
     {
         DebugMenuManager.Instance.PauseMenu = false;
         _pauseScreen.SetActive(false);
+        _controllerMenuing = false;
 
         //gets rid of restart icon in cutscenes
         string path = SceneManager.GetActiveScene().path;
@@ -105,10 +118,18 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void OptionsMainMenu()
     {
+        _optionsOpen = true;
         _optionsScreen.SetActive(true);
         _mainMenu.SetActive(false);
         CollectableManager.Instance.SetFoundCollectibles();
-        EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
+        if (_controllerMenuing)
+        {
+            EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
+        }
+        else
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
     /// <summary>
@@ -116,9 +137,17 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void OptionsMainMenuClose()
     {
+        _optionsOpen = false;
         _optionsScreen.SetActive(false);
         _mainMenu.SetActive(true);
-        EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+        if (_controllerMenuing)
+        {
+            EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+        }
+        else
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
     /// <summary>
@@ -126,12 +155,20 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void Options()
     {
+        _optionsOpen = true;
         _optionsScreen.SetActive(true);
         _mainMenuStart.SetActive(false);
         _mainMenuSettings.SetActive(false);
         _mainMenuQuit.SetActive(false);
         CollectableManager.Instance.SetFoundCollectibles();
-        EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
+        if (_controllerMenuing)
+        {
+            EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
+        }
+        else
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
 
@@ -140,11 +177,19 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void OptionsClose()
     {
+        _optionsOpen = false;
         _optionsScreen.SetActive(false);
         _mainMenuStart.SetActive(true);
         _mainMenuSettings.SetActive(true);
         _mainMenuQuit.SetActive(true);
-        EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+        if (_controllerMenuing)
+        {
+            EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+        }
+        else
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+        }
     }
 
     /// <summary>
@@ -158,7 +203,15 @@ public class MenuManager : MonoBehaviour
             DebugMenuManager.Instance.PauseMenu = true;
             _pauseScreen.SetActive(true);
             _restartButton.SetActive(false);
-            EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+            if (_controllerMenuing)
+            {
+                EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+            }
+            else
+            {
+                EventSystem.current.SetSelectedGameObject(null);
+            }
+
             Time.timeScale = 0f;
 
             _pauseInvoked = true;
@@ -169,7 +222,6 @@ public class MenuManager : MonoBehaviour
             if (path.Contains("CS"))
             {
                 _skipPromptInPause.SetActive(true);
-                _skipInPause = true;
             }
         }
         else if (_optionsScreen != null && _optionsScreen.activeInHierarchy)
@@ -216,15 +268,6 @@ public class MenuManager : MonoBehaviour
     public bool GetPauseInvoked()
     {
         return _pauseInvoked;
-    }
-
-    /// <summary>
-    /// Getter method to tell if the button to skip a cutscene in pause menu is used.
-    /// </summary>
-    /// <returns></returns>
-    public bool GetSkipInPause()
-    {
-        return _skipInPause;
     }
 
     /// <summary>
@@ -277,6 +320,70 @@ public class MenuManager : MonoBehaviour
 
         int idx = SceneUtility.GetBuildIndexByScenePath(level);
         SceneManager.LoadScene(idx);
+    }
+
+    /// <summary>
+    /// Detects the controller automatically when plugged into a device and automatically
+    /// assigns the menu to hover a button to begin menu navigation with a controller
+    /// depending on what menu is currently open
+    /// </summary>
+    /// <param name="device"></param>
+    /// <param name="change"></param>
+    private void ControllerDetection(InputDevice device, InputDeviceChange change)
+    {
+        switch (change)
+        {
+            case InputDeviceChange.Added:
+                if (_optionsOpen)
+                {
+                    EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
+                    _controllerMenuing = true;
+                }
+                else
+                {
+                    EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+                    _controllerMenuing = true;
+                }
+                break;
+            case InputDeviceChange.Removed:
+                EventSystem.current.SetSelectedGameObject(null);
+                _controllerMenuing = false;
+                break;
+            case InputDeviceChange.ConfigurationChanged:
+                Debug.Log("Device configuration changed: " + device);
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Detects the controller inputs to start menuing with a controller instead of a mouse
+    /// also automatically hovers the first menu option depending on the menu
+    /// </summary>
+    private void MenuDetection()
+    {
+        if (_optionsOpen && !_controllerMenuing)
+        {
+            EventSystem.current.SetSelectedGameObject(_settingsMenuFirst);
+        }
+        else if (!_controllerMenuing)
+        {
+            EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
+        }
+        else
+        {
+            return;
+        }
+        _controllerMenuing = true;
+    }
+
+    /// <summary>
+    /// If the mouse is used while a controller is being used the event system will 
+    /// unfocus the current button to allow the mouse to be primarily used instead
+    /// </summary>
+    private void MouseDetection()
+    {
+        EventSystem.current.SetSelectedGameObject(null);
+        _controllerMenuing = false;
     }
 
     /// <summary>
