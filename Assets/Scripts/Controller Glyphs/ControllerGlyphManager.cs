@@ -26,6 +26,7 @@ public class ControllerGlyphManager : MonoBehaviour
 
     private bool _areInteractables = false;
     private bool _areTextBlurbs = false;
+    private bool _areControllerGraphics = false;
 
     private DebugInputActions _playerInput;
     private PlayerControls _playerControls;
@@ -34,6 +35,7 @@ public class ControllerGlyphManager : MonoBehaviour
     private NpcDialogueController[] _interactableArray;
     private ControllerTextChecker[] _textBlurbArray;
     private ControllerTextChecker[] _htpArray;
+    private ControllerImageChanger[] _ControllerGraphicArray;
 
     /// <summary>
     /// sets up variables when first possible
@@ -51,6 +53,7 @@ public class ControllerGlyphManager : MonoBehaviour
         _interactableArray = GameObject.FindObjectsOfType<NpcDialogueController>();
         _textBlurbArray = GameObject.FindObjectsOfType<ControllerTextChecker>();
         _htpArray = GameObject.FindObjectsOfType<ControllerTextChecker>();
+        _ControllerGraphicArray = GameObject.FindObjectsOfType<ControllerImageChanger>();
     }
 
     /// <summary>
@@ -102,6 +105,14 @@ public class ControllerGlyphManager : MonoBehaviour
                 blurb.TutorialTextChange();
             }
             _areTextBlurbs = true;
+        }
+        if (_ControllerGraphicArray != null)
+        {
+            foreach (var graphic in _ControllerGraphicArray)
+            {
+                graphic.ControllerImageSwap();
+            }
+            _areControllerGraphics = true;
         }
     }
 
@@ -157,6 +168,13 @@ public class ControllerGlyphManager : MonoBehaviour
             foreach (var blurb in _textBlurbArray)
             {
                 blurb.TutorialTextChange();
+            }
+        }
+        if (_areControllerGraphics)
+        {
+            foreach (var graphic in _ControllerGraphicArray)
+            {
+                graphic.ControllerImageSwap();
             }
         }
     }
@@ -235,5 +253,30 @@ public class ControllerGlyphManager : MonoBehaviour
             }
         }
         return tutorialText;
+    }
+
+    /// <summary>
+    /// Depending on if either Controller or Keyboard is being used, this sprite function
+    /// changes the sprite used to show the controls in the how to play menu
+    /// </summary>
+    /// <returns></returns>
+    public Sprite ControllerImageDecider()
+    {
+        Sprite NewImage = null;
+        if (PlayStationController || XboxController || SwitchController)
+        {
+            foreach (var graphic in _ControllerGraphicArray)
+            {
+                NewImage = graphic.ControllerImage;
+            }
+        }
+        else
+        {
+            foreach (var graphic in _ControllerGraphicArray)
+            {
+                NewImage = graphic.KeyboardImage;
+            }
+        }
+        return NewImage;
     }
 }
