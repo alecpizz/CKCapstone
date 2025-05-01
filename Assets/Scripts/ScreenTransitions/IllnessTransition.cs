@@ -12,7 +12,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
-public class IllnessTransition : ScreenTransitionBase
+public class IllnessTransition : SceneTransitionBase
 {
     [Header("Intensity Values")]
     [Tooltip("How opaque the aura effect should initially become")]
@@ -47,17 +47,19 @@ public class IllnessTransition : ScreenTransitionBase
     private Volume _postProcess;
     private Image _aura;
     private Image _white;
+    private bool _inProgress = false;
 
-    /// <summary>
-    /// Assign references
-    /// </summary>
-    private void Start()
+    public override void Init()
     {
         _postProcess = _postProcessObj.GetComponent<Volume>();
         _aura = _auraObj.GetComponent<Image>();
         _white = _whiteObj.GetComponent<Image>();
     }
-    
+
+    public override bool InProgress()
+    {
+        return _inProgress;
+    }
 
     /// <summary>
     /// Fade in from nothing.  Call this when the screen should fade in.
@@ -90,7 +92,7 @@ public class IllnessTransition : ScreenTransitionBase
         }
 
         // Start the fade out
-        StartCoroutine(FadeWhite(1f, 0f, _whiteFadeOut));
+        StartCoroutine(FadeWhite(1f, 0f, _whiteFadeOut, true));
     }
 
     /// <summary>
@@ -99,6 +101,7 @@ public class IllnessTransition : ScreenTransitionBase
     /// <returns> null </returns>
     private IEnumerator LerpEffects()
     {
+        _inProgress = true;
         // FADE IN AURA //
         
         // This float will be updated over time to set the interpolation percentage
@@ -180,7 +183,7 @@ public class IllnessTransition : ScreenTransitionBase
         }
 
         // Start fading the white screen in
-        StartCoroutine(FadeWhite(0f, 1f, _whiteFadeIn));
+        StartCoroutine(FadeWhite(0f, 1f, _whiteFadeIn, false));
 
         // FADE OUT TO ZERO //
 
@@ -217,6 +220,8 @@ public class IllnessTransition : ScreenTransitionBase
         {
             chroma.intensity.value = 0f;
         }
+
+        _inProgress = false;
     }
 
     /// <summary>
@@ -225,8 +230,12 @@ public class IllnessTransition : ScreenTransitionBase
     /// <param name="start"> How opaque the screen should be to begin with </param>
     /// <param name="end"> How opaque the screen should become </param>
     /// <returns> null </returns>
-    private IEnumerator FadeWhite(float start, float end, float duration)
+    private IEnumerator FadeWhite(float start, float end, float duration, bool affectProgress)
     {
+        if (affectProgress)
+        {
+            _inProgress = true;
+        }
         // This float will be updated over time to set the interpolation percentage
         // according the the specified lerp duration
         float time = 0f;
@@ -250,5 +259,9 @@ public class IllnessTransition : ScreenTransitionBase
 
         // Set the screen to full opacity at the end
         _white.color = new Color(_white.color.r, _white.color.b, _white.color.b, end);
+        if (affectProgress)
+        {
+            _inProgress = false;
+        }
     }
 }

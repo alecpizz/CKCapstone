@@ -29,6 +29,7 @@ public class EndLevelDoor : MonoBehaviour
     [SerializeField] private EventReference _doorSound;
 
     private List<ParticleSystem> _childVFX = new();
+    private bool _isChallenge;
 
     /// <summary>
     /// Door glow is assigned a value when the function awakens
@@ -40,6 +41,7 @@ public class EndLevelDoor : MonoBehaviour
         _doorPortalVFX.SetActive(false);
 
         _childVFX.AddRange(_doorPortalVFX.GetComponentsInChildren<ParticleSystem>());
+        _isChallenge = gameObject.name.ToLower().Contains("challenge");
     }
 
     /// <summary>
@@ -144,7 +146,7 @@ public class EndLevelDoor : MonoBehaviour
             string scenePath = SceneUtility.GetScenePathByBuildIndex(_levelIndexToLoad);
             SaveDataManager.SetLastFinishedLevel(scenePath);
             SaveDataManager.SetLevelCompleted(SceneManager.GetActiveScene().path);
-            SceneController.Instance.LoadNewScene(_levelIndexToLoad);
+            SceneController.Instance.LoadNewScene(_levelIndexToLoad, _isChallenge ? SceneTransitionType.Challenge : SceneTransitionType.Black);
         }
         else if (other.CompareTag("Player"))
         {

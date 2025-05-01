@@ -808,7 +808,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                             {
                                 _animator.SetBool(Attack, true);
                             }
-                            SceneController.Instance.ReloadCurrentScene();
+                            SceneController.Instance.ReloadCurrentScene(_isSonEnemy ? SceneTransitionType.Son : SceneTransitionType.Illness);
                         }
                     });
             AudioManager.Instance.PlaySound(_enemyMove);

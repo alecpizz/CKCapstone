@@ -12,7 +12,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
-public class SonTransition : ScreenTransitionBase
+public class SonTransition : SceneTransitionBase
 {
     [Header("Adjustable Values")]
     [Tooltip("How long the white screen should take to fade in")]
@@ -29,14 +29,17 @@ public class SonTransition : ScreenTransitionBase
     // Internal references
     private Image _white;
     private ParticleSystem _notes;
+    private bool _inProgress;
 
-    /// <summary>
-    /// Assign references
-    /// </summary>
-    private void Start()
+    public override void Init()
     {
         _white = _whiteObj.GetComponent<Image>();
         _notes = _noteParticles.GetComponent<ParticleSystem>();
+    }
+
+    public override bool InProgress()
+    {
+        return _inProgress;
     }
 
     /// <summary>
@@ -50,6 +53,7 @@ public class SonTransition : ScreenTransitionBase
         // Play the note particles
         _noteParticles.SetActive(true);
         _notes.Play();
+        _inProgress = true;
 
         // Start fading in the white screen
         StartCoroutine(LerpEffects(_white, _whiteFadeIn));
@@ -60,6 +64,7 @@ public class SonTransition : ScreenTransitionBase
     /// </summary>
     public override void FadeOut()
     {
+        _inProgress = true;
         StartCoroutine(FadeFromWhite());
     }
 
@@ -71,7 +76,6 @@ public class SonTransition : ScreenTransitionBase
 /// <returns> null </returns>
     private IEnumerator LerpEffects(Image img, float duration)
     {
-
         // This float will be updated over time to set the interpolation percentage
         // according the the specified lerp duration
         float time = 0;
@@ -99,6 +103,7 @@ public class SonTransition : ScreenTransitionBase
 
         // Turn off net particles
         _noteParticles.SetActive(false);
+        _inProgress = false;
     }
 
     /// <summary>
@@ -131,5 +136,6 @@ public class SonTransition : ScreenTransitionBase
 
         // Just in case, set the white screen to zero
         _white.color = new Color(_white.color.r, _white.color.b, _white.color.b, 0f);
+        _inProgress = false;
     }
 }

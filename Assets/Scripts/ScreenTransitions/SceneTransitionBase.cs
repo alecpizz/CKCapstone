@@ -9,7 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class ScreenTransitionBase : MonoBehaviour
+public abstract class SceneTransitionBase : MonoBehaviour
 {
     [Header("Test Controls")]
     [Tooltip("Use this to test fading the screen in")]
@@ -39,6 +39,9 @@ public abstract class ScreenTransitionBase : MonoBehaviour
         }
     }
     #endif
+
+    public abstract void Init();
+    public abstract bool InProgress();
     /// <summary>
     /// Fade in screen effeects from nothing.  Call this when the screen should fade in.
     /// </summary>

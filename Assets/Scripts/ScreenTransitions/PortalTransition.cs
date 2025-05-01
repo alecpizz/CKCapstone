@@ -12,7 +12,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
-public class PortalTransition : ScreenTransitionBase
+public class PortalTransition : SceneTransitionBase
 {
     [Header("Adjustable Values")]
     [Tooltip("How long the white screen should take to fade in")]
@@ -38,15 +38,18 @@ public class PortalTransition : ScreenTransitionBase
     private Image _white;
     private Image _glow;
     private Image _sparkles;
+    private int _count = 0;
 
-    /// <summary>
-    /// Assign references
-    /// </summary>
-    private void Start()
+    public override void Init()
     {
         _white = _whiteObj.GetComponent<Image>();
         _glow = _glowObj.GetComponent<Image>();
         _sparkles = _sparklesObj.GetComponent<Image>();
+    }
+
+    public override bool InProgress()
+    {
+        return _count > 0;
     }
 
     /// <summary>
@@ -61,8 +64,9 @@ public class PortalTransition : ScreenTransitionBase
 
         // Turn on the glow image
         _glowObj.SetActive(true);
-
+        
         // Fade each effect in over different durations of time
+        _count = 3;
         StartCoroutine(LerpEffects(_white, _whiteFadeIn, 0, 1));
         StartCoroutine(LerpEffects(_glow, _glowFade, 0, 1));
         StartCoroutine(LerpEffects(_sparkles, _sparklesFadeIn, 0, 1));
@@ -75,6 +79,7 @@ public class PortalTransition : ScreenTransitionBase
     {
         _glow.color = new Color(_glow.color.r, _glow.color.b, _glow.color.b, 0f);
         _glowObj.SetActive(false);
+        _count = 2;
         StartCoroutine(LerpEffects(_white, _whiteFadeOut, 1, 0));
         StartCoroutine(LerpEffects(_sparkles, _sparklesFadeOut, 1, 0));
     }
@@ -113,5 +118,6 @@ public class PortalTransition : ScreenTransitionBase
 
         // Just in case, set the image alpha to the given end value at the end
         img.color = new Color(img.color.r, img.color.b, img.color.b, end);
+        _count--;
     }
 }
