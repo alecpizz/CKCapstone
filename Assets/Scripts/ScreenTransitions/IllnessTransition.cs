@@ -6,6 +6,7 @@
 *******************************************************************/
 using System.Collections;
 using System.Collections.Generic;
+using FMODUnity;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Rendering;
@@ -43,6 +44,8 @@ public class IllnessTransition : SceneTransitionBase
     [SerializeField] private GameObject _postProcessObj;
     [Tooltip("The white screen UI image")]
     [SerializeField] private GameObject _whiteObj;
+
+    [SerializeField] private EventReference _tinnitusEvent;
 
     private Volume _postProcess;
     private Image _aura;
@@ -106,6 +109,7 @@ public class IllnessTransition : SceneTransitionBase
         
         // This float will be updated over time to set the interpolation percentage
         // according the the specified lerp duration
+        AudioManager.Instance.PlaySound(_tinnitusEvent);
         float time = 0;
 
         // Get the specific components that need adjusting for easier reference
