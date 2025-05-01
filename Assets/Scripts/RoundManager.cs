@@ -52,6 +52,9 @@ public sealed class RoundManager : MonoBehaviour
     //For input detected when moving to help the mirror enemies keep up
     private bool _isDelaying = false;
     
+    //For no diagonal inputs to dash when correcting
+    private bool _isDiagonalMove = false;
+    
     [Header("Autocomplete Mechanic")]
     [SerializeField, Tooltip("Timescale during autocomplete dash")] private float _autocompleteSpeed = 3;
     [SerializeField] private float _autocompleteWindow = 0.2f;
@@ -193,11 +196,15 @@ public sealed class RoundManager : MonoBehaviour
         if (EnemiesPresent && !_autocompleteActive && _turnState != TurnState.None && 
             _lastMovementInput == dir && 
             Time.unscaledTime - _movementRegisteredTime <= _autocompleteWindow &&
-            !_isDelaying)
+            !_isDiagonalMove)
         {
             EnableAutocomplete();
         }
-        
+
+        if (_lastMovementInput == dir && _isDiagonalMove)
+        {
+            _isDiagonalMove = false;
+        }
         _lastMovementInput = dir;
 
         // If a movement is already registered, then flag as buffered
@@ -432,28 +439,13 @@ public sealed class RoundManager : MonoBehaviour
     /// <returns>Normalized input vector</returns>
     private Vector3 GetNormalizedInput()
     {
-        
             Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>().normalized;
+            if (input.x != 0 && input.y != 0)
+            {
+                _isDiagonalMove = true;
+            }
             if (!_isDelaying)
             {
-                //new filter for inputs
-                if ((input.x) != 0 && (input.y) != 0)
-                {
-                    Vector2 unnormalized = _playerControls.InGame.Movement.ReadValue<Vector2>();
-                    if (MathF.Abs(input.x) - MathF.Abs(unnormalized.x) < MathF.Abs(input.y) - MathF.Abs(unnormalized.y))
-                    {
-                        input.y = 0;
-                        input.x = input.x;
-                    }
-
-                    if (MathF.Abs(input.y) - MathF.Abs(unnormalized.y) < MathF.Abs(input.x) - MathF.Abs(unnormalized.x))
-                    {
-                        input.x = 0;
-                        input.y = input.y;
-                    }
-                    _isDelaying = true;
-                }
-
                 if (input != _lastRegistered)
                 {
                     input = _lastRegistered;
@@ -463,7 +455,7 @@ public sealed class RoundManager : MonoBehaviour
                 _isDelaying = true;
                 return new Vector3(input.x, 0f, input.y);  
             }
-
+            
             return _lastMovementInput;
     }
     
