@@ -36,7 +36,7 @@ public class IllnessSymptomVFX : MonoBehaviour
     [Tooltip("How long Stage 1 should take to fade (both in and out)")]
     [SerializeField] private float _stage1FadeDuration = .4f;
 
-    [Header("Intensity Values - Stage 2 (Higher Intensity)")]
+    [Header("Intensity Values - Stage 1 (Lower Intensity)")]
     [Tooltip("How transparent the vignette should be at Stage 2")]
     [SerializeField] private float _stage2VignetteAlpha = .71f;
     [Tooltip("How transparent the aura effect should be at Stage 2")]
