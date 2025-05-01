@@ -79,6 +79,11 @@ public class CutsceneCollection : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         }
 
+        if (Path.GetFileNameWithoutExtension(levelData.MainMenuScene.name).Equals(cutsceneName))
+        {
+            name = "Intro";
+        }
+
         return name;
     }
 
