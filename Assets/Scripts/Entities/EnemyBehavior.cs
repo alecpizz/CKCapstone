@@ -23,7 +23,7 @@ using TMPro;
 using UnityEngine.Analytics;
 
 public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
-    ITurnListener, IHarmonyBeamEntity
+    ITurnListener, IHarmonyBeamEntity, IEnemy
 {
     public bool IsTransparent
     {
@@ -56,6 +56,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         get => gameObject;
     }
 
+    public bool IsSon
+    {
+        get => _isSonEnemy;
+    }
+
     public static Action EnemyBeamSwitchActivation;
 
     [SerializeField] private GameObject _destinationMarker;
@@ -67,6 +72,15 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private List<GameObject> _subDestPathMarkers = new();
 
     private int _subMarkerIdx = 0;
+
+    private ParticleSystem.MainModule _particleMainModule;
+    private Renderer _destMarkerRenderer;
+    private Renderer _pathVfxRenderer;
+    private List<Renderer> _subMarkerRenderers = new();
+    private List<ParticleSystem.MainModule> _subDestMainModules = new();
+    private Color _defaultMarkerColor;
+
+    [SerializeField] private Color _frozenMarkerColor;
 
     public bool CollidingWithRay { get; set; } = false;
 
@@ -100,15 +114,14 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [SerializeField] private float _rotationTime = 0.10f;
     [SerializeField] private Ease _rotationEase = Ease.InOutSine;
     [SerializeField] private Ease _movementEase = Ease.OutBack;
-    private bool _endRotate = false;
 
-    private int _offsetDestCount = 0;
-    private bool _signatureIsChanged = false;
-    private bool _firstTurnBack = false;
     private bool _metronomeTriggered = false;
     private bool _notFirstCheck = false;
     private bool _isMoving = false;
     private bool _isCircling = false;
+
+    private Tween _moveTween;
+    private PrimeTween.Sequence _moveSequence;
 
     /// <summary>
     /// Helper enum for enemy directions.
@@ -170,6 +183,11 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     [SerializeField]
     private bool _isSonEnemy;
 
+    [Space]
+    [Tooltip("Distance from which the enemy will stop when walking into the player.")]
+    [Range(0.01f, 2f)]
+    [SerializeField] private float _attackLungeDistance;
+
     private readonly List<Vector3Int> _moveDestinations = new();
 
     // Timing from metronome
@@ -185,6 +203,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private int _currentEnemyIndex = 0;
     private Vector3 _lastPosition;
     private bool _waitOnBeam = false;
+    private bool _didHitPlayer = false;
+    private Vector3 _rotationDir;
 
     //public static PlayerMovement Instance;
     private static readonly int Forward = Animator.StringToHash("Forward");
@@ -213,6 +233,13 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
         _rb = GetComponent<Rigidbody>();
         _rb.isKinematic = true;
+
+        ParticleSystem markerParticleSystem = _destinationMarker.GetComponentInChildren<ParticleSystem>();
+        _particleMainModule = markerParticleSystem.main;
+        _destMarkerRenderer = _destinationMarker.GetComponentInChildren<Renderer>();
+        _pathVfxRenderer = _destPathVFX.GetComponent<Renderer>();
+        
+        _defaultMarkerColor = _destMarkerRenderer.material.color;
 
         _lastPosition = transform.position;
 
@@ -353,12 +380,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 //the entry has a switch type :)
                 if (gridEntry.EntryObject.TryGetComponent(out SwitchTrigger entity))
                 {
-                    if (entity.HarmonyBeamsPresent)
-                    {
-                        EnemyBeamSwitchActivation?.Invoke();
-                        // Reset this enemy's boolean so it can step on the switch
-                        _waitOnBeam = false;
-                    }
+                    EnemyBeamSwitchActivation?.Invoke();
+                    // Reset this enemy's boolean so it can step on the switch
+                    _waitOnBeam = false;
                 }
                 //no entry, but a cell that blocks movement. pass through.
                 else if (!gridEntry.IsTransparent)
@@ -465,6 +489,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             //obj.SetActive(false);
 
             _subDestPathMarkers.Add(obj);
+            _subMarkerRenderers.Add(obj.GetComponentInChildren<Renderer>());
+            ParticleSystem subDestParticles = obj.GetComponentInChildren<ParticleSystem>();
+            _subDestMainModules.Add(subDestParticles.main);
         }
     }
 
@@ -694,7 +721,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             HarmonyBeam.TriggerHarmonyScan?.Invoke();
         }
 
-        if (_isFrozen)
+        if (_isFrozen || _didHitPlayer)
         {
             RoundManager.Instance.CompleteTurn(this);
             yield break;
@@ -704,6 +731,9 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
         for (int i = 0; i < _enemyMovementTime; i++)
         {
+            if (_didHitPlayer)
+                continue;
+
             int prevMove = _moveIndex;
             bool prevReturn = _isReturningToStart;
             bool isVFX = false;
@@ -712,11 +742,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             var movePt = _moveDestinations[_moveIndex];
             var currCell = GridBase.Instance.WorldToCell(transform.position);
             var goalCell = GetLongestPath(GridBase.Instance.CellToWorld(movePt), transform.position);
-
-            if (_moveIndex == _moveDestinations.Count - 1 && !_circularMovement)
-            {
-                _endRotate = true;
-            }
             //we were blocked by something, adjust memory
             if (goalCell != movePt)
             {
@@ -743,14 +768,14 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 _animator.SetBool(Forward, true);
             }
             var dist = Vector3Int.Distance(currCell, goalCell);
-            var rotationDir = (GridBase.Instance.CellToWorld(goalCell) - transform.position).normalized;
-            rotationDir.y = 0f;
+            _rotationDir = (GridBase.Instance.CellToWorld(goalCell) - transform.position).normalized;
+            _rotationDir.y = 0f;
             var moveWorld = GridBase.Instance.CellToWorld(goalCell);
 
             dist = Mathf.Max(dist, 1f);
             float movementTime = Mathf.Clamp((_waitTime / _enemyMovementTime) * dist,
                 _minMoveTime, float.MaxValue);
-            var tween = Tween
+            _moveTween = Tween
                 .Position(transform, endValue: moveWorld + CKOffsetsReference.EnemyOffset(_isSonEnemy),
                     duration: movementTime, _movementEase).OnUpdate(
                     target: this,
@@ -766,7 +791,19 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                             !DebugMenuManager.Instance.Invincibility)
                         {
                             //hit a player!
+                            _didHitPlayer = true;
                             PlayerMovement.Instance.OnDeath();
+                            // When walking into a player, stops the enemy at a reasonable distance
+                            // for the enemy's attack animation to play without clipping
+                            if (_moveSequence.isAlive)
+                            {
+                                float progress = _moveSequence.progress;
+                                _moveSequence.Stop();
+                                Vector3 direction = PlayerMovement.Instance.Position - transform.position;
+                                direction.y = 0;
+                                Vector3 endPos = transform.position + (direction.normalized * _attackLungeDistance);
+                                Tween.Position(transform, endValue: endPos, _enemyMovementTime * (1 - progress));
+                            }
                             if (_animator != null)
                             {
                                 _animator.SetBool(Attack, true);
@@ -775,13 +812,15 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                         }
                     });
             AudioManager.Instance.PlaySound(_enemyMove);
+
             /*if (rotationDir != transform.forward && _animator != null)
             {
                 _animator.SetBool(Turn, true);
             }*/
-            yield return Tween.Rotation(transform, endValue: Quaternion.LookRotation(rotationDir),
+            _moveSequence = Tween.Rotation(transform, endValue: Quaternion.LookRotation(_rotationDir),
                 duration: _rotationTime,
-                ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).Chain(tween).ToYieldInstruction();
+                ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).Chain(_moveTween);
+            yield return _moveSequence.ToYieldInstruction();
             /*if (_animator != null)
             {
                 _animator.SetBool(Turn, false);
@@ -792,17 +831,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             }
             GridBase.Instance.UpdateEntry(this);
 
-            if (_endRotate)
-            {
-                /*if (_animator != null)
-                {
-                    _animator.SetBool(Turn, false);
-                }*/
-                yield return Tween.Rotation(transform, endValue: Quaternion.LookRotation(-rotationDir),
-                duration: _rotationTime,
-                ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).ToYieldInstruction();
-                _endRotate = false;
-            }
             /*if (_animator != null)
             {
                 _animator.SetBool(Turn, false);
@@ -818,6 +846,19 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
 
         if (_waitOnBeam)
             _waitOnBeam = false;
+
+        if (_moveIndex == 0 || _moveIndex == _moveDestinations.Count - 1)
+        {
+            /*if (_animator != null)
+            {
+                _animator.SetBool(Turn, false);
+            }*/
+            if(!_didHitPlayer)
+                yield return Tween.Rotation(transform, endValue: Quaternion.LookRotation(-_rotationDir),
+                    duration: _rotationTime,
+                    ease: _rotationEase).Chain(Tween.Delay(_enemyRotateToMovementDelay)).ToYieldInstruction();
+
+        }
 
         RoundManager.Instance.CompleteTurn(this);
     }
@@ -911,7 +952,6 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                         moveIndex++;
                     }
                     looped = false;
-                    _endRotate = true;
                 }
             }
         }
@@ -1069,6 +1109,21 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
                 _animator.SetBool(Frozen, true);
             }
             _isFrozen = true;
+
+            _particleMainModule.startColor = _frozenMarkerColor;
+            _destMarkerRenderer.material.color = _frozenMarkerColor;
+            _pathVfxRenderer.material.color = _frozenMarkerColor;
+            foreach (var subMarker in _subMarkerRenderers)
+            {
+                subMarker.material.color = _frozenMarkerColor;
+            }
+
+            ParticleSystem.MainModule temp;
+            for (int i = 0; i < _subDestMainModules.Count; ++i)
+            {
+                temp = _subDestMainModules[i];
+                temp.startColor = _frozenMarkerColor;
+            }
         }
     }
 
@@ -1082,6 +1137,21 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
             _animator.SetBool(Frozen, false);
         }
         _isFrozen = false;
+
+        _particleMainModule.startColor = _defaultMarkerColor;
+        _destMarkerRenderer.material.color = _defaultMarkerColor;
+        _pathVfxRenderer.material.color = _defaultMarkerColor;
+        foreach (var subMarker in _subMarkerRenderers)
+        {
+            subMarker.material.color = _defaultMarkerColor;
+        }
+
+        ParticleSystem.MainModule temp;
+        for (int i = 0; i < _subDestMainModules.Count; ++i)
+        {
+            temp = _subDestMainModules[i];
+            temp.startColor = _defaultMarkerColor;
+        }
     }
 
     public bool HitWrapAround
@@ -1097,5 +1167,27 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
         Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos);
         transform.position = worldPos + CKOffsetsReference.EnemyOffset(_isSonEnemy);
+    }
+
+    /// <summary>
+    /// Implementation of IEnemy
+    /// Rotates to face its target and then does its attack animation
+    /// </summary>
+    /// <param name="target"></param>
+    public void AttackTarget(Transform target)
+    {
+        if (_didHitPlayer)
+            return;
+
+        var rotationDir = (target.position - transform.position).normalized;
+        rotationDir.y = 0f;
+        Tween.Rotation(transform, endValue: Quaternion.LookRotation(rotationDir),
+                duration: _rotationTime,
+                ease: _rotationEase);
+
+        if (_animator != null)
+            _animator.SetBool(Attack, true);
+
+        _didHitPlayer = true;
     }
 }
