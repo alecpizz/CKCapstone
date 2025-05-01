@@ -627,7 +627,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     {
         int tempMoveIndex = _moveIndex;
         bool tempLooping = _isReturningToStart;
-        Vector3 lastSubPosition = transform.position;
+        Vector3 lastSubPosition = _lastPosition;
 
         bool blocked = false;
 
@@ -1034,51 +1034,16 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         }
         else
         {
-            if (changeInIndex < 0)
+            int prevMove = _moveIndex;
+            bool prevReturn = _isReturningToStart;
+            bool isVFX = false;
+
+            for (int i = 0; i < changeInIndex; i++)
             {
-                looped = !looped;
+                EvaluateNextMove(ref prevMove, ref prevReturn, ref isVFX);
             }
 
-            if (looped)
-            {
-                moveIndex -= changeInIndex;
-
-                if (moveIndex > _currentEnemyIndex && _isMoving)
-                {
-                    moveIndex = _currentEnemyIndex;
-                }
-            }
-            else
-            {
-                moveIndex += changeInIndex;
-
-                if (moveIndex < _currentEnemyIndex && _isMoving)
-                {
-                    moveIndex = _currentEnemyIndex;
-                }
-            }
-
-            int offsetIndex;
-
-            while (moveIndex < 0 || moveIndex > _moveDestinations.Count - 1)
-            {
-                if (moveIndex < 0)
-                {
-                    moveIndex = -moveIndex;
-                    looped = false;
-                }
-                else if (moveIndex > _moveDestinations.Count - 1)
-                {
-                    offsetIndex = moveIndex % (_moveDestinations.Count - 1);
-                    moveIndex = (_moveDestinations.Count - 1) - offsetIndex;
-                    looped = true;
-                }
-            }
-
-            if (moveIndex == 0 || moveIndex == _moveDestinations.Count - 1)
-            {
-                looped = !looped;
-            }
+            moveIndex = prevMove;
         }
     }
 
