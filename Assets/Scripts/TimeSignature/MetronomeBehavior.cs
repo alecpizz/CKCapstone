@@ -87,6 +87,11 @@ public class MetronomeBehavior : MonoBehaviour, ITimeListener
 
         Vector2Int nextTimeSig = TimeSignatureManager.Instance.GetNextTimeSignature();
         _metronomePredictor.text = nextTimeSig.x + "/" + nextTimeSig.y;
+
+        if (_hudIndicator == null)
+        {
+            _hudIndicator = GameObject.Find("TimeSigParticles").transform.GetChild(1).gameObject.GetComponent<ParticleSystem>();
+        }
     }
 
     /// <summary>
