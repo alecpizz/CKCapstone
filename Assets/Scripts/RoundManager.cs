@@ -248,6 +248,7 @@ public sealed class RoundManager : MonoBehaviour
     /// <param name="listener"></param>
     public void CompleteTurn(ITurnListener listener)
     {
+        _isDelaying = false;
         //don't complete if it's not our turn. this shouldn't happen
         if (listener.TurnState != _turnState &&
             (listener.SecondaryTurnState != _turnState ||
@@ -314,6 +315,7 @@ public sealed class RoundManager : MonoBehaviour
     /// <param name="listener">The listener to repeat a turn.</param>
     public void RequestRepeatTurnStateRepeat(ITurnListener listener)
     {
+        _isDelaying = false;
         if (!_playerControls.InGame.Movement.IsPressed() && !_inputBuffered)
         {
             _movementRegistered = false;
@@ -430,57 +432,40 @@ public sealed class RoundManager : MonoBehaviour
     /// <returns>Normalized input vector</returns>
     private Vector3 GetNormalizedInput()
     {
-        if (!_isDelaying)
-        {
+        
             Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>().normalized;
-            //new filter for inputs
-            if ((input.x) != 0 && (input.y) != 0)
+            if (!_isDelaying)
             {
-                Vector2 unnormalized = _playerControls.InGame.Movement.ReadValue<Vector2>();
-                if (MathF.Abs(input.x) - MathF.Abs(unnormalized.x) < MathF.Abs(input.y) - MathF.Abs(unnormalized.y))
+                //new filter for inputs
+                if ((input.x) != 0 && (input.y) != 0)
                 {
-                    input.y = 0;
-                    input.x = input.x;
+                    Vector2 unnormalized = _playerControls.InGame.Movement.ReadValue<Vector2>();
+                    if (MathF.Abs(input.x) - MathF.Abs(unnormalized.x) < MathF.Abs(input.y) - MathF.Abs(unnormalized.y))
+                    {
+                        input.y = 0;
+                        input.x = input.x;
+                    }
+
+                    if (MathF.Abs(input.y) - MathF.Abs(unnormalized.y) < MathF.Abs(input.x) - MathF.Abs(unnormalized.x))
+                    {
+                        input.x = 0;
+                        input.y = input.y;
+                    }
+                    _isDelaying = true;
                 }
 
-                if (MathF.Abs(input.y) - MathF.Abs(unnormalized.y) < MathF.Abs(input.x) - MathF.Abs(unnormalized.x))
+                if (input != _lastRegistered)
                 {
-                    input.x = 0;
-                    input.y = input.y;
+                    input = _lastRegistered;
                 }
-            }
-
-            if (input != _lastRegistered)
-            {
-                input = _lastRegistered;
-            }
-            _isDelaying = true;
-            StartCoroutine(ShortDelay());
             
-            return new Vector3(input.x, 0f, input.y);
-        }
-        //does last input so that it links up with the mirror enemy
-        return _lastMovementInput;
-    }
+                Debug.Log(input);
+                _isDelaying = true;
+                return new Vector3(input.x, 0f, input.y);  
+            }
 
-    /// <summary>
-    /// Delay for inputs so everything has time to process
-    /// </summary>
-    /// <returns></returns>
-    IEnumerator ShortDelay()
-    {
-        if (_isDelaying)
-        {
-            yield return new WaitForSeconds(0.1f);
-            _isDelaying = false;
-        }
-
-        if (!_isDelaying)
-        {
-            StopCoroutine(nameof(ShortDelay));
-        }
+            return _lastMovementInput;
     }
-    
     
     /// <summary>
     /// Helper method to get the next turn state.
