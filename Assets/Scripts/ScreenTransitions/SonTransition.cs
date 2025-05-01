@@ -26,8 +26,11 @@ public class SonTransition : SceneTransitionBase
     [Tooltip("The music note particles")]
     [SerializeField] private GameObject _noteParticles;
 
+    [SerializeField] private GameObject _noteRenderTarget;
+
     // Internal references
     private Image _white;
+    private RawImage _notesImage;
     private ParticleSystem _notes;
     private bool _inProgress;
 
@@ -35,6 +38,7 @@ public class SonTransition : SceneTransitionBase
     {
         _white = _whiteObj.GetComponent<Image>();
         _notes = _noteParticles.GetComponent<ParticleSystem>();
+        _notesImage = _noteRenderTarget.GetComponent<RawImage>();
     }
 
     public override bool InProgress()
@@ -56,7 +60,7 @@ public class SonTransition : SceneTransitionBase
         _inProgress = true;
 
         // Start fading in the white screen
-        StartCoroutine(LerpEffects(_white, _whiteFadeIn));
+        StartCoroutine(LerpEffects( _whiteFadeIn));
     }
 
     /// <summary>
@@ -71,26 +75,26 @@ public class SonTransition : SceneTransitionBase
 /// <summary>
 /// Fades any effects (white screen) in from zero opacity
 /// </summary>
-/// <param name="img"> The screen overlay image to fade </param>
 /// <param name="duration"> How long the fade should take </param>
 /// <returns> null </returns>
-    private IEnumerator LerpEffects(Image img, float duration)
+    private IEnumerator LerpEffects( float duration)
     {
         // This float will be updated over time to set the interpolation percentage
         // according the the specified lerp duration
         float time = 0;
 
         // Get the color property of the image
-        Color colA = img.color;
-
+        Color colA = _white.color;
+        Color colB = _notesImage.color;
         // Fade any screen effects over time
         while (time < duration)
         {
 
             // Set the image color over time
             colA.a = Mathf.Lerp(0f, 1f, time / duration);
-            img.color = colA;
-
+            colB.a = Mathf.Lerp(0f, 1f, time / duration);
+            _white.color = colA;
+            _notesImage.color = colB;
             // Add the seconds passed to time
             time += Time.deltaTime;
 
@@ -99,7 +103,8 @@ public class SonTransition : SceneTransitionBase
         }
 
         // Just in case, set any effects to their end values at the end
-        img.color = new Color(img.color.r, img.color.b, img.color.b, 1f);
+        _white.color = new Color(_white.color.r, _white.color.b, _white.color.b, 1f);
+        _notesImage.color = new Color(_notesImage.color.r, _notesImage.color.b, _notesImage.color.b, 1f);
 
         // Turn off net particles
         _noteParticles.SetActive(false);
@@ -118,6 +123,7 @@ public class SonTransition : SceneTransitionBase
 
         // Get the color property of the image
         Color whiteA = _white.color;
+        Color imageB = _notesImage.color;
 
         // Fade the white screen out over time
         while (time < _whiteFadeOut)
@@ -125,8 +131,9 @@ public class SonTransition : SceneTransitionBase
 
             // Set the image color over time
             whiteA.a = Mathf.Lerp(1f, 0f, time / _whiteFadeOut);
+            imageB.a = Mathf.Lerp(1f, 0f, time / _whiteFadeOut);
             _white.color = whiteA;
-
+            _notesImage.color = imageB;
             // Add the seconds passed to time
             time += Time.deltaTime;
 
@@ -136,6 +143,7 @@ public class SonTransition : SceneTransitionBase
 
         // Just in case, set the white screen to zero
         _white.color = new Color(_white.color.r, _white.color.b, _white.color.b, 0f);
+        _notesImage.color = new Color(_notesImage.color.r, _notesImage.color.b, _notesImage.color.b, 0f);
         _inProgress = false;
     }
 }
