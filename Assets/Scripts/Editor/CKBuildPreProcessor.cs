@@ -351,18 +351,14 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         List<EditorBuildSettingsScene> editorBuildSettingsScenes =
             new List<EditorBuildSettingsScene>();
         var levelData = LevelOrderSelection.Instance.SelectedLevelData;
-        levelData.PrettyChapterNames.Clear();
-        levelData.PrettySceneNames.Clear();
         //add the main menu scene
         editorBuildSettingsScenes.Add(
             new EditorBuildSettingsScene(AssetDatabase.GetAssetPath(levelData.MainMenuScene),
                 true));
-        levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = "Main Menu", showUp = false });
         //add each chapter's data
         int chapterIndex = 0;
         foreach (var chapter in levelData.Chapters)
         {
-            levelData.PrettyChapterNames.Add(chapter.ChapterName);
             //add intro scene
             if (chapter.Intro.Scene != null)
             {
@@ -370,8 +366,6 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                     AssetDatabase.GetAssetPath(chapter.Intro.Scene),
                     true));
                 chapter.Intro.ScenePath = editorBuildSettingsScenes[^1].path;
-                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData
-                    { PrettyName = chapter.Intro.LevelName, showUp = false });
             }
 
             //add all puzzles
@@ -382,8 +376,6 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                     AssetDatabase.GetAssetPath(level.Scene),
                     true));
                 level.ScenePath = editorBuildSettingsScenes[^1].path;
-                levelData.PrettySceneNames.Add(
-                    new LevelOrder.PrettyData { PrettyName = level.LevelName, showUp = true });
             }
 
             //add outro scene
@@ -393,8 +385,6 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                     AssetDatabase.GetAssetPath(chapter.Outro.Scene),
                     true));
                 chapter.Outro.ScenePath = editorBuildSettingsScenes[^1].path;
-                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData
-                    { PrettyName = chapter.Outro.LevelName, showUp = true });
             }
         }
 
@@ -408,7 +398,6 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                 AssetDatabase.GetAssetPath(levelData.CreditsScene),
                 true));
-            levelData.PrettySceneNames.Add(new LevelOrder.PrettyData {PrettyName = "Credits Scene", showUp = false});
         }
 
         EditorUtility.SetDirty(levelData);
