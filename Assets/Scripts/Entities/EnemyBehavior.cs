@@ -72,6 +72,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     private List<GameObject> _subDestPathMarkers = new();
 
     private int _subMarkerIdx = 0;
+    private int _changeInIndex = 0;
 
     private ParticleSystem.MainModule _particleMainModule;
     private Renderer _destMarkerRenderer;
@@ -562,6 +563,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         _destinationMarker.transform.position = destPointWorld;
 
         UpdateAllSubMarkers();
+
+        _metronomeTriggered = false;
     }
 
     /// <summary>
@@ -625,15 +628,18 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// </summary>
     public void UpdateAllSubMarkers()
     {
+        _changeInIndex = _metronomeTriggered ? _enemyMovementTime - _prevMovementTime :
+            _enemyMovementTime;
+
         int tempMoveIndex = _moveIndex;
         bool tempLooping = _isReturningToStart;
-        Vector3 lastSubPosition = transform.position;
+        Vector3 lastSubPosition = _lastPosition;
 
         bool blocked = false;
 
         _subMarkerIdx = 0;
 
-        for (int i = 0; i < _enemyMovementTime; i++)
+        for (int i = 0; i < _changeInIndex; i++)
         {
             int prevMove = tempMoveIndex;
             bool prevReturn = tempLooping;
@@ -847,7 +853,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
         if (_waitOnBeam)
             _waitOnBeam = false;
 
-        if (_moveIndex == 0 || _moveIndex == _moveDestinations.Count - 1)
+        if (_moveIndex == 0 && !_circularMovement || _moveIndex == _moveDestinations.Count - 1 && !_circularMovement)
         {
             /*if (_animator != null)
             {
@@ -1001,85 +1007,19 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// <param name="looped">Reference to the evaluated loop state.</param>
     private void NextMarkerDestination(ref int moveIndex, ref bool looped)
     {
-        int changeInIndex = _metronomeTriggered ? _enemyMovementTime - _prevMovementTime :
+        _changeInIndex = _metronomeTriggered ? _enemyMovementTime - _prevMovementTime :
             _enemyMovementTime;
+        
+        int prevMove = _moveIndex;
+        bool prevReturn = _isReturningToStart;
+        bool isVFX = false;
 
-        _metronomeTriggered = false;
-
-        if (_circularMovement)
+        for (int i = 0; i < _changeInIndex; i++)
         {
-            moveIndex += changeInIndex;
-
-            if (moveIndex < 0)
-            {
-                moveIndex = _moveDestinations.Count - -moveIndex;
-            }
-
-            if (moveIndex > _moveDestinations.Count - 1)
-            {
-                moveIndex %= _moveDestinations.Count - 1;
-                _isCircling = true;
-            }
-
-            if (moveIndex < _currentEnemyIndex && _isMoving && !_isCircling)
-            {
-                moveIndex = _currentEnemyIndex;
-            }
-            else if (moveIndex < _currentEnemyIndex && !_isCircling)
-            {
-                moveIndex = _currentEnemyIndex + changeInIndex;
-                moveIndex %= _moveDestinations.Count - 1;
-                _isCircling = true;
-            }
+            EvaluateNextMove(ref prevMove, ref prevReturn, ref isVFX);
         }
-        else
-        {
-            if (changeInIndex < 0)
-            {
-                looped = !looped;
-            }
 
-            if (looped)
-            {
-                moveIndex -= changeInIndex;
-
-                if (moveIndex > _currentEnemyIndex && _isMoving)
-                {
-                    moveIndex = _currentEnemyIndex;
-                }
-            }
-            else
-            {
-                moveIndex += changeInIndex;
-
-                if (moveIndex < _currentEnemyIndex && _isMoving)
-                {
-                    moveIndex = _currentEnemyIndex;
-                }
-            }
-
-            int offsetIndex;
-
-            while (moveIndex < 0 || moveIndex > _moveDestinations.Count - 1)
-            {
-                if (moveIndex < 0)
-                {
-                    moveIndex = -moveIndex;
-                    looped = false;
-                }
-                else if (moveIndex > _moveDestinations.Count - 1)
-                {
-                    offsetIndex = moveIndex % (_moveDestinations.Count - 1);
-                    moveIndex = (_moveDestinations.Count - 1) - offsetIndex;
-                    looped = true;
-                }
-            }
-
-            if (moveIndex == 0 || moveIndex == _moveDestinations.Count - 1)
-            {
-                looped = !looped;
-            }
-        }
+        moveIndex = prevMove;
     }
 
     /// <summary>

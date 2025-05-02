@@ -45,7 +45,7 @@ public class DoorLightBehaviour : MonoBehaviour
     /// <summary>
     /// Assign initial references
     /// </summary>
-    void Start()
+    void Awake()
     {
         // Get the light object from the gameobject hierarchy
         _pointLight = _pointLightChild.gameObject;
