@@ -23,6 +23,8 @@ public class LevelOrder : ScriptableObject
 #if UNITY_EDITOR
     [field: SerializeField, SepTitle("Main Menu", EColor.Aqua), BelowSeparator(EColor.Aqua)]
     public SceneAsset MainMenuScene { get; private set; }
+    [field: SerializeField]
+    public SceneAsset IntroCutScene { get; private set; }
 #endif
     public enum LightingMode
     {
