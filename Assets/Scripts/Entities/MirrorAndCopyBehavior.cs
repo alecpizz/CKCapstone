@@ -82,7 +82,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     private bool _waitOnBeam = false;
     private bool _didHitPlayer = false;
 
-    private Sequence _moveSequence;
+    private Tween _moveSequence;
 
     /// <summary>
     /// Prime tween configuration
@@ -195,8 +195,10 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                         AudioManager.Instance.PlaySound(_walkSound);
                     }
 
-                    _moveSequence = Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
-                    ease: _rotationEase).Chain(Tween.Position(transform,
+                    Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
+                    ease: _rotationEase);
+
+                    _moveSequence = Tween.Position(transform,
                         move + CKOffsetsReference.MirrorCopyEnemyOffset(_mirrored), modifiedMovementTime, ease: _movementEase)
                         .OnUpdate(target: this, (target, tween) =>
                         {
@@ -233,7 +235,7 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                                 }
                                 SceneController.Instance.ReloadCurrentScene();
                             }
-                        }));
+                        });
 
                     yield return _moveSequence.ToYieldInstruction();
                     _animator.SetBool(Forward, false);
