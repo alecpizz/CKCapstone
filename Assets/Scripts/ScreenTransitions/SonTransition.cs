@@ -34,6 +34,9 @@ public class SonTransition : SceneTransitionBase
     private ParticleSystem _notes;
     private bool _inProgress;
 
+    /// <summary>
+    /// Assigns references
+    /// </summary>
     public override void Init()
     {
         _white = _whiteObj.GetComponent<Image>();
@@ -41,6 +44,10 @@ public class SonTransition : SceneTransitionBase
         _notesImage = _noteRenderTarget.GetComponent<RawImage>();
     }
 
+    /// <summary>
+    /// Whether the transition is currently playing
+    /// </summary>
+    /// <returns></returns>
     public override bool InProgress()
     {
         return _inProgress;

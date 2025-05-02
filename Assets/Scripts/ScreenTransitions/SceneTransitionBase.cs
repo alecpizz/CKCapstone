@@ -40,7 +40,14 @@ public abstract class SceneTransitionBase : MonoBehaviour
     }
     #endif
 
+    /// <summary>
+    /// Initialize the transition
+    /// </summary>
     public abstract void Init();
+    /// <summary>
+    /// Whether the transition is in progress
+    /// </summary>
+    /// <returns></returns>
     public abstract bool InProgress();
     /// <summary>
     /// Fade in screen effeects from nothing.  Call this when the screen should fade in.

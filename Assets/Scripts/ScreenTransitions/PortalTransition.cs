@@ -40,6 +40,9 @@ public class PortalTransition : SceneTransitionBase
     private Image _sparkles;
     private int _count = 0;
 
+    /// <summary>
+    /// Initialize the transition
+    /// </summary>
     public override void Init()
     {
         _white = _whiteObj.GetComponent<Image>();
@@ -47,6 +50,10 @@ public class PortalTransition : SceneTransitionBase
         _sparkles = _sparklesObj.GetComponent<Image>();
     }
 
+    /// <summary>
+    /// Transition is currently playing.
+    /// </summary>
+    /// <returns></returns>
     public override bool InProgress()
     {
         return _count > 0;

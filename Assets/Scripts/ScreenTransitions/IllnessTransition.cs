@@ -52,6 +52,9 @@ public class IllnessTransition : SceneTransitionBase
     private Image _white;
     private bool _inProgress = false;
 
+    /// <summary>
+    /// Assigns references.
+    /// </summary>
     public override void Init()
     {
         _postProcess = _postProcessObj.GetComponent<Volume>();
@@ -59,6 +62,10 @@ public class IllnessTransition : SceneTransitionBase
         _white = _whiteObj.GetComponent<Image>();
     }
 
+    /// <summary>
+    /// Whether or not the transition is in progress.
+    /// </summary>
+    /// <returns></returns>
     public override bool InProgress()
     {
         return _inProgress;
