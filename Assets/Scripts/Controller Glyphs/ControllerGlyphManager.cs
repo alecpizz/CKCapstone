@@ -23,6 +23,7 @@ public class ControllerGlyphManager : MonoBehaviour
     public bool PlayStationController { get; private set; } = false;
     public bool SwitchController { get; private set; } = false;
     public bool XboxController { get; private set; } = false;
+    public bool UsingController { get; private set; } = false;
 
     private bool _areInteractables = false;
     private bool _areTextBlurbs = false;
@@ -131,6 +132,7 @@ public class ControllerGlyphManager : MonoBehaviour
             SwitchController = false;
             XboxController = false;
             KeyboardAndMouse = true;
+            UsingController = false;
         }
         else if (controllerName.Contains("dualshock") || controllerName.Contains("dualsense") ||
             controllerName.Contains("playstation") || controllerName.Contains("wireless controller"))
@@ -139,6 +141,7 @@ public class ControllerGlyphManager : MonoBehaviour
             SwitchController = false;
             XboxController = false;
             KeyboardAndMouse = false;
+            UsingController = true;
         }
         else if (controllerName.Contains("pro controller") || controllerName.Contains("switch") ||
             controllerName.Contains("nintendo"))
@@ -147,6 +150,7 @@ public class ControllerGlyphManager : MonoBehaviour
             SwitchController = true;
             XboxController = false;
             KeyboardAndMouse = false;
+            UsingController = true;
         }
         else
         {
@@ -154,6 +158,7 @@ public class ControllerGlyphManager : MonoBehaviour
             SwitchController = false;
             XboxController = true;
             KeyboardAndMouse = false;
+            UsingController = true ;
         }
         //changes input related text depending on current input device
         if (_areInteractables)
@@ -253,30 +258,5 @@ public class ControllerGlyphManager : MonoBehaviour
             }
         }
         return tutorialText;
-    }
-
-    /// <summary>
-    /// Depending on if either Controller or Keyboard is being used, this sprite function
-    /// changes the sprite used to show the controls in the how to play menu
-    /// </summary>
-    /// <returns></returns>
-    public Sprite ControllerImageDecider()
-    {
-        Sprite NewImage = null;
-        if (PlayStationController || XboxController || SwitchController)
-        {
-            foreach (var graphic in _ControllerGraphicArray)
-            {
-                NewImage = graphic.ControllerImage;
-            }
-        }
-        else
-        {
-            foreach (var graphic in _ControllerGraphicArray)
-            {
-                NewImage = graphic.KeyboardImage;
-            }
-        }
-        return NewImage;
     }
 }

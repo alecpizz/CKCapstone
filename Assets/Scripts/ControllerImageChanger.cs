@@ -13,12 +13,22 @@ using UnityEngine.UI;
 
 public class ControllerImageChanger : MonoBehaviour
 {
-    [SerializeField] public Sprite ControllerImage;
-    [SerializeField] public Sprite KeyboardImage;
-    [SerializeField] public Image ChangingImage;
-
+    [SerializeField] private Sprite ControllerImage;
+    [SerializeField] private Sprite KeyboardImage;
+    [SerializeField] private Image ChangingImage;
+    
+    /// <summary>
+    /// Changes the controls image in how to play based off of what controller is being used
+    /// </summary>
     public void ControllerImageSwap()
     {
-        ChangingImage.sprite = ControllerGlyphManager.Instance.ControllerImageDecider();
+        if (ControllerGlyphManager.Instance.UsingController)
+        {
+            ChangingImage.sprite = ControllerImage;
+        }
+        else
+        {
+            ChangingImage.sprite = KeyboardImage;
+        }
     }
 }
