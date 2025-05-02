@@ -73,10 +73,6 @@ public class SceneController : MonoBehaviour
 
         if (_shouldFadeInOnLoad)
         {
-            if (SceneManager.GetActiveScene().name.StartsWith('C'))
-            {
-                currentTransitionType = SceneTransitionType.Challenge;
-            }
             StartCoroutine(CircleWipeTransition(true, currentTransitionType));
         }
         
@@ -93,11 +89,6 @@ public class SceneController : MonoBehaviour
         currentTransitionType = type;
         int sceneIndex = SceneManager.GetActiveScene().buildIndex;
         StartCoroutine(CircleWipeTransition(false, currentTransitionType, sceneIndex));
-    }
-    
-    public void ReloadCurrentScene()
-    {
-        ReloadCurrentScene(currentTransitionType);
     }
 
     /// <summary>

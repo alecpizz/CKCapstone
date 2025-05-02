@@ -308,7 +308,7 @@ public class DebugMenuManager : MonoBehaviour
     {
         if (SceneController.Instance != null)
         {
-            SceneController.Instance.ReloadCurrentScene();
+            SceneController.Instance.ReloadCurrentScene(SceneTransitionType.Black);
         }
         else
         {
