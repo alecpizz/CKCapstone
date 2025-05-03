@@ -280,7 +280,8 @@ public class PlayerMovement : MonoBehaviour, IGridEntry, ITimeListener, ITurnLis
                     Tween.Position(transform, endValue: endPos, _movementTime * (1 - progress));
                 }
                 OnDeath();
-                SceneController.Instance.ReloadCurrentScene();
+                SceneController.Instance.ReloadCurrentScene(enemy.IsSon ?
+                    SceneTransitionType.Son : SceneTransitionType.Illness);
                 return true;
             }
         }

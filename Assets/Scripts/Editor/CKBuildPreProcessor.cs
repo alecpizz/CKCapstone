@@ -96,9 +96,18 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 .GetField("_firstLevelIndex", BindingFlags.Instance | BindingFlags.NonPublic);
             if (field != null)
             {
-                int index = SceneUtility.GetBuildIndexByScenePath(
-                    AssetDatabase.GetAssetPath(levelData.Chapters[0].GetStartingLevel.Scene));
-                field.SetValue(menuManager, index);
+                if (levelData.IntroCutScene == null)
+                {
+                    int index = SceneUtility.GetBuildIndexByScenePath(
+                        AssetDatabase.GetAssetPath(levelData.Chapters[0].GetStartingLevel.Scene));
+                    field.SetValue(menuManager, index);
+                }
+                else
+                {
+                    int index = SceneUtility.GetBuildIndexByScenePath(
+                        AssetDatabase.GetAssetPath(levelData.IntroCutScene));
+                    field.SetValue(menuManager, index);
+                }
             }
             else
             {
@@ -107,6 +116,28 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         }
 
         EditorSceneManager.SaveScene(menuScene);
+
+        if (levelData.IntroCutScene != null)
+        {
+            var introScene = EditorSceneManager.OpenScene(AssetDatabase.GetAssetPath(levelData.IntroCutScene));
+            var cutsceneFrameWork = Object.FindObjectOfType<CutsceneFramework>();
+            if (cutsceneFrameWork != null)
+            {
+                var field = cutsceneFrameWork.GetType().GetField("_loadingLevelIndex",
+                    BindingFlags.Instance | BindingFlags.NonPublic);
+                if (field != null)
+                {
+                    field.SetValue(cutsceneFrameWork,
+                        SceneUtility.GetBuildIndexByScenePath(
+                            AssetDatabase.GetAssetPath(levelData.Chapters[0].GetStartingLevel.Scene)));
+                }
+                else
+                {
+                    Debug.LogError("Field _loadingLevelIndex not found on cutsceneFramework!");
+                }
+            }
+            EditorSceneManager.SaveScene(introScene);
+        }
 
         //loop thru each scene, apply puzzle exits
         for (var chapterIndex = 0; chapterIndex < levelData.Chapters.Count; chapterIndex++)
@@ -138,6 +169,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
             var intro = chapter.Intro;
             SetOpenerCloserSceneExit(intro, chapter.Puzzles[0].Scene, lightDataMethod);
             UpdatePuzzles(chapterIndex, lightDataMethod);
@@ -159,7 +191,8 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
     /// </summary>
     /// <param name="entrance">The scene to modify.</param>
     /// <param name="scene">The destination scene to link towards.</param>
-    private static void SetOpenerCloserSceneExit(LevelOrder.LevelData entrance, SceneAsset scene, Action<LightingData> lightingDataAction)
+    private static void SetOpenerCloserSceneExit(LevelOrder.LevelData entrance, SceneAsset scene,
+        Action<LightingData> lightingDataAction)
     {
         if (entrance.Scene == null) return;
         //apply transitions for intro/outro
@@ -191,6 +224,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             SetDoorExitScene(endLevelDoor, SceneUtility.GetBuildIndexByScenePath(
                 AssetDatabase.GetAssetPath(scene)));
         }
+
         lightingDataAction?.Invoke(entrance.LightingData);
 
         EditorSceneManager.SaveScene(introScene);
@@ -204,8 +238,8 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
     {
         var levelData = LevelOrderSelection.Instance.SelectedLevelData;
         var chapter = levelData.Chapters[chapterIndex];
-       
-        
+
+
         for (int puzzleIndex = 0; puzzleIndex < chapter.Puzzles.Count; puzzleIndex++)
         {
             var currentLevel = chapter.Puzzles[puzzleIndex];
@@ -286,12 +320,11 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                 }
 
                 SetDoorExitScene(endLevelDoor, index);
-                
-                
+
 
                 EditorUtility.SetDirty(endLevelDoor);
             }
-            
+
             var cutsceneFrameWork = Object.FindObjectOfType<CutsceneFramework>();
             if (cutsceneFrameWork != null)
             {
@@ -312,7 +345,7 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             {
                 Debug.Log($"NO CUTSCENE FRAMEWORK IN SCENE {currScene.name}");
             }
-            
+
             lightingDataApply?.Invoke(currentLevel.LightingData);
 
             EditorSceneManager.MarkSceneDirty(currScene);
@@ -351,18 +384,20 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
         List<EditorBuildSettingsScene> editorBuildSettingsScenes =
             new List<EditorBuildSettingsScene>();
         var levelData = LevelOrderSelection.Instance.SelectedLevelData;
-        levelData.PrettyChapterNames.Clear();
-        levelData.PrettySceneNames.Clear();
         //add the main menu scene
         editorBuildSettingsScenes.Add(
             new EditorBuildSettingsScene(AssetDatabase.GetAssetPath(levelData.MainMenuScene),
                 true));
-        levelData.PrettySceneNames.Add(new LevelOrder.PrettyData { PrettyName = "Main Menu", showUp = false });
+        if (levelData.IntroCutScene)
+        {
+            editorBuildSettingsScenes.Add(
+                new EditorBuildSettingsScene(AssetDatabase.GetAssetPath(levelData.IntroCutScene),
+                    true));
+        }
         //add each chapter's data
         int chapterIndex = 0;
         foreach (var chapter in levelData.Chapters)
         {
-            levelData.PrettyChapterNames.Add(chapter.ChapterName);
             //add intro scene
             if (chapter.Intro.Scene != null)
             {
@@ -370,8 +405,6 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                     AssetDatabase.GetAssetPath(chapter.Intro.Scene),
                     true));
                 chapter.Intro.ScenePath = editorBuildSettingsScenes[^1].path;
-                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData
-                    { PrettyName = chapter.Intro.LevelName, showUp = false });
             }
 
             //add all puzzles
@@ -382,8 +415,6 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                     AssetDatabase.GetAssetPath(level.Scene),
                     true));
                 level.ScenePath = editorBuildSettingsScenes[^1].path;
-                levelData.PrettySceneNames.Add(
-                    new LevelOrder.PrettyData { PrettyName = level.LevelName, showUp = true });
             }
 
             //add outro scene
@@ -393,8 +424,6 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
                     AssetDatabase.GetAssetPath(chapter.Outro.Scene),
                     true));
                 chapter.Outro.ScenePath = editorBuildSettingsScenes[^1].path;
-                levelData.PrettySceneNames.Add(new LevelOrder.PrettyData
-                    { PrettyName = chapter.Outro.LevelName, showUp = true });
             }
         }
 
@@ -408,7 +437,6 @@ public class CKBuildPreProcessor : IPreprocessBuildWithReport
             editorBuildSettingsScenes.Add(new EditorBuildSettingsScene(
                 AssetDatabase.GetAssetPath(levelData.CreditsScene),
                 true));
-            levelData.PrettySceneNames.Add(new LevelOrder.PrettyData {PrettyName = "Credits Scene", showUp = false});
         }
 
         EditorUtility.SetDirty(levelData);
