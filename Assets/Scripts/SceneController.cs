@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -17,30 +18,32 @@ using SaintsField;
 using SaintsField.Playa;
 using FMODUnity;
 
+public enum SceneTransitionType
+{
+    Illness,
+    Son,
+    Portal,
+    Challenge,
+    Black
+}
+
 public class SceneController : MonoBehaviour
 {
     public static SceneController Instance;
 
     // Remembers previous wipe color when loading a new scene
-    private static Color _currentFadeColor = Color.black;
+    private static SceneTransitionType currentTransitionType = SceneTransitionType.Black;
 
-    [Required]
-    [SerializeField] private Image _circleWipeImage;
-    [Required]
-    [SerializeField] private Camera _camera;
-    [InfoBox("Needed for screen wipe to center on the player", EMessageType.Warning)]
-    [SerializeField] private float _timeForScreenWipe;
     [SerializeField] private bool _shouldFadeInOnLoad;
     [SerializeField] private EventReference _endSound;
     [SerializeField] private EventReference _deathSound;
     [SerializeField] private bool _playSoundOnSceneChange = true;
-
-    private readonly int _circleSizePropId = Shader.PropertyToID("_CircleSize");
-    private readonly int _backgroundColorPropId = Shader.PropertyToID("_BackgroundColor");
-    private readonly int _positionOffsetPropId = Shader.PropertyToID("_PositionOffset");
-
-    private const float xUvOffset = 0.5f;
-    private const float yUvOffset = 0.28f;
+    [SerializeField] private SceneTransitionBase _illnessTransition;
+    [SerializeField] private SceneTransitionBase _sonTransition;
+    [SerializeField] private SceneTransitionBase _portalTransition;
+    [SerializeField] private SceneTransitionBase _challengeTransition;
+    [SerializeField] private SceneTransitionBase _blackTransition;
+    private Dictionary<SceneTransitionType, SceneTransitionBase> _transitions = new();
 
     public bool Transitioning {get; private set;}
     
@@ -55,12 +58,22 @@ public class SceneController : MonoBehaviour
         }
 
         Instance = this;
+        
 
         Time.timeScale = 1.0f;
+        _transitions[SceneTransitionType.Black] = _blackTransition;
+        _transitions[SceneTransitionType.Challenge] = _challengeTransition;
+        _transitions[SceneTransitionType.Illness] = _illnessTransition;
+        _transitions[SceneTransitionType.Portal] = _portalTransition;
+        _transitions[SceneTransitionType.Son] = _sonTransition;
+        foreach (var st in _transitions)
+        {
+            st.Value.Init();
+        }
 
         if (_shouldFadeInOnLoad)
         {
-            StartCoroutine(CircleWipeTransition(true, _currentFadeColor));
+            StartCoroutine(CircleWipeTransition(true, currentTransitionType));
         }
         
         Transitioning = false;
@@ -68,76 +81,39 @@ public class SceneController : MonoBehaviour
     /// <summary>
     /// Called to reload the current scene after a fade out transition
     /// </summary>
-    public void ReloadCurrentScene()
+    public void ReloadCurrentScene(SceneTransitionType type)
     {
         if (Transitioning) { return; }
 
         StopAllCoroutines();
-        _currentFadeColor = Color.black;
+        currentTransitionType = type;
         int sceneIndex = SceneManager.GetActiveScene().buildIndex;
-        StartCoroutine(CircleWipeTransition(false, _currentFadeColor, sceneIndex));
+        StartCoroutine(CircleWipeTransition(false, currentTransitionType, sceneIndex));
     }
 
     /// <summary>
     /// Called to load a new scene after playing a fade out transition
     /// </summary>
     /// <param name="sceneBuildIndex">Build index of the scene to load</param>
-    public void LoadNewScene(int sceneBuildIndex)
+    public void LoadNewScene(int sceneBuildIndex, SceneTransitionType type)
     {
         if (Transitioning) { return; }
 
         StopAllCoroutines();
-        _currentFadeColor = Color.white;
-        StartCoroutine(CircleWipeTransition(false, _currentFadeColor, sceneBuildIndex));
+        currentTransitionType = type;
+        StartCoroutine(CircleWipeTransition(false, currentTransitionType, sceneBuildIndex));
     }
-
-    /// <summary>
-    /// Called by the circle wipe coroutine to center the circle over the player
-    /// </summary>
-    private void RepositionCircleWipe()
-    {
-        // Do circle wipe in center of the screen if there's no player
-        if (PlayerMovement.Instance == null)
-        {
-            _circleWipeImage.materialForRendering.SetVector(_positionOffsetPropId, new Vector2(0, 0));
-            return;
-        }
-
-        // Find where player is in screen space
-        Vector3 screenPos = _camera.WorldToScreenPoint(PlayerMovement.Instance.transform.position);
-
-        // Turn pixel position into percent of screen width and height
-        float xPercent = screenPos.x / _camera.pixelWidth;
-        float yPercent = screenPos.y / _camera.pixelHeight;
-
-        // Use percentages to calculate UV offsets for shader
-        Vector2 newOffset = new Vector2();
-        newOffset.x = (xPercent - xUvOffset) * -1f;
-        newOffset.y = (yPercent * yUvOffset * 2 - yUvOffset) * -1f;
-        _circleWipeImage.materialForRendering.SetVector(_positionOffsetPropId, newOffset);
-    }
-
+    
     /// <summary>
     /// Handles the smoothly animating the circle wipe over a period of time
     /// </summary>
     /// <param name="isFadingIn">True if circle should move out, false if it should close in</param>
     /// <param name="fadeColor">Determines color of the background during wipe</param>
     /// <param name="sceneIndexToLoad">Index of the scene to load, only needed if fading out</param>
-    private IEnumerator CircleWipeTransition(bool isFadingIn, Color fadeColor, int sceneIndexToLoad = -1)
+    private IEnumerator CircleWipeTransition(bool isFadingIn, SceneTransitionType type, int sceneIndexToLoad = -1)
     {
-        float elapsedTime = 0f;
-        float lerpingTime;
-        float newCircleSize;
-        float startingCircleSize = isFadingIn ? 0f : 1f;
-        float targetCircleSize = isFadingIn ? 1f : 0f;
-
-        _circleWipeImage.materialForRendering.SetFloat(_circleSizePropId, startingCircleSize);
-        _circleWipeImage.materialForRendering.SetColor(_backgroundColorPropId, fadeColor);
-
         Transitioning = true;
         
-        RepositionCircleWipe();
-
         if (AudioManager.Instance != null) {
 
             if (_playSoundOnSceneChange && PlayerMovement.Instance != null)
@@ -151,21 +127,20 @@ public class SceneController : MonoBehaviour
                 AudioManager.Instance.PlaySound(_endSound);
         }
 
+
+        if (isFadingIn)
+        {
+            _transitions[type].FadeOut();
+        }
+        else
+        {
+            _transitions[type].FadeIn();
+        }
         yield return new WaitForEndOfFrame();
-        
-        
+
+        yield return new WaitUntil(() => !_transitions[type].InProgress());
         
         // Animates circle wipe until the end time is reached
-        while (elapsedTime < _timeForScreenWipe)
-        {
-            lerpingTime = elapsedTime / _timeForScreenWipe;
-            newCircleSize = Mathf.Lerp(startingCircleSize, targetCircleSize, lerpingTime);
-            _circleWipeImage.materialForRendering.SetFloat(_circleSizePropId, newCircleSize);
-            elapsedTime += Time.unscaledDeltaTime;
-            yield return null;
-        }
-
-        _circleWipeImage.materialForRendering.SetFloat(_circleSizePropId, targetCircleSize);
 
         yield return new WaitForSecondsRealtime(0.1f);
         
@@ -185,7 +160,7 @@ public class SceneController : MonoBehaviour
     [Button]
     private void ReloadScene()
     {
-        ReloadCurrentScene();
+        ReloadCurrentScene(currentTransitionType);
     }
 #endif
 }
