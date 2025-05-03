@@ -147,7 +147,9 @@ public class DebugMenuManager : MonoBehaviour
         Scene currentScene = SceneManager.GetActiveScene();
         //unlocks the cursor if locked
         Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;  
+        Cursor.visible = true;
+        //Sets an default game object for the event system to hold on to for menuing
+        EventSystem.current.SetSelectedGameObject(_mainMenuFirst);
     }
 
 
@@ -184,6 +186,7 @@ public class DebugMenuManager : MonoBehaviour
             _debugMenu.SetActive(true);
             _dMenu = true;
             //Sets the default option for keyboard and controller navigation
+            EventSystem.current.SetSelectedGameObject(_debugMenuFirst);
         }
         else if ( _dMenu == true)
         {
@@ -208,6 +211,8 @@ public class DebugMenuManager : MonoBehaviour
         {
             _quitMenu.SetActive(true);
             _qMenu = true;
+            //Sets the default option for keyboard and controller navigation
+            EventSystem.current.SetSelectedGameObject(_quitMenuFirst);
         }
         else if ( _qMenu == true)
         {
@@ -227,6 +232,8 @@ public class DebugMenuManager : MonoBehaviour
             _puzzleSelectMenu.SetActive(true);
             _debugMenu.SetActive(false);
             _pMenu = true;
+            //Sets the default option for keyboard and controller navigation
+            EventSystem.current.SetSelectedGameObject(_puzzleSelectFirst);
         }
         else if (_pMenu == true)
         {
@@ -235,11 +242,13 @@ public class DebugMenuManager : MonoBehaviour
             {
                 //doesn't go back to the dubug menu
                 _pMenu = false;
+                EventSystem.current.SetSelectedGameObject(_settingsFirst);
             }
             else
             {
                 _debugMenu.SetActive(true);
                 _pMenu = false;
+                EventSystem.current.SetSelectedGameObject(_debugMenuFirst);
             }            
         }
     }

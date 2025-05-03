@@ -20,7 +20,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
-  m_LockedProperties: 
+  m_LockedProperties: _AlphaAdd
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -98,9 +98,9 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AlphaAdd: -0.3
+    - _AlphaAdd: 0
     - _AlphaClip: 0
-    - _AlphaMult: 0.9
+    - _AlphaMult: 15.5
     - _AlphaToMask: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
@@ -113,14 +113,14 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _DstBlendAlpha: 0
-    - _EmissionStrength: 1
+    - _EmissionStrength: 0
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
-    - _OpacityAdjustment: 1
+    - _OpacityAdjustment: 3
     - _OpacityMap: 0
     - _Parallax: 0.005
     - _QueueControl: 0
@@ -132,10 +132,10 @@ Material:
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
-    - _WispyOpaque: 0.3
+    - _WispyOpaque: 0.2
     - _WispyScale: 25
     - _WispySpeed: 0.2
-    - _WispyTransparent: 10
+    - _WispyTransparent: 3
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
