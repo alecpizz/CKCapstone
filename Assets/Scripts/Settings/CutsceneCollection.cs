@@ -108,7 +108,7 @@ public class CutsceneCollection : MonoBehaviour, IPointerEnterHandler, IPointerE
     /// <param name="eventData"></param>
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (_nameOfCutscene != null)
+        if (_nameOfCutscene != null || EventSystem.current.currentSelectedGameObject != null)
         {
             _nameOfCutscene.SetActive(true);
         }
@@ -120,7 +120,7 @@ public class CutsceneCollection : MonoBehaviour, IPointerEnterHandler, IPointerE
     /// <param name="eventData"></param>
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (_nameOfCutscene != null)
+        if (_nameOfCutscene != null || EventSystem.current.currentSelectedGameObject != null)
         {
             _nameOfCutscene.SetActive(false);
         }
