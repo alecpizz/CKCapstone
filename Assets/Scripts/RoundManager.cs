@@ -212,9 +212,6 @@ public sealed class RoundManager : MonoBehaviour
         {
             return;
         }
-        if (Time.timeScale > 1)
-            return;
-        
         var dir = GetNormalizedInput();
         //Don't use direction if zero
         if (dir == Vector3.zero)
@@ -242,7 +239,10 @@ public sealed class RoundManager : MonoBehaviour
 
         _movementRegistered = true;
         _movementRegisteredTime = Time.unscaledTime;
-        
+
+        if (Time.timeScale > 1)
+            return;
+
         PerformMovement();
     }
 
