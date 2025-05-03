@@ -489,7 +489,6 @@ public sealed class RoundManager : MonoBehaviour
                     input = _lastRegistered;
                 }
             
-                Debug.Log(input);
                 _isDelaying = true;
                 return new Vector3(input.x, 0f, input.y);  
             }
