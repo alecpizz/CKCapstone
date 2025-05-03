@@ -14,7 +14,7 @@ using System.IO;
 using UnityEngine.EventSystems;
 using TMPro;
 
-public class CutsceneCollection : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class CutsceneCollection : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
 {
     [SerializeField] private bool unlocked = false;
     [SerializeField] private string cutsceneName = "";
@@ -108,7 +108,7 @@ public class CutsceneCollection : MonoBehaviour, IPointerEnterHandler, IPointerE
     /// <param name="eventData"></param>
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (_nameOfCutscene != null || EventSystem.current.currentSelectedGameObject != null)
+        if (_nameOfCutscene != null)
         {
             _nameOfCutscene.SetActive(true);
         }
@@ -120,10 +120,33 @@ public class CutsceneCollection : MonoBehaviour, IPointerEnterHandler, IPointerE
     /// <param name="eventData"></param>
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (_nameOfCutscene != null || EventSystem.current.currentSelectedGameObject != null)
+        if (_nameOfCutscene != null)
         {
             _nameOfCutscene.SetActive(false);
         }
     }
 
+    /// <summary>
+    /// Activates hover text for controllers
+    /// </summary>
+    /// <param name="eventData"></param>
+    public void OnSelect(BaseEventData eventData)
+    {
+        if(EventSystem.current.currentSelectedGameObject != null)
+        {
+            _nameOfCutscene.SetActive(true);
+        }
+    }
+
+    /// <summary>
+    /// Deactivates hover text for controllers
+    /// </summary>
+    /// <param name="eventData"></param>
+    public void OnDeselect(BaseEventData eventData)
+    {
+        if (EventSystem.current.currentSelectedGameObject != null)
+        {
+            _nameOfCutscene.SetActive(true);
+        }
+    }
 }
