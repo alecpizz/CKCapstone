@@ -6,6 +6,7 @@
  *******************************************************************/
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using FMODUnity;
 using PrimeTween;
@@ -51,9 +52,14 @@ public sealed class RoundManager : MonoBehaviour
 
     private bool _isListeningForMoveEnd = false;
 
-    [Header("Autocomplete Mechanic")] [SerializeField, Tooltip("Timescale during autocomplete dash")]
-    private float _autocompleteSpeed = 3;
-
+    //For input detected when moving to help the mirror enemies keep up
+    private bool _isDelaying = false;
+    
+    //For no diagonal inputs to dash when correcting
+    private bool _isDiagonalMove = false;
+    
+    [Header("Autocomplete Mechanic")]
+    [SerializeField, Tooltip("Timescale during autocomplete dash")] private float _autocompleteSpeed = 3;
     [SerializeField] private float _autocompleteWindow = 0.2f;
     [SerializeField] private Image _speedUI;
 
@@ -99,7 +105,9 @@ public sealed class RoundManager : MonoBehaviour
         PrimeTweenConfig.warnTweenOnDisabledTarget = false;
         _playerControls = new PlayerControls();
 
-        for (int i = 0; i <= (int) TurnState.None; i++)
+        _isDelaying = false;
+        
+        for (int i = 0; i <= (int)TurnState.None; i++)
         {
             _turnListeners.Add((TurnState) i, new List<ITurnListener>());
             _completedTurnCounts.Add((TurnState) i, 0);
@@ -204,17 +212,23 @@ public sealed class RoundManager : MonoBehaviour
         {
             return;
         }
-
         var dir = GetNormalizedInput();
+        //Don't use direction if zero
+        if (dir == Vector3.zero)
+           return;
 
         bool doubleTap = _lastMovementInput == dir &&
                          Time.unscaledTime - _movementRegisteredTime
                          <= _autocompleteWindow && _turnState != TurnState.None && !_autocompleteActive;
-        if (EnemiesPresent && doubleTap)
+        if (EnemiesPresent && doubleTap && !_isDiagonalMove)
         {
             EnableAutocomplete();
         }
 
+        if (_lastMovementInput == dir && _isDiagonalMove)
+        {
+            _isDiagonalMove = false;
+        }
         _lastMovementInput = dir;
 
         // If a movement is already registered, then flag as buffered
@@ -271,6 +285,7 @@ public sealed class RoundManager : MonoBehaviour
     /// <param name="listener"></param>
     public void CompleteTurn(ITurnListener listener)
     {
+        _isDelaying = false;
         //don't complete if it's not our turn. this shouldn't happen
         if (listener.TurnState != _turnState &&
             (listener.SecondaryTurnState != _turnState ||
@@ -337,6 +352,7 @@ public sealed class RoundManager : MonoBehaviour
     /// <param name="listener">The listener to repeat a turn.</param>
     public void RequestRepeatTurnStateRepeat(ITurnListener listener)
     {
+        _isDelaying = false;
         if (!_playerControls.InGame.Movement.IsPressed() && !_inputBuffered)
         {
             _movementRegistered = false;
@@ -461,26 +477,25 @@ public sealed class RoundManager : MonoBehaviour
     /// <returns>Normalized input vector</returns>
     private Vector3 GetNormalizedInput()
     {
-        Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>().normalized;
-        if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
-        {
-            input.y = 0;
-            input.x = input.x < 0 ? -1 : 1;
-        }
-        else
-        {
-            input.x = 0;
-            input.y = input.y < 0 ? -1 : 1;
-        }
-
-        if (input != _lastRegistered)
-        {
-            input = _lastRegistered;
-        }
-
-        return new Vector3(input.x, 0f, input.y);
+            Vector2 input = _playerControls.InGame.Movement.ReadValue<Vector2>().normalized;
+            if (input.x != 0 && input.y != 0)
+            {
+                _isDiagonalMove = true;
+            }
+            if (!_isDelaying)
+            {
+                if (input != _lastRegistered)
+                {
+                    input = _lastRegistered;
+                }
+            
+                _isDelaying = true;
+                return new Vector3(input.x, 0f, input.y);  
+            }
+            
+            return _lastMovementInput;
     }
-
+    
     /// <summary>
     /// Helper method to get the next turn state.
     /// </summary>
