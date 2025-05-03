@@ -26,6 +26,7 @@ public class LevelOrder : ScriptableObject
     [field: SerializeField]
     public SceneAsset IntroCutScene { get; private set; }
 #endif
+    public string IntroCutSceneName { get; private set; } = "Intro";
     public enum LightingMode
     {
         None = -1,

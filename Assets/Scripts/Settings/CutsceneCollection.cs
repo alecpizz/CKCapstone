@@ -57,8 +57,6 @@ public class CutsceneCollection : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         var levelData = LevelOrderSelection.Instance.SelectedLevelData;
 
-        string name = "";
-
         foreach (var levelDataChapter in levelData.Chapters)
         {
             foreach (var level in levelDataChapter.Puzzles)
@@ -66,25 +64,19 @@ public class CutsceneCollection : MonoBehaviour, IPointerEnterHandler, IPointerE
                 var sceneName = Path.GetFileNameWithoutExtension(level.ScenePath);
                 if (sceneName.Equals(cutsceneName))
                 {
-                    name = level.LevelName;
+                    return  level.LevelName;
                 }
             }
 
             var outroName = Path.GetFileNameWithoutExtension(levelDataChapter.Outro.ScenePath);
             if (outroName.Equals(cutsceneName))
             {
-                name = levelDataChapter.Outro.LevelName;
-                
+                return levelDataChapter.Outro.LevelName;
             }
 
         }
 
-        if (Path.GetFileNameWithoutExtension(levelData.MainMenuScene.name).Equals(cutsceneName))
-        {
-            name = "Intro";
-        }
-
-        return name;
+        return levelData.IntroCutSceneName;
     }
 
     /// <summary>
