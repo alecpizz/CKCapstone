@@ -11,6 +11,7 @@ using UnityEngine;
 using SaintsField;
 using TMPro;
 using UnityEngine.UI;
+using FMODUnity;
 
 public class TimeSignatureManager : MonoBehaviour
 {
@@ -32,6 +33,12 @@ public class TimeSignatureManager : MonoBehaviour
     [SerializeField] private TMP_Text _metronomePredictor;
 
     private List<ITimeListener> _timeListeners = new List<ITimeListener>();
+
+    [Header("Juice")]
+    [SerializeField]
+    private ParticleSystem _timeSigChangeParticles;
+    [SerializeField]
+    private EventReference _timeSigChangeSFX;
 
     /// <summary>
     /// Creating an instance and ensuring time signature has valid values
@@ -73,6 +80,12 @@ public class TimeSignatureManager : MonoBehaviour
         TimeSigInUse = _timeSignature != Vector2Int.one || _secondaryTimeSignature != Vector2Int.one;
 
         MetronomeInUse = FindFirstObjectByType(typeof(MetronomeBehavior)) != null;
+    }
+
+    private void Start()
+    {
+        if (TimeSigInUse)
+            PlayJuice();
     }
 
     /// <summary>
@@ -134,5 +147,16 @@ public class TimeSignatureManager : MonoBehaviour
     public void UnregisterTimeListener(ITimeListener listenerToRemove)
     {
         _timeListeners.Remove(listenerToRemove);
+    }
+
+    /// <summary>
+    /// Plays SFX and VFX to draw attention to a changed time signature
+    /// </summary>
+    public void PlayJuice(bool playSFX = true, bool playVFX = true)
+    {
+        if(playSFX)
+            AudioManager.Instance.PlaySound(_timeSigChangeSFX);
+        if (playVFX)
+            _timeSigChangeParticles.Play();
     }
 }
