@@ -23,7 +23,6 @@ public class MetronomeBehavior : MonoBehaviour, ITimeListener
     private const string _WEIGHT_ANIM_UP = "Armature|WeightSlide_Up";
     private const string _WEIGHT_ANIM_DOWN = "Armature|WeightSlide_Down";
 
-
     //the ripple effect when touching the metronome
     [SerializeField] private ParticleSystem _contactIndicator;
     //the circle that flashes around the HUD time signature
@@ -71,6 +70,7 @@ public class MetronomeBehavior : MonoBehaviour, ITimeListener
         _metronomePredictor.rectTransform.Rotate(Vector3.right * 90);
 
         _isSlow = _initiallySlow;
+        
     }
 
     /// <summary>
@@ -173,7 +173,11 @@ public class MetronomeBehavior : MonoBehaviour, ITimeListener
         }
 
         _contactIndicator.Play();
-        if(_HUDEffect != null)
+
+        if(TimeSignatureManager.Instance != null)
+            TimeSignatureManager.Instance.PlayJuice(playSFX: false);
+
+        if (_HUDEffect != null)
         _HUDEffect.SetActive(false);
 
        /* PlayerMovement playerMovement;
