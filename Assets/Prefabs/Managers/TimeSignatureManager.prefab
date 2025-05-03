@@ -29,7 +29,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1670900184140890899}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2886603686957764620
@@ -46,8 +47,97 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _timeSignature: {x: 0, y: 0}
   _secondaryTimeSignature: {x: 0, y: 0}
-  _hudTexts: []
-  _ribbon: {fileID: 0}
-  _defaultHudTextColor: {r: 0.13333334, g: 0.17254902, b: 0.21960784, a: 1}
-  _highHudTextColor: {r: 0.9254902, g: 0.9843137, b: 0.99607843, a: 1}
   _metronomePredictor: {fileID: 0}
+  _timeSigChangeParticles: {fileID: 5390513365350670325}
+  _timeSigChangeSFX:
+    Guid:
+      Data1: -1855561853
+      Data2: 1145645254
+      Data3: 103782053
+      Data4: -239989044
+    Path: event:/Metronome Change
+--- !u!1001 &2562175317761838036
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8530559598603047698}
+    m_Modifications:
+    - target: {fileID: 3800640325252122823, guid: 0b0371260ff9da546bbcc326a18590ff,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.21
+      objectReference: {fileID: 0}
+    - target: {fileID: 3800640325252122823, guid: 0b0371260ff9da546bbcc326a18590ff,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -6.53
+      objectReference: {fileID: 0}
+    - target: {fileID: 3800640325252122823, guid: 0b0371260ff9da546bbcc326a18590ff,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 16.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 3800640325252122823, guid: 0b0371260ff9da546bbcc326a18590ff,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3800640325252122823, guid: 0b0371260ff9da546bbcc326a18590ff,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3800640325252122823, guid: 0b0371260ff9da546bbcc326a18590ff,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3800640325252122823, guid: 0b0371260ff9da546bbcc326a18590ff,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3800640325252122823, guid: 0b0371260ff9da546bbcc326a18590ff,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3800640325252122823, guid: 0b0371260ff9da546bbcc326a18590ff,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3800640325252122823, guid: 0b0371260ff9da546bbcc326a18590ff,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7140892767243026768, guid: 0b0371260ff9da546bbcc326a18590ff,
+        type: 3}
+      propertyPath: m_Name
+      value: TimeSigParticles
+      objectReference: {fileID: 0}
+    - target: {fileID: 7584167016803537953, guid: 0b0371260ff9da546bbcc326a18590ff,
+        type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0b0371260ff9da546bbcc326a18590ff, type: 3}
+--- !u!4 &1670900184140890899 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3800640325252122823, guid: 0b0371260ff9da546bbcc326a18590ff,
+    type: 3}
+  m_PrefabInstance: {fileID: 2562175317761838036}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &5390513365350670325 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 7584167016803537953, guid: 0b0371260ff9da546bbcc326a18590ff,
+    type: 3}
+  m_PrefabInstance: {fileID: 2562175317761838036}
+  m_PrefabAsset: {fileID: 0}

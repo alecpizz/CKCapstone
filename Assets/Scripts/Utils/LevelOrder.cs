@@ -23,6 +23,8 @@ public class LevelOrder : ScriptableObject
 #if UNITY_EDITOR
     [field: SerializeField, SepTitle("Main Menu", EColor.Aqua), BelowSeparator(EColor.Aqua)]
     public SceneAsset MainMenuScene { get; private set; }
+    [field: SerializeField]
+    public SceneAsset IntroCutScene { get; private set; }
 #endif
     public enum LightingMode
     {
@@ -152,20 +154,6 @@ public class LevelOrder : ScriptableObject
     // [BelowButton(nameof(RunBuildPreProcess), groupBy: "Build")]
     private LevelData _inputLevelData;
 
-
-    [field: SerializeField] public List<PrettyData> PrettySceneNames { get; set; } = new();
-    [field: SerializeField] public List<string> PrettyChapterNames { get; set; } = new();
-
-    /// <summary>
-    /// Structure to keep track of what kind of scene is what.
-    /// </summary>
-    [Serializable]
-    public struct PrettyData
-    {
-        public string PrettyName;
-        public bool showUp;
-
-    }
 
 #if UNITY_EDITOR
     /// <summary>

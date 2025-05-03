@@ -1,6 +1,6 @@
 /******************************************************************
 *    Author: Mitchell Young
-*    Contributors: Mitchell Young, Nick Grinstead, Jamison Parks, Alec Pizziferro
+*    Contributors: Mitchell Young, Nick Grinstead, Jamison Parks, Alec Pizziferro, Trinity Hutson
 *    Date Created: 10/27/24
 *    Description: Script that handles the behavior of the mirror and
 *    copy enemy that mirrors or copies player movement.
@@ -15,7 +15,7 @@ using UnityEngine.EventSystems;
 using SaintsField.Playa;
 using SaintsField;
 
-public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener, IHarmonyBeamEntity
+public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, ITurnListener, IHarmonyBeamEntity, IEnemy
 {
     public bool IsTransparent { get => !EnemyFrozen; }
     public bool BlocksHarmonyBeam { get => false; }
@@ -23,6 +23,8 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     public Vector3 Position { get => transform.position; }
     public Transform EntityTransform { get => transform; }
     public GameObject EntryObject { get => gameObject; }
+    public bool IsSon { get => sonEnemy; }
+
 
     public bool EnemyFrozen { get; private set; } = false;
     
@@ -59,6 +61,11 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     // Bool checked if this enemy is a Son Enemy
     [SerializeField] private bool sonEnemy;
 
+    [Space]
+    [Tooltip("Distance from which the enemy will stop when walking into the player.")]
+    [Range(0.01f, 2f)]
+    [SerializeField] private float _attackLungeDistance;
+
     private Rigidbody _rb;
  
     //public static PlayerMovement Instance;
@@ -73,6 +80,9 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
     [SerializeField] private EventReference _walkSound;
 
     private bool _waitOnBeam = false;
+    private bool _didHitPlayer = false;
+
+    private Tween _moveSequence;
 
     /// <summary>
     /// Prime tween configuration
@@ -138,6 +148,12 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
             HarmonyBeam.TriggerHarmonyScan?.Invoke();
         }
 
+        if (_didHitPlayer)
+        {
+            RoundManager.Instance.CompleteTurn(this);
+            yield break;
+        }
+
         if (!EnemyFrozen)
         {
             _animator.SetBool(Frozen, false);
@@ -152,8 +168,11 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
 
             for (int i = 0; i < _movementTiming; ++i)
             {
-                // Moves if there is no objects in the next grid space
-                var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
+                if (_didHitPlayer)
+                    continue;
+
+                    // Moves if there is no objects in the next grid space
+                    var move = GridBase.Instance.GetCellPositionInDirection(gameObject.transform.position, moveDirection);
                 bool canMove = GridBase.Instance.CellIsTransparent(move);
 
                 if (canMove == true)
@@ -166,8 +185,6 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                         }
                     }
                     _animator.SetBool(Forward, true);
-                    Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
-                    ease: _rotationEase);
                     if (_animator != null)
                     {
                         _animator.SetBool(Turn, false);
@@ -178,29 +195,53 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                         AudioManager.Instance.PlaySound(_walkSound);
                     }
 
-                    yield return Tween.Position(transform,
-                        move + CKOffsetsReference.MirrorCopyEnemyOffset(_mirrored), modifiedMovementTime, ease: _movementEase).OnUpdate<MirrorAndCopyBehavior>(target: this, (target, tween) =>
+                    Tween.Rotation(transform, endValue: Quaternion.LookRotation(moveDirection), duration: _rotationTime,
+                    ease: _rotationEase);
+
+                    _moveSequence = Tween.Position(transform,
+                        move + CKOffsetsReference.MirrorCopyEnemyOffset(_mirrored), modifiedMovementTime, ease: _movementEase)
+                        .OnUpdate(target: this, (target, tween) =>
                         {
                             GridBase.Instance.UpdateEntry(this);
-                        }).ToYieldInstruction();
+                            //not a fan of this but it should be more consistent than 
+                            //using collisions
+                            //also just math comparisons, no memory accessing outside of Position.
+                            if (GridBase.Instance.WorldToCell(PlayerMovement.Instance.Position) ==
+                                GridBase.Instance.WorldToCell(transform.position) &&
+                                !DebugMenuManager.Instance.Invincibility)
+                            {
+                                //hit a player!
+                                _didHitPlayer = true;
+                                PlayerMovement.Instance.OnDeath();
+                                // When walking into a player, stops the enemy at a reasonable distance
+                                // for the enemy's attack animation to play without clipping
+                                if (_moveSequence.isAlive)
+                                {
+                                    float progress = _moveSequence.progress;
+                                    _moveSequence.Stop();
+                                   
+                                    Vector3 direction = PlayerMovement.Instance.Position - transform.position;
+                                    direction.y = 0;
+                                    Vector3 endPos = transform.position + (direction.normalized * _attackLungeDistance);
+                                    Tween.Position(transform, endValue: endPos, _movementTime * (1 - progress))
+                                    // Bandaid fix due to the mirror enemy moving after it reaches its destination from an external source
+                                    // This prevents the enemy from moving until the sccene is reloaded
+                                        .Chain(Tween.Position(transform, endPos, 2));
+                                    
+                                }
+                                if (_animator != null)
+                                {
+                                    _animator.SetBool(Attack, true);
+                                }
+                                SceneController.Instance.ReloadCurrentScene(IsSon ? SceneTransitionType.Son 
+                                    : SceneTransitionType.Illness);
+                            }
+                        });
+
+                    yield return _moveSequence.ToYieldInstruction();
                     _animator.SetBool(Forward, false);
                     HarmonyBeam.TriggerHarmonyScan?.Invoke();
 
-                    //not a fan of this but it should be more consistent than 
-                    //using collisions
-                    //also just math comparisons, no memory accessing outside of Position.
-                    if (GridBase.Instance.WorldToCell(PlayerMovement.Instance.Position) ==
-                        GridBase.Instance.WorldToCell(transform.position) &&
-                        !DebugMenuManager.Instance.Invincibility)
-                    {
-                        //hit a player!
-                        PlayerMovement.Instance.OnDeath();
-                        if (_animator != null)
-                        {
-                            _animator.SetBool(Attack, true);
-                        }
-                        SceneController.Instance.ReloadCurrentScene();
-                    }
                 }
                 else
                 {
@@ -286,5 +327,27 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
         Vector3Int cellPos = GridBase.Instance.WorldToCell(transform.position);
         Vector3 worldPos = GridBase.Instance.CellToWorld(cellPos) + CKOffsetsReference.MirrorCopyEnemyOffset(_mirrored);
         transform.position = worldPos;
+    }
+
+    /// <summary>
+    /// Implementation of IEnemy
+    /// Rotates to face its target and then does its attack animation
+    /// </summary>
+    /// <param name="target"></param>
+    public void AttackTarget(Transform target)
+    {
+        if (_didHitPlayer)
+            return;
+
+        var rotationDir = (target.position - transform.position).normalized;
+        rotationDir.y = 0f;
+        Tween.Rotation(transform, endValue: Quaternion.LookRotation(rotationDir),
+                duration: _rotationTime,
+                ease: _rotationEase);
+
+        if (_animator != null)
+            _animator.SetBool(Attack, true);
+
+        _didHitPlayer = true;
     }
 }

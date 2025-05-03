@@ -17,14 +17,17 @@ using UnityEngine.UI;
 
 public class ControllerGlyphManager : MonoBehaviour
 {
+    //sets up variables to be used in the script
     public static ControllerGlyphManager Instance { get; private set; }
     public bool KeyboardAndMouse { get; private set; } = false;
     public bool PlayStationController { get; private set; } = false;
     public bool SwitchController { get; private set; } = false;
     public bool XboxController { get; private set; } = false;
+    public bool UsingController { get; private set; } = false;
 
     private bool _areInteractables = false;
     private bool _areTextBlurbs = false;
+    private bool _areControllerGraphics = false;
 
     private DebugInputActions _playerInput;
     private PlayerControls _playerControls;
@@ -33,6 +36,7 @@ public class ControllerGlyphManager : MonoBehaviour
     private NpcDialogueController[] _interactableArray;
     private ControllerTextChecker[] _textBlurbArray;
     private ControllerTextChecker[] _htpArray;
+    private ControllerImageChanger[] _ControllerGraphicArray;
 
     /// <summary>
     /// sets up variables when first possible
@@ -50,6 +54,7 @@ public class ControllerGlyphManager : MonoBehaviour
         _interactableArray = GameObject.FindObjectsOfType<NpcDialogueController>();
         _textBlurbArray = GameObject.FindObjectsOfType<ControllerTextChecker>();
         _htpArray = GameObject.FindObjectsOfType<ControllerTextChecker>();
+        _ControllerGraphicArray = GameObject.FindObjectsOfType<ControllerImageChanger>();
     }
 
     /// <summary>
@@ -57,6 +62,7 @@ public class ControllerGlyphManager : MonoBehaviour
     /// </summary>
     private void OnEnable()
     {
+        _playerInput.Enable();
         _playerControls.Enable();
         //_defaultControls.Enable();
         _playerControls.InGame.Movement.performed += DetectInputType;
@@ -77,6 +83,7 @@ public class ControllerGlyphManager : MonoBehaviour
         _defaultControls.UI.Point.performed -= DetectInputType;
         _defaultControls.UI.Navigate.performed -= DetectInputType;
         _playerControls.Disable();
+        _playerInput.Disable();
         //_defaultControls.Disable();
     }
 
@@ -100,6 +107,14 @@ public class ControllerGlyphManager : MonoBehaviour
             }
             _areTextBlurbs = true;
         }
+        if (_ControllerGraphicArray != null)
+        {
+            foreach (var graphic in _ControllerGraphicArray)
+            {
+                graphic.ControllerImageSwap();
+            }
+            _areControllerGraphics = true;
+        }
     }
 
 
@@ -117,6 +132,7 @@ public class ControllerGlyphManager : MonoBehaviour
             SwitchController = false;
             XboxController = false;
             KeyboardAndMouse = true;
+            UsingController = false;
         }
         else if (controllerName.Contains("dualshock") || controllerName.Contains("dualsense") ||
             controllerName.Contains("playstation") || controllerName.Contains("wireless controller"))
@@ -125,6 +141,7 @@ public class ControllerGlyphManager : MonoBehaviour
             SwitchController = false;
             XboxController = false;
             KeyboardAndMouse = false;
+            UsingController = true;
         }
         else if (controllerName.Contains("pro controller") || controllerName.Contains("switch") ||
             controllerName.Contains("nintendo"))
@@ -133,6 +150,7 @@ public class ControllerGlyphManager : MonoBehaviour
             SwitchController = true;
             XboxController = false;
             KeyboardAndMouse = false;
+            UsingController = true;
         }
         else
         {
@@ -140,6 +158,7 @@ public class ControllerGlyphManager : MonoBehaviour
             SwitchController = false;
             XboxController = true;
             KeyboardAndMouse = false;
+            UsingController = true ;
         }
         //changes input related text depending on current input device
         if (_areInteractables)
@@ -154,6 +173,13 @@ public class ControllerGlyphManager : MonoBehaviour
             foreach (var blurb in _textBlurbArray)
             {
                 blurb.TutorialTextChange();
+            }
+        }
+        if (_areControllerGraphics)
+        {
+            foreach (var graphic in _ControllerGraphicArray)
+            {
+                graphic.ControllerImageSwap();
             }
         }
     }
