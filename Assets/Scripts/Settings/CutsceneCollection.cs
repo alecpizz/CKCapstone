@@ -146,7 +146,7 @@ public class CutsceneCollection : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (EventSystem.current.currentSelectedGameObject != null)
         {
-            _nameOfCutscene.SetActive(true);
+            _nameOfCutscene.SetActive(false);
         }
     }
 }
