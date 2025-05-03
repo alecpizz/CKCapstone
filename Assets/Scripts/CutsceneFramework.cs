@@ -229,7 +229,7 @@ public class CutsceneFramework : MonoBehaviour
                 _skipCompletingIcon.enabled = false;
                 _holdToSkipIcon.SetActive(false);
             }
-            SceneController.Instance.LoadNewScene(_loadingLevelIndex);
+            SceneController.Instance.LoadNewScene(_loadingLevelIndex, SceneTransitionType.Black);
 
             if(SceneManager.GetActiveScene().name.Equals("CSCN_Act5_End"))
             {
@@ -297,7 +297,7 @@ public class CutsceneFramework : MonoBehaviour
             SceneManager.LoadScene(SaveDataManager.GetSceneLoadedFrom());
             yield break;
         }
-        SceneController.Instance.LoadNewScene(_loadingLevelIndex);
+        SceneController.Instance.LoadNewScene(_loadingLevelIndex, SceneTransitionType.Black);
     }
 
     /// <summary>
@@ -340,7 +340,7 @@ public class CutsceneFramework : MonoBehaviour
             SceneManager.LoadScene(SaveDataManager.GetSceneLoadedFrom());
             return;
         }
-        SceneController.Instance.LoadNewScene(_loadingLevelIndex);
+        SceneController.Instance.LoadNewScene(_loadingLevelIndex, SceneTransitionType.Black);
         //if video isn't looping pause the video
         if (!vp.isLooping)
         {

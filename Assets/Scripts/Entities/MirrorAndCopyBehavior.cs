@@ -233,7 +233,8 @@ public class MirrorAndCopyBehavior : MonoBehaviour, IGridEntry, ITimeListener, I
                                 {
                                     _animator.SetBool(Attack, true);
                                 }
-                                SceneController.Instance.ReloadCurrentScene();
+                                SceneController.Instance.ReloadCurrentScene(IsSon ? SceneTransitionType.Son 
+                                    : SceneTransitionType.Illness);
                             }
                         });
 

@@ -306,7 +306,14 @@ public class DebugMenuManager : MonoBehaviour
     /// </summary>
     public void RestartLevel()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        if (SceneController.Instance != null)
+        {
+            SceneController.Instance.ReloadCurrentScene(SceneTransitionType.Black);
+        }
+        else
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
     }
 
     /// <summary>

@@ -12,7 +12,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
-public class FadeToBlack : ScreenTransitionBase
+public class FadeToBlack : SceneTransitionBase
 {
     [Header("Adjustable Values")]
     [Tooltip("How long the screen should take to fade in")]
@@ -26,13 +26,16 @@ public class FadeToBlack : ScreenTransitionBase
 
     // Internal references
     private Image _blackScreen;
+    private bool _inProgress = false;
 
-    /// <summary>
-    /// Assign references
-    /// </summary>
-    private void Start()
+    public override void Init()
     {
         _blackScreen = _blackScreenObj.GetComponent<Image>();
+    }
+
+    public override bool InProgress()
+    {
+        return _inProgress;
     }
 
     /// <summary>
@@ -65,6 +68,7 @@ public class FadeToBlack : ScreenTransitionBase
     /// <returns></returns>
     private IEnumerator LerpEffects(Image img, float duration, float start, float end)
     {
+        _inProgress = true;
         // This float will be updated over time to set the interpolation percentage
         // according the the specified lerp duration
         float time = 0;
@@ -89,5 +93,6 @@ public class FadeToBlack : ScreenTransitionBase
 
         // Just in case, set the image alpha to the given end value at the end
         img.color = new Color(img.color.r, img.color.b, img.color.b, end);
+        _inProgress = false;
     }
 }

@@ -75,6 +75,7 @@ Transform:
   - {fileID: 2840097155142839772}
   - {fileID: 5235367107790197496}
   - {fileID: 2847843138469851440}
+  - {fileID: 5806975629999131791}
   - {fileID: 2899967879648720470}
   - {fileID: 3390212648505983337}
   - {fileID: 3802561123697916951}
@@ -1526,18 +1527,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &5598251421030866082 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7909984034791231927, guid: 6a8517eb504a3dc4f90bc546f81eaf46,
-    type: 3}
-  m_PrefabInstance: {fileID: 2338798205990391061}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d10905f88eef15b488f4e02688eb2f47, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &5798978579805698714 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8074682384597530511, guid: 6a8517eb504a3dc4f90bc546f81eaf46,
@@ -2036,6 +2025,80 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 5490336201532293273}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &5497742214915251260
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 6409311488171112465}
+    m_Modifications:
+    - target: {fileID: 2079927433490043059, guid: 0e21ed47f635e2f46a16898ef65812f4,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2079927433490043059, guid: 0e21ed47f635e2f46a16898ef65812f4,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2079927433490043059, guid: 0e21ed47f635e2f46a16898ef65812f4,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2079927433490043059, guid: 0e21ed47f635e2f46a16898ef65812f4,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2079927433490043059, guid: 0e21ed47f635e2f46a16898ef65812f4,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2079927433490043059, guid: 0e21ed47f635e2f46a16898ef65812f4,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2079927433490043059, guid: 0e21ed47f635e2f46a16898ef65812f4,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2079927433490043059, guid: 0e21ed47f635e2f46a16898ef65812f4,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2079927433490043059, guid: 0e21ed47f635e2f46a16898ef65812f4,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2079927433490043059, guid: 0e21ed47f635e2f46a16898ef65812f4,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4886332361151117612, guid: 0e21ed47f635e2f46a16898ef65812f4,
+        type: 3}
+      propertyPath: m_Name
+      value: SceneTransitionManager
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0e21ed47f635e2f46a16898ef65812f4, type: 3}
+--- !u!4 &5806975629999131791 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2079927433490043059, guid: 0e21ed47f635e2f46a16898ef65812f4,
+    type: 3}
+  m_PrefabInstance: {fileID: 5497742214915251260}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5707163335875051251
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2461,11 +2524,6 @@ PrefabInstance:
       propertyPath: _enemyPathButton
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 7540286100697677891, guid: 736cce2be166da94c89d7843ede711d1,
-        type: 3}
-      propertyPath: _sceneController
-      value: 
-      objectReference: {fileID: 5598251421030866082}
     - target: {fileID: 7540286100697677891, guid: 736cce2be166da94c89d7843ede711d1,
         type: 3}
       propertyPath: _mainMenuSettings
