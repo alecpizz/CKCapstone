@@ -17,6 +17,7 @@ using UnityEngine.UI;
 
 public class ControllerGlyphManager : MonoBehaviour
 {
+    //sets up variables to be used in the script
     public static ControllerGlyphManager Instance { get; private set; }
     public bool KeyboardAndMouse { get; private set; } = false;
     public bool PlayStationController { get; private set; } = false;
@@ -58,6 +59,7 @@ public class ControllerGlyphManager : MonoBehaviour
     /// </summary>
     private void OnEnable()
     {
+        _playerInput.Enable();
         _playerControls.Enable();
         //_defaultControls.Enable();
         _playerControls.InGame.Movement.performed += DetectInputType;
@@ -78,6 +80,7 @@ public class ControllerGlyphManager : MonoBehaviour
         _defaultControls.UI.Point.performed -= DetectInputType;
         _defaultControls.UI.Navigate.performed -= DetectInputType;
         _playerControls.Disable();
+        _playerInput.Disable();
         //_defaultControls.Disable();
     }
 
