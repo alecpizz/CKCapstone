@@ -422,6 +422,8 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// </summary>
     public void DestinationPath()
     {
+        if (MenuManager.Instance.isPaused) return;
+
         if (!_currentGroupToggle)
         {
             return;
