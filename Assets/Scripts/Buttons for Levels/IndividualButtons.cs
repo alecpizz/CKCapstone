@@ -12,7 +12,7 @@ using UnityEngine.SceneManagement;
 
 public class IndividualButtons : MonoBehaviour
 {
-    private int _index = 0;
+    
     private string _sceneName = "";
     /// <summary>
     /// The index of the scene is set for the individual buttons
