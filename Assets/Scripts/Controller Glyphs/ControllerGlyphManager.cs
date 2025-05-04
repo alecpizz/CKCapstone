@@ -276,9 +276,11 @@ public class ControllerGlyphManager : MonoBehaviour
         return tutorialText;
     }
 
+    /// <summary>
+    /// Sets up changing the skip icon in cutscenes depending on what input device is being used
+    /// </summary>
     public void GetIcon()
     {
-
         foreach (var ControllerIcon in _cutsceneIconArray)
         {
             if (PlayStationController)
