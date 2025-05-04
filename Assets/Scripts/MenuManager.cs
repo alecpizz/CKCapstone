@@ -51,7 +51,6 @@ public class MenuManager : MonoBehaviour
     private bool _isMainMenu;   
     private bool _optionsOpen = false;
     private bool _controllerMenuing = false;
-    public bool isPaused;
 
     /// <summary>
     /// Enables player input for opening the pause menu
@@ -100,7 +99,6 @@ public class MenuManager : MonoBehaviour
     {
         DebugMenuManager.Instance.PauseMenu = false;
         _pauseScreen.SetActive(false);
-        isPaused = false;
         _controllerMenuing = false;
 
         //gets rid of restart icon in cutscenes
@@ -207,7 +205,6 @@ public class MenuManager : MonoBehaviour
             if (SceneController.Instance == null || SceneController.Instance.Transitioning) return;
             DebugMenuManager.Instance.PauseMenu = true;
             _pauseScreen.SetActive(true);
-            isPaused = true;
             _restartButton.SetActive(false);
             if (_controllerMenuing)
             {

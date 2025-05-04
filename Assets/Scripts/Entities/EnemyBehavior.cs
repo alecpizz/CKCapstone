@@ -422,7 +422,7 @@ public class EnemyBehavior : MonoBehaviour, IGridEntry, ITimeListener,
     /// </summary>
     public void DestinationPath()
     {
-        if (MenuManager.Instance.isPaused) return;
+        if (MenuManager.Instance.GetPauseInvoked() == true) return;
 
         if (!_currentGroupToggle)
         {

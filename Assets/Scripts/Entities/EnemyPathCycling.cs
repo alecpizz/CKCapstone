@@ -145,7 +145,7 @@ public class EnemyPathCycling : MonoBehaviour
     /// <param name="context">Input context</param>
     private void ToggleEnemyPaths(InputAction.CallbackContext context)
     {
-        if(MenuManager.Instance.isPaused)
+        if(MenuManager.Instance.GetPauseInvoked() == true)
         {
             return;
         }
