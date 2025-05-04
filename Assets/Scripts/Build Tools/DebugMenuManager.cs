@@ -100,6 +100,7 @@ public class DebugMenuManager : MonoBehaviour
         _frameDeltaTimeArray = new float[60];
     }
 
+    #if UNITY_EDITOR || DEVELOPMENT_BUILD
     /// <summary>
     /// Unity callback. Draws scene view text
     /// </summary>
@@ -113,6 +114,7 @@ public class DebugMenuManager : MonoBehaviour
                 $"SCENE NAME: {SceneManager.GetActiveScene().name}");
         }
     }
+    #endif
 
     /// <summary>
     /// Turns on the Debug Inputs and input checks
@@ -121,8 +123,10 @@ public class DebugMenuManager : MonoBehaviour
     {
         _debugInput.Enable();
         _restartInput.Enable();
+        #if UNITY_EDITOR || DEVELOPMENT_BUILD
         _playerInput.Player.SceneView.Enable();
         _playerInput.Player.SceneView.performed += ToggleSceneName;
+        #endif
         _playerControls.Enable();
     }
 
@@ -133,8 +137,10 @@ public class DebugMenuManager : MonoBehaviour
     {
         _debugInput.Disable();
         _restartInput.Disable();
+        #if UNITY_EDITOR || DEVELOPMENT_BUILD
         _playerInput.Player.SceneView.Disable();
         _playerInput.Player.SceneView.performed -= ToggleSceneName;
+        #endif
         _playerControls.Disable();
     }
 
@@ -194,10 +200,12 @@ public class DebugMenuManager : MonoBehaviour
         }
     }
 
+    #if UNITY_EDITOR || DEVELOPMENT_BUILD
     private void ToggleSceneName(InputAction.CallbackContext ctx)
     {
         _sceneNameVisible = !_sceneNameVisible;
     }
+    #endif
 
     /// <summary>
     /// Method to open and close the menu to quit the game

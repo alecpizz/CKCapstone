@@ -28,6 +28,7 @@ public class ControllerGlyphManager : MonoBehaviour
     private bool _areInteractables = false;
     private bool _areTextBlurbs = false;
     private bool _areControllerGraphics = false;
+    private bool _isCutscene = false;
 
     private DebugInputActions _playerInput;
     private PlayerControls _playerControls;
@@ -35,8 +36,18 @@ public class ControllerGlyphManager : MonoBehaviour
 
     private NpcDialogueController[] _interactableArray;
     private ControllerTextChecker[] _textBlurbArray;
-    private ControllerTextChecker[] _htpArray;
+    private CutsceneFramework[] _cutsceneIconArray;
     private ControllerImageChanger[] _ControllerGraphicArray;
+
+    [SerializeField] private Image _skipIcon;
+    [SerializeField] private Image _skipCompletingIcon;
+
+    [SerializeField] private Sprite _keyboardSkipButton;
+    [SerializeField] private Sprite _playstationSkipButton;
+    [SerializeField] private Sprite _switchSkipButton;
+    [SerializeField] private Sprite _xboxSkipButton;
+    [SerializeField] private Sprite _completionCircle;
+    [SerializeField] private Sprite _completionSquare;
 
     /// <summary>
     /// sets up variables when first possible
@@ -53,7 +64,7 @@ public class ControllerGlyphManager : MonoBehaviour
 
         _interactableArray = GameObject.FindObjectsOfType<NpcDialogueController>();
         _textBlurbArray = GameObject.FindObjectsOfType<ControllerTextChecker>();
-        _htpArray = GameObject.FindObjectsOfType<ControllerTextChecker>();
+        _cutsceneIconArray = GameObject.FindObjectsOfType<CutsceneFramework>();
         _ControllerGraphicArray = GameObject.FindObjectsOfType<ControllerImageChanger>();
     }
 
@@ -114,6 +125,11 @@ public class ControllerGlyphManager : MonoBehaviour
                 graphic.ControllerImageSwap();
             }
             _areControllerGraphics = true;
+        }
+        if (_cutsceneIconArray != null)
+        {
+            GetIcon();
+            _isCutscene = true;
         }
     }
 
@@ -181,6 +197,10 @@ public class ControllerGlyphManager : MonoBehaviour
             {
                 graphic.ControllerImageSwap();
             }
+        }
+        if (_isCutscene)
+        {
+            GetIcon();
         }
     }
 
@@ -259,4 +279,33 @@ public class ControllerGlyphManager : MonoBehaviour
         }
         return tutorialText;
     }
+
+    /// <summary>
+    /// Sets up changing the skip icon in cutscenes depending on what input device is being used
+    /// </summary>
+    public void GetIcon()
+    {
+        if (PlayStationController)
+        {
+            _skipIcon.sprite = _playstationSkipButton;
+            _skipCompletingIcon.sprite = _completionCircle;
+        }
+        else if (SwitchController)
+        {
+            _skipIcon.sprite = _switchSkipButton;
+            _skipCompletingIcon.sprite = _completionCircle;
+        }
+        else if (XboxController)
+        {
+            _skipIcon.sprite = _xboxSkipButton;
+            _skipCompletingIcon.sprite = _completionCircle;
+        }
+        else
+        {
+            _skipIcon.sprite = _keyboardSkipButton;
+            _skipCompletingIcon.sprite = _completionSquare;
+        }
+        return;
+    }
+
 }
