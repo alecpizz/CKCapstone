@@ -42,6 +42,8 @@ public class MenuManager : MonoBehaviour
 
     [SerializeField] private CursorManager _cursorManager;
 
+    public static MenuManager Instance;
+
     [FormerlySerializedAs("_skipWhilePaused")]
     [SerializeField] private GameObject _skipPromptInPause;
 
@@ -55,6 +57,8 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     private void Awake()
     {
+        Instance = this;
+
         _inputActions = new DebugInputActions();
         _inputActions.Enable();
         _inputActions.Player.Quit.performed += ctx => Pause();
