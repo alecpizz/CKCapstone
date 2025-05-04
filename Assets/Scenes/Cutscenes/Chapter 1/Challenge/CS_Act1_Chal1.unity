@@ -140,6 +140,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1407579074 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4474377275031935950, guid: dbb0dd27c6fab3344aab4441094b0849,
+    type: 3}
+  m_PrefabInstance: {fileID: 2108491760}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1946342959
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -389,7 +401,16 @@ MonoBehaviour:
   _timeTillSkip: 2
   _skipIconDuration: 2
   _holdToSkipIcon: {fileID: 2108491764}
-  _skipCompletingIcon: {fileID: 2108491765}
+  SkipIcon: {fileID: 1407579074}
+  SkipCompletingIcon: {fileID: 2108491765}
+  KeyboardSkipButton: {fileID: 21300000, guid: d156689db7ba8d34a91ce47982ad19c2, type: 3}
+  PlaystationSkipButton: {fileID: -2082582276, guid: d25c3175f993ca443b7392e16da76eaf,
+    type: 3}
+  SwitchSkipButton: {fileID: -1320653032, guid: d25c3175f993ca443b7392e16da76eaf,
+    type: 3}
+  XboxSkipButton: {fileID: -759136360, guid: d25c3175f993ca443b7392e16da76eaf, type: 3}
+  CompletionCircle: {fileID: 21300000, guid: e1b98eccdf343714cb7f2710ccd94023, type: 3}
+  CompletionSquare: {fileID: 21300000, guid: 8fe49c9b811c3fb4ba2a614c49c409b0, type: 3}
 --- !u!4 &2000108363
 Transform:
   m_ObjectHideFlags: 0
@@ -462,7 +483,7 @@ PrefabInstance:
     - target: {fileID: 1979347854173412038, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2149765265198579261, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
