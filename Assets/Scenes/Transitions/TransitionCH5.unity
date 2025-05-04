@@ -242,6 +242,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3091313384924612710, guid: ef9b14c03d88d684faa47f3a537bbf19,
         type: 3}
+      propertyPath: _blackTransition
+      value: 
+      objectReference: {fileID: 657568233}
+    - target: {fileID: 3091313384924612710, guid: ef9b14c03d88d684faa47f3a537bbf19,
+        type: 3}
       propertyPath: _endSound.Guid.Data1
       value: 0
       objectReference: {fileID: 0}
@@ -619,7 +624,10 @@ MonoBehaviour:
   _audioVolumeOverride: 150
   _endCutsceneVolumeOverride: 5
   _menuManager: {fileID: 0}
-  _skipHoldTime: 2
+  _timeTillSkip: 2
+  _skipIconDuration: 2
+  _holdToSkipIcon: {fileID: 0}
+  _skipCompletingIcon: {fileID: 0}
 --- !u!4 &620812242
 Transform:
   m_ObjectHideFlags: 0
@@ -796,6 +804,86 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 621479463}
   m_CullTransparentMesh: 1
+--- !u!1001 &657568232
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 97516171424736529, guid: f92dd8e1727b1b943a472ba53db4e499,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 97516171424736529, guid: f92dd8e1727b1b943a472ba53db4e499,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 97516171424736529, guid: f92dd8e1727b1b943a472ba53db4e499,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 97516171424736529, guid: f92dd8e1727b1b943a472ba53db4e499,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 97516171424736529, guid: f92dd8e1727b1b943a472ba53db4e499,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 97516171424736529, guid: f92dd8e1727b1b943a472ba53db4e499,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 97516171424736529, guid: f92dd8e1727b1b943a472ba53db4e499,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 97516171424736529, guid: f92dd8e1727b1b943a472ba53db4e499,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 97516171424736529, guid: f92dd8e1727b1b943a472ba53db4e499,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 97516171424736529, guid: f92dd8e1727b1b943a472ba53db4e499,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5020171052545034675, guid: f92dd8e1727b1b943a472ba53db4e499,
+        type: 3}
+      propertyPath: m_Name
+      value: BlackScreenTransition
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f92dd8e1727b1b943a472ba53db4e499, type: 3}
+--- !u!114 &657568233 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7584120794635567588, guid: f92dd8e1727b1b943a472ba53db4e499,
+    type: 3}
+  m_PrefabInstance: {fileID: 657568232}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc6241bfd8d077347bb3c2a8dbf50e48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &842858843
 GameObject:
   m_ObjectHideFlags: 0
@@ -935,7 +1023,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &962347466
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 16
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -6283,3 +6371,4 @@ SceneRoots:
   - {fileID: 620812242}
   - {fileID: 1068639949}
   - {fileID: 842858847}
+  - {fileID: 657568232}

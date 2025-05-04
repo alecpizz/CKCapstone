@@ -68,7 +68,7 @@ public class SceneController : MonoBehaviour
         _transitions[SceneTransitionType.Son] = _sonTransition;
         foreach (var st in _transitions)
         {
-            st.Value.Init();
+            st.Value?.Init();
         }
 
         if (_shouldFadeInOnLoad)
