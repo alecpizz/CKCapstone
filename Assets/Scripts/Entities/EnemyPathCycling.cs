@@ -80,6 +80,11 @@ public class EnemyPathCycling : MonoBehaviour
     /// <param name="context"></param>
     private void PathingForward(InputAction.CallbackContext context)
     {
+        if (MenuManager.Instance.GetPauseInvoked() == true)
+        {
+            return;
+        }
+
         //if there are no enemies return early
         if (_allEnemyArray.Length == 0)
         {
@@ -145,6 +150,11 @@ public class EnemyPathCycling : MonoBehaviour
     /// <param name="context">Input context</param>
     private void ToggleEnemyPaths(InputAction.CallbackContext context)
     {
+        if(MenuManager.Instance.GetPauseInvoked() == true)
+        {
+            return;
+        }
+
         if (_allEnemyArray.Length == 0)
         {
             return;
