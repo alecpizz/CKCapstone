@@ -198,6 +198,7 @@ public class SettingsTabs : MonoBehaviour
         _accessibilityButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_accessibilityButtonGameObject));
         _accessibilityButton.onClick.AddListener(() => ChangeImage(_accessibilityButton));
 
+
         //gameplay events
         _gameplayButton.onClick.AddListener(() => OpenTab(Tab.Gameplay));
         _gameplayButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_gameplayButtonGameObject));
