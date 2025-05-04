@@ -109,11 +109,19 @@ public class CutsceneFramework : MonoBehaviour
     [SerializeField] private float _skipIconDuration = 2f;
 
     private float _skipIconTimer = 0f;
-    [SerializeField] private GameObject _holdToSkipIcon;
+    [SerializeField] public GameObject _holdToSkipIcon;
 
-    [SerializeField] private Image _skipCompletingIcon;
+    [SerializeField] public Image SkipIcon;
+    [SerializeField] public Image SkipCompletingIcon;
     private bool _skipHeld = false;
-    
+
+    [SerializeField] public Sprite KeyboardSkipButton;
+    [SerializeField] public Sprite PlaystationSkipButton;
+    [SerializeField] public Sprite SwitchSkipButton;
+    [SerializeField] public Sprite XboxSkipButton;
+    [SerializeField] public Sprite CompletionCircle;
+    [SerializeField] public Sprite CompletionSquare;
+
     /// <summary>
     /// Determines whether to play the Challenge or End Chapter Cutscene
     /// </summary>
@@ -169,9 +177,9 @@ public class CutsceneFramework : MonoBehaviour
         }
 
         //initial state of circle skip indicator
-        if (!_skipCompletingIcon) return;
-        _skipCompletingIcon.enabled = true;
-        _skipCompletingIcon.fillAmount = 0;
+        if (!SkipCompletingIcon) return;
+        SkipCompletingIcon.enabled = true;
+        SkipCompletingIcon.fillAmount = 0;
     }
     
     /// <summary>
@@ -224,9 +232,9 @@ public class CutsceneFramework : MonoBehaviour
                 return;
             }
 
-            if (_skipCompletingIcon && _holdToSkipIcon)
+            if (SkipCompletingIcon && _holdToSkipIcon)
             {
-                _skipCompletingIcon.enabled = false;
+                SkipCompletingIcon.enabled = false;
                 _holdToSkipIcon.SetActive(false);
             }
             SceneController.Instance.LoadNewScene(_loadingLevelIndex, SceneTransitionType.Black);
@@ -417,6 +425,15 @@ public class CutsceneFramework : MonoBehaviour
     }
 
     /// <summary>
+    /// Takes the reference of the current controller from the debug manager to make sure
+    /// input prompt for skipping the cutscene lines up with your current input device
+    /// </summary>
+    public void ControllerIconChange()
+    {
+        ControllerGlyphManager.Instance.GetIcon();
+    }
+
+    /// <summary>
     /// If there is an End Chapter Cutscene being played make sure the video is being played smoothly
     /// </summary>
     private void Update()
@@ -428,7 +445,7 @@ public class CutsceneFramework : MonoBehaviour
         {
             _timer += Time.deltaTime;
             _skipHeld = true;
-            _skipCompletingIcon.enabled = true;
+            SkipCompletingIcon.enabled = true;
 
             if (_timer > _timeTillSkip)
             {
@@ -436,9 +453,9 @@ public class CutsceneFramework : MonoBehaviour
                 SkipCutscene();
             }
 
-            if (_skipCompletingIcon)
+            if (SkipCompletingIcon)
             {
-                _skipCompletingIcon.fillAmount = fillSpeed;
+                SkipCompletingIcon.fillAmount = fillSpeed;
             }
         }
         else if(_timer > 0) 
@@ -446,9 +463,9 @@ public class CutsceneFramework : MonoBehaviour
             _timer -= Time.deltaTime;
             _skipHeld = false;
 
-            if (_skipCompletingIcon)
+            if (SkipCompletingIcon)
             {
-                _skipCompletingIcon.fillAmount = fillSpeed;
+                SkipCompletingIcon.fillAmount = fillSpeed;
             }
         }
         else //so timer doesn't become negative
@@ -470,7 +487,7 @@ public class CutsceneFramework : MonoBehaviour
             if (_skipIconTimer > _skipIconDuration || _menuManager.GetPauseInvoked())
             {
                 _holdToSkipIcon.SetActive(false);
-                _skipCompletingIcon.enabled = false;
+                SkipCompletingIcon.enabled = false;
                 _skipIconTimer = 0f;
             }
         }

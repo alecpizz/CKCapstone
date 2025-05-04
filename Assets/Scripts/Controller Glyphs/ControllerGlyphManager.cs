@@ -28,6 +28,7 @@ public class ControllerGlyphManager : MonoBehaviour
     private bool _areInteractables = false;
     private bool _areTextBlurbs = false;
     private bool _areControllerGraphics = false;
+    private bool _isCutscene = false;
 
     private DebugInputActions _playerInput;
     private PlayerControls _playerControls;
@@ -35,7 +36,7 @@ public class ControllerGlyphManager : MonoBehaviour
 
     private NpcDialogueController[] _interactableArray;
     private ControllerTextChecker[] _textBlurbArray;
-    private ControllerTextChecker[] _htpArray;
+    private CutsceneFramework[] _cutsceneIconArray;
     private ControllerImageChanger[] _ControllerGraphicArray;
 
     /// <summary>
@@ -53,7 +54,7 @@ public class ControllerGlyphManager : MonoBehaviour
 
         _interactableArray = GameObject.FindObjectsOfType<NpcDialogueController>();
         _textBlurbArray = GameObject.FindObjectsOfType<ControllerTextChecker>();
-        _htpArray = GameObject.FindObjectsOfType<ControllerTextChecker>();
+        _cutsceneIconArray = GameObject.FindObjectsOfType<CutsceneFramework>();
         _ControllerGraphicArray = GameObject.FindObjectsOfType<ControllerImageChanger>();
     }
 
@@ -106,6 +107,14 @@ public class ControllerGlyphManager : MonoBehaviour
                 blurb.TutorialTextChange();
             }
             _areTextBlurbs = true;
+        }
+        if (_cutsceneIconArray != null)
+        {
+            foreach (var icon in _cutsceneIconArray)
+            {
+                icon.ControllerIconChange();
+            }
+            _isCutscene = true;
         }
         if (_ControllerGraphicArray != null)
         {
@@ -173,6 +182,13 @@ public class ControllerGlyphManager : MonoBehaviour
             foreach (var blurb in _textBlurbArray)
             {
                 blurb.TutorialTextChange();
+            }
+        }
+        if (_isCutscene)
+        {
+            foreach (var icon in _cutsceneIconArray)
+            {
+                icon.ControllerIconChange();
             }
         }
         if (_areControllerGraphics)
@@ -259,4 +275,34 @@ public class ControllerGlyphManager : MonoBehaviour
         }
         return tutorialText;
     }
+
+    public void GetIcon()
+    {
+
+        foreach (var ControllerIcon in _cutsceneIconArray)
+        {
+            if (PlayStationController)
+            {
+                ControllerIcon.SkipIcon.sprite = ControllerIcon.PlaystationSkipButton;
+                ControllerIcon.SkipCompletingIcon.sprite = ControllerIcon.CompletionCircle;
+            }
+            else if (SwitchController)
+            {
+                ControllerIcon.SkipIcon.sprite = ControllerIcon.SwitchSkipButton;
+                ControllerIcon.SkipCompletingIcon.sprite = ControllerIcon.CompletionCircle;
+            }
+            else if (XboxController)
+            {
+                ControllerIcon.SkipIcon.sprite = ControllerIcon.XboxSkipButton;
+                ControllerIcon.SkipCompletingIcon.sprite = ControllerIcon.CompletionCircle;
+            }
+            else
+            {
+                ControllerIcon.SkipIcon.sprite = ControllerIcon.KeyboardSkipButton;
+                ControllerIcon.SkipCompletingIcon.sprite = ControllerIcon.CompletionSquare;
+            }
+        }
+        return;
+    }
+
 }
