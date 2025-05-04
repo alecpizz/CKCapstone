@@ -109,18 +109,10 @@ public class CutsceneFramework : MonoBehaviour
     [SerializeField] private float _skipIconDuration = 2f;
 
     private float _skipIconTimer = 0f;
-    [SerializeField] public GameObject _holdToSkipIcon;
+    [SerializeField] private GameObject _holdToSkipIcon;
 
-    [SerializeField] public Image SkipIcon;
-    [SerializeField] public Image SkipCompletingIcon;
+    [SerializeField] private Image SkipCompletingIcon;
     private bool _skipHeld = false;
-
-    [SerializeField] public Sprite KeyboardSkipButton;
-    [SerializeField] public Sprite PlaystationSkipButton;
-    [SerializeField] public Sprite SwitchSkipButton;
-    [SerializeField] public Sprite XboxSkipButton;
-    [SerializeField] public Sprite CompletionCircle;
-    [SerializeField] public Sprite CompletionSquare;
 
     /// <summary>
     /// Determines whether to play the Challenge or End Chapter Cutscene
@@ -422,15 +414,6 @@ public class CutsceneFramework : MonoBehaviour
             _mChannel.setFrequency(playbackRate);
             _mChannel.setVolume(_endCutsceneVolumeOverride);
         }
-    }
-
-    /// <summary>
-    /// Takes the reference of the current controller from the debug manager to make sure
-    /// input prompt for skipping the cutscene lines up with your current input device
-    /// </summary>
-    public void ControllerIconChange()
-    {
-        ControllerGlyphManager.Instance.GetIcon();
     }
 
     /// <summary>

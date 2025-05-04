@@ -39,6 +39,16 @@ public class ControllerGlyphManager : MonoBehaviour
     private CutsceneFramework[] _cutsceneIconArray;
     private ControllerImageChanger[] _ControllerGraphicArray;
 
+    [SerializeField] private Image _skipIcon;
+    [SerializeField] private Image _skipCompletingIcon;
+
+    [SerializeField] private Sprite _keyboardSkipButton;
+    [SerializeField] private Sprite _playstationSkipButton;
+    [SerializeField] private Sprite _switchSkipButton;
+    [SerializeField] private Sprite _xboxSkipButton;
+    [SerializeField] private Sprite _completionCircle;
+    [SerializeField] private Sprite _completionSquare;
+
     /// <summary>
     /// sets up variables when first possible
     /// </summary>
@@ -108,14 +118,6 @@ public class ControllerGlyphManager : MonoBehaviour
             }
             _areTextBlurbs = true;
         }
-        if (_cutsceneIconArray != null)
-        {
-            foreach (var icon in _cutsceneIconArray)
-            {
-                icon.ControllerIconChange();
-            }
-            _isCutscene = true;
-        }
         if (_ControllerGraphicArray != null)
         {
             foreach (var graphic in _ControllerGraphicArray)
@@ -123,6 +125,11 @@ public class ControllerGlyphManager : MonoBehaviour
                 graphic.ControllerImageSwap();
             }
             _areControllerGraphics = true;
+        }
+        if (_cutsceneIconArray != null)
+        {
+            GetIcon();
+            _isCutscene = true;
         }
     }
 
@@ -184,19 +191,16 @@ public class ControllerGlyphManager : MonoBehaviour
                 blurb.TutorialTextChange();
             }
         }
-        if (_isCutscene)
-        {
-            foreach (var icon in _cutsceneIconArray)
-            {
-                icon.ControllerIconChange();
-            }
-        }
         if (_areControllerGraphics)
         {
             foreach (var graphic in _ControllerGraphicArray)
             {
                 graphic.ControllerImageSwap();
             }
+        }
+        if (_isCutscene)
+        {
+            GetIcon();
         }
     }
 
@@ -281,28 +285,25 @@ public class ControllerGlyphManager : MonoBehaviour
     /// </summary>
     public void GetIcon()
     {
-        foreach (var ControllerIcon in _cutsceneIconArray)
+        if (PlayStationController)
         {
-            if (PlayStationController)
-            {
-                ControllerIcon.SkipIcon.sprite = ControllerIcon.PlaystationSkipButton;
-                ControllerIcon.SkipCompletingIcon.sprite = ControllerIcon.CompletionCircle;
-            }
-            else if (SwitchController)
-            {
-                ControllerIcon.SkipIcon.sprite = ControllerIcon.SwitchSkipButton;
-                ControllerIcon.SkipCompletingIcon.sprite = ControllerIcon.CompletionCircle;
-            }
-            else if (XboxController)
-            {
-                ControllerIcon.SkipIcon.sprite = ControllerIcon.XboxSkipButton;
-                ControllerIcon.SkipCompletingIcon.sprite = ControllerIcon.CompletionCircle;
-            }
-            else
-            {
-                ControllerIcon.SkipIcon.sprite = ControllerIcon.KeyboardSkipButton;
-                ControllerIcon.SkipCompletingIcon.sprite = ControllerIcon.CompletionSquare;
-            }
+            _skipIcon.sprite = _playstationSkipButton;
+            _skipCompletingIcon.sprite = _completionCircle;
+        }
+        else if (SwitchController)
+        {
+            _skipIcon.sprite = _switchSkipButton;
+            _skipCompletingIcon.sprite = _completionCircle;
+        }
+        else if (XboxController)
+        {
+            _skipIcon.sprite = _xboxSkipButton;
+            _skipCompletingIcon.sprite = _completionCircle;
+        }
+        else
+        {
+            _skipIcon.sprite = _keyboardSkipButton;
+            _skipCompletingIcon.sprite = _completionSquare;
         }
         return;
     }
