@@ -229,6 +229,8 @@ public class CutsceneFramework : MonoBehaviour
                 _skipCompletingIcon.enabled = false;
                 _holdToSkipIcon.SetActive(false);
             }
+
+            Time.timeScale = 1.0f;
             SceneController.Instance.LoadNewScene(_loadingLevelIndex, SceneTransitionType.Black);
 
             if(SceneManager.GetActiveScene().name.Equals("CSCN_Act5_End"))
