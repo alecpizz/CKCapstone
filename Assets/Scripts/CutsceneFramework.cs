@@ -432,7 +432,6 @@ public class CutsceneFramework : MonoBehaviour
 
             if (_timer > _timeTillSkip)
             {
-                Debug.Log("run");
                 SkipCutscene();
             }
 

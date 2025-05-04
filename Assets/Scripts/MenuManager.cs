@@ -44,7 +44,6 @@ public class MenuManager : MonoBehaviour
 
     [FormerlySerializedAs("_skipWhilePaused")]
     [SerializeField] private GameObject _skipPromptInPause;
-    private bool _skipInPause;
 
     private bool _pauseInvoked = false;
     private bool _isMainMenu;   

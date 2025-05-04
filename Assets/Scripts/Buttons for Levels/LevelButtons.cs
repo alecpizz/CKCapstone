@@ -37,9 +37,6 @@ public class LevelButtons : MonoBehaviour
 
     [SerializeField] private string _challengePrefix = "Challenge";
 
-    //Counter for the levels
-    private int _lvlCounter = -1;
-
     //Stores the true buildIndex and the level select number
     private Dictionary<int, int> _lvlNumberAssignment = new();
 
