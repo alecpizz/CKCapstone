@@ -29,6 +29,10 @@ public class CreditsScroll : MonoBehaviour
 
     Tween _scrollTween;
 
+
+    /// <summary>
+    /// Initializes how long the credits scroll for
+    /// </summary>
     private void Awake()
     {
         _scrollDuration = 1000 / _scrollSpeed;
@@ -39,6 +43,9 @@ public class CreditsScroll : MonoBehaviour
         ScrollCredits();
     }
 
+    /// <summary>
+    /// Detects if the player is pressing any input, and speeds up the credits if so
+    /// </summary>
     private void Update()
     {
         if (!_scrollTween.isAlive)
@@ -59,6 +66,9 @@ public class CreditsScroll : MonoBehaviour
         _scrollTween.timeScale = 1;
     }
 
+    /// <summary>
+    /// Creates the tween that controls the credit scrolling
+    /// </summary>
     private void ScrollCredits()
     {
         _scrollTween = Tween.UIAnchoredPosition3DY(_creditsTransform,
