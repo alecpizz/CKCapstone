@@ -122,36 +122,23 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &963847387 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 656997055110088003, guid: df90af16ed9c7a543bbd72c3cc0228e3,
-    type: 3}
-  m_PrefabInstance: {fileID: 1946342959}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1219149610 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4796894138141777801, guid: df90af16ed9c7a543bbd72c3cc0228e3,
-    type: 3}
-  m_PrefabInstance: {fileID: 1946342959}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1001 &1946342959
+--- !u!1001 &1016588223
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 2108491761}
+    m_TransformParent: {fileID: 1494485571}
     m_Modifications:
     - target: {fileID: 2113139815924245984, guid: df90af16ed9c7a543bbd72c3cc0228e3,
         type: 3}
       propertyPath: m_Name
       value: ChallengeCutsceneSetup
+      objectReference: {fileID: 0}
+    - target: {fileID: 2113139815924245984, guid: df90af16ed9c7a543bbd72c3cc0228e3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3457352470003476173, guid: df90af16ed9c7a543bbd72c3cc0228e3,
         type: 3}
@@ -257,150 +244,73 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 74fe5af4a13f74d47867fe40a1c1cab4,
+      objectReference: {fileID: 21300000, guid: 8c87088fc9883b647a08653dbd0426b9,
         type: 3}
     - target: {fileID: 5712047417106964266, guid: df90af16ed9c7a543bbd72c3cc0228e3,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 197.01
       objectReference: {fileID: 0}
     - target: {fileID: 5712047417106964266, guid: df90af16ed9c7a543bbd72c3cc0228e3,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 7761143557241632798, guid: df90af16ed9c7a543bbd72c3cc0228e3,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7761143557241632798, guid: df90af16ed9c7a543bbd72c3cc0228e3,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7761143557241632798, guid: df90af16ed9c7a543bbd72c3cc0228e3,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 157.01
       objectReference: {fileID: 0}
     - target: {fileID: 7761143557241632798, guid: df90af16ed9c7a543bbd72c3cc0228e3,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 98.505
       objectReference: {fileID: 0}
     - target: {fileID: 7761143557241632798, guid: df90af16ed9c7a543bbd72c3cc0228e3,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: df90af16ed9c7a543bbd72c3cc0228e3, type: 3}
---- !u!224 &1946342960 stripped
+--- !u!1 &1016588224 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 656997055110088003, guid: df90af16ed9c7a543bbd72c3cc0228e3,
+    type: 3}
+  m_PrefabInstance: {fileID: 1016588223}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &1016588225 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3457352470003476173, guid: df90af16ed9c7a543bbd72c3cc0228e3,
     type: 3}
-  m_PrefabInstance: {fileID: 1946342959}
+  m_PrefabInstance: {fileID: 1016588223}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &2000108360
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2000108363}
-  - component: {fileID: 2000108362}
-  - component: {fileID: 2000108361}
-  m_Layer: 0
-  m_Name: CutsceneManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2000108361
+--- !u!114 &1016588226 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 4796894138141777801, guid: df90af16ed9c7a543bbd72c3cc0228e3,
+    type: 3}
+  m_PrefabInstance: {fileID: 1016588223}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2000108360}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 300d622a05df742458b0dc20573d60fc, type: 3}
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dialogue:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  _subtitleText: "Telephone: You have 'one' new message. Son: Hey, Mom, I\u2019m
-    just checking in. Son: So, uh, how have you been? Son: I haven\u2019t heard from
-    you since, well, um. Son: Actually, that\u2019s why I called. Son: I- I wanted
-    to apologize. Son: I know you were just looking out for me, you\u2019ve always
-    put me first, caring when no else would. Son: Without you, I wouldn\u2019t be
-    who I am now! Son: When we fought, I just-. Son: I don\u2019t think I was ready
-    to imagine a time where you, aren\u2019t here anymore. Son: So, please, call
-    me when you can. Son: I love you, Mom. Telephone: You have 'no' new messages."
-  _sentences: 13
-  _sentenceDelay: 4
-  _subtitleObject: {fileID: 1219149610}
---- !u!114 &2000108362
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2000108360}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 104df417cc52e654ba0e5d7b9070697e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _isChallengeCutscene: 1
-  _isEndChapterCutscene: 0
-  _challengeCutsceneImages:
-  - {fileID: 963847387}
-  _cutsceneDuration: 53
-  _cutsceneAudio:
-    Guid:
-      Data1: 0
-      Data2: 0
-      Data3: 0
-      Data4: 0
-    Path: 
-  _loadingLevelIndex: 72
-  _audioVolumeOverride: 0
-  _endCutsceneVolumeOverride: 5
-  _menuManager: {fileID: 2108491762}
-  _timeTillSkip: 2
-  _skipIconDuration: 2
-  _holdToSkipIcon: {fileID: 2108491763}
-  _skipCompletingIcon: {fileID: 2108491764}
---- !u!4 &2000108363
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2000108360}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 13.50135, y: 4.923876, z: 1.887146}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &2108491760
+--- !u!1001 &1494485570
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -413,35 +323,55 @@ PrefabInstance:
       propertyPath: m_Name
       value: CK_Base_LevelPrefab
       objectReference: {fileID: 0}
+    - target: {fileID: 1101849353876025853, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.00024414062
+      objectReference: {fileID: 0}
+    - target: {fileID: 1979347854173412038, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2149765265198579261, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Path
-      value: event:/Music Controller
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _musicLayering
-      value: 4
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Guid.Data1
-      value: 1087454660
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Guid.Data2
-      value: 1125730479
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Guid.Data3
-      value: 2075035788
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2180498454267110288, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _music.Guid.Data4
-      value: 1825618196
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2298426373216158578, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -26.409912
       objectReference: {fileID: 0}
     - target: {fileID: 3794366438221480467, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
@@ -452,7 +382,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 2000108362}
+      objectReference: {fileID: 1519516031}
     - target: {fileID: 4302793240257533961, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
@@ -462,11 +392,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 2000108362}
+      objectReference: {fileID: 1519516031}
     - target: {fileID: 7315412022279455653, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: SkipCutscene
+      objectReference: {fileID: 0}
+    - target: {fileID: 7663816770030828482, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_ClearFlags
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7663816770030828482, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: far clip plane
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 7757164700761813088, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
@@ -538,44 +478,31 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9017290271949941636, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 4176986204430351289, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       insertIndex: 4
-      addedObject: {fileID: 1946342960}
+      addedObject: {fileID: 1016588225}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dbb0dd27c6fab3344aab4441094b0849, type: 3}
---- !u!224 &2108491761 stripped
+--- !u!224 &1494485571 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4176986204430351289, guid: dbb0dd27c6fab3344aab4441094b0849,
     type: 3}
-  m_PrefabInstance: {fileID: 2108491760}
+  m_PrefabInstance: {fileID: 1494485570}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2108491762 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 568816946503938640, guid: dbb0dd27c6fab3344aab4441094b0849,
-    type: 3}
-  m_PrefabInstance: {fileID: 2108491760}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f61e032f6da43a04f9aaa88d67405bb9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &2108491763 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1979347854173412038, guid: dbb0dd27c6fab3344aab4441094b0849,
-    type: 3}
-  m_PrefabInstance: {fileID: 2108491760}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2108491764 stripped
+--- !u!114 &1494485572 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6710362832247839266, guid: dbb0dd27c6fab3344aab4441094b0849,
     type: 3}
-  m_PrefabInstance: {fileID: 2108491760}
+  m_PrefabInstance: {fileID: 1494485570}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
@@ -583,9 +510,164 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1494485573 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1979347854173412038, guid: dbb0dd27c6fab3344aab4441094b0849,
+    type: 3}
+  m_PrefabInstance: {fileID: 1494485570}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1494485574 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 568816946503938640, guid: dbb0dd27c6fab3344aab4441094b0849,
+    type: 3}
+  m_PrefabInstance: {fileID: 1494485570}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f61e032f6da43a04f9aaa88d67405bb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!20 &1494485575 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 7663816770030828482, guid: dbb0dd27c6fab3344aab4441094b0849,
+    type: 3}
+  m_PrefabInstance: {fileID: 1494485570}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1519516030
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1519516034}
+  - component: {fileID: 1519516031}
+  - component: {fileID: 1519516033}
+  - component: {fileID: 1519516032}
+  m_Layer: 0
+  m_Name: CutsceneManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1519516031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519516030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 104df417cc52e654ba0e5d7b9070697e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _isChallengeCutscene: 0
+  _isEndChapterCutscene: 1
+  _challengeCutsceneImages:
+  - {fileID: 1016588224}
+  _cutsceneDuration: 52
+  _cutsceneAudio:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  _loadingLevelIndex: 8
+  _audioVolumeOverride: 0
+  _endCutsceneVolumeOverride: 5
+  _menuManager: {fileID: 1494485574}
+  _timeTillSkip: 2
+  _skipIconDuration: 2
+  _holdToSkipIcon: {fileID: 1494485573}
+  SkipCompletingIcon: {fileID: 1494485572}
+--- !u!328 &1519516032
+VideoPlayer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519516030}
+  m_Enabled: 1
+  m_VideoClip: {fileID: 32900000, guid: 6f7fadf1fdaddee498a43ddc5bf9ef73, type: 3}
+  m_TargetCameraAlpha: 1
+  m_TargetCamera3DLayout: 0
+  m_TargetCamera: {fileID: 1494485575}
+  m_TargetTexture: {fileID: 8400000, guid: 8a1fd988bcf3c304ca12e83cb9f70882, type: 2}
+  m_TimeReference: 0
+  m_TargetMaterialRenderer: {fileID: 0}
+  m_TargetMaterialProperty: <noninit>
+  m_RenderMode: 1
+  m_AspectRatio: 3
+  m_DataSource: 0
+  m_TimeUpdateMode: 1
+  m_PlaybackSpeed: 1
+  m_AudioOutputMode: 0
+  m_TargetAudioSources:
+  - {fileID: 0}
+  m_DirectAudioVolumes:
+  - 1
+  m_Url: 
+  m_EnabledAudioTracks: 01
+  m_DirectAudioMutes: 00
+  m_ControlledAudioTrackCount: 1
+  m_PlayOnAwake: 0
+  m_SkipOnDrop: 0
+  m_Looping: 0
+  m_WaitForFirstFrame: 1
+  m_FrameReadyEventEnabled: 0
+  m_VideoShaders: []
+--- !u!114 &1519516033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519516030}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 300d622a05df742458b0dc20573d60fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _dialogue:
+    Guid:
+      Data1: 0
+      Data2: 0
+      Data3: 0
+      Data4: 0
+    Path: 
+  _subtitleText: 'Mother: Alright, back to work. Mother: Hmmm, where am I meant to
+    use this screw? Mother: I must''ve skipped a step! Mother: Now, which page was
+    it? Mother: This one? Mother: No. Mother: C''mon. Mother: Ugh, I should''ve been
+    finished with this by now! Mother: I''m already behind on laundry. Mother: And,
+    I haven''t changed his diaper in a while. Mother: Maybe it''s over here? Mother:
+    Oh, there it is! Mother: I can do this. Mother: Just gotta screw that there and.
+    Mother: Sounds like someone needs some food! Mother: Mama''s right here, dear!'
+  _sentences: 16
+  _sentenceDelay: 4
+  _subtitleObject: {fileID: 1016588226}
+--- !u!4 &1519516034
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1519516030}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 13.50135, y: 4.923876, z: 1.887146}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 2108491760}
-  - {fileID: 2000108363}
+  - {fileID: 1494485570}
+  - {fileID: 1519516034}

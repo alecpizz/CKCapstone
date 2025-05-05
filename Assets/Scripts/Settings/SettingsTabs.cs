@@ -99,7 +99,7 @@ public class SettingsTabs : MonoBehaviour
     const string CUTSCENES = "cutscenes";
     const string COLLECTABLES = "collectables";
 
-    private Dictionary<Tab, GameObject> _panels;
+    private Dictionary<Tab, List<GameObject>> _panels;
     private Dictionary<Tab, Button> _buttons;
     private Dictionary<Button, Sprite> _ogSprites;
     private Dictionary<Button, Sprite> _altSprites;
@@ -111,17 +111,35 @@ public class SettingsTabs : MonoBehaviour
     private void Start()
     {
         // Initialize the panel dictionary
-        _panels = new Dictionary<Tab, GameObject>
+        _panels = new()
         {
-            { Tab.Display, _displayPanel },
-            { Tab.Audio, _audioPanel },
-            { Tab.Accessibility, _accessibilityPanel },
-            { Tab.Gameplay, _gameplayPanel },
-            { Tab.HowToPlay, _howToPlayPanel },
-            { Tab.LevelSelect, _levelSelectPanel },
-            { Tab.Cutscenes, _cutscenesPanel },
-            { Tab.CutscenesText, _cutscenesTextPanel },
-            { Tab.Collectables, _collectablesPanel }
+            { Tab.Display, 
+                new(){ _displayPanel, _audioPanel } 
+            },
+            /*{ Tab.Audio, 
+                new() { _audioPanel, _displayPanel } 
+            },*/
+            { Tab.Accessibility, 
+                new() { _accessibilityPanel, _howToPlayPanel } 
+            },
+            { Tab.Gameplay, 
+                new() { _gameplayPanel } 
+            },
+            /*{ Tab.HowToPlay,
+                new() { _howToPlayPanel, _audioPanel } 
+            },*/
+            { Tab.LevelSelect, 
+                new() { _levelSelectPanel }  
+            },
+            { Tab.Cutscenes, 
+                new() { _cutscenesPanel } 
+            },
+            { Tab.CutscenesText, 
+                new() { _cutscenesTextPanel } 
+            },
+            { Tab.Collectables, 
+                new() { _collectablesPanel }
+            }
         };
 
         // Initialize the button dictionary
@@ -198,6 +216,7 @@ public class SettingsTabs : MonoBehaviour
         _accessibilityButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_accessibilityButtonGameObject));
         _accessibilityButton.onClick.AddListener(() => ChangeImage(_accessibilityButton));
 
+
         //gameplay events
         _gameplayButton.onClick.AddListener(() => OpenTab(Tab.Gameplay));
         _gameplayButton.onClick.AddListener(() => EventSystem.current.SetSelectedGameObject(_gameplayButtonGameObject));
@@ -252,7 +271,8 @@ public class SettingsTabs : MonoBehaviour
     {
         foreach (var panel in _panels)
         {
-            panel.Value.SetActive(panel.Key == tab);
+            foreach(var obj in panel.Value)
+                obj.SetActive(panel.Key == tab);
         }
 
         HighlightButton(tab);

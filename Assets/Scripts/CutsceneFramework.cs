@@ -111,9 +111,9 @@ public class CutsceneFramework : MonoBehaviour
     private float _skipIconTimer = 0f;
     [SerializeField] private GameObject _holdToSkipIcon;
 
-    [SerializeField] private Image _skipCompletingIcon;
+    [SerializeField] private Image SkipCompletingIcon;
     private bool _skipHeld = false;
-    
+
     /// <summary>
     /// Determines whether to play the Challenge or End Chapter Cutscene
     /// </summary>
@@ -169,9 +169,9 @@ public class CutsceneFramework : MonoBehaviour
         }
 
         //initial state of circle skip indicator
-        if (!_skipCompletingIcon) return;
-        _skipCompletingIcon.enabled = true;
-        _skipCompletingIcon.fillAmount = 0;
+        if (!SkipCompletingIcon) return;
+        SkipCompletingIcon.enabled = true;
+        SkipCompletingIcon.fillAmount = 0;
     }
     
     /// <summary>
@@ -224,11 +224,13 @@ public class CutsceneFramework : MonoBehaviour
                 return;
             }
 
-            if (_skipCompletingIcon && _holdToSkipIcon)
+            if (SkipCompletingIcon && _holdToSkipIcon)
             {
-                _skipCompletingIcon.enabled = false;
+                SkipCompletingIcon.enabled = false;
                 _holdToSkipIcon.SetActive(false);
             }
+
+            Time.timeScale = 1.0f;
             SceneController.Instance.LoadNewScene(_loadingLevelIndex, SceneTransitionType.Black);
 
             if(SceneManager.GetActiveScene().name.Equals("CSCN_Act5_End"))
@@ -428,17 +430,16 @@ public class CutsceneFramework : MonoBehaviour
         {
             _timer += Time.deltaTime;
             _skipHeld = true;
-            _skipCompletingIcon.enabled = true;
+            SkipCompletingIcon.enabled = true;
 
             if (_timer > _timeTillSkip)
             {
-                Debug.Log("run");
                 SkipCutscene();
             }
 
-            if (_skipCompletingIcon)
+            if (SkipCompletingIcon)
             {
-                _skipCompletingIcon.fillAmount = fillSpeed;
+                SkipCompletingIcon.fillAmount = fillSpeed;
             }
         }
         else if(_timer > 0) 
@@ -446,9 +447,9 @@ public class CutsceneFramework : MonoBehaviour
             _timer -= Time.deltaTime;
             _skipHeld = false;
 
-            if (_skipCompletingIcon)
+            if (SkipCompletingIcon)
             {
-                _skipCompletingIcon.fillAmount = fillSpeed;
+                SkipCompletingIcon.fillAmount = fillSpeed;
             }
         }
         else //so timer doesn't become negative
@@ -470,7 +471,7 @@ public class CutsceneFramework : MonoBehaviour
             if (_skipIconTimer > _skipIconDuration || _menuManager.GetPauseInvoked())
             {
                 _holdToSkipIcon.SetActive(false);
-                _skipCompletingIcon.enabled = false;
+                SkipCompletingIcon.enabled = false;
                 _skipIconTimer = 0f;
             }
         }

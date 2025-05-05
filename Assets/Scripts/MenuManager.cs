@@ -42,9 +42,10 @@ public class MenuManager : MonoBehaviour
 
     [SerializeField] private CursorManager _cursorManager;
 
+    public static MenuManager Instance;
+
     [FormerlySerializedAs("_skipWhilePaused")]
     [SerializeField] private GameObject _skipPromptInPause;
-    private bool _skipInPause;
 
     private bool _pauseInvoked = false;
     private bool _isMainMenu;   
@@ -56,6 +57,8 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     private void Awake()
     {
+        Instance = this;
+
         _inputActions = new DebugInputActions();
         _inputActions.Enable();
         _inputActions.Player.Quit.performed += ctx => Pause();
@@ -415,9 +418,9 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void Credits()
     {
-        _tempCredits.SetActive(true);
+        //_tempCredits.SetActive(true);
 
-        //SceneManager.LoadScene("Credits");
+        SceneManager.LoadScene("Credits");
     }
 
     /// <summary>
