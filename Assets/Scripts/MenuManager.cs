@@ -418,9 +418,9 @@ public class MenuManager : MonoBehaviour
     /// </summary>
     public void Credits()
     {
-        _tempCredits.SetActive(true);
+        //_tempCredits.SetActive(true);
 
-        //SceneManager.LoadScene("Credits");
+        SceneManager.LoadScene("Credits");
     }
 
     /// <summary>
