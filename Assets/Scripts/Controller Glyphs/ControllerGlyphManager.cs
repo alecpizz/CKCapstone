@@ -285,7 +285,7 @@ public class ControllerGlyphManager : MonoBehaviour
     /// </summary>
     public void GetIcon()
     {
-        if (_skipIcon.sprite == null || _skipCompletingIcon.sprite)
+        if (_skipIcon == null || _skipCompletingIcon == null)
             return; 
 
         if (PlayStationController)
