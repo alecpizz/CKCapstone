@@ -131,7 +131,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 174421324}
-  - component: {fileID: 174421325}
   m_Layer: 5
   m_Name: Credits
   m_TagString: Untagged
@@ -157,30 +156,77 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -644}
+  m_AnchoredPosition: {x: 0, y: -700}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!95 &174421325
-Animator:
-  serializedVersion: 5
+--- !u!1001 &287300718
+PrefabInstance:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 174421323}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: ef02d950b5afe694ea0196acb48d7408, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 925676350848293028, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_Name
+      value: CK_Base_LevelPrefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 7757164700761813088, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7757164700761813088, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7757164700761813088, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7757164700761813088, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7757164700761813088, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7757164700761813088, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7757164700761813088, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7757164700761813088, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7757164700761813088, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7757164700761813088, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: dbb0dd27c6fab3344aab4441094b0849, type: 3}
 --- !u!1 &296802243
 GameObject:
   m_ObjectHideFlags: 0
@@ -388,7 +434,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1334946625
 RectTransform:
   m_ObjectHideFlags: 0
@@ -569,6 +615,7 @@ GameObject:
   - component: {fileID: 1410091890}
   - component: {fileID: 1410091889}
   - component: {fileID: 1410091888}
+  - component: {fileID: 1410091892}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -605,12 +652,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -660,6 +707,22 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1410091892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1410091887}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a958aad916e5ca419482f3ad05b50b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _creditsTransform: {fileID: 174421324}
+  _scrollSpeed: 9
+  _skipSpeedMult: 6
+  _creditsLength: 17100
 --- !u!1 &1816386235
 GameObject:
   m_ObjectHideFlags: 0
@@ -694,8 +757,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 495, y: 83}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchoredPosition: {x: 165, y: 83}
+  m_SizeDelta: {x: 841.9779, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1816386237
 MonoBehaviour:
@@ -717,82 +780,83 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Trinity Hutson
-
-    Rachel Rudy
-
-    Christian Young
-
-    Amanda Lardner
-
-    Aiden
-    Chaves
-
-    Leo Hernandez
-
-    Zayden Joyner
-
-    An Nguyen
-
-    Travis Wade
-
-    Sean
-    Crawford
-
-    Allen Gore
-
-    Guy Lynn
-
-    Jasper Schiliro
-
-    Ryan Salmon
-
-    Gaberiel
-    Engelman
-
-    Logan Baker
-
-    Josh Eddy
-
-    Sean Forrester
-
-    Madison Gorman
-
-    Nate
-    Mitchell
-
-    Jamison Parks
-
-    Thomas Revord
-
-    Alec Pizzeferro
-
-    Nick
-    Grinstead
-
-    Mark Hanson
-
-    Alexandra Henvick
-
-    Alex Laubenstien
-
-    Claire
-    Noto
-
-    Taylor Sims
-
-    Cole Stranczek
-
-    Josephine Qualls
-
-    Mitchell
-    Young
-
-    David Galmines
-
-    Rider Hagen
-
-    Jake Holmes'
+  m_text: "Trinity Hutson - Creative Director, Programmer\n\nRachel Rudy - Lead Producer\n\nChristian
+    Young - Assistant Producer\n\n\n\n<b>Art</b>\n\nAmanda Lardner - Art lead\n\n\nAiden
+    Chavez - 3D modeler, Character artist, Animator, Illustrator\n\nAn Nguyen - 3D
+    Artist, Concept Artist, Illustrator\n\nLeo Hernandez - Prop Artist\n\nZayden
+    Joyner - Environment, VFX,  and Lighting Artist\n\n\n<b>Audio</b>\n\nTravis Wade
+    - Sound Design Lead, Level Designer\n\nSean Crawford - Composer\n\nArin Bass
+    - Mixing, Mastering, and Guitar Performance\n\n\n<b>Design</b>\n\nRyan Salmon
+    - Design Lead\n\n\nGabriel Engelmann - Level and Mechanics Designer, Writer\n\nJamison
+    Parks - Level Designer, and Documentation Manager\n\nJosh Eddy - Mechanics, Level,
+    and SFX Designer \n\nLogan Baker - Level, Puzzle, and Mechanics Designer, QA\n\nMadison
+    Gorman - Narrative, Puzzle, and Technical Designer\n\nNate Mitchell - Tech, Story,
+    and SFX Designer\n\nSean Forrester - Level Designer\n\nThomas Revord - Writer
+    and Level Designer\n\n\n<b>Programming</b>\n\nNick Grinstead - Programming Lead\n\nAlec
+    Pizziferro - Programmer, Version Control Manager, Tools Developer\n\n\nAlex Laubenstein
+    - Programmer\n\nAlexandria Henvick - Programmer\n\nClaire Noto - Script Editor,
+    FMOD Programmer\n\nCole Stranczek - Programmer\n\nJosephine Qualls - Script Editor,
+    Mechanic Developer, UI Programmer\n\nMark Hanson - System Engineer\n\nMitchell
+    Young - Tech Designer, Level Designer, Enemy Programmer\n\nTaylor Sims - Programmer\n\n\n<b>User
+    Interface and Experience</b>\n\nDavid Galmines - QA Lead, User Research\n\nRider
+    Hagen - UI and UX Lead\n\n\nJake Holmes - UX Designer, Polish\n\n\n<b>Voice Actors\n(In
+    Order of Appearance)</b>\n\nJasper Schiliro - Mother\n\nAllen Gore - Cody (Baby)\n\nGuy
+    Lynn - Cody (Younger)\n\nDavid Galmines - Cody (Older)\n\n\n<b>Special Thanks</b>\n\nShout
+    out Elannore - Alec\n\nTo My family - Cole\n\nGreg and Guy Lynn for helping out
+    with voice acting - David\n\nTo Trinity and Alec for their endless patience on
+    my journey to learn Unity and C# - Josephine\n\nShoutouts to my mom and dad!
+    Wouldn't be here without them - Josh\n\nTo my family, both blood and found. I
+    couldn't have done this without you, and wouldn't have wanted to either - Rachel\n\nLisa
+    Revord. For being a good mom! - Thomas\n\nThank you mom and dad for all your
+    love and support - Guy\n\n\n<b>Industry Mentors</b>\n\nRob Loftus - Shapeshifter
+    Games, Studio Director, Point of Contact\n\nRyan McCabe - Insomniac, Design Manager,
+    Point of Contact\n\n\nAlex Bernett - Insomniac, Associate Project Manager\n\nAlex
+    Cline - Shapeshifter Games, Quest Designer\n\nBen Stoddard - Shapeshifter Games,
+    Level Designer\n\nBryan Dillow - Shapeshifter Games, Designer\n\nCory O\u2019Brien
+    - Shapeshifter Games, Narrative Designer\n\nGrant Parker - Insomniac, Senior
+    Game Designer and Culture Council Member\n\nJoe Jacobs - Insomniac, Environment
+    Artist\n\n\n<b>Bradley University Faculty</b>\n\nAria A. Dines - Assistant Professor
+    of Interactive Media - Animation\n\nBill Duncan - Affiliate Instructor Audio
+    Engineering, Director of Hilltop Studio\n\nBrent Wiley - Assistant Animation
+    Professor\n\nBryce Gore - Instructor-in-Residence and Game Art Program Head\n\nChantell
+    Marlow - Instructor-in-Residence\n\nDavid Abzug - Instructor-in-Residence, Undergraduate
+    Game Design and Master of Science in Game Development Program Head\n\nDavid Lennie
+    - Instructor and SCCFA Director Hench Production Arts Studio, Director of Instructional
+    Technology\n\nEthan Ham - Dean of the Slane College of Communications and  Fine
+    Arts, Professor of Game Design\n\nGrace Fielany - Administrative Support\n\nGregory
+    Lynn - Assistant Professor in Residence\n\nHeather Ford - Interactive Media Associate
+    Chair, UI/UX, User Experience Design Program Head and Assistant Professor\n\nLynette
+    Fernandes - Instructor-in-Residence\n\nLynnsey Lambrecht - Associate Professor,
+    Music Theory and Composition\n\nRay Hazlip - Instructor-in-Residence\n\nScott
+    Cavanah\t - Department Chairperson and Associate Professor of Animation\n\nZach
+    Abbott - Instructor-in-Residence\n\t\n\n<b>Playtesters</b>\n\nAdam Garwacki\u25CFAidan
+    O'Donnell\u25CFAiden Losey\u25CFAlex Koeberl\u25CFAlexander Helvie\u25CFAlicia\nAmber
+    Cardamone\u25CFAmy & Jesse Rudy\u25CFAndrea Swihart-DeCoster\u25CFAndrew Higgins\nAndrew
+    Moss\u25CFAndrew Stapay\u25CFAnthony\u25CFApollo Ridgeway\u25CFBrady Neill\u25CFBrandon\n
+    Koederitz\u25CFBrennan Riggs\u25CFBrittany\u25CFBroc\u25CFC Hanson\u25CFCaden
+    Bielema\u25CFCaden Sheahan\nCaelie Joyner\u25CFCamryn Wooten\u25CFCarla\u25CFCasey
+    Salmon\u25CFCeandte Jackson\nCharlie Polonus\u25CFCharlotte Tolly\u25CFCherie
+    Qualls\u25CFClare Grady\u25CFCleo\u25CFCollin Gorman\nCorey Gorman\u25CFEdward
+    Parra\u25CFElannore and Eaghan Bester\u25CFEric Chow\u25CFEthan\u25CFEthan Rekeweg\nEvie
+    Swiahert\u25CFGabriel Flores-Martinez\u25CFGabriel Slye\u25CFHarrison Weber\u25CFHayden
+    Huber\nHelen Parks\u25CFJack Dellutri\u25CFJacqueline Heisel\u25CFJacob Thomas\u25CFJake
+    Slutzky\u25CFJames Parks\nJason Shull\u25CFJasper Schiliro!\u25CFJaxson Green\u25CFJohn
+    Tighe\u25CFJohnatan Vargas\u25CFJoli Steffenauer\nJosh Peters\u25CFJoshua Galmines\u25CFKadin
+    harris\u25CFKarl Trollinger\u25CFKeegan Strauch\nKhajeie Feazell\u25CFKimberly
+    Gorman\u25CFKody Felmey\u25CFKyle Kotovsky\u25CFKymari Daniels\nLeif Sann\u25CFLinda
+    Escamilla\u25CFLisa Revord\u25CFMalcolm\u25CFMarlene\u25CFMatt Young\nMaurice
+    Qualls\u25CFMicah Hernandez\u25CFMichael Vietti\u25CFMiles Rogers\u25CFNabil
+    Tagba\nNat Schneider\u25CFNguyen Pham Hung Phuoc\u25CFNicholas Moritz\u25CFNick
+    Rice\u25CFNicole\nNikolai Tomkow\u25CFOliver Creighton\u25CFOwen Brubaker\u25CFPeyton
+    Manis\u25CFPeyton Metcalf\nRaymond Knapp\u25CFReese G\u25CFRonin Ryerson\u25CFRose
+    Knecht\u25CFRudy/Liz Wolfer\nRyan (The real one, not Salmon)\u25CFRyan Angulo\u25CFRyan
+    Swanson\u25CFScott Berry\nSean Martinez\u25CFSeth Baker\u25CFShanya Shepard\u25CFSky
+    Beal\u25CFSteve Sturm\nSusan Larabell\u25CFTacy\u25CFTheodore Groce\u25CFThomas
+    Santini\u25CFToby Schamberger\u25CFTracy\nTrenton Qualls\u25CFTyler Colander\u25CFUni\u25CFVivienne
+    Engelmann\nWill B\u25CFYana\u25CFZaden Westbrook\n\n\n<b>In Memory of</b> \n\nJordan
+    Ristau \nImportant member of the Interactive Media Department\nYou will be missed\n2003-2025\n\nDeborah
+    Boles\nSupportive and loving mother\n\nChata Tavera,\nA kind and loving aunt
+    and mother \n1980-2021\n\n\n\n\n\nThank you for playing!"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 948c848aed13a7841828f936b880534b, type: 2}
   m_sharedMaterial: {fileID: -7682226728210173025, guid: 948c848aed13a7841828f936b880534b,
@@ -827,7 +891,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -881,6 +945,7 @@ GameObject:
   - component: {fileID: 1892408834}
   - component: {fileID: 1892408833}
   - component: {fileID: 1892408832}
+  - component: {fileID: 1892408835}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -905,8 +970,8 @@ Camera:
   m_GameObject: {fileID: 1892408831}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -962,6 +1027,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1892408835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1892408831}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2
+  m_TaaSettings:
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
 --- !u!1 &2066002225
 GameObject:
   m_ObjectHideFlags: 0
@@ -972,7 +1081,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2066002228}
   - component: {fileID: 2066002227}
-  - component: {fileID: 2066002226}
+  - component: {fileID: 2066002229}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -980,26 +1089,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2066002226
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2066002225}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
-  m_HorizontalAxis: Horizontal
-  m_VerticalAxis: Vertical
-  m_SubmitButton: Submit
-  m_CancelButton: Cancel
-  m_InputActionsPerSecond: 10
-  m_RepeatDelay: 0.5
-  m_ForceModuleActive: 0
 --- !u!114 &2066002227
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1030,10 +1119,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2066002229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2066002225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
+  m_MoveRepeatDelay: 0.5
+  m_MoveRepeatRate: 0.1
+  m_XRTrackingOrigin: {fileID: 0}
+  m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
+  m_PointAction: {fileID: -1654692200621890270, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
+  m_MoveAction: {fileID: -8784545083839296357, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
+  m_SubmitAction: {fileID: 392368643174621059, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
+  m_CancelAction: {fileID: 7727032971491509709, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
+  m_LeftClickAction: {fileID: 3001919216989983466, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
+  m_MiddleClickAction: {fileID: -2185481485913320682, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
+  m_RightClickAction: {fileID: -4090225696740746782, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
+  m_ScrollWheelAction: {fileID: 6240969308177333660, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
+  m_TrackedDevicePositionAction: {fileID: 6564999863303420839, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
+  m_TrackedDeviceOrientationAction: {fileID: 7970375526676320489, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
+  m_DeselectOnBackgroundClick: 1
+  m_PointerBehavior: 0
+  m_CursorLockBehavior: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 287300718}
   - {fileID: 1892408834}
   - {fileID: 296802245}
   - {fileID: 1410091891}
