@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 0.5
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: 19b1efe2fdd599040b61947c2bad42d1, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 7d7e9271b91e51e47bc414fc6f6533f7, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -128,12 +128,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 381800723}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &69762996 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1979347854173412038, guid: dbb0dd27c6fab3344aab4441094b0849,
-    type: 3}
-  m_PrefabInstance: {fileID: 381800723}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &381800723
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -142,6 +136,12 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 125233841770136038, guid: dbb0dd27c6fab3344aab4441094b0849,
+        type: 3}
+      propertyPath: _gridPrefab
+      value: 
+      objectReference: {fileID: 5850831787062816667, guid: a07bd0ad0a4445e4ca526599624085cb,
+        type: 3}
     - target: {fileID: 125233841770136038, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
       propertyPath: _gridMeshHolder
@@ -433,11 +433,11 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 4176986204430351289, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
-      insertIndex: 8
+      insertIndex: -1
       addedObject: {fileID: 987237891}
     - targetCorrespondingSourceObject: {fileID: 4176986204430351289, guid: dbb0dd27c6fab3344aab4441094b0849,
         type: 3}
-      insertIndex: 9
+      insertIndex: -1
       addedObject: {fileID: 1310912737}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dbb0dd27c6fab3344aab4441094b0849, type: 3}
@@ -471,7 +471,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e56c7dc95d6d4c4484630d90410c89b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &381800727 stripped
+--- !u!1 &381800727 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1979347854173412038, guid: dbb0dd27c6fab3344aab4441094b0849,
+    type: 3}
+  m_PrefabInstance: {fileID: 381800723}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &381800728 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6710362832247839266, guid: dbb0dd27c6fab3344aab4441094b0849,
     type: 3}
@@ -1621,22 +1627,22 @@ MonoBehaviour:
   _isEndChapterCutscene: 1
   _challengeCutsceneImages:
   - {fileID: 987237890}
-  _cutsceneDuration: 40
+  _cutsceneDuration: 56
   _cutsceneAudio:
     Guid:
-      Data1: 988537092
-      Data2: 1100017216
-      Data3: 1600132527
-      Data4: -334552092
-    Path: event:/Chapter 1 End Cutscene
-  _loadingLevelIndex: 15
+      Data1: -129330510
+      Data2: 1196642327
+      Data3: -1739112038
+      Data4: 592403969
+    Path: event:/Chapter 2 End Cutscene
+  _loadingLevelIndex: 34
   _audioVolumeOverride: 1
-  _endCutsceneVolumeOverride: 9
+  _endCutsceneVolumeOverride: 3
   _menuManager: {fileID: 381800724}
   _timeTillSkip: 2
   _skipIconDuration: 2
-  _holdToSkipIcon: {fileID: 69762996}
-  SkipCompletingIcon: {fileID: 381800727}
+  _holdToSkipIcon: {fileID: 381800727}
+  SkipCompletingIcon: {fileID: 381800728}
 --- !u!4 &1312136891
 Transform:
   m_ObjectHideFlags: 0
@@ -1687,11 +1693,11 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1312136889}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 99e977e346976c2439963f2d1b4ca04e, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: b3f9e63015f2a9d4cb58af065699170d, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 381800725}
-  m_TargetTexture: {fileID: 8400000, guid: 8a1fd988bcf3c304ca12e83cb9f70882, type: 2}
+  m_TargetTexture: {fileID: 0}
   m_TimeReference: 0
   m_TargetMaterialRenderer: {fileID: 0}
   m_TargetMaterialProperty: <noninit>
