@@ -46,7 +46,7 @@ public class CreditsScroll : MonoBehaviour
     /// <summary>
     /// Detects if the player is pressing any input, and speeds up the credits if so
     /// </summary>
-    private void Update()
+    private void FixedUpdate()
     {
         if (!_scrollTween.isAlive)
             return;
