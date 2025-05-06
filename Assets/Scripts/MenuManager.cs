@@ -220,12 +220,14 @@ public class MenuManager : MonoBehaviour
             _pauseInvoked = true;
 
             //Gets the path to a scene
+            /* 
             string path = SceneManager.GetActiveScene().path;
 
             if (path.Contains("CS"))
             {
                 _skipPromptInPause.SetActive(true);
             }
+            */
         }
         else if (_optionsScreen != null && _optionsScreen.activeInHierarchy)
         {

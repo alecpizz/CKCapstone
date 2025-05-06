@@ -1600,7 +1600,7 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 0.7830189, g: 0.62419903, b: 0.7156407, a: 1}
+  m_Color: {r: 0.65882355, g: 0.3647059, b: 0.39607844, a: 1}
   m_Intensity: 0.75
   m_Range: 10
   m_SpotAngle: 30
@@ -1969,7 +1969,7 @@ Transform:
   m_GameObject: {fileID: 793792244}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -7.68, y: 1.61, z: -3.43}
+  m_LocalPosition: {x: -7.68, y: 8, z: -3.43}
   m_LocalScale: {x: 50, y: 50, z: 50}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2641,6 +2641,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1511555851957794241, guid: dcba41633fd984049a86e947ecc19131,
+        type: 3}
+      propertyPath: _rotationSpeed
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511555851957794241, guid: dcba41633fd984049a86e947ecc19131,
+        type: 3}
+      propertyPath: _floatDirection.y
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 1511555851957794241, guid: dcba41633fd984049a86e947ecc19131,
+        type: 3}
+      propertyPath: _rotationDirection.y
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2192702497065154746, guid: dcba41633fd984049a86e947ecc19131,
+        type: 3}
+      propertyPath: m_Name
+      value: ENV_ElectricBass_Floating
+      objectReference: {fileID: 0}
     - target: {fileID: 2908695865277501858, guid: dcba41633fd984049a86e947ecc19131,
         type: 3}
       propertyPath: m_LocalScale.x
@@ -2710,26 +2730,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1511555851957794241, guid: dcba41633fd984049a86e947ecc19131,
-        type: 3}
-      propertyPath: _rotationSpeed
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1511555851957794241, guid: dcba41633fd984049a86e947ecc19131,
-        type: 3}
-      propertyPath: _floatDirection.y
-      value: 0.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 1511555851957794241, guid: dcba41633fd984049a86e947ecc19131,
-        type: 3}
-      propertyPath: _rotationDirection.y
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 2192702497065154746, guid: dcba41633fd984049a86e947ecc19131,
-        type: 3}
-      propertyPath: m_Name
-      value: ENV_ElectricBass_Floating
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2818,25 +2818,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 6081596757076654472, guid: 0b40ac46695af2342892f3a395623d15,
+    - target: {fileID: 4665542641175702220, guid: 0b40ac46695af2342892f3a395623d15,
         type: 3}
-      propertyPath: _rotationSpeed
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 6081596757076654472, guid: 0b40ac46695af2342892f3a395623d15,
-        type: 3}
-      propertyPath: _rotationCycleMode
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6081596757076654472, guid: 0b40ac46695af2342892f3a395623d15,
-        type: 3}
-      propertyPath: _rotationDirection.x
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 6081596757076654472, guid: 0b40ac46695af2342892f3a395623d15,
-        type: 3}
-      propertyPath: _rotationDirection.y
-      value: 90
+      propertyPath: m_Name
+      value: ENV_CassetteTape Variant_Floating
       objectReference: {fileID: 0}
     - target: {fileID: 5794738053530343929, guid: 0b40ac46695af2342892f3a395623d15,
         type: 3}
@@ -2908,10 +2893,25 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 4665542641175702220, guid: 0b40ac46695af2342892f3a395623d15,
+    - target: {fileID: 6081596757076654472, guid: 0b40ac46695af2342892f3a395623d15,
         type: 3}
-      propertyPath: m_Name
-      value: ENV_CassetteTape Variant_Floating
+      propertyPath: _rotationSpeed
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 6081596757076654472, guid: 0b40ac46695af2342892f3a395623d15,
+        type: 3}
+      propertyPath: _rotationCycleMode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6081596757076654472, guid: 0b40ac46695af2342892f3a395623d15,
+        type: 3}
+      propertyPath: _rotationDirection.x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 6081596757076654472, guid: 0b40ac46695af2342892f3a395623d15,
+        type: 3}
+      propertyPath: _rotationDirection.y
+      value: 90
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4926,7 +4926,7 @@ PrefabInstance:
     - target: {fileID: 2136362874793484460, guid: dda7842c0387e794a8c66ddc56220932,
         type: 3}
       propertyPath: _isUnlocked
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2136362874793484460, guid: dda7842c0387e794a8c66ddc56220932,
         type: 3}
@@ -5878,6 +5878,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: CHALLENGE_Door Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 5710732456977986689, guid: 75582add012eba64e9e42d321e55826e,
+        type: 3}
+      propertyPath: _isUnlocked
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5710732456977986689, guid: 75582add012eba64e9e42d321e55826e,
         type: 3}

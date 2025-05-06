@@ -285,6 +285,9 @@ public class ControllerGlyphManager : MonoBehaviour
     /// </summary>
     public void GetIcon()
     {
+        if (_skipIcon == null || _skipCompletingIcon == null)
+            return; 
+
         if (PlayStationController)
         {
             _skipIcon.sprite = _playstationSkipButton;
@@ -305,7 +308,6 @@ public class ControllerGlyphManager : MonoBehaviour
             _skipIcon.sprite = _keyboardSkipButton;
             _skipCompletingIcon.sprite = _completionSquare;
         }
-        return;
     }
 
 }
